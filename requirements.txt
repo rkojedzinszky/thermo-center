@@ -1,0 +1,7 @@
+# requirements for DIY wireless Temp/Humidity sensor solution
+spidev
+pycrypto
+django
+django-tastypie
+uwsgi
+whisper
