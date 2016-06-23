@@ -1,0 +1,25 @@
+
+import os
+from application.settings import BASE_DIR
+
+DATABASES = {
+    'default': {
+        # default db with sqlite
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+        # postgresql db with schema support
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME': 'dbname',
+        #'SCHEMA': '',
+    }
+}
+
+
+SECRET_KEY = '@SECRET_KEY@'
+
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+del os, BASE_DIR

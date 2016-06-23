@@ -1,7 +1,7 @@
 # requirements for DIY wireless Temp/Humidity sensor solution
 spidev
 pycrypto
-django
+django<1.9
 django-tastypie
 uwsgi
 whisper

@@ -14,7 +14,7 @@ if ! test -f carbon.conf ; then
 		-e 's/^MAX_UPDATES_PER_SECOND.*/MAX_UPDATES_PER_SECOND = 1/' \
 		-e 's/^LINE_RECEIVER_PORT.*/LINE_RECEIVER_PORT = 0/' \
 		-e 's/^PICKLE_RECEIVER_INTERFACE.*/PICKLE_RECEIVER_INTERFACE = 127.0.0.1/' \
-		-e 's/^CACHE_QUERY_INTERFACE/CACHE_QUERY_INTERFACE = 127.0.0.1/' \
+		-e 's/^CACHE_QUERY_INTERFACE.*/CACHE_QUERY_INTERFACE = 127.0.0.1/' \
 		-e 's/^[#[:space:]]*MAX_UPDATES_PER_SECOND_ON_SHUTDOWN.*/MAX_UPDATES_PER_SECOND_ON_SHUTDOWN = 1000/' \
 		carbon.conf.example > carbon.conf
 fi
@@ -33,3 +33,13 @@ fi
 
 ## set up graphite-web
 #pip install -U graphite-web --install-option="--prefix=$GRAPHITE" --install-option="--install-lib=$PYTHON_LIB"
+
+# setup local_settings.py
+if [ ! -f local_settings.py ]; then
+    echo "** Generating local_settings.py"
+    SECRET_KEY=$(python -c 'from django.utils.crypto import get_random_string; print get_random_string(50, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^*(-_=+)")')
+    _u=$(umask)
+    umask 027
+    sed -e "s/@SECRET_KEY@/$SECRET_KEY/g" local_settings.py.sample > local_settings.py
+    umask $_u
+fi
