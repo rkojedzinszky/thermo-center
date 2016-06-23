@@ -1,7 +1,7 @@
 #!/bin/sh
 
 GRAPHITE=$HOME/graphite
-PYTHON_LIB=$(python -c 'import sys; print sys.path.pop()')
+PYTHON_LIB=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 pip install -U -r requirements.txt
 
