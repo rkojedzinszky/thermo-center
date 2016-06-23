@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'tastypie',
+    'center',
 )
 
 MIDDLEWARE_CLASSES = (
