@@ -1,3 +1,4 @@
+import re
 from django.db import models
 import center.fields
 
@@ -21,6 +22,12 @@ class RFConfig(models.Model):
 
     def __str__(self):
         return 'RFConfig'
+
+    def config_bytes(self):
+        from center.receiver import radio
+        regs = [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self.rf_profile.confregs)]
+        regs.extend([radio.Radio.ConfReg.CHANNR, self.rf_channel])
+        return regs
 
 class Sensor(models.Model):
     """ A sensor device """
