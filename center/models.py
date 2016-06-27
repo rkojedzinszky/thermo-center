@@ -1,6 +1,10 @@
 import re
+import logging
 from django.db import models
+from django.utils import timezone
 import center.fields
+
+logger = logging.getLogger(__name__)
 
 class RFProfile(models.Model):
     """ A profile for RF communication """
@@ -38,3 +42,34 @@ class Sensor(models.Model):
 
     def __str__(self):
         return 'Sensor %02x' % self.device_id
+
+    def _validate_seq(self, seq):
+        now = timezone.now()
+        avg = 0
+
+        if self.last_ts is not None:
+            if self.last_seq is None:
+                diff = 1
+            else:
+                diff = (seq - self.last_seq) & 0x7fffffff
+
+            interval = (now - self.last_ts).total_seconds()
+            avg = interval / diff
+
+            valid = 26 <= avg <= 34
+            if not valid:
+                logger.warn('%s: received invalid update' % self)
+                return None
+
+        self.last_seq = seq
+        self.last_ts = now
+
+        return avg
+
+    def feed(self, seq, metrics):
+        avg = self._validate_seq(seq)
+
+        if avg is None:
+            return
+
+        self.save(update_fields=('last_seq', 'last_ts'))

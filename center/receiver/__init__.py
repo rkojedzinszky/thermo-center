@@ -15,9 +15,15 @@ class Console(basic.LineOnlyReceiver):
         return self
 
     def lineReceived(self, line):
-        print 'line received: %s' % line
         if line == 'stop':
+            self.sendLine('exiting')
             self._main.stop()
+        elif line == 'configure':
+            self._main.startconfigurator()
+            self.sendLine('entered sensor configuration mode')
+        elif line == 'reload':
+            self._main.startreceiver()
+            self.sendLine('reloaded receiver mode')
 
 class ConsoleFactory(protocol.ServerFactory):
     def setMain(self, main):
@@ -32,7 +38,7 @@ class Main(object):
 
     pidfile = '%s/receiver.pid' % settings.BASE_DIR
 
-    def __init__(self):
+    def run(self, daemonize=True):
         spi = spidev.SpiDev()
         spi.open(settings.SPI_BUS, 0)
         spi.mode = 3
@@ -44,19 +50,6 @@ class Main(object):
 
         self._loop = None
 
-    def writepidfile(self):
-        with open(self.pidfile, 'w') as pfh:
-            pfh.write(str(os.getpid()))
-
-    def removepidfile(self):
-        os.unlink(self.pidfile)
-
-    @classmethod
-    def readpidfile(cls):
-        with open(cls.pidfile, 'r') as pfh:
-            return int(pfh.read())
-
-    def run(self, daemonize=False):
         if daemonize:
             if os.fork() > 0:
                 sys.exit()
@@ -73,15 +66,11 @@ class Main(object):
                 os.dup2(fh.fileno(), sys.stdout.fileno())
                 os.dup2(fh.fileno(), sys.stderr.fileno())
 
-        self.writepidfile()
-
         self._listen = reactor.listenTCP(1234, ConsoleFactory().setMain(self))
 
         self.startreceiver()
 
         reactor.run()
-
-        self.removepidfile()
 
     def startreceiver(self):
         from center.receiver import receiver
@@ -106,6 +95,8 @@ class Main(object):
         reactor.stop()
 
 class RadioBase(object):
+    """ Base class for receiver and configurator mode """
+
     @implementer(interfaces.IReadDescriptor)
     class GPIOInterruptHandler(object):
         def __init__(self, gpio, cb):

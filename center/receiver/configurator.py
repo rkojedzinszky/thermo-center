@@ -7,4 +7,4 @@ class Configurator(RadioBase):
         print 'Configurator destroyed'
 
     def run(self):
-        reactor.callLater(10, self._main.startreceiver)
+        reactor.callLater(15, self._main.startreceiver)
