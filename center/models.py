@@ -6,6 +6,9 @@ import center.fields
 
 logger = logging.getLogger(__name__)
 
+def _parse_hex(s):
+    return [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', s)]
+
 class RFProfile(models.Model):
     """ A profile for RF communication """
     name = models.CharField(max_length=50)
@@ -29,9 +32,12 @@ class RFConfig(models.Model):
 
     def config_bytes(self):
         from center.receiver import radio
-        regs = [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self.rf_profile.confregs)]
+        regs = _parse_hex(self.rf_profile.confregs)
         regs.extend([radio.Radio.ConfReg.CHANNR, self.rf_channel])
         return regs
+
+    def aes_bytes(self):
+        return _parse_hex(self.aes_key)
 
 class Sensor(models.Model):
     """ A sensor device """
@@ -71,5 +77,7 @@ class Sensor(models.Model):
 
         if avg is None:
             return
+
+        logger.info('%s: update: seq=%d' % (self, seq))
 
         self.save(update_fields=('last_seq', 'last_ts'))

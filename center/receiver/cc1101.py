@@ -85,8 +85,11 @@ class CC1101(object):
     def __init__(self, spidev):
         self._spi = spidev
 
+    def marcstate(self):
+        return self.status(self.StatusReg.MARCSTATE) & 0x1f
+
     def waitstate(self, state):
-        while (self.status(self.StatusReg.MARCSTATE) & 0x1f) != state:
+        while self.marcstate() != state:
             pass
 
     def reset(self):
@@ -125,3 +128,6 @@ class CC1101(object):
     def read_rxfifo(self, length):
         to = [0xff] + [0] * length
         return self._spi.xfer(to)[1:]
+
+    def write_txfifo(self, data):
+        self._spi.xfer([0x7f] + data)

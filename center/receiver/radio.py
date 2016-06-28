@@ -23,17 +23,12 @@ class Radio(cc1101.CC1101):
         # PATABLE
         self.set(self.ConfReg.PATABLE, 0xc0)
 
-        self.calibrate()
-
-    def setup_common(self):
+    def setup_for_rx(self):
         # fix packet length
         self.set(self.ConfReg.PKTLEN, 16)
 
         # packet automation
         self.set(self.ConfReg.PKTCTRL0, 0x44)
-
-    def setup_for_rx(self):
-        self.setup_common()
 
         self.set(self.ConfReg.PKTCTRL1, 0x2c)
 
@@ -45,11 +40,13 @@ class Radio(cc1101.CC1101):
 
         self.calibrate()
 
-    def setup_for_tx(self):
-        self.setup_common()
-
-        # main radio control state machine configuration
-        self.set(self.ConfReg.MCSM1, 0x30)
-        self.set(self.ConfReg.MCSM0, 0x38)
+    def setup_for_conf(self):
+        # treat 0 as broadcast
+        self.set(self.ConfReg.PKTLEN, 0x10)
+        self.set(self.ConfReg.PKTCTRL1, 0x0a)
+        self.set(self.ConfReg.PKTCTRL0, 0x45)
+        self.set(self.ConfReg.IOCFG0, 0x07)
+        self.set(self.ConfReg.MCSM1, 0x0b)
+        self.set(self.ConfReg.ADDR, 0)
 
         self.calibrate()
