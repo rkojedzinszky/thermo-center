@@ -59,6 +59,6 @@ class Receiver(RadioBase):
         #print ' RSSI=%d LQI=%d' % (rssi, lqi)
 
         try:
-            models.Sensor.objects.get(device_id=id_).feed(seq, [])
+            models.Sensor.objects.get(id=id_).feed(seq, [])
         except models.Sensor.DoesNotExist:
             logger.warn('Unknown device id: %02x' % id_)

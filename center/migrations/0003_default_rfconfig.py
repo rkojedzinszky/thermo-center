@@ -21,7 +21,7 @@ def remove_rfconfig(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('center', '0001_initial'),
+        ('center', '0002_rfprofiles'),
     ]
 
     operations = [

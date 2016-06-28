@@ -41,13 +41,13 @@ class RFConfig(models.Model):
 
 class Sensor(models.Model):
     """ A sensor device """
-    device_id = center.fields.SensorIdField(unique=True)
+    id = center.fields.SensorIdField(primary_key=True)
     name = models.CharField(max_length=100, blank=True)
     last_seq = models.PositiveIntegerField(null=True)
     last_ts = models.DateTimeField(null=True)
 
     def __str__(self):
-        return 'Sensor %02x' % self.device_id
+        return 'Sensor %02x' % self.id
 
     def _validate_seq(self, seq):
         now = timezone.now()
