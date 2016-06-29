@@ -1,5 +1,7 @@
 import re
 import logging
+import socket, struct, pickle
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 import center.fields
@@ -72,6 +74,9 @@ class Sensor(models.Model):
 
         return avg
 
+    def _carbon_path(self):
+        return 'sensor.%02x' % self.pk
+
     def feed(self, seq, metrics):
         avg = self._validate_seq(seq)
 
@@ -81,3 +86,19 @@ class Sensor(models.Model):
         logger.info('%s: update: seq=%d' % (self, seq))
 
         self.save(update_fields=('last_seq', 'last_ts'))
+
+        m = {m.metric: m.value() for m in metrics}
+        m['intvl'] = avg
+        ts = int(self.last_ts.strftime('%s'))
+
+        carbon_data = [('%s.%s' % (self._carbon_path(), k), (ts, v)) for k, v in m.iteritems()]
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect(settings.CARBON_PICKLE_ENDPOINT)
+            payload = pickle.dumps(carbon_data, protocol=2)
+            header = struct.pack('!L', len(payload))
+            s.send(header + payload)
+        finally:
+            s.close()
+

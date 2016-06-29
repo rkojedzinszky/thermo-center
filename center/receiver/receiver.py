@@ -4,10 +4,17 @@ import re
 import logging
 from Crypto.Cipher import AES
 from twisted.internet import reactor
-from center.receiver import RadioBase, radio
+from center.receiver import RadioBase, radio, sensorvalue
 from center import models
 
 logger = logging.getLogger(__name__)
+
+class StringOrdIter(object):
+    def __init__(self, s):
+        self._i = iter(s)
+
+    def next(self):
+        return ord(next(self._i))
 
 class Receiver(RadioBase):
     def __del__(self):
@@ -34,11 +41,10 @@ class Receiver(RadioBase):
         try:
             self._receive_packet(data)
         except Exception as e:
-            logger.error('error processing packet')
+            logger.error('error processing packet: %s' % str(e))
 
     def _receive_packet(self, packet):
-        rssi = (struct.unpack('b', struct.pack('B', packet[16]))[0] - 148 ) / 2.0
-        lqi = packet[17] & 127
+        metrics = [sensorvalue.RSSI(packet[16]), sensorvalue.LQI(packet[17] & 0x7f)]
         packet = self._aes.decrypt(''.join(chr(c) for c in packet[:16]))
 
         network, seq, length, id_ = struct.unpack('<HLBB', packet[:8])
@@ -55,10 +61,26 @@ class Receiver(RadioBase):
             logger.warn('Received packet for invalid network: %d' % network)
             return
 
-        #print 'network=%d, devid=%d, length=%d, seq=%d, rest=%s' % (network, id_, length, seq, " ".join("{:02x}".format(ord(c)) for c in rest))
-        #print ' RSSI=%d LQI=%d' % (rssi, lqi)
+        si = StringOrdIter(rest)
+        try:
+            while True:
+                try:
+                    metrics.append(sensorvalue.SensorValueParser.parse(next(si), next(si)))
+                except sensorvalue.SensorValueParser.InvalidType:
+                    pass
+        except StopIteration:
+            pass
+
+        mh = {m.metric: m for m in metrics}
+        try:
+            t = mh['Temperature']
+            h = mh['Humidity']
+            if isinstance(t, sensorvalue.HTU21DTemperature) and isinstance(h, sensorvalue.HTU21DHumidty):
+                h.temp_compensate(t)
+        except KeyError:
+            pass
 
         try:
-            models.Sensor.objects.get(id=id_).feed(seq, [])
+            models.Sensor.objects.get(id=id_).feed(seq, metrics)
         except models.Sensor.DoesNotExist:
             logger.warn('Unknown device id: %02x' % id_)

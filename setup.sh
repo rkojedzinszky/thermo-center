@@ -11,7 +11,7 @@ pip install -U carbon --install-option="--prefix=$GRAPHITE" --install-option="--
 cd $GRAPHITE/conf
 if ! test -f carbon.conf ; then
 	sed -r \
-		-e 's/^MAX_UPDATES_PER_SECOND.*/MAX_UPDATES_PER_SECOND = 1/' \
+		-e 's/^MAX_UPDATES_PER_SECOND.*/MAX_UPDATES_PER_SECOND = 10/' \
 		-e 's/^LINE_RECEIVER_PORT.*/LINE_RECEIVER_PORT = 0/' \
 		-e 's/^PICKLE_RECEIVER_INTERFACE.*/PICKLE_RECEIVER_INTERFACE = 127.0.0.1/' \
 		-e 's/^CACHE_QUERY_INTERFACE.*/CACHE_QUERY_INTERFACE = 127.0.0.1/' \
