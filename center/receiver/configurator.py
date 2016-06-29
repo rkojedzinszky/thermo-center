@@ -1,7 +1,9 @@
 
 import logging
 from twisted.internet import reactor
+from django.utils import timezone
 from center.receiver import RadioBase, radio
+from center.models import Sensor
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +24,7 @@ class Configurator(RadioBase):
         self._configpacket[0] -= 1 # fixup for total length
 
     def _gen_next_id(self):
-        self._next_id = 11
+        self._next_id = (set(range(1, 128)) - set([s.pk for s in Sensor.objects.all()])).pop()
 
     def run(self):
         self._prepare_config_reply()
@@ -50,8 +52,6 @@ class Configurator(RadioBase):
         id_ = data[2]
         if id_ & 0x80:
             id_ = self._next_id
-            self._next_id = None
-        id_ = self._next_id
 
         logger.info('Received autoconfig request from %02x, sending reply with id=%02x' % (data[2], id_))
 
@@ -60,5 +60,12 @@ class Configurator(RadioBase):
 
         self._radio.write_txfifo(self._configpacket)
 
-        if self._next_id is None:
-            self._gen_next_id()
+        try:
+            sensor = Sensor.objects.get(id=id_)
+        except Sensor.DoesNotExist:
+            sensor = Sensor(id=id_)
+
+        sensor.last_ts = timezone.now()
+        sensor.save()
+
+        self._gen_next_id()
