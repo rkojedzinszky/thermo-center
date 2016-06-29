@@ -10,6 +10,8 @@ import spidev
 from center.receiver import radio, gpio
 
 class Console(basic.LineOnlyReceiver):
+    delimiter = b'\n'
+
     def setMain(self, main):
         self._main = main
         return self
@@ -36,7 +38,7 @@ class ConsoleFactory(protocol.ServerFactory):
 class Main(object):
     """ Main radio handler daemon """
 
-    pidfile = '%s/receiver.pid' % settings.BASE_DIR
+    socket = '%s/receiver.sock' % settings.BASE_DIR
 
     def run(self, daemonize=True):
         spi = spidev.SpiDev()
@@ -66,7 +68,7 @@ class Main(object):
                 os.dup2(fh.fileno(), sys.stdout.fileno())
                 os.dup2(fh.fileno(), sys.stderr.fileno())
 
-        self._listen = reactor.listenTCP(1234, ConsoleFactory().setMain(self))
+        self._listen = reactor.listenUNIX(self.socket, ConsoleFactory().setMain(self), mode=0o600)
 
         self.startreceiver()
 
