@@ -62,6 +62,7 @@ class Configurator(RadioBase):
 
         try:
             sensor = Sensor.objects.get(id=id_)
+            sensor.last_seq = None
         except Sensor.DoesNotExist:
             sensor = Sensor(id=id_)
 
