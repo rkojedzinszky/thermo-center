@@ -4,6 +4,7 @@ from twisted.internet import reactor, interfaces, protocol
 from twisted.protocols import basic
 from zope.interface import implementer
 from center import models
+from django.db.backends import signals
 
 from django.conf import settings
 import spidev
@@ -70,9 +71,18 @@ class Main(object):
 
         self._listen = reactor.listenUNIX(self.socket, ConsoleFactory().setMain(self), mode=0o600)
 
+        signals.connection_created.connect(self._set_sync_commit_to_off)
+
         self.startreceiver()
 
         reactor.run()
+
+    def _set_sync_commit_to_off(self, sender, connection, **kwargs):
+        try:
+            with connection.cursor() as c:
+                c.execute('set synchronous_commit to off')
+        except:
+            pass
 
     def startreceiver(self):
         from center.receiver import receiver
