@@ -2,6 +2,7 @@
 import struct
 import re
 import logging
+import time
 from Crypto.Cipher import AES
 from django.conf import settings
 from twisted.internet import reactor
@@ -36,22 +37,51 @@ class Receiver(RadioBase):
 
         self.enable_interrupt()
 
-    def oninterrupt(self):
-        data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
-        data = self._radio.read_rxfifo(data_len)
-        if data_len != 18:
-            return
+        self._icnt = 0
 
-        try:
-            self._receive_packet(data)
-        except Exception as e:
-            logger.error('error processing packet: %s' % str(e))
+    def oninterrupt(self):
+        logger.debug('Receiver.oninterrupt (#%d)' % self._icnt)
+        self._icnt += 1
+        while True:
+            data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
+            logger.debug('CC1101.RXBYTES=%d' % data_len)
+
+            if data_len & 0x80:
+                logger.warn('CC1101 RX_OVERFLOW')
+                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+                return
+
+            # we read all available full packets
+            data_len -= data_len % 18
+            if data_len == 0:
+                break
+
+            data = self._radio.read_rxfifo(data_len)
+
+            while len(data) > 0:
+                p = data[:18]
+                data = data[18:]
+
+                start = time.time()
+
+                try:
+                    self._receive_packet(p)
+                except Exception as e:
+                    logger.error('error processing packet: %s' % str(e))
+
+                end = time.time()
+
+                logger.debug('Packet processed in %f seconds' % (end - start))
 
     def _receive_packet(self, packet):
         metrics = [sensorvalue.RSSI(packet[16]), sensorvalue.LQI(packet[17] & 0x7f)]
         packet = self._aes.decrypt(''.join(chr(c) for c in packet[:16]))
 
         network, seq, length, id_ = struct.unpack('<HLBB', packet[:8])
+
+        logger.debug('packet header: network=%04x seq=%08x len=%02x id=%02x' % (network, seq, length, id_))
+
         if length < 8:
             logger.error('Invalid packet data received, short length: %d' % length)
             return
