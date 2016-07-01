@@ -9,4 +9,4 @@ export PYTHONHASHSEED=random
 ~/graphite/bin/carbon-cache.py start
 
 rm -f receiver.sock
-python manage.py receiver
+python manage.py receiver -d
