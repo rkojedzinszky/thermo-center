@@ -78,3 +78,10 @@ del re
 
 # default tastypie.api object
 RESTAPI_CLASS = 'application.restapi.RestApi'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': CACHE_DIR
+    }
+}

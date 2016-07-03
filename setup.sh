@@ -38,8 +38,12 @@ fi
 if [ ! -f local_settings.py ]; then
     echo "** Generating local_settings.py"
     SECRET_KEY=$(python -c 'from django.utils.crypto import get_random_string; print get_random_string(50, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^*(-_=+)")')
+    CACHE_DIR=$(python -c 'from django.utils.crypto import get_random_string; print get_random_string(12, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")')
     _u=$(umask)
     umask 027
-    sed -e "s/@SECRET_KEY@/$SECRET_KEY/g" local_settings.py.sample > local_settings.py
+    sed \
+	    -e "s/@SECRET_KEY@/$SECRET_KEY/g" \
+	    -e "s/@CACHE_DIR@/$CACHE_DIR/g" \
+	    local_settings.py.sample > local_settings.py
     umask $_u
 fi

@@ -1,5 +1,6 @@
 
 import os
+import tempfile
 from application.settings import BASE_DIR
 
 DATABASES = {
@@ -17,6 +18,7 @@ DATABASES = {
 
 
 SECRET_KEY = '@SECRET_KEY@'
+CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-@CACHE_DIR@')
 
 DEBUG = True
 
