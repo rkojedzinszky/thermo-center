@@ -62,6 +62,8 @@ STATIC_URL = '/static/'
 CARBON_PICKLE_ENDPOINT = ('127.0.0.1', 2004)
 CARBON_CACHE_ENDPOINT = ('127.0.0.1', 7002)
 
+WWW_ROOT = '/'
+
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True

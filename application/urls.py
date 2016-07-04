@@ -7,5 +7,5 @@ autodiscover_modules('restapi')
 RestApi = import_string(settings.RESTAPI_CLASS)
 
 urlpatterns = [
-    url(r'^api/', include(RestApi.urls)),
+    url(r'^' + settings.WWW_ROOT + 'api/', include(RestApi.urls)),
 ]
