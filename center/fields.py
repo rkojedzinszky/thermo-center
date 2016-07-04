@@ -27,7 +27,7 @@ class RangedIntegerField(models.IntegerField):
         return value
 
     def get_prep_value(self, value):
-        return super(RangedIntegerField, self).get_prep_value(self._check_ranges(value))
+        return self._check_ranges(super(RangedIntegerField, self).get_prep_value(value))
 
     def to_python(self, value):
         return self._check_ranges(super(RangedIntegerField, self).to_python(value))
