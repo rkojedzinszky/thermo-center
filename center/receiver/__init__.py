@@ -86,11 +86,9 @@ class Main(object):
             pass
 
     def startreceiver(self):
-        from center.receiver import receiver
         self._setloop(receiver.Receiver)
 
     def startconfigurator(self):
-        from center.receiver import configurator
         self._setloop(configurator.Configurator)
 
     def _setloop(self, cls):
@@ -152,3 +150,6 @@ class RadioBase(object):
         self._radio.sidle()
         self.disable_interrupt()
         del self._ih
+
+from center.receiver import receiver
+from center.receiver import configurator
