@@ -37,7 +37,6 @@ class Configurator(RadioBase):
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
 
         logger.debug('Configurator initialized')
-        reactor.callLater(15, self._main.startreceiver)
 
     def oninterrupt(self):
         data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)

@@ -23,6 +23,7 @@ class Console(basic.LineOnlyReceiver):
             self._main.stop()
         elif line == 'configure':
             self._main.startconfigurator()
+            reactor.callLater(15, self._main.startreceiver)
             self.sendLine('entered sensor configuration mode')
         elif line == 'reload':
             self._main.startreceiver()
@@ -97,7 +98,6 @@ class Main(object):
             self._loop.finish()
         if cls:
             self._loop = cls(self._radio, self._gpio)
-            self._loop._main = self
             self._loop.run()
         else:
             self._loop = None
