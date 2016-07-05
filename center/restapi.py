@@ -20,6 +20,9 @@ class SensorResource(resource.ModelResource):
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()
         excludes = ('last_seq',)
+        ordering = (
+                'id',
+                )
 
     def dehydrate(self, bundle):
         bundle = super(SensorResource, self).dehydrate(bundle)
@@ -37,6 +40,9 @@ class SensorResource(resource.ModelResource):
 class THSensorResource(SensorResource):
     temperature = fields.FloatField(null=True)
     humidity = fields.FloatField(null=True)
+
+    class Meta(SensorResource.Meta):
+        excludes = ('thsensor',)
 
     def dehydrate(self, bundle):
         bundle = super(THSensorResource, self).dehydrate(bundle)
