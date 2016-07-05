@@ -1,0 +1,30 @@
+{
+  "name": "thermo-center",
+  "version": "0.0.0",
+  "description": "DIY thermo center",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rkojedzinszky/thermo-center"
+  },
+  "keywords": [
+    "diy",
+    "sensor",
+    "temperature",
+    "humidity"
+  ],
+  "author": "Richard Kojedzinszky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rkojedzinszky/thermo-center/issues"
+  },
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "steal-tools": "^0.16.5"
+  }
+}

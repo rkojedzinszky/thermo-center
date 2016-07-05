@@ -10,3 +10,4 @@ export PYTHONHASHSEED=random
 
 rm -f receiver.sock
 python manage.py receiver -d
+uwsgi --uwsgi-socket 127.0.0.1:8080 --wsgi-file=application/wsgi.py --master --workers 2 --threads 8 --daemonize=/dev/null
