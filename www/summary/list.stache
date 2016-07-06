@@ -3,24 +3,24 @@
 <tr>
 	<th>id</th>
 	<th>name</th>
+	<th>temperature</th>
+	<th>humidity</th>
 	<th>vcc</th>
 	<th>rssi</th>
 	<th>lqi</th>
 	<th>interval</th>
-	<th>temperature</th>
-	<th>humidity</th>
 </tr>
 <tbody>
 {{#sensors}}
 <tr>
 	<td>{{id}}</td>
 	<td>{{name}}</td>
+	<td>{{format_temperature}}</td>
+	<td>{{format_humidity}}</td>
 	<td>{{format_vcc}}</td>
 	<td>{{format_rssi}}</td>
 	<td>{{format_lqi}}</td>
 	<td>{{format_interval}}</td>
-	<td>{{format_temperature}}</td>
-	<td>{{format_humidity}}</td>
 </tr>
 {{/sensors}}
 </tbody>

@@ -18,7 +18,7 @@ can.Component.extend({
 			return ctx.context.attr('interval').toFixed(1);
 		},
 		format_temperature(ctx) {
-			return ctx.context.attr('temperature').toFixed(1);
+			return ctx.context.attr('temperature').toFixed(2);
 		},
 		format_humidity(ctx) {
 			return ctx.context.attr('humidity').toFixed(1);
