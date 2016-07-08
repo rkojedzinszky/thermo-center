@@ -1,0 +1,26 @@
+<div can-click="toggle" class="sensor">
+<div class="row">
+<div class="col-xs-6">{{name}}</div>
+<div class="col-xs-3">{{format_num temperature 2}}</div>
+<div class="col-xs-3">{{format_num humidity 1}}</div>
+</div>
+{{#if expand}}
+<div class="row">
+<div class="col-sm-6">
+<div class="row">
+<div class="col-xs-1"></div>
+<div class="col-xs-5">id: {{id}}</div>
+<div class="col-xs-6">Interval: {{format_num interval 1}}</div>
+</div>
+</div>
+<div class="col-sm-6">
+<div class="row">
+<div class="col-xs-1"></div>
+<div class="col-xs-5">VCC: {{format_num vcc 2}}</div>
+<div class="col-xs-3">RSSI: {{format_num rssi 1}}</div>
+<div class="col-xs-3">LQI: {{format_num lqi 0}}</div>
+</div>
+</div>
+</div>
+{{/if}}
+</div>
