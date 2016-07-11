@@ -56,15 +56,15 @@ class Sensor(models.Model):
         avg = 0
 
         if self.last_ts is not None:
+            interval = (now - self.last_ts).total_seconds()
+
             if self.last_seq is None:
-                diff = 1
+                valid = interval <= 34
             else:
                 diff = (seq - self.last_seq) & 0x7fffffff
+                avg = interval / diff
+                valid = 26 <= avg <= 34
 
-            interval = (now - self.last_ts).total_seconds()
-            avg = interval / diff
-
-            valid = 26 <= avg <= 34
             if not valid:
                 logger.warn('%s: received invalid update' % self)
                 return None
@@ -99,3 +99,11 @@ class Sensor(models.Model):
         m['last_ts'] = self.last_ts
         cache.set(self._carbon_path(), m)
 
+    def resync(self):
+        """ Resync a sensor, when a battery change or rarely a time
+        synchronization error occured.
+        """
+
+        self.last_seq = None
+        self.last_ts = timezone.now()
+        self.save()
