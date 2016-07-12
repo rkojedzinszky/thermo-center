@@ -20,12 +20,7 @@ class StringOrdIter(object):
         return ord(next(self._i))
 
 class Receiver(RadioBase):
-    def __del__(self):
-        print 'Receiver destroyed'
-
     def run(self):
-        print 'Receiver.run()'
-
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
 
         self._aes = AES.new(''.join(chr(int(c, base=16)) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)))
