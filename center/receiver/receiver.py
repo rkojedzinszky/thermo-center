@@ -66,7 +66,7 @@ class Receiver(RadioBase):
                 start = time.time()
 
                 try:
-                    self._receive_packet(p)
+                    reactor.callInThread(self._receive_packet, p)
                 except Exception as e:
                     logger.error('error processing packet: %s' % str(e))
 
