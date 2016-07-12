@@ -1,14 +1,16 @@
 import os, sys
 import select
+import logging
 from twisted.internet import reactor, interfaces, protocol
 from twisted.protocols import basic
 from zope.interface import implementer
 from center import models
 from django.db.backends import signals
-
 from django.conf import settings
 import spidev
 from center.receiver import radio, gpio
+
+logger = logging.getLogger(__name__)
 
 class Console(basic.LineOnlyReceiver):
     delimiter = b'\n'
@@ -91,10 +93,10 @@ class Main(object):
 
     def _setloop(self, cls):
         if self._loop:
-            self._loop.finish()
+            self._loop._stop()
         if cls:
             self._loop = cls(self._radio, self._gpio)
-            self._loop.run()
+            self._loop._start()
         else:
             self._loop = None
 
@@ -144,10 +146,24 @@ class RadioBase(object):
     def disable_interrupt(self):
         reactor.removeReader(self._ih)
 
-    def finish(self):
+    def _start(self):
+        logger.info('%s starting' % self.name)
+        self.start()
+        logger.info('%s started' % self.name)
+
+    def start(self):
+        """ Override this in subclasses """
+
+    def _stop(self):
+        logger.info('%s stopping' % self.name)
         self._radio.sidle()
         self.disable_interrupt()
         del self._ih
+        self.stop()
+        logger.info('%s stopped' % self.name)
+
+    def stop(self):
+        """ Override this in subclasses """
 
 from center.receiver import receiver
 from center.receiver import configurator

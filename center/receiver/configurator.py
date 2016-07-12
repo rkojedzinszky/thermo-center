@@ -8,6 +8,8 @@ from center.models import Sensor
 logger = logging.getLogger(__name__)
 
 class Configurator(RadioBase):
+    name = 'configurator'
+
     def _prepare_config_reply(self):
         self._configpacket = [
                 54, # total length
@@ -26,7 +28,7 @@ class Configurator(RadioBase):
     def _gen_next_id(self):
         self._next_id = (set(range(1, 128)) - set([s.pk for s in Sensor.objects.all()])).pop()
 
-    def run(self):
+    def start(self):
         self._prepare_config_reply()
         self._gen_next_id()
 
@@ -36,7 +38,8 @@ class Configurator(RadioBase):
 
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
 
-        logger.debug('Configurator initialized')
+    def stop(self):
+        pass
 
     def oninterrupt(self):
         data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)

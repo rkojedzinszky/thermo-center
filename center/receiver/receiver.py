@@ -20,7 +20,9 @@ class StringOrdIter(object):
         return ord(next(self._i))
 
 class Receiver(RadioBase):
-    def run(self):
+    name = 'receiver'
+
+    def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
 
         self._aes = AES.new(''.join(chr(int(c, base=16)) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)))
@@ -33,6 +35,9 @@ class Receiver(RadioBase):
         self.enable_interrupt()
 
         self._icnt = 0
+
+    def stop(self):
+        pass
 
     def oninterrupt(self):
         logger.debug('Receiver.oninterrupt (#%d)' % self._icnt)
