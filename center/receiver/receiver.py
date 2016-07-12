@@ -3,8 +3,11 @@ import struct
 import re
 import logging
 import time
+import threading
+import Queue
 from Crypto.Cipher import AES
 from django.conf import settings
+from django.db import connection
 from twisted.internet import reactor
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models
@@ -36,7 +39,13 @@ class Receiver(RadioBase):
 
         self._icnt = 0
 
+        self._q = Queue.Queue()
+        self._t = threading.Thread(target=self._receive_thread)
+        self._t.start()
+
     def stop(self):
+        self._q.put(None)
+        self._t.join()
         pass
 
     def oninterrupt(self):
@@ -65,14 +74,24 @@ class Receiver(RadioBase):
 
                 start = time.time()
 
-                try:
-                    reactor.callInThread(self._receive_packet, p)
-                except Exception as e:
-                    logger.error('error processing packet: %s' % str(e))
+                self._q.put(p)
 
                 end = time.time()
 
                 logger.debug('Packet processed in %f seconds' % (end - start))
+
+    def _receive_thread(self):
+        while True:
+            p = self._q.get()
+            if p is None:
+                break
+
+            try:
+                self._receive_packet(p)
+            except Exception as e:
+                logger.error('error processing packet: %s' % str(e))
+
+        connection.close()
 
     def _receive_packet(self, packet):
         metrics = [sensorvalue.RSSI(packet[16]), sensorvalue.LQI(packet[17] & 0x7f)]
