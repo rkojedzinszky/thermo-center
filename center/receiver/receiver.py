@@ -72,13 +72,8 @@ class Receiver(RadioBase):
                 p = data[:18]
                 data = data[18:]
 
-                start = time.time()
 
                 self._q.put(p)
-
-                end = time.time()
-
-                logger.debug('Packet processed in %f seconds' % (end - start))
 
     def _receive_thread(self):
         while True:
@@ -86,10 +81,16 @@ class Receiver(RadioBase):
             if p is None:
                 break
 
+            start = time.time()
+
             try:
                 self._receive_packet(p)
             except Exception as e:
                 logger.error('error processing packet: %s' % str(e))
+
+            end = time.time()
+
+            logger.debug('Packet processed in %f seconds' % (end - start))
 
         connection.close()
 
