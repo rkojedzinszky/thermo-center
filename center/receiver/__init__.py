@@ -101,6 +101,7 @@ class Main(object):
             self._loop = None
 
     def stop(self):
+        self._setloop(None)
         self._listen.stopListening()
         reactor.stop()
 
