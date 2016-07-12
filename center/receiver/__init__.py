@@ -40,8 +40,6 @@ class ConsoleFactory(protocol.ServerFactory):
 class Main(object):
     """ Main radio handler daemon """
 
-    socket = '%s/receiver.sock' % settings.BASE_DIR
-
     def run(self, daemonize=True):
         spi = spidev.SpiDev()
         spi.open(settings.SPI_BUS, 0)
@@ -70,7 +68,7 @@ class Main(object):
                 os.dup2(fh.fileno(), sys.stdout.fileno())
                 os.dup2(fh.fileno(), sys.stderr.fileno())
 
-        self._listen = reactor.listenUNIX(self.socket, ConsoleFactory().setMain(self), mode=0o600)
+        self._listen = reactor.listenUNIX(settings.RECEIVER_SOCKET, ConsoleFactory().setMain(self), mode=0o660)
 
         signals.connection_created.connect(self._set_sync_commit_to_off)
 
