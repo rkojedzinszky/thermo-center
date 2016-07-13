@@ -70,7 +70,6 @@ RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
-DATABASES['default']['CONN_MAX_AGE'] = None
 
 import re
 

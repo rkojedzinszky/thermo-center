@@ -13,6 +13,8 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         #'NAME': 'dbname',
         #'SCHEMA': '',
+
+	'CONN_MAX_AGE': None,
     }
 }
 
