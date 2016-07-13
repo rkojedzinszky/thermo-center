@@ -26,7 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SPI_BUS = 0
+SPI_DEV = (0, 0)
 #GPIO_SYS_DIR = '/sys/class/gpio/gpio200/'
 
 # specify alternate root url, _WITHOUT_ leading slash, and _WITH_ trailing slash

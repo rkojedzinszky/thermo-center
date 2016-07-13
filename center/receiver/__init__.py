@@ -44,7 +44,7 @@ class Main(object):
 
     def run(self, daemonize=True):
         spi = spidev.SpiDev()
-        spi.open(settings.SPI_BUS, 0)
+        spi.open(*settings.SPI_DEV)
         spi.mode = 3
         spi.max_speed_hz = 1000000
         self._radio = radio.Radio(spi)
