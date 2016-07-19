@@ -1,11 +1,14 @@
 """ API for center """
 
+import datetime
+from django.utils import timezone
 from django.core.cache import cache
 from application import restapi, resource
 from center.models import Sensor
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
+from graphite.render.evaluator import evaluateTarget
 
 class SensorResource(resource.ModelResource):
     vcc = fields.FloatField(null=True, help_text='Power in battery in sensor')
@@ -57,3 +60,37 @@ THSensorResourceInstance = THSensorResource()
 
 restapi.RestApi.register(SensorResource())
 restapi.RestApi.register(THSensorResourceInstance)
+
+class MetricResource(SensorResource):
+    start = fields.DateTimeField(readonly=True)
+    end = fields.DateTimeField(readonly=True)
+    step = fields.IntegerField(readonly=True)
+    values = fields.ListField(readonly=True)
+
+    class Meta(SensorResource.Meta):
+        fields = ('id', 'start', 'end', 'step', 'values')
+        list_allowed_methods = []
+        detail_allowed_methods = ['get']
+
+    def dehydrate(self, bundle):
+        rc = {
+            'startTime': self.start.convert(bundle.request.GET.get('start')),
+            'endTime': self.end.convert(bundle.request.GET.get('end')),
+            'now': timezone.now(),
+            'localOnly': False,
+            'data': []
+        }
+        s = bundle.obj
+        ts = evaluateTarget(rc, '%s.%s' % (s._carbon_path(), self.metric))[0]
+        bundle.data['start'] = datetime.datetime.fromtimestamp(ts.start)
+        bundle.data['end'] = datetime.datetime.fromtimestamp(ts.end)
+        bundle.data['step'] = ts.step
+        bundle.data['values'] = ts
+
+        return bundle
+        #return super(MetricResource, self).dehydrate(bundle)
+
+class TemperatureResource(MetricResource):
+    metric = 'Temperature'
+
+restapi.RestApi.register(TemperatureResource())

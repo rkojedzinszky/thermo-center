@@ -1,14 +1,14 @@
 #!/bin/sh
 
-GRAPHITE=$HOME/graphite
+GRAPHITE_ROOT=$HOME/graphite
 PYTHON_LIB=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 pip install -U -r requirements.txt
 
 # set up carbon
-pip install -U carbon --install-option="--prefix=$GRAPHITE" --install-option="--install-lib=$PYTHON_LIB"
+pip install -U carbon --install-option="--prefix=$GRAPHITE_ROOT" --install-option="--install-lib=$PYTHON_LIB"
 (
-cd $GRAPHITE/conf
+cd $GRAPHITE_ROOT/conf
 if ! test -f carbon.conf ; then
 	sed -r \
 		-e 's/^MAX_UPDATES_PER_SECOND.*/MAX_UPDATES_PER_SECOND = 10/' \
@@ -31,8 +31,8 @@ if ! test -f storage-schemas.conf ; then
 fi
 )
 
-## set up graphite-web
-#pip install -U graphite-web --install-option="--prefix=$GRAPHITE" --install-option="--install-lib=$PYTHON_LIB"
+# set up graphite-web
+pip install -U graphite-web --install-option="--prefix=$GRAPHITE_ROOT" --install-option="--install-lib=$PYTHON_LIB"
 
 # setup local_settings.py
 if [ ! -f local_settings.py ]; then
@@ -44,6 +44,9 @@ if [ ! -f local_settings.py ]; then
     sed \
 	    -e "s/@SECRET_KEY@/$SECRET_KEY/g" \
 	    -e "s/@CACHE_DIR@/$CACHE_DIR/g" \
+	    -e "s/@GRAPHITE_ROOT@/$GRAPHITE_ROOT/g" \
 	    local_settings.py.sample > local_settings.py
     umask $_u
 fi
+
+python manage.py migrate
