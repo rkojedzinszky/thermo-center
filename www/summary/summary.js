@@ -14,7 +14,13 @@ can.Component.extend({
 	},
 	helpers: {
 		format_num(value, fix) {
-			return value().toFixed(fix);
+			value = value();
+
+			if (typeof(value) == 'number') {
+				return value.toFixed(fix);
+			}
+
+			return value;
 		}
 	}
 });
