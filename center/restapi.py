@@ -15,6 +15,8 @@ class SensorResource(resource.ModelResource):
     rssi = fields.FloatField(null=True, help_text='RSSI of sensor')
     lqi = fields.FloatField(null=True, help_text='Line Quality Indicator of sensor')
     interval = fields.FloatField(null=True, help_text='Elapsed time since last report')
+    age = fields.FloatField(null=True, readonly=True)
+    server_time = fields.DateTimeField(readonly=True)
 
     thsensor = fields.ForeignKey('center.restapi.THSensorResource', '', readonly=True, null=True)
 
@@ -29,6 +31,7 @@ class SensorResource(resource.ModelResource):
 
     def dehydrate(self, bundle):
         bundle = super(SensorResource, self).dehydrate(bundle)
+        now = timezone.now()
 
         bundle.data['thsensor'] = THSensorResourceInstance.get_resource_uri(bundle.obj)
         bundle._cache = cache.get(bundle.obj._carbon_path())
@@ -37,6 +40,10 @@ class SensorResource(resource.ModelResource):
             bundle.data['rssi'] = bundle._cache.get('RSSI', None)
             bundle.data['lqi'] = bundle._cache.get('LQI', None)
             bundle.data['interval'] = bundle._cache.get('intvl', None)
+
+        bundle.data['server_time'] = now
+        if bundle.obj.last_ts:
+            bundle.data['age'] = (now - bundle.obj.last_ts).total_seconds()
 
         return bundle
 
