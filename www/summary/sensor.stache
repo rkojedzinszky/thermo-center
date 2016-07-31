@@ -1,6 +1,11 @@
-<div can-click="toggle" class="sensor">
+<div class="sensor {{classes}}">
 <div class="row">
-<div class="col-xs-6">{{name}}</div>
+<div class="col-xs-1">
+{{#if can_resync}}
+	<button ($click)="do_resync()">Resync</button>
+{{/if}}
+</div>
+<div can-click="toggle" class="col-xs-5">{{name}}</div>
 <div class="col-xs-3">{{format_num temperature 2}}</div>
 <div class="col-xs-3">{{format_num humidity 1}}</div>
 </div>

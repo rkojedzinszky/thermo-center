@@ -3,7 +3,8 @@
 <tr>
 <th>
 <div class="row">
-	<div class="col-xs-6">Name</div>
+	<div class="col-xs-1"></div>
+	<div class="col-xs-5">Name</div>
 	<div class="col-xs-3">Temperature</div>
 	<div class="col-xs-3">Humidity</div>
 </div>

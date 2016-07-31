@@ -6,11 +6,12 @@ from django.core.cache import cache
 from application import restapi, resource
 from center.models import Sensor
 from tastypie.authentication import Authentication
-from tastypie.authorization import ReadOnlyAuthorization
+from tastypie.authorization import ReadOnlyAuthorization, Authorization as RWAuthorization
 from tastypie import fields
 from graphite.render.evaluator import evaluateTarget
 
 class SensorResource(resource.ModelResource):
+    valid = fields.BooleanField(null=True, readonly=True, help_text='Recent update status')
     vcc = fields.FloatField(null=True, help_text='Power in battery in sensor')
     rssi = fields.FloatField(null=True, help_text='RSSI of sensor')
     lqi = fields.FloatField(null=True, help_text='Line Quality Indicator of sensor')
@@ -18,6 +19,7 @@ class SensorResource(resource.ModelResource):
     age = fields.FloatField(null=True, readonly=True)
     server_time = fields.DateTimeField(readonly=True)
 
+    sensor_resync = fields.ForeignKey('center.restapi.SensorResyncResource', '', readonly=True, null=True)
     thsensor = fields.ForeignKey('center.restapi.THSensorResource', '', readonly=True, null=True)
 
     class Meta(resource.ModelResource.Meta):
@@ -36,16 +38,32 @@ class SensorResource(resource.ModelResource):
         bundle.data['thsensor'] = THSensorResourceInstance.get_resource_uri(bundle.obj)
         bundle._cache = cache.get(bundle.obj._carbon_path())
         if bundle._cache:
+            bundle.data['valid'] = bundle._cache.get('valid', None)
             bundle.data['vcc'] = bundle._cache.get('Power', None)
             bundle.data['rssi'] = bundle._cache.get('RSSI', None)
             bundle.data['lqi'] = bundle._cache.get('LQI', None)
             bundle.data['interval'] = bundle._cache.get('intvl', None)
+            if bundle.data['valid'] == False:
+                bundle.data['sensor_resync'] = SensorResyncResourceInstance.get_resource_uri(bundle.obj)
 
         bundle.data['server_time'] = now
         if bundle.obj.last_ts:
             bundle.data['age'] = (now - bundle.obj.last_ts).total_seconds()
 
         return bundle
+
+class SensorResyncResource(SensorResource):
+    class Meta(SensorResource.Meta):
+        fields = ('id',)
+        authorization = RWAuthorization()
+
+    def obj_update(self, bundle, **kwargs):
+        self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
+        bundle.obj.resync()
+        return bundle
+
+SensorResyncResourceInstance = SensorResyncResource()
+restapi.RestApi.register(SensorResyncResourceInstance)
 
 class THSensorResource(SensorResource):
     temperature = fields.FloatField(null=True)

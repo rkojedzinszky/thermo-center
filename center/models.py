@@ -79,25 +79,25 @@ class Sensor(models.Model):
 
     def feed(self, seq, metrics, carbon=None):
         avg = self._validate_seq(seq)
+        cachevalues = {'valid': avg is not None}
 
-        if avg is None:
-            return
+        if cachevalues['valid']:
+            logger.info('%s: update: seq=%d' % (self, seq))
 
-        logger.info('%s: update: seq=%d' % (self, seq))
+            self.save(update_fields=('last_seq', 'last_ts'))
 
-        self.save(update_fields=('last_seq', 'last_ts'))
+            cachevalues.update({m.metric: m.value() for m in metrics})
+            cachevalues['intvl'] = avg
 
-        m = {m.metric: m.value() for m in metrics}
-        m['intvl'] = avg
+            if carbon:
+                ts = int(self.last_ts.strftime('%s'))
+                carbon_data = [('%s.%s' % (self._carbon_path(), k), (ts, v)) for k, v in cachevalues.iteritems()]
+                carbon.send(carbon_data)
 
-        if carbon:
-            ts = int(self.last_ts.strftime('%s'))
-            carbon_data = [('%s.%s' % (self._carbon_path(), k), (ts, v)) for k, v in m.iteritems()]
-            carbon.send(carbon_data)
+            cachevalues['last_seq'] = self.last_seq
+            cachevalues['last_ts'] = self.last_ts
 
-        m['last_seq'] = self.last_seq
-        m['last_ts'] = self.last_ts
-        cache.set(self._carbon_path(), m)
+        cache.set(self._carbon_path(), cachevalues)
 
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time
