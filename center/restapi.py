@@ -113,7 +113,6 @@ class MetricResource(SensorResource):
         bundle.data['values'] = ts
 
         return bundle
-        #return super(MetricResource, self).dehydrate(bundle)
 
 class TemperatureResource(MetricResource):
     metric = 'Temperature'
