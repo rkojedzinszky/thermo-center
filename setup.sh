@@ -43,8 +43,8 @@ if [ ! -f local_settings.py ]; then
     umask 027
     sed \
 	    -e "s/@SECRET_KEY@/$SECRET_KEY/g" \
-	    -e "s/@CACHE_DIR@/$CACHE_DIR/g" \
-	    -e "s/@GRAPHITE_ROOT@/$GRAPHITE_ROOT/g" \
+	    -e "s#@CACHE_DIR@#$CACHE_DIR#g" \
+	    -e "s#@GRAPHITE_ROOT@#$GRAPHITE_ROOT#g" \
 	    local_settings.py.sample > local_settings.py
     umask $_u
 fi
