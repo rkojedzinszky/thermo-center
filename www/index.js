@@ -3,7 +3,7 @@ import 'summary/';
 import $ from 'jquery';
 import stache from 'can/view/stache/';
 import 'tastypie';
-import 'bootstrap.css!';
+import 'bootstrap/dist/css/bootstrap.css!';
 
 THSensor.findAll({'order_by': 'id'}).then(function(res) {
 	$("#main").html(stache('<sensor-list />')({sensors: res}));
