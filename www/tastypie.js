@@ -1,4 +1,4 @@
-import 'jquery.cookie';
+import Cookies from 'js-cookie';
 
 function sameOrigin(url) {
 	var loc = window.location,
@@ -14,7 +14,7 @@ jQuery.ajaxSetup({
     processData: false,
     beforeSend: function(xhr, settings) {
         if (sameOrigin(settings.url) && !/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", jQuery.cookie('csrftoken'));
+            xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
         }
     }
 });
