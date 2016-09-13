@@ -29,6 +29,7 @@ INSTALLED_APPS = (
     'graphite.account',
     'tastypie',
     'center',
+    'heatcontrol',
 )
 
 MIDDLEWARE_CLASSES = (
