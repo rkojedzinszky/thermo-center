@@ -32,6 +32,11 @@ class HeatSensor(models.Model):
     daytime = models.ForeignKey(DayTime, on_delete=models.CASCADE)
     target_temp = models.FloatField()
 
+    class Meta:
+        unique_together = (
+                ('sensor', 'daytime'),
+                )
+
     def __str__(self):
         return '%s at %s: %f' % (self.sensor, self.daytime, self.target_temp)
 

@@ -107,3 +107,23 @@ class Sensor(models.Model):
         self.last_seq = None
         self.last_ts = timezone.now()
         self.save()
+
+    def _get_heatsensor(self, dt):
+        day = dt.date()
+        tm = dt.time()
+
+        return self.heatsensor_set.get(models.Q(daytime__end='00:00:00') | models.Q(daytime__end__gt=tm), daytime__start__lte=tm, daytime__daytype=heatcontrol.models.Calendar.objects.get(day=day).daytype)
+
+    def _get_heatvalue(self):
+        return cache.get(self._carbon_path())['Temperature']
+
+    def get_heatcontrol(self):
+        try:
+            temp = self._get_heatvalue()
+            hs = self._get_heatsensor(timezone.now())
+
+            return temp < hs.target_temp
+        except:
+            return None
+
+import heatcontrol.models
