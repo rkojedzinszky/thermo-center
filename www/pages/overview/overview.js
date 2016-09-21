@@ -1,7 +1,9 @@
+import THSensor from 'models/Thsensor';
 import 'can/component/';
+import 'can/construct/super/';
 import list from './list.stache!';
 import sensor from './sensor.stache!';
-import './summary.less!';
+import './overview.less!';
 
 can.Component.extend({
 	tag: 'sensor-sensor',
@@ -44,6 +46,30 @@ can.Component.extend({
 });
 
 can.Component.extend({
-	tag: 'sensor-list',
-	template: list
+	tag: 'page-overview',
+	template: list,
+	viewModel(attrs, parentScope, element) {
+		return can.Map.extend({
+			define: {
+				sensors: {
+					Value: THSensor.List
+				}
+			}
+		});
+	},
+	events: {
+		inserted() {
+			var view = this.viewModel;
+			THSensor.findAll({'order_by': 'id'}).then(function(res) {
+				can.each(res, function(s) {
+					view.sensors.push(s);
+					s.startRefresh();
+				});
+			});
+		},
+		removed() {
+			var view = this.viewModel;
+			can.each(view.sensors, (s) => s.stopRefresh());
+		}
+	}
 });

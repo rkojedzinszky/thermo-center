@@ -27,5 +27,6 @@ export default Model.extend('Models.Thsensor', { // static members
 	},
 	stopRefresh() {
 		clearTimeout(this._th);
+		delete this._th;
 	}
 });

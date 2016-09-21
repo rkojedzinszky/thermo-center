@@ -1,0 +1,5 @@
+<div class="btn-group">
+{{#each menus}}
+<a class="btn btn-default" href="{{menu_link .}}">{{.}}</a>
+{{/each}}
+</div>

@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Thermo Center</title>
+  </head>
+  <body>
+    <can-import from="bootstrap/dist/css/bootstrap.css!" />
+    <can-import from="app" export-as="viewModel" />
+    <can-import from="menu" />
+
+    <thermo-menu />
+
+    {{#switch menu}}
+      {{#case "overview"}}
+        <can-import from="pages/overview/">
+        {{#if isResolved}}
+        <page-overview />
+        {{else}}
+        <div>Loading...</div>
+        {{/if}}
+        </can-import>
+      {{/case}}
+      {{#case "graphs"}}
+        <can-import from="pages/graphs/">
+        {{#if isResolved}}
+        <page-graphs />
+        {{else}}
+        <div>Loading...</div>
+        {{/if}}
+        </can-import>
+      {{/case}}
+    {{/switch}}
+
+    {{#switch env.NODE_ENV}}
+      {{#case "production"}}
+        <script src="{{joinBase 'node_modules/steal/steal.production.js'}}"  main="www/index.stache!done-autorender"></script>
+      {{/case}}
+      {{#default}}
+        <script src="/node_modules/steal/steal.js"></script>
+      {{/default}}
+    {{/switch}}
+  </body>
+</html>

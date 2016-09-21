@@ -11,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "main": "index.js",
+  "main": "index.stache!done-autorender",
   "keywords": [
     "diy",
     "sensor",
@@ -19,7 +19,6 @@
     "humidity"
   ],
   "system": {
-    "main": "index.js",
     "configDependencies": [
       "node_modules/can-zone/register"
     ]
