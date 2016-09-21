@@ -11,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "main": "index.stache!done-autorender",
+  "main": "index.js",
   "keywords": [
     "diy",
     "sensor",
@@ -21,7 +21,8 @@
   "system": {
     "configDependencies": [
       "node_modules/can-zone/register"
-    ]
+    ],
+    "bundle": ["pages/overview/", "pages/graphs/"]
   },
   "license": "ISC",
   "bugs": {
