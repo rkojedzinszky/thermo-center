@@ -13,17 +13,16 @@
 <div class="row">
 <div class="col-sm-6">
 <div class="row">
-<div class="col-xs-1"></div>
-<div class="col-xs-5">id: {{id}}</div>
-<div class="col-xs-6">Interval: {{format_num interval 1}}</div>
+<div class="col-xs-4">id: {{id}}</div>
+<div class="col-xs-4">pid: {{pid}}</div>
+<div class="col-xs-4">Interval: {{format_num interval 1}}</div>
 </div>
 </div>
 <div class="col-sm-6">
 <div class="row">
-<div class="col-xs-1"></div>
-<div class="col-xs-5">VCC: {{format_num vcc 2}}</div>
-<div class="col-xs-3">RSSI: {{format_num rssi 1}}</div>
-<div class="col-xs-3">LQI: {{format_num lqi 0}}</div>
+<div class="col-xs-4">VCC: {{format_num vcc 2}}</div>
+<div class="col-xs-4">RSSI: {{format_num rssi 1}}</div>
+<div class="col-xs-4">LQI: {{format_num lqi 0}}</div>
 </div>
 </div>
 </div>

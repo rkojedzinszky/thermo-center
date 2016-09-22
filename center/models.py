@@ -5,6 +5,8 @@ from django.db import models
 from django.utils import timezone
 from django.core.cache import cache
 import center.fields
+import datetime
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -114,15 +116,51 @@ class Sensor(models.Model):
 
         return self.heatsensor_set.get(models.Q(daytime__end='00:00:00') | models.Q(daytime__end__gt=tm), daytime__start__lte=tm, daytime__daytype=heatcontrol.models.Calendar.objects.get(day=day).daytype)
 
-    def _get_heatvalue(self):
-        return cache.get(self._carbon_path())['Temperature']
+    def _get_heatvalues(self):
+        from graphite.render.evaluator import evaluateTarget
+        now = datetime.datetime.utcnow().replace(second=0, microsecond=0) - datetime.timedelta(minutes=1)
+        now = now.replace(tzinfo=pytz.utc)
+        start = now - datetime.timedelta(minutes=15)
+        end = now
+        rc = {
+            'startTime': start,
+            'endTime': end,
+            'now': now,
+            'localOnly': False,
+            'data': []
+        }
 
-    def get_heatcontrol(self):
+        return evaluateTarget(rc, '%s.%s' % (self._carbon_path(), 'Temperature'))[0]
+
+    def _get_heatcontrol_pid(self, target, kp=1.0, ki=1.0, kd=1.0):
+        ts = list(self._get_heatvalues())
+        i = 0
+        while i < len(ts) and ts[i] is None:
+            i += 1
+
+        if i == len(ts):
+            return None
+
+        for j in range(i):
+            ts[j] = ts[i]
+
+        i = len(ts) - 1
+        while ts[i] is None:
+            i -= 1
+
+        for j in range(i+1, len(ts)):
+            ts[j] = ts[i]
+
+        et = target - ts[-1:][0]
+        it = sum([target - i for i in ts])
+        dt = ts[-2:-1][0] - ts[-1:][0]
+
+        return kp * et + ki * it + kd * dt
+
+    def get_heatcontrol_pid(self):
         try:
-            temp = self._get_heatvalue()
             hs = self._get_heatsensor(timezone.now())
-
-            return temp < hs.target_temp
+            return self._get_heatcontrol_pid(hs.target_temp)
         except:
             return None
 
