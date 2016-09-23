@@ -7,6 +7,7 @@ from django.core.cache import cache
 import center.fields
 import datetime
 import pytz
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +93,7 @@ class Sensor(models.Model):
             cachevalues['intvl'] = avg
 
             if carbon:
-                ts = int(self.last_ts.strftime('%s'))
+                ts = int(time.time())
                 carbon_data = [('%s.%s' % (self._carbon_path(), k), (ts, v)) for k, v in cachevalues.iteritems()]
                 carbon.send(carbon_data)
 
@@ -114,9 +115,10 @@ class Sensor(models.Model):
         day = dt.date()
         tm = dt.time()
 
-        return self.heatsensor_set.get(models.Q(daytime__end='00:00:00') | models.Q(daytime__end__gt=tm), daytime__start__lte=tm, daytime__daytype=heatcontrol.models.Calendar.objects.get(day=day).daytype)
+        return self.heatsensor_set.filter(models.Q(daytime__end='00:00:00') | models.Q(daytime__end__gt=tm), daytime__start__lte=tm, daytime__daytype=heatcontrol.models.Calendar.objects.get(day=day).daytype).first()
 
     def _get_heatvalues(self):
+        """ Extract last 15 minutes data from carbon """
         from graphite.render.evaluator import evaluateTarget
         now = datetime.datetime.utcnow().replace(second=0, microsecond=0) - datetime.timedelta(minutes=1)
         now = now.replace(tzinfo=pytz.utc)
@@ -144,12 +146,11 @@ class Sensor(models.Model):
         for j in range(i):
             ts[j] = ts[i]
 
-        i = len(ts) - 1
-        while ts[i] is None:
-            i -= 1
-
         for j in range(i+1, len(ts)):
-            ts[j] = ts[i]
+            if ts[j] is None:
+                ts[j] = ts[i]
+            else:
+                i = j
 
         et = target - ts[-1:][0]
         it = sum([target - i for i in ts])
@@ -158,10 +159,21 @@ class Sensor(models.Model):
         return kp * et + ki * it + kd * dt
 
     def get_heatcontrol_pid(self):
-        try:
-            hs = self._get_heatsensor(timezone.now())
-            return self._get_heatcontrol_pid(hs.target_temp)
-        except:
+        now = timezone.now()
+        target_temp = None
+
+        ho = self.heatsensoroverride_set.filter(end__gt=now, start__lte=now).first()
+        if ho is not None:
+            target_temp = ho.target_temp
+
+        if target_temp is None:
+            hs = self._get_heatsensor(now)
+            if hs is not None:
+                target_temp = hs.target_temp
+
+        if target_temp is None:
             return None
+
+        return self._get_heatcontrol_pid(target_temp)
 
 import heatcontrol.models

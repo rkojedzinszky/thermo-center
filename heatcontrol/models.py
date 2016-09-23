@@ -40,3 +40,14 @@ class HeatSensor(models.Model):
     def __str__(self):
         return '%s at %s: %f' % (self.sensor, self.daytime, self.target_temp)
 
+class HeatSensorOverride(models.Model):
+    """ Simply override a setting for a period of time for a sensor """
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    target_temp = models.FloatField()
+
+    class Meta:
+        index_together = (
+                ('sensor', 'end'),
+                )
