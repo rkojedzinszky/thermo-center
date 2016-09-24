@@ -111,69 +111,26 @@ class Sensor(models.Model):
         self.last_ts = timezone.now()
         self.save()
 
+    def get_cache(self):
+        return cache.get(self._carbon_path())
+
     def _get_heatsensor(self, dt):
         day = dt.date()
         tm = dt.time()
 
         return self.heatsensor_set.filter(models.Q(daytime__end='00:00:00') | models.Q(daytime__end__gt=tm), daytime__start__lte=tm, daytime__daytype=heatcontrol.models.Calendar.objects.get(day=day).daytype).first()
 
-    def _get_heatvalues(self):
-        """ Extract last 15 minutes data from carbon """
-        from graphite.render.evaluator import evaluateTarget
-        now = datetime.datetime.utcnow().replace(second=0, microsecond=0) - datetime.timedelta(minutes=1)
-        now = now.replace(tzinfo=pytz.utc)
-        start = now - datetime.timedelta(minutes=15)
-        end = now
-        rc = {
-            'startTime': start,
-            'endTime': end,
-            'now': now,
-            'localOnly': False,
-            'data': []
-        }
-
-        return evaluateTarget(rc, '%s.%s' % (self._carbon_path(), 'Temperature'))[0]
-
-    def _get_heatcontrol_pid(self, target, kp=1.0, ki=1.0, kd=1.0):
-        ts = list(self._get_heatvalues())
-        i = 0
-        while i < len(ts) and ts[i] is None:
-            i += 1
-
-        if i == len(ts):
-            return None
-
-        for j in range(i):
-            ts[j] = ts[i]
-
-        for j in range(i+1, len(ts)):
-            if ts[j] is None:
-                ts[j] = ts[i]
-            else:
-                i = j
-
-        et = target - ts[-1:][0]
-        it = sum([target - i for i in ts])
-        dt = ts[-2:-1][0] - ts[-1:][0]
-
-        return kp * et + ki * it + kd * dt
-
-    def get_heatcontrol_pid(self):
+    def get_target_temp(self):
         now = timezone.now()
-        target_temp = None
 
         ho = self.heatsensoroverride_set.filter(end__gt=now, start__lte=now).first()
         if ho is not None:
-            target_temp = ho.target_temp
+            return ho.target_temp
 
-        if target_temp is None:
-            hs = self._get_heatsensor(now)
-            if hs is not None:
-                target_temp = hs.target_temp
+        hs = self._get_heatsensor(now)
+        if hs is not None:
+            return hs.target_temp
 
-        if target_temp is None:
-            return None
-
-        return self._get_heatcontrol_pid(target_temp)
+        return None
 
 import heatcontrol.models

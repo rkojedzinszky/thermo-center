@@ -68,7 +68,7 @@ restapi.RestApi.register(SensorResyncResourceInstance)
 class THSensorResource(SensorResource):
     temperature = fields.FloatField(null=True)
     humidity = fields.FloatField(null=True)
-    pid = fields.FloatField(null=True)
+    pidcontrol = fields.FloatField(null=True)
 
     class Meta(SensorResource.Meta):
         excludes = ('thsensor',)
@@ -79,8 +79,7 @@ class THSensorResource(SensorResource):
         if bundle._cache:
             bundle.data['temperature'] = bundle._cache.get('Temperature', None)
             bundle.data['humidity'] = bundle._cache.get('Humidity', None)
-
-        bundle.data['pid'] = bundle.obj.get_heatcontrol_pid()
+            bundle.data['pidcontrol'] = bundle._cache.get('pidcontrol', None)
 
         return bundle
 

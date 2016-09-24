@@ -53,6 +53,7 @@ class Main(object):
         self._gpio.input()
 
         self._loop = None
+        self._pidmap = {}
 
         if daemonize:
             if os.fork() > 0:
@@ -87,6 +88,7 @@ class Main(object):
 
     def startreceiver(self):
         self._setloop(receiver.Receiver)
+        self._loop.setpidmap(self._pidmap)
 
     def startconfigurator(self):
         self._setloop(configurator.Configurator)

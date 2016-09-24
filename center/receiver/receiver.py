@@ -12,8 +12,14 @@ from twisted.internet import reactor
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models
 from center.carbon import PickleClient
+from center.receiver import pid
+
+PIDCONTROL_INTERVAL = 15 * 60
 
 logger = logging.getLogger(__name__)
+
+class PIDControlValue(sensorvalue.Value):
+    metric = 'pidcontrol'
 
 class StringOrdIter(object):
     def __init__(self, s):
@@ -24,6 +30,9 @@ class StringOrdIter(object):
 
 class Receiver(RadioBase):
     name = 'receiver'
+
+    def setpidmap(self, pidmap):
+        self._pidmap = pidmap
 
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
@@ -135,6 +144,15 @@ class Receiver(RadioBase):
             pass
 
         try:
-            models.Sensor.objects.get(id=id_).feed(seq, metrics, carbon=self._cc)
+            s = models.Sensor.objects.get(id=id_)
+            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
+            pc.feed(mh['Temperature'].value())
+            target_temp = s.get_target_temp()
+            if target_temp is not None:
+                pcv = pc.value(target_temp)
+                logger.debug('%s: pid control=%f', s, pcv)
+                metrics.append(PIDControlValue(pcv))
+
+            s.feed(seq, metrics, carbon=self._cc)
         except models.Sensor.DoesNotExist:
             logger.warn('Unknown device id: %02x' % id_)
