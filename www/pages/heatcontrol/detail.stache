@@ -1,0 +1,27 @@
+<div>
+<ul>
+{{#days}}
+	<li>DayType: {{name}}</li>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Start</th>
+				<th>End</th>
+				<th>Target temp</th>
+				<th>Save</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{#each times}}
+			<tr>
+				<td>{{start}}</td>
+				<td>{{end}}</td>
+				<td><input {($value)}="target_temp" placeholder="na"/></td>
+				<td><button ($click)='save' class="btn btn-default">Save</button></td>
+			</tr>
+		{{/each}}
+		</tbody>
+	</table>
+{{/days}}
+</ul>
+</div>

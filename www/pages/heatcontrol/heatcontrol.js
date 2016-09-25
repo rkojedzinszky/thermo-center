@@ -2,10 +2,16 @@ import HeatSensor from 'models/Heatsensor';
 import 'can/component/';
 import list from './list.stache!';
 import sensor from './sensor.stache!';
+import './detail';
 
 can.Component.extend({
 	tag: 'heatcontrol-sensor',
 	template: sensor,
+	viewModel: {
+		toggle() {
+			this.attr('expand', !this.attr('expand'));
+		}
+	},
 	helpers: {
 		format_num(value, fix) {
 			value = value();

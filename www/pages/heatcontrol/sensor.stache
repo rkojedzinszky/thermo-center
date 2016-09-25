@@ -1,11 +1,11 @@
 <div class="sensor">
-<div class="row">
+<div class="row" ($click)="toggle()">
 	<div class="col-xs-5 col-xs-offset-1">{{name}}</div>
 	<div class="col-xs-2">{{format_num temperature 2}}</div>
 	<div class="col-xs-2">{{format_num target_temp 2}}</div>
 	<div class="col-xs-2">{{format_num pidcontrol 2}}</div>
 </div>
-{{if expand}}
-	<heatcontrol-detail {sensor}='.' />
+{{#if expand}}
+	<heatcontrol-detail {sensor}='sensor' />
 {{/if}}
 </div>
