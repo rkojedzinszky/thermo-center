@@ -1,4 +1,5 @@
 import HeatSensor from 'models/Heatsensor';
+import DayType from 'models/Daytype';
 import 'can/component/';
 import list from './list.stache!';
 import sensor from './sensor.stache!';
@@ -29,7 +30,8 @@ can.Component.extend({
 	tag: 'page-heatcontrol',
 	template: list,
 	viewModel: {
-		sensors: []
+		sensors: [],
+		daytypes: null
 	},
 	events: {
 		inserted() {
@@ -40,6 +42,7 @@ can.Component.extend({
 					s.startRefresh();
 				});
 			});
+			view.attr('daytypes', DayType.findAll());
 		},
 		removed() {
 			var view = this.viewModel;

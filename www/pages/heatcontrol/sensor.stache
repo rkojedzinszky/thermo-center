@@ -6,6 +6,6 @@
 	<div class="col-xs-2">{{format_num pidcontrol 2}}</div>
 </div>
 {{#if expand}}
-	<heatcontrol-detail {sensor}='sensor' />
+	<heatcontrol-detail {sensor}='sensor' {daytypes}='daytypes' />
 {{/if}}
 </div>

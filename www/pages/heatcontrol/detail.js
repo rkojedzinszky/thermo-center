@@ -1,5 +1,3 @@
-import DayType from 'models/Daytype';
-import DayTime from 'models/Daytime';
 import 'can/component/';
 import template from './detail.stache!';
 import HeatSensorTime from 'models/Heatsensortime';
@@ -13,14 +11,16 @@ can.Component.extend({
 	events: {
 		inserted() {
 			var view = this.viewModel;
-			DayType.findAll().then(function(r) {
-				can.each(r, function(dt) {
+			var days = view.attr('days');
+			view.attr('daytypes').then(function(r) {
+				can.each(r, function(d) {
+					var dt = new can.Map(d);
 					dt.attr('times', []);
 					HeatSensorTime.findAll({sensor_id: view.sensor.attr('id'), daytype_id: dt.attr('id')}).then(function(times) {
 						dt.attr('times', times);
 					});
+					days.push(dt);
 				});
-				view.attr('days', r);
 			});
 		}
 	}
