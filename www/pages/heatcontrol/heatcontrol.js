@@ -1,32 +1,11 @@
-import THSensor from 'models/Thsensor';
+import HeatSensor from 'models/Heatsensor';
 import 'can/component/';
 import list from './list.stache!';
 import sensor from './sensor.stache!';
 
 can.Component.extend({
-	tag: 'overview-sensor',
+	tag: 'heatcontrol-sensor',
 	template: sensor,
-	viewModel: {
-		expand: false,
-		classes() {
-			if (this.sensor.getValid() === false) {
-				return 'text-warning';
-			}
-
-			return '';
-		},
-		can_resync() {
-			return this.sensor.attr('sensor_resync') != null;
-		},
-		do_resync() {
-			this.sensor.getSensor_resync().then(function(o) {
-				o.save();
-			});
-		},
-		toggle() {
-			this.attr('expand', !this.attr('expand'));
-		}
-	},
 	helpers: {
 		format_num(value, fix) {
 			value = value();
@@ -41,7 +20,7 @@ can.Component.extend({
 });
 
 can.Component.extend({
-	tag: 'page-overview',
+	tag: 'page-heatcontrol',
 	template: list,
 	viewModel: {
 		sensors: []
@@ -49,7 +28,7 @@ can.Component.extend({
 	events: {
 		inserted() {
 			var view = this.viewModel;
-			THSensor.findAll({'order_by': 'id'}).then(function(res) {
+			HeatSensor.findAll({'order_by': 'id'}).then(function(res) {
 				view.attr('sensors', res);
 				can.each(res, function(s) {
 					s.startRefresh();

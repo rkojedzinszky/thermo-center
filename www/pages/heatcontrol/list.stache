@@ -5,8 +5,9 @@
 <div class="row">
 	<div class="col-xs-1"></div>
 	<div class="col-xs-5">Name</div>
-	<div class="col-xs-3">Temperature</div>
-	<div class="col-xs-3">Humidity</div>
+	<div class="col-xs-2">Temperature</div>
+	<div class="col-xs-2">Target temperature</div>
+	<div class="col-xs-2">Pid control</div>
 </div>
 </th>
 </tr>
@@ -15,7 +16,7 @@
 {{#each sensors}}
 <tr>
 	<td>
-		<overview-sensor {sensor}='.' />
+		<heatcontrol-sensor {sensor}='.' />
 	</td>
 </tr>
 {{/each}}
