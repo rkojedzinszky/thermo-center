@@ -52,7 +52,7 @@ can.Component.extend({
 		return can.Map.extend({
 			define: {
 				sensors: {
-					Value: THSensor.List
+					value: []
 				}
 			}
 		});
@@ -61,8 +61,8 @@ can.Component.extend({
 		inserted() {
 			var view = this.viewModel;
 			THSensor.findAll({'order_by': 'id'}).then(function(res) {
+				view.attr('sensors', res);
 				can.each(res, function(s) {
-					view.sensors.push(s);
 					s.startRefresh();
 				});
 			});
