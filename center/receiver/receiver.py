@@ -14,7 +14,7 @@ from center import models
 from center.carbon import PickleClient
 from center.receiver import pid
 
-PIDCONTROL_INTERVAL = 15 * 60
+PIDCONTROL_INTERVAL = 10 * 60
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +145,7 @@ class Receiver(RadioBase):
 
         try:
             s = models.Sensor.objects.get(id=id_)
-            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
+            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL, ki=0.1, kd=10))
             pc.feed(mh['Temperature'].value())
             target_temp = s.get_target_temp()
             if target_temp is not None:
