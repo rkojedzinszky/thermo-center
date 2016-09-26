@@ -97,5 +97,3 @@ Session.findAll().then(function(res) {
 	}
 	appState.attr('ready', true);
 });
-
-window.as = appState;
