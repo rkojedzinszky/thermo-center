@@ -23,5 +23,38 @@
 		</tbody>
 	</table>
 {{/each}}
+<div>
+	Felülbírálások
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>Start</th>
+				<th>End</th>
+				<th>Target temp</th>
+				<th>Op</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{#each overrides}}
+			<tr>
+				<td>{{start}}</td>
+				<td>{{end}}</td>
+				<td><input class="form-control" type="number" {($value)}="target_temp" placeholder="na"/></td>
+				<td>
+					<button ($click)='save' class="btn btn-default">Save</button>
+					<button ($click)='destroy' class="btn btn-default">Delete</button>
+				</td>
+			</tr>
+		{{/each}}
+			<tr>
+				<td><input {($value)}="s" type="datetime" class="form-control" /></td>
+				<td><input {($value)}="e" type="datetime" class="form-control" /></td>
+				<td><input {($value)}="t" type="number" class="form-control" /></td>
+				<td><button ($click)='add' class="btn btn-default">Add</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
 </ul>
 </div>

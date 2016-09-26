@@ -112,3 +112,32 @@ class HeatSensorTimeResource(resource.ModelResource):
 
 HeatSensorTimeResourceInstance = HeatSensorTimeResource()
 restapi.RestApi.register(HeatSensorTimeResourceInstance)
+
+class HeatSensorOverrideAuthorization(resource.NoAuthorization):
+    def read_list(self, object_list, bundle):
+        return object_list
+
+    def read_detail(self, object_list, bundle):
+        return True
+
+    def create_detail(self, object_list, bundle):
+        return True
+
+    def update_detail(self, object_list, bundle):
+        return True
+
+    def delete_detail(self, object_list, bundle):
+        return True
+
+class HeatSensorOverrideResource(resource.ModelResource):
+    sensor = fields.ForeignKey(HeatSensorResource, 'sensor')
+
+    class Meta(resource.ModelResource.Meta):
+        queryset = models.HeatSensorOverride.objects.order_by('start')
+        authorization = HeatSensorOverrideAuthorization()
+        filtering = {
+                'sensor': 'exact',
+                }
+
+HeatSensorOverrideResourceInstance = HeatSensorOverrideResource()
+restapi.RestApi.register(HeatSensorOverrideResourceInstance)
