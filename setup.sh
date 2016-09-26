@@ -26,7 +26,7 @@ if ! test -f storage-schemas.conf ; then
 	cat <<-EOF >>storage-schemas.conf
 	[default]
 	pattern = .*
-	retentions = 1m:3h, 5m:4320, 30m:4320, 3h:4320, 1d:4320
+	retentions = 5m:4320, 30m:4320, 3h:4320, 1d:4320
 	EOF
 fi
 )
