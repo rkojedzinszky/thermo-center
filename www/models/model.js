@@ -57,13 +57,14 @@ export default can.Model.extend({
 
 		var resource_uri = meta.endpoint;
 		var object_uri = meta.endpoint + '{id}/';
+		var objecti_uri = '{resource_uri}';
 
 		staticProps = can.extend({
 			findAll: 'GET ' + resource_uri,
 			findOne: 'GET ' + object_uri,
 			create : 'POST ' + resource_uri,
-			update : 'PATCH ' + object_uri,
-			destroy: 'DELETE ' + object_uri
+			update : 'PATCH ' + objecti_uri,
+			destroy: 'DELETE ' + objecti_uri
 		}, staticProps || { });
 
 		can.Model.setup.call(this, base, fullName, staticProps, protoProps);
