@@ -9,17 +9,16 @@ can.Component.extend({
 	viewModel: {
 		days: [],
 		overrides: [],
+		d: 1,
 		add() {
 			var self = this;
+			var st = new Date();
+			var end = new Date(st.getTime() + this.attr('d') * 3600 * 1000);
 			var hso = new HeatSensorOverride({
 				sensor: self.attr('sensor'),
-				start: this.attr('s'),
-				end: this.attr('e'),
+				start: st,
+				end: end,
 				target_temp: this.attr('t')
-			});
-			hso.save().then(function(hso) {
-				self.attr('overrides').push(hso);
-				can.each(['s', 'e', 't'], (el) => self.attr(el, ''));
 			});
 		},
 	},

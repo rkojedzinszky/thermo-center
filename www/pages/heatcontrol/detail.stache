@@ -1,28 +1,17 @@
 <div>
-<ul>
-{{#each days}}
-	<li>DayType: {{name}}</li>
-	<table class="table table-condensed">
-		<thead>
-			<tr>
-				<th>Start</th>
-				<th>End</th>
-				<th>Target temp</th>
-				<th>Save</th>
-			</tr>
-		</thead>
-		<tbody>
-		{{#each times}}
-			<tr>
-				<td>{{start}}</td>
-				<td>{{end}}</td>
-				<td><input class="form-control" type="number" {($value)}="target_temp" placeholder="na"/></td>
-				<td><button ($click)='save' class="btn btn-default">Save</button></td>
-			</tr>
-		{{/each}}
-		</tbody>
-	</table>
-{{/each}}
+	<div class="form-inline">
+		Add quick override
+		<div class="input-group">
+			<input {($value)}="d" type="number" min="1" max="100" step="1" class="form-control" aria-label="duration in hours" />
+			<div class="input-group-addon">hours</div>
+		</div>
+		<div class="input-group">
+			<input {($value)}="t" type="number" class="form-control" step="0.5" aria-label="temperature" />
+			<div class="input-group-addon">&#8451;</div>
+		</div>
+		<button ($click)='add' class="btn btn-default">Add</button>
+	</div>
+</div>
 <div>
 	Felülbírálások
 	<table class="table table-condensed">
@@ -46,15 +35,34 @@
 				</td>
 			</tr>
 		{{/each}}
-			<tr>
-				<td><input {($value)}="s" type="datetime" class="form-control" /></td>
-				<td><input {($value)}="e" type="datetime" class="form-control" /></td>
-				<td><input {($value)}="t" type="number" class="form-control" /></td>
-				<td><button ($click)='add' class="btn btn-default">Add</button></td>
-			</tr>
 		</tbody>
 	</table>
 </div>
-
-</ul>
+<div>
+	Profiles
+	<ul>
+	{{#each days}}
+		<li>DayType: {{name}}</li>
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>Start</th>
+					<th>End</th>
+					<th>Target temp</th>
+					<th>Save</th>
+				</tr>
+			</thead>
+			<tbody>
+			{{#each times}}
+				<tr>
+					<td>{{start}}</td>
+					<td>{{end}}</td>
+					<td><input class="form-control" type="number" {($value)}="target_temp" placeholder="na"/></td>
+					<td><button ($click)='save' class="btn btn-default">Save</button></td>
+				</tr>
+			{{/each}}
+			</tbody>
+		</table>
+	{{/each}}
+	</ul>
 </div>
