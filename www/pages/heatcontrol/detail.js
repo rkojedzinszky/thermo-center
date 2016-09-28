@@ -18,13 +18,17 @@ can.Component.extend({
 				sensor: self.attr('sensor'),
 				start: st,
 				end: end,
-				target_temp: this.attr('t')
+				target_temp: this.attr('tt')
+			});
+			hso.save().then(function(hso) {
+				self.attr('overrides').push(hso);
 			});
 		},
 	},
 	events: {
 		inserted() {
 			var view = this.viewModel;
+			view.attr('tt', view.attr('t'));
 			var days = view.attr('days');
 			view.attr('daytypes').then(function(r) {
 				can.each(r, function(d) {
