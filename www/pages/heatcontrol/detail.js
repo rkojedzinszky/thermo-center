@@ -34,7 +34,7 @@ can.Component.extend({
 				can.each(r, function(d) {
 					var dt = new can.Map(d);
 					dt.attr('times', []);
-					HeatSensorTime.findAll({sensor_id: view.sensor.attr('id'), daytype_id: dt.attr('id')}).then(function(times) {
+					HeatSensorTime.findAll({sensor: view.sensor.attr('id'), daytype: dt.attr('id')}).then(function(times) {
 						dt.attr('times', times);
 					});
 					days.push(dt);
