@@ -1,6 +1,7 @@
 """ API for heatcontrol """
 
 from tastypie import fields
+from tastypie.utils import timezone
 from tastypie.authorization import ReadOnlyAuthorization
 from center.restapi import THSensorResource, THSensorResourceInstance
 from application import restapi, resource
@@ -138,6 +139,9 @@ class HeatSensorOverrideResource(resource.ModelResource):
         filtering = {
                 'sensor': 'exact',
                 }
+
+    def get_object_list(self, request):
+        return super(HeatSensorOverrideResource, self).get_object_list(request).filter(end__gt=timezone.now())
 
 HeatSensorOverrideResourceInstance = HeatSensorOverrideResource()
 restapi.RestApi.register(HeatSensorOverrideResourceInstance)
