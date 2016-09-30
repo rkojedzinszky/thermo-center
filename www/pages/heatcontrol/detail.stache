@@ -49,20 +49,26 @@
 					<th>Start</th>
 					<th>End</th>
 					<th>Target temp</th>
-					<th>Save</th>
+					<th>Op</th>
 				</tr>
 			</thead>
 			<tbody>
 			{{#each times}}
 				<tr>
-					<td>{{start}}</td>
-					<td>{{end}}</td>
-					<td><input class="form-control" type="number" {($value)}="target_temp" placeholder="na"/></td>
-					<td><button ($click)='save' class="btn btn-default">Save</button></td>
+					<td><input class="form-control" type="time" {($value)}='start' aria-label="Start time" /></td>
+					<td><input class="form-control" type="time" {($value)}='end' aria-label="End time" /></td>
+					<td><input class="form-control" type="number" {($value)}='target_temp' step="0.1" placeholder="na"/></td>
+					<td>
+						<button ($click)='save' class="btn btn-default">{{#if isNew}}Create{{else}}Save{{/if}}</button>
+						{{#unless isNew}}
+						<button ($click)='destroy' class="btn btn-default">Delete</button>
+						{{/unless}}
+					</td>
 				</tr>
 			{{/each}}
 			</tbody>
 		</table>
+		<button ($click)='addProfile(%context)' class="btn btn-default">New profile</button>
 	{{/each}}
 	</ul>
 </div>

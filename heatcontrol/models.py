@@ -19,6 +19,16 @@ class Calendar(models.Model):
     def __str__(self):
         return '%s' % self.day
 
+class PidControlParams(models.Model):
+    """ Describes PID Control loop coefficients """
+    sensor = models.OneToOneField(Sensor, on_delete=models.CASCADE)
+    kp = models.FloatField()
+    ki = models.FloatField()
+    kd = models.FloatField()
+
+    def __str__(self):
+        return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
+
 class HeatSensor(models.Model):
     """ A specific target temperature setting for a sensor """
     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)

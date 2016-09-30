@@ -8,6 +8,7 @@ import Queue
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import connection
+from django.core import exceptions
 from twisted.internet import reactor
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models
@@ -144,12 +145,18 @@ class Receiver(RadioBase):
             pass
 
         try:
-            s = models.Sensor.objects.get(id=id_)
-            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL, ki=0.1, kd=10))
+            s = models.Sensor.objects.select_related('pidcontrolparams').get(id=id_)
+            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
             pc.feed(mh['Temperature'].value())
             target_temp = s.get_target_temp()
             if target_temp is not None:
-                pcv = pc.value(target_temp)
+                try:
+                    pcp = s.pidcontrolparams
+                    kp, ki, kd = pcp.kp, pcp.ki, pcp.kd
+                except exceptions.ObjectDoesNotExist:
+                    kp, ki, kd = 1.0, 1.0, 1.0
+
+                pcv = pc.value(target_temp, kp=kp, ki=ki, kd=kd)
                 logger.debug('%s: pid control=%f', s, pcv)
                 metrics.append(PIDControlValue(pcv))
 
