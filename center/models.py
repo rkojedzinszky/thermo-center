@@ -118,7 +118,7 @@ class Sensor(models.Model):
         day = dt.date()
         tm = dt.time()
 
-        return self.heatsensor_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm, start__lte=tm)).first()
+        return self.heatsensor_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
 
     def get_target_temp(self):
         now = timezone.now()
