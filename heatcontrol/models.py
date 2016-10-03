@@ -32,7 +32,7 @@ class PidControlParams(models.Model):
 class HeatSensor(models.Model):
     """ A specific target temperature setting for a sensor """
     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
-    daytype = models.ForeignKey(DayType)
+    daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
     start = models.TimeField()
     end = models.TimeField()
     target_temp = models.FloatField()
