@@ -6,8 +6,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'heatcontrol', '0001_initial'), (b'heatcontrol', '0002_calendar_defaults'), (b'heatcontrol', '0003_auto_20160914_1536'), (b'heatcontrol', '0004_heatcontrol_heatsensoroverride'), (b'heatcontrol', '0005_auto_20160928_2101'), (b'heatcontrol', '0006_migrate_of_daytime'), (b'heatcontrol', '0007_auto_20160928_2109'), (b'heatcontrol', '0008_pidcontrolparams')]
-
     dependencies = [
         ('center', '0003_default_rfconfig'),
     ]
