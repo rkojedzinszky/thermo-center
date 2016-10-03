@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    replaces = [(b'heatcontrol', '0001_initial'), (b'heatcontrol', '0002_calendar_defaults'), (b'heatcontrol', '0003_auto_20160914_1536'), (b'heatcontrol', '0004_heatcontrol_heatsensoroverride'), (b'heatcontrol', '0005_auto_20160928_2101'), (b'heatcontrol', '0006_migrate_of_daytime'), (b'heatcontrol', '0007_auto_20160928_2109'), (b'heatcontrol', '0008_pidcontrolparams')]
+
+    dependencies = [
+        ('center', '0003_default_rfconfig'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Calendar',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('day', models.DateField(unique=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='DayType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='HeatSensor',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start', models.TimeField()),
+                ('end', models.TimeField()),
+                ('target_temp', models.FloatField()),
+                ('daytype', models.ForeignKey(to='heatcontrol.DayType')),
+                ('sensor', models.ForeignKey(to='center.Sensor')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='HeatSensorOverride',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start', models.DateTimeField()),
+                ('end', models.DateTimeField()),
+                ('target_temp', models.FloatField()),
+                ('sensor', models.ForeignKey(to='center.Sensor')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='PidControlParams',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('kp', models.FloatField()),
+                ('ki', models.FloatField()),
+                ('kd', models.FloatField()),
+                ('sensor', models.OneToOneField(to='center.Sensor')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='calendar',
+            name='daytype',
+            field=models.ForeignKey(to='heatcontrol.DayType'),
+        ),
+        migrations.AlterIndexTogether(
+            name='heatsensoroverride',
+            index_together=set([('sensor', 'end')]),
+        ),
+        migrations.AlterIndexTogether(
+            name='heatsensor',
+            index_together=set([('sensor', 'daytype')]),
+        ),
+    ]
