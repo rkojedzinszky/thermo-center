@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     'graphite',
     'graphite.account',
     'tastypie',
+    'nauth',
     'center',
     'heatcontrol',
 )
@@ -41,6 +42,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = ['nauth.backend.Backend']
 
 ROOT_URLCONF = 'application.urls'
 

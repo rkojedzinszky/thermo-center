@@ -1,6 +1,7 @@
 """ Rest API """
 
 import time
+import ipaddress
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from application.resource import Resource, ModelResource
@@ -40,13 +41,20 @@ class SessionResource(Resource):
         raise http.ImmediateHttpResponse(http.HttpUnauthorized())
 
     def obj_create(self, bundle, **kwargs):
-        user = authenticate(username=bundle.data['username'], password=bundle.data.pop('password', None))
+        remote_addr = bundle.request.META.get('REMOTE_ADDR', None)
+
+        if remote_addr:
+            remote_addr = ipaddress.ip_address(unicode(remote_addr))
+
+        user = authenticate(username=bundle.data['username'], password=bundle.data.pop('password', None), remote_addr=remote_addr)
+
         if user is not None and user.is_active:
             login(bundle.request, user)
             bundle.obj = user
         else:
             time.sleep(1)
             raise http.ImmediateHttpResponse(http.HttpUnauthorized())
+
         return bundle
 
     def obj_delete(self, bundle, **kwargs):

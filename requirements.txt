@@ -9,3 +9,4 @@ cairocffi<0.7
 django-tagging
 pyparse
 pytz
+ipaddress
