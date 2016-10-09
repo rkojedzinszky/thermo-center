@@ -50,6 +50,6 @@ class PID(object):
         deriv = 0
         if len(self._values) >= 2:
             l = len(self._values)
-            deriv = self._values[l-2].value - self._values[l-1].value
+            deriv = (self._values[l-2].value - self._values[l-1].value) / (self._values[l-1].ts - self._values[l-2].ts)
 
         return kp * error + ki * accum + kd * deriv
