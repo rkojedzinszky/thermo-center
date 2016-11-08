@@ -1,6 +1,7 @@
 """ API for center """
 
 import datetime
+import time
 from django.utils import timezone
 from django.core.cache import cache
 from application import restapi, resource
@@ -46,8 +47,8 @@ class SensorResource(resource.ModelResource):
                 bundle.data['sensor_resync'] = SensorResyncResourceInstance.get_resource_uri(bundle.obj)
 
         bundle.data['server_time'] = now
-        if bundle.obj.last_ts:
-            bundle.data['age'] = (now - bundle.obj.last_ts).total_seconds()
+        if bundle.obj.last_tsf:
+            bundle.data['age'] = time.time() - bundle.obj.last_tsf
 
         return bundle
 

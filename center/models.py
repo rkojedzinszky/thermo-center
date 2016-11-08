@@ -49,17 +49,16 @@ class Sensor(models.Model):
     id = center.fields.SensorIdField(primary_key=True)
     name = models.CharField(max_length=100, blank=True)
     last_seq = models.PositiveIntegerField(null=True)
-    last_ts = models.DateTimeField(null=True)
+    last_tsf = models.FloatField(null=True)
 
     def __str__(self):
         return 'Sensor %02x' % self.id
 
-    def _validate_seq(self, seq):
-        now = timezone.now()
+    def _validate_seq(self, ts, seq):
         avg = 0
 
-        if self.last_ts is not None:
-            interval = (now - self.last_ts).total_seconds()
+        if self.last_tsf:
+            interval = ts - self.last_tsf
 
             if self.last_seq is None:
                 valid = interval <= 34
@@ -73,7 +72,7 @@ class Sensor(models.Model):
                 return None
 
         self.last_seq = seq
-        self.last_ts = now
+        self.last_tsf = ts
 
         return avg
 
@@ -81,24 +80,25 @@ class Sensor(models.Model):
         return 'sensor.%02x' % self.pk
 
     def feed(self, seq, metrics, carbon=None):
-        avg = self._validate_seq(seq)
+        ts = time.time()
+        avg = self._validate_seq(ts, seq)
         cachevalues = {'valid': avg is not None}
 
         if cachevalues['valid']:
             logger.info('%s: update: seq=%d' % (self, seq))
 
-            self.save(update_fields=('last_seq', 'last_ts'))
+            self.save(update_fields=('last_seq', 'last_tsf'))
 
             cachevalues.update({m.metric: m.value() for m in metrics})
             cachevalues['intvl'] = avg
 
             if carbon:
-                ts = int(time.time())
-                carbon_data = [('%s.%s' % (self._carbon_path(), k), (ts, v)) for k, v in cachevalues.iteritems()]
+                tsi = int(ts)
+                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v)) for k, v in cachevalues.iteritems()]
                 carbon.send(carbon_data)
 
             cachevalues['last_seq'] = self.last_seq
-            cachevalues['last_ts'] = self.last_ts
+            cachevalues['last_tsf'] = self.last_tsf
 
         cache.set(self._carbon_path(), cachevalues)
 
@@ -108,7 +108,7 @@ class Sensor(models.Model):
         """
 
         self.last_seq = None
-        self.last_ts = timezone.now()
+        self.last_tsf = time.time()
         self.save()
 
     def get_cache(self):
