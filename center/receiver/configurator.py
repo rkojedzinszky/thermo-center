@@ -1,7 +1,7 @@
 
 import logging
+import time
 from twisted.internet import reactor
-from django.utils import timezone
 from center.receiver import RadioBase, radio
 from center.models import Sensor
 
@@ -64,11 +64,12 @@ class Configurator(RadioBase):
 
         try:
             sensor = Sensor.objects.get(id=id_)
-            sensor.last_seq = None
         except Sensor.DoesNotExist:
             sensor = Sensor(id=id_)
+        else:
+            sensor.last_seq = None
 
-        sensor.last_ts = timezone.now()
+        sensor.last_tsf = time.time()
         sensor.save()
 
         self._gen_next_id()
