@@ -144,28 +144,24 @@ class Receiver(RadioBase):
             pass
 
         try:
-            s = models.Sensor.objects.select_related('pidcontrolparams').get(id=id_)
+            s = models.Sensor.objects.select_related('heatcontrol').get(id=id_)
         except models.Sensor.DoesNotExist:
             logger.warn('Unknown device id: %02x' % id_)
             return
 
-        try:
-            pc = self._pidmap[id_]
-        except KeyError:
-            pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
+        if hasattr(s, 'heatcontrol'):
+            pcp = s.heatcontrol
 
-        pc.feed(mh['Temperature'].value())
-        target_temp = s.get_target_temp()
-        if target_temp is not None:
             try:
-                pcp = s.pidcontrolparams
-            except exceptions.ObjectDoesNotExist:
-                kp, ki, kd = 1.0, 1.0, 1.0
-            else:
-                kp, ki, kd = pcp.kp, pcp.ki, pcp.kd
+                pc = self._pidmap[id_]
+            except KeyError:
+                pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
 
-            pcv = pc.value(target_temp, kp=kp, ki=ki, kd=kd)
-            logger.debug('%s: pid control=%f', s, pcv)
-            metrics.append(PIDControlValue(pcv))
+            pc.feed(mh['Temperature'].value())
+            target_temp = s.get_target_temp()
+            if target_temp is not None:
+                pcv = pc.value(target_temp, kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
+                logger.debug('%s: pid control=%f', s, pcv)
+                metrics.append(PIDControlValue(pcv))
 
         s.feed(seq, metrics, carbon=self._cc)

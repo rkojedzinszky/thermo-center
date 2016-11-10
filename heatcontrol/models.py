@@ -19,7 +19,7 @@ class Calendar(models.Model):
     def __str__(self):
         return '%s' % self.day
 
-class PidControlParams(models.Model):
+class HeatControl(models.Model):
     """ Describes PID Control loop coefficients """
     sensor = models.OneToOneField(Sensor, on_delete=models.CASCADE)
     kp = models.FloatField()
