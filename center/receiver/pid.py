@@ -4,6 +4,8 @@ class PID(object):
     """ A tuned PID controller to accumulate errors on a fix
     time interval """
 
+    DERIV_SPAN = 2
+
     class Value(object):
         """ Represents a value in a time point """
         __slots__ = ('_ts', '_value')
@@ -43,13 +45,20 @@ class PID(object):
             self._values.insert(0, nv)
 
     def value(self, sp, kp=1.0, ki=1.0, kd=1.0):
-        error = sp - self._values[-1:][0].value
-        accum = sp * (self._values[-1:][0].ts - self._values[0].ts)
+        fv = self._values[0]       # very first value
+        li = len(self._values) - 1 # last index
+        lv = self._values[li]      # last value
+
+        error = sp - lv.value
+
+        accum = sp * (lv.ts - fv.ts)
         for i in range(1, len(self._values)):
             accum -= (self._values[i - 1].value + self._values[i].value) / 2.0 * (self._values[i].ts - self._values[i-1].ts)
+
         deriv = 0
-        if len(self._values) >= 2:
-            l = len(self._values)
-            deriv = (self._values[l-2].value - self._values[l-1].value) / (self._values[l-1].ts - self._values[l-2].ts)
+        if li >= self.DERIV_SPAN:
+            a = self._values[li - self.DERIV_SPAN]
+
+            deriv = (a.value - lv.value) / (lv.ts - a.ts)
 
         return kp * error + ki * accum + kd * deriv
