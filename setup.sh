@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GRAPHITE_ROOT=$HOME/graphite
+GRAPHITE_ROOT=${GRAPHITE_ROOT:-$HOME/graphite}
 PYTHON_LIB=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 pip install -U -r requirements.txt
