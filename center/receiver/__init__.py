@@ -45,11 +45,11 @@ class Main(object):
     def run(self, daemonize=True):
         spi = spidev.SpiDev()
         spi.open(*settings.SPI_DEV)
-        spi.mode = 3
-        spi.max_speed_hz = 1000000
+        spi.mode = settings.SPI_MODE
+        spi.max_speed_hz = settings.SPI_FREQ
         self._radio = radio.Radio(spi)
 
-        self._gpio = gpio.GPIO(settings.GPIO_SYS_DIR)
+        self._gpio = gpio.GPIO(settings.INT_GPIO_DIR)
         self._gpio.input()
 
         self._loop = None

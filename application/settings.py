@@ -73,6 +73,10 @@ WWW_ROOT = '/'
 # receiver control socket
 RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 
+# receiver SPI defaults
+SPI_MODE = 0
+SPI_FREQ = 1000000
+
 # graphite-web settings
 STORAGE_DIR = ''
 LOG_DIR = ''

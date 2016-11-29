@@ -27,7 +27,13 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SPI_DEV = (0, 0)
-#GPIO_SYS_DIR = '/sys/class/gpio/gpio200/'
+# These are defaults
+# SPI_MODE = 0 # CPOL = 0 / CPHA = 0
+# SPI_FREQ = 1000000
+
+# This must be defined for receiver to work
+# an interrupt-enabled gpio must be given
+#INT_GPIO_DIR = '/sys/class/gpio/gpio200/'
 
 # specify alternate root url, _WITHOUT_ leading slash, and _WITH_ trailing slash
 #WWW_ROOT = 'thermo/'
