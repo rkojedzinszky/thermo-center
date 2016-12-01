@@ -71,18 +71,12 @@ class Receiver(RadioBase):
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 return
 
-            # we read all available full packets
-            data_len -= data_len % 18
-            if data_len == 0:
+            if data_len < 18:
                 break
 
-            data = self._radio.read_rxfifo(data_len)
-
-            while len(data) > 0:
-                p = data[:18]
-                data = data[18:]
-
-                self._q.put(p)
+            # read one packet from radio
+            data = self._radio.read_rxfifo(18)
+            self._q.put(data)
 
     def _receive_thread(self):
         while True:
