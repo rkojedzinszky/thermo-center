@@ -12,6 +12,14 @@ import 'pages/login/';
 import 'pages/logout/';
 import './index.less!';
 
+stache.registerSimpleHelper('format_num', function(f, w) {
+	if (typeof(f) == 'number') {
+		return f.toFixed(w);
+	}
+
+	return f;
+});
+
 var AppState = can.Map.extend({
 	define: {
 		menu: {
@@ -90,6 +98,7 @@ appState.bind('menu', function(ev, newVal, oldVal) {
 });
 
 can.route(':page', {'page': 'overview'});
+can.route(':page/:id');
 
 Session.findAll().then(function(res) {
 	if (res.length == 1) {

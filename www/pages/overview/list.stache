@@ -1,23 +1,40 @@
 <table class="table table-striped table-bordered table-hover table-sm">
 <thead>
 <tr>
-<th>
-<div class="row">
-	<div class="col-xs-1"></div>
-	<div class="col-xs-5">Name</div>
-	<div class="col-xs-3">Temperature</div>
-	<div class="col-xs-3">Humidity</div>
-</div>
-</th>
+	<th>ID</th>
+	<th>Name</th>
+	<th>Temperature</th>
+	<th>Humidity</th>
+	{{#if advanced}}
+	<th>VCC</th>
+	<th>Interval</th>
+	<th>RSSI</th>
+	<th>LQI</th>
+	{{/if}}
+	<th>Op</th>
 </tr>
 </thead>
 <tbody>
 {{#each sensors}}
-<tr>
-	<td>
-		<overview-sensor {sensor}='.' />
-	</td>
-</tr>
+	<tr class="{{classes}}">
+		<td>{{id}}</td>
+		<td>{{name}}</td>
+		<td>{{format_num temperature 2}}</td>
+		<td>{{format_num humidity 1}}</td>
+		{{#if advanced}}
+		<td>{{format_num vcc 2}}</td>
+		<td>{{format_num interval 2}}</td>
+		<td>{{format_num rssi 1}}</td>
+		<td>{{lqi}}</td>
+		{{/if}}
+		<td><sensor-resync {sensor}='.' /></td>
+	</tr>
 {{/each}}
 </tbody>
 </table>
+<div class="checkbox">
+	<label>
+		<input type="checkbox" {($checked)}="advanced" />
+		Show advanced fields
+	</label>
+</div>

@@ -1,11 +1,12 @@
 import 'can/component/';
 import template from './detail.stache!';
 import DayType from 'models/Daytype';
+import HeatSensor from 'models/Heatsensor';
 import HeatSensorTime from 'models/Heatsensortime';
 import HeatSensorOverride from 'models/Heatsensoroverride';
 
 can.Component.extend({
-	tag: 'heatcontrol-detail',
+	tag: 'page-edit',
 	template: template,
 	viewModel: {
 		days: [],
@@ -19,7 +20,7 @@ can.Component.extend({
 				sensor: self.attr('sensor'),
 				start: st,
 				end: end,
-				target_temp: this.attr('tt')
+				target_temp: 20,
 			});
 			hso.save().then(function(hso) {
 				self.attr('overrides').push(hso);
@@ -32,20 +33,23 @@ can.Component.extend({
 	events: {
 		inserted() {
 			var view = this.viewModel;
-			view.attr('tt', view.attr('t'));
 			var days = view.attr('days');
-			view.attr('daytypes').then(function(r) {
+
+			can.when(HeatSensor.findOne({id: can.route.attr('id')}).then(function(s) {
+				view.attr('sensor', s);
+				HeatSensorOverride.findAll({sensor: s.attr('id')}).then(function(overrides) {
+					view.attr('overrides', overrides);
+				});
+				return s;
+			}), DayType.findAll()).then(function(s, r) {
 				can.each(r, function(d) {
 					var dt = new DayType(d);
 					dt.attr('times', []);
-					HeatSensorTime.findAll({sensor: view.sensor.attr('id'), daytype: dt.attr('id')}).then(function(times) {
+					HeatSensorTime.findAll({sensor: s.attr('id'), daytype: dt.attr('id')}).then(function(times) {
 						dt.attr('times', times);
 					});
 					days.push(dt);
 				});
-			});
-			HeatSensorOverride.findAll({sensor: view.sensor.attr('id')}).then(function(overrides) {
-				view.attr('overrides', overrides);
 			});
 		}
 	}

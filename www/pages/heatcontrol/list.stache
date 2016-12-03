@@ -1,23 +1,21 @@
-<table class="table table-striped table-bordered table-hover table-sm">
+<table class="table table-striped table-bordered table-condensed table-hover table-sm">
 <thead>
 <tr>
-<th>
-<div class="row">
-	<div class="col-xs-1"></div>
-	<div class="col-xs-5">Name</div>
-	<div class="col-xs-2">Temperature</div>
-	<div class="col-xs-2">Target temperature</div>
-	<div class="col-xs-2">Pid control</div>
-</div>
-</th>
+	<th>Name</th>
+	<th>Temp</th>
+	<th>Target temp</th>
+	<th>Pid control</th>
+	<th>Edit</th>
 </tr>
 </thead>
 <tbody>
 {{#each sensors}}
 <tr>
-	<td>
-		<heatcontrol-sensor {sensor}='.' />
-	</td>
+	<td>{{name}}</td>
+	<td>{{format_num temperature 2}}</td>
+	<td>{{format_num target_temp 2}}</td>
+	<td>{{format_num pidcontrol 2}}</td>
+	<td><a class="btn btn-default btn-xs" href="{{ edit_link . }}">Edit</a></td>
 </tr>
 {{/each}}
 </tbody>

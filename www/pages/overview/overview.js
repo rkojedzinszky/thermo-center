@@ -1,20 +1,11 @@
 import THSensor from 'models/Thsensor';
 import 'can/component/';
 import list from './list.stache!';
-import sensor from './sensor.stache!';
 
 can.Component.extend({
-	tag: 'overview-sensor',
-	template: sensor,
+	tag: 'sensor-resync',
+	template: can.stache('{{#if can_resync}}<button ($click)="do_resync()">Resync</button>{{/if}}'),
 	viewModel: {
-		expand: false,
-		classes() {
-			if (this.sensor.getValid() === false) {
-				return 'text-warning';
-			}
-
-			return '';
-		},
 		can_resync() {
 			return this.sensor.attr('sensor_resync') != null;
 		},
@@ -22,20 +13,6 @@ can.Component.extend({
 			this.sensor.getSensor_resync().then(function(o) {
 				o.save();
 			});
-		},
-		toggle() {
-			this.attr('expand', !this.attr('expand'));
-		}
-	},
-	helpers: {
-		format_num(value, fix) {
-			value = value();
-
-			if (typeof(value) == 'number') {
-				return value.toFixed(fix);
-			}
-
-			return value;
 		}
 	}
 });
@@ -45,6 +22,15 @@ can.Component.extend({
 	template: list,
 	viewModel: {
 		sensors: []
+	},
+	helpers: {
+		classes(args) {
+			if (args.context.getValid() === false) {
+				return 'text-warning';
+			}
+
+			return '';
+		},
 	},
 	events: {
 		inserted() {

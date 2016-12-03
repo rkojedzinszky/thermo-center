@@ -2,29 +2,7 @@ import HeatSensor from 'models/Heatsensor';
 import DayType from 'models/Daytype';
 import 'can/component/';
 import list from './list.stache!';
-import sensor from './sensor.stache!';
-import './detail';
-
-can.Component.extend({
-	tag: 'heatcontrol-sensor',
-	template: sensor,
-	viewModel: {
-		toggle() {
-			this.attr('expand', !this.attr('expand'));
-		}
-	},
-	helpers: {
-		format_num(value, fix) {
-			value = value();
-
-			if (typeof(value) == 'number') {
-				return value.toFixed(fix);
-			}
-
-			return value;
-		}
-	}
-});
+import stache from 'can/view/stache/';
 
 can.Component.extend({
 	tag: 'page-heatcontrol',
@@ -32,6 +10,11 @@ can.Component.extend({
 	viewModel: {
 		sensors: [],
 		daytypes: null
+	},
+	helpers: {
+		edit_link(sensor) {
+			return stache.safeString(can.route.url({'page': 'edit', 'id': sensor.getId()}));
+		}
 	},
 	events: {
 		inserted() {
