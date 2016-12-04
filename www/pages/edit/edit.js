@@ -20,7 +20,7 @@ can.Component.extend({
 				sensor: self.attr('sensor'),
 				start: st,
 				end: end,
-				target_temp: 20,
+				target_temp: self.attr('t'),
 			});
 			hso.save().then(function(hso) {
 				self.attr('overrides').push(hso);

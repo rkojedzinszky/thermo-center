@@ -6,7 +6,7 @@
 			<div class="input-group-addon">hours</div>
 		</div>
 		<div class="input-group">
-			<input {($value)}="tt" type="number" class="form-control" step="0.5" aria-label="temperature" />
+			<input {($value)}="t" type="number" class="form-control" step="0.5" aria-label="temperature" />
 			<div class="input-group-addon">&#8451;</div>
 		</div>
 		<button ($click)='add' class="btn btn-default">Add</button>
