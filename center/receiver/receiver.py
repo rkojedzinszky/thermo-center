@@ -17,6 +17,8 @@ from center.receiver import pid
 
 PIDCONTROL_INTERVAL = 10 * 60
 
+WATCHDOG_TIMEOUT = 300
+
 logger = logging.getLogger(__name__)
 
 class PIDControlValue(sensorvalue.Value):
@@ -35,15 +37,18 @@ class Receiver(RadioBase):
     def setpidmap(self, pidmap):
         self._pidmap = pidmap
 
+    def _setup_radio(self):
+        self._radio.setup_basic()
+        self._radio.xfer2(self._config.config_bytes())
+        self._radio.setup_for_rx()
+        self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
 
         self._aes = AES.new(''.join(chr(int(c, base=16)) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)))
 
-        self._radio.setup_basic()
-        self._radio.xfer2(self._config.config_bytes())
-        self._radio.setup_for_rx()
-        self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+        self._setup_radio()
 
         self.enable_interrupt()
 
@@ -53,7 +58,15 @@ class Receiver(RadioBase):
         self._t = threading.Thread(target=self._receive_thread)
         self._t.start()
 
+        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
+
+    def _wdt_timeout(self):
+        logger.warn('Watchdog timeout, resetting radio')
+        self._setup_radio()
+        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
+
     def stop(self):
+        self._watchdog.cancel()
         self._q.put(None)
         self._t.join()
         pass
@@ -166,3 +179,5 @@ class Receiver(RadioBase):
                 metrics.append(PIDControlValue(pcv))
 
         s.feed(seq, metrics, carbon=self._cc)
+
+        self._watchdog.reset(WATCHDOG_TIMEOUT)
