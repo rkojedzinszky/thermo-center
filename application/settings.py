@@ -75,7 +75,7 @@ RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 
 # receiver SPI defaults
 SPI_MODE = 0
-SPI_FREQ = 1000000
+SPI_FREQ = 100000
 
 # graphite-web settings
 STORAGE_DIR = ''
