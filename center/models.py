@@ -113,10 +113,4 @@ class Sensor(models.Model):
     def get_cache(self):
         return cache.get(self._carbon_path())
 
-    def get_target_temp(self):
-        if not hasattr(self, 'heatcontrol'):
-            return None
-
-        return hc.get_target_temp()
-
 import heatcontrol.models

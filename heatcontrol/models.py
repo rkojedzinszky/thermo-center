@@ -49,38 +49,6 @@ class HeatControl(models.Model):
     def __str__(self):
         return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
 
-class HeatSensor(models.Model):
-    """ A specific target temperature setting for a sensor """
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
-    daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
-    start = models.TimeField()
-    end = models.TimeField()
-    target_temp = models.FloatField()
-
-    class Meta:
-        index_together = (
-                ('sensor', 'daytype'),
-                )
-
-    def __str__(self):
-        return '%s at %s[%s-%s]: %f' % (self.sensor, self.daytype, self.start, self.end, self.target_temp)
-
-    def save(self, *args, **kwargs):
-        if self.end != datetime.time(0, 0) and self.end < self.start:
-            raise ValidationError()
-
-        qs = HeatSensor.objects.filter(sensor=self.sensor, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
-        if self.end != datetime.time(0, 0):
-            qs = qs.filter(start__lt=self.end)
-
-        if self.pk is not None:
-            qs = qs.exclude(pk=self.pk)
-
-        if qs.exists():
-            raise IntegrityError()
-
-        return super(HeatSensor, self).save(*args, **kwargs)
-
 class HeatControlProfile(models.Model):
     """ Profile setting for a HeatControl unit """
     heatcontrol = models.ForeignKey(HeatControl, on_delete=models.CASCADE)
@@ -112,18 +80,6 @@ class HeatControlProfile(models.Model):
             raise IntegrityError()
 
         return super(HeatControlProfile, self).save(*args, **kwargs)
-
-class HeatSensorOverride(models.Model):
-    """ Simply override a setting for a period of time for a sensor """
-    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
-    target_temp = models.FloatField()
-
-    class Meta:
-        index_together = (
-                ('sensor', 'end'),
-                )
 
 class HeatControlOverride(models.Model):
     """ Simply override a setting for a period of time for a HeatControl unit """
