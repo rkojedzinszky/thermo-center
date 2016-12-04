@@ -1,8 +1,9 @@
 
 import datetime
-from center.models import Sensor
+from django.utils import timezone
 from django.db import models, IntegrityError
 from django.core.exceptions import ValidationError
+from center.models import Sensor
 
 class DayType(models.Model):
     """ Represents day types """
@@ -20,11 +21,30 @@ class Calendar(models.Model):
         return '%s' % self.day
 
 class HeatControl(models.Model):
-    """ Describes PID Control loop coefficients """
+    """
+    This enables heat-control operation for a sensor
+
+    Describes PID Control loop coefficients
+    """
     sensor = models.OneToOneField(Sensor, on_delete=models.CASCADE)
     kp = models.FloatField()
     ki = models.FloatField()
     kd = models.FloatField()
+
+    def get_target_temp(self):
+        now = timezone.now()
+
+        hco = self.heatcontroloverride_set.filter(end__gt=now, start__lte=now).first()
+        if hco is not None:
+            return hco.target_temp
+
+        day = now.date()
+        tm = now.time()
+        hcp = self.heatcontrolprofile_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
+        if hcp is not None:
+            return hcp.target_temp
+
+        return None
 
     def __str__(self):
         return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
@@ -61,6 +81,38 @@ class HeatSensor(models.Model):
 
         return super(HeatSensor, self).save(*args, **kwargs)
 
+class HeatControlProfile(models.Model):
+    """ Profile setting for a HeatControl unit """
+    heatcontrol = models.ForeignKey(HeatControl, on_delete=models.CASCADE)
+    daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
+    start = models.TimeField()
+    end = models.TimeField()
+    target_temp = models.FloatField()
+
+    class Meta:
+        index_together = (
+                ('heatcontrol', 'daytype'),
+                )
+
+    def __str__(self):
+        return '%s at %s[%s-%s]: %f' % (self.heatcontrol.sensor, self.daytype, self.start, self.end, self.target_temp)
+
+    def save(self, *args, **kwargs):
+        if self.end != datetime.time(0, 0) and self.end < self.start:
+            raise ValidationError()
+
+        qs = HeatControlProfile.objects.filter(heatcontrol=self.heatcontrol, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
+        if self.end != datetime.time(0, 0):
+            qs = qs.filter(start__lt=self.end)
+
+        if self.pk is not None:
+            qs = qs.exclude(pk=self.pk)
+
+        if qs.exists():
+            raise IntegrityError()
+
+        return super(HeatControlProfile, self).save(*args, **kwargs)
+
 class HeatSensorOverride(models.Model):
     """ Simply override a setting for a period of time for a sensor """
     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
@@ -71,4 +123,16 @@ class HeatSensorOverride(models.Model):
     class Meta:
         index_together = (
                 ('sensor', 'end'),
+                )
+
+class HeatControlOverride(models.Model):
+    """ Simply override a setting for a period of time for a HeatControl unit """
+    heatcontrol = models.ForeignKey(HeatControl, on_delete=models.CASCADE)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    target_temp = models.FloatField()
+
+    class Meta:
+        index_together = (
+                ('heatcontrol', 'end'),
                 )

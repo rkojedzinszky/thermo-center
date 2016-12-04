@@ -1,9 +1,9 @@
 import 'can/component/';
 import template from './detail.stache!';
 import DayType from 'models/Daytype';
-import HeatSensor from 'models/Heatsensor';
-import HeatSensorTime from 'models/Heatsensortime';
-import HeatSensorOverride from 'models/Heatsensoroverride';
+import HeatControl from 'models/Heatcontrol';
+import HeatControlProfile from 'models/Heatcontrolprofile';
+import HeatControlOverride from 'models/Heatcontroloverride';
 
 can.Component.extend({
 	tag: 'page-edit',
@@ -16,36 +16,39 @@ can.Component.extend({
 			var self = this;
 			var st = new Date();
 			var end = new Date(st.getTime() + this.attr('d') * 3600 * 1000);
-			var hso = new HeatSensorOverride({
-				sensor: self.attr('sensor'),
+			var hco = new HeatControlOverride({
+				heatcontrol: self.attr('heatcontrol'),
 				start: st,
 				end: end,
 				target_temp: self.attr('t'),
 			});
-			hso.save().then(function(hso) {
-				self.attr('overrides').push(hso);
+			hco.save().then(function(hco) {
+				self.attr('overrides').push(hco);
 			});
 		},
 		addProfile(day) {
-			day.attr('times').push(new HeatSensorTime({daytype: day, sensor: this.sensor, target_temp: 20}));
-		}
+			day.attr('times').push(new HeatControlProfile({daytype: day, heatcontrol: this.attr('heatcontrol'), target_temp: 20}));
+		},
+		hcSave() {
+			this.heatcontrol.save();
+		},
 	},
 	events: {
 		inserted() {
 			var view = this.viewModel;
 			var days = view.attr('days');
 
-			can.when(HeatSensor.findOne({id: can.route.attr('id')}).then(function(s) {
-				view.attr('sensor', s);
-				HeatSensorOverride.findAll({sensor: s.attr('id')}).then(function(overrides) {
+			can.when(HeatControl.findOne({id: can.route.attr('id')}).then(function(hc) {
+				view.attr('heatcontrol', hc);
+				HeatControlOverride.findAll({heatcontrol: hc.getId()}).then(function(overrides) {
 					view.attr('overrides', overrides);
 				});
-				return s;
-			}), DayType.findAll()).then(function(s, r) {
+				return hc;
+			}), DayType.findAll()).then(function(hc, r) {
 				can.each(r, function(d) {
 					var dt = new DayType(d);
 					dt.attr('times', []);
-					HeatSensorTime.findAll({sensor: s.attr('id'), daytype: dt.attr('id')}).then(function(times) {
+					HeatControlProfile.findAll({heatcontrol: hc.getId(), daytype: dt.getId()}).then(function(times) {
 						dt.attr('times', times);
 					});
 					days.push(dt);

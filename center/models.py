@@ -2,7 +2,6 @@ import re
 import logging
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
 from django.core.cache import cache
 import center.fields
 import datetime
@@ -114,23 +113,10 @@ class Sensor(models.Model):
     def get_cache(self):
         return cache.get(self._carbon_path())
 
-    def _get_heatsensor(self, dt):
-        day = dt.date()
-        tm = dt.time()
-
-        return self.heatsensor_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
-
     def get_target_temp(self):
-        now = timezone.now()
+        if not hasattr(self, 'heatcontrol'):
+            return None
 
-        ho = self.heatsensoroverride_set.filter(end__gt=now, start__lte=now).first()
-        if ho is not None:
-            return ho.target_temp
-
-        hs = self._get_heatsensor(now)
-        if hs is not None:
-            return hs.target_temp
-
-        return None
+        return hc.get_target_temp()
 
 import heatcontrol.models

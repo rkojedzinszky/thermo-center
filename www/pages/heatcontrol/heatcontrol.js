@@ -1,4 +1,4 @@
-import HeatSensor from 'models/Heatsensor';
+import HeatControl from 'models/Heatcontrol';
 import DayType from 'models/Daytype';
 import 'can/component/';
 import list from './list.stache!';
@@ -19,11 +19,9 @@ can.Component.extend({
 	events: {
 		inserted() {
 			var view = this.viewModel;
-			HeatSensor.findAll({'order_by': 'id'}).then(function(res) {
+			HeatControl.findAll().then(function(res) {
 				view.attr('sensors', res);
-				can.each(res, function(s) {
-					s.startRefresh();
-				});
+				can.each(view.sensors, (s) => s.startRefresh());
 			});
 			view.attr('daytypes', DayType.findAll());
 		},

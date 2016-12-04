@@ -1,35 +1,18 @@
 """ API for heatcontrol """
 
+import time
 from tastypie import fields
+from django.core.cache import cache
 from tastypie.utils import timezone
-from tastypie.authorization import ReadOnlyAuthorization
+from tastypie.authorization import ReadOnlyAuthorization, Authorization
 from center.restapi import THSensorResource, THSensorResourceInstance
 from application import restapi, resource
 from heatcontrol import models
 from tastypie.bundle import Bundle
+from tastypie import fields
 
 import logging
 logger = logging.getLogger(__name__)
-
-class HeatSensorResource(THSensorResource):
-    target_temp = fields.FloatField(null=True)
-    pidcontrol = fields.FloatField(null=True)
-
-    class Meta(THSensorResource.Meta):
-        fields = ('id', 'name', 'temperature', 'target_temp', 'age', 'server_time')
-
-    def dehydrate(self, bundle):
-        bundle = super(HeatSensorResource, self).dehydrate(bundle)
-
-        bundle.data['target_temp'] = bundle.obj.get_target_temp()
-
-        if bundle._cache:
-            bundle.data['pidcontrol'] = bundle._cache.get('pidcontrol', None)
-
-        return bundle
-
-HeatSensorResourceInstance = HeatSensorResource()
-restapi.RestApi.register(HeatSensorResourceInstance)
 
 class DayTypeResource(resource.ModelResource):
     class Meta(resource.ModelResource.Meta):
@@ -39,65 +22,67 @@ class DayTypeResource(resource.ModelResource):
 DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
 
-class HeatSensorTimeAuthorization(resource.NoAuthorization):
-    def read_list(self, object_list, bundle):
-        return object_list
+class HeatControlResource(resource.ModelResource):
+    name = fields.CharField(readonly=True)
+    temperature = fields.FloatField(readonly=True, null=True)
+    target_temp = fields.FloatField(readonly=True, null=True)
+    pidcontrol = fields.FloatField(readonly=True, null=True)
+    age = fields.FloatField(null=True, readonly=True)
 
-    def read_detail(self, object_list, bundle):
-        return True
+    class Meta(resource.ModelResource.Meta):
+        queryset = models.HeatControl.objects.select_related('sensor').order_by('sensor__id')
+        authorization = Authorization()
 
-    def create_detail(self, object_list, bundle):
-        return True
+    def dehydrate_name(self, bundle):
+        return bundle.obj.sensor.name
 
-    def update_detail(self, object_list, bundle):
-        return True
+    def dehydrate_target_temp(self, bundle):
+        return bundle.obj.get_target_temp()
 
-    def delete_detail(self, object_list, bundle):
-        return True
+    def dehydrate_age(self, bundle):
+        if bundle.obj.sensor.last_tsf:
+            return time.time() - bundle.obj.sensor.last_tsf
 
-class HeatSensorTimeResource(resource.ModelResource):
-    sensor = fields.ForeignKey(HeatSensorResource, 'sensor')
+        return None
+
+    def dehydrate(self, bundle):
+        c = cache.get(bundle.obj.sensor._carbon_path())
+        if c:
+            bundle.data['temperature'] = c.get('Temperature')
+            bundle.data['pidcontrol'] = c.get('pidcontrol')
+
+        return bundle
+
+HeatControlResourceInstance = HeatControlResource()
+restapi.RestApi.register(HeatControlResourceInstance)
+
+class HeatControlProfileResource(resource.ModelResource):
+    heatcontrol = fields.ForeignKey(HeatControlResource, 'heatcontrol')
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
     class Meta(resource.ModelResource.Meta):
-        queryset = models.HeatSensor.objects.order_by('start')
-        authorization = HeatSensorTimeAuthorization()
+        queryset = models.HeatControlProfile.objects.order_by('start')
+        authorization = Authorization()
         filtering = {
-                'sensor': 'exact',
+                'heatcontrol': 'exact',
                 'daytype': 'exact',
                 }
 
-HeatSensorTimeResourceInstance = HeatSensorTimeResource()
-restapi.RestApi.register(HeatSensorTimeResourceInstance)
+HeatControlProfileResourceInstance = HeatControlProfileResource()
+restapi.RestApi.register(HeatControlProfileResourceInstance)
 
-class HeatSensorOverrideAuthorization(resource.NoAuthorization):
-    def read_list(self, object_list, bundle):
-        return object_list
-
-    def read_detail(self, object_list, bundle):
-        return True
-
-    def create_detail(self, object_list, bundle):
-        return True
-
-    def update_detail(self, object_list, bundle):
-        return True
-
-    def delete_detail(self, object_list, bundle):
-        return True
-
-class HeatSensorOverrideResource(resource.ModelResource):
-    sensor = fields.ForeignKey(HeatSensorResource, 'sensor')
+class HeatControlOverrideResource(resource.ModelResource):
+    heatcontrol = fields.ForeignKey(HeatControlResource, 'heatcontrol')
 
     class Meta(resource.ModelResource.Meta):
-        queryset = models.HeatSensorOverride.objects.order_by('start')
-        authorization = HeatSensorOverrideAuthorization()
+        queryset = models.HeatControlOverride.objects.order_by('start')
+        authorization = Authorization()
         filtering = {
-                'sensor': 'exact',
+                'heatcontrol': 'exact',
                 }
 
     def get_object_list(self, request):
-        return super(HeatSensorOverrideResource, self).get_object_list(request).filter(end__gt=timezone.now())
+        return super(HeatControlOverrideResource, self).get_object_list(request).filter(end__gt=timezone.now())
 
-HeatSensorOverrideResourceInstance = HeatSensorOverrideResource()
-restapi.RestApi.register(HeatSensorOverrideResourceInstance)
+HeatControlOverrideResourceInstance = HeatControlOverrideResource()
+restapi.RestApi.register(HeatControlOverrideResourceInstance)

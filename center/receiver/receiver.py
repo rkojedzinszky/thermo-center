@@ -152,7 +152,7 @@ class Receiver(RadioBase):
                 pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
 
             pc.feed(mh['Temperature'].value())
-            target_temp = s.get_target_temp()
+            target_temp = pcp.get_target_temp()
             if target_temp is not None:
                 pcv = pc.value(target_temp, kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
                 logger.debug('%s: pid control=%f', s, pcv)

@@ -1,18 +1,52 @@
-<div>
-	<div class="form-inline">
-		Add quick override
-		<div class="input-group">
-			<input {($value)}="d" type="number" min="1" max="100" step="0.5" class="form-control" aria-label="duration in hours" />
-			<div class="input-group-addon">hours</div>
+<div class="container-fluid">
+	<div class="col-sm-6 form-horizontal">
+		<legend>Add quick override</legend>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">Time</label>
+			<div class="col-sm-2 input-group">
+				<input {($value)}="d" type="number" min="1" max="100" step="0.5" class="form-control" aria-label="duration in hours" />
+				<div class="input-group-addon">hours</div>
+			</div>
 		</div>
-		<div class="input-group">
-			<input {($value)}="t" type="number" class="form-control" step="0.5" aria-label="temperature" />
-			<div class="input-group-addon">&#8451;</div>
+		<div class="form-group">
+			<label class="col-sm-1 control-label">Temp</label>
+			<div class="col-sm-2 input-group">
+				<input {($value)}="t" type="number" class="form-control" step="0.5" aria-label="temperature" />
+				<div class="input-group-addon">&#8451;</div>
+			</div>
 		</div>
-		<button ($click)='add' class="btn btn-default">Add</button>
+		<div class="form-group">
+			<div class="col-sm-offset-1 col-sm-1">
+				<button ($click)='add' class="btn btn-default">Add</button>
+			</div>
+		</div>
 	</div>
+	{{#heatcontrol}}
+	<div class="col-sm-6 form-horizontal">
+		<legend>Pid control loop parameters</legend>
+		<div class="form-group form-inline">
+			<div class="col-sm-2 input-group">
+				<div class="input-group-addon">Kp</div>
+				<input type="number" class="form-control" {($value)}="kp" />
+			</div>
+			<div class="col-sm-2 input-group">
+				<div class="input-group-addon">Ki</div>
+				<input type="number" class="form-control" {($value)}="ki" />
+			</div>
+			<div class="col-sm-2 input-group">
+				<div class="input-group-addon">Kd</div>
+				<input type="number" class="form-control" {($value)}="kd" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2">
+				<button class="form-control btn btn-default" ($click)="save">Save</button>
+			</div>
+		</div>
+	</div>
+	{{/heatcontrol}}
 </div>
-<div>
+<div class="container">
 	Felülbírálások
 	<table class="table table-condensed">
 		<thead>
@@ -38,7 +72,7 @@
 		</tbody>
 	</table>
 </div>
-<div>
+<div class="container">
 	Profiles
 	<ul>
 	{{#each days}}
