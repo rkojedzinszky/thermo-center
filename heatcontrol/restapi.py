@@ -23,6 +23,7 @@ DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
 
 class HeatControlResource(resource.ModelResource):
+    sensor_id = fields.IntegerField('sensor_id', readonly=True)
     name = fields.CharField(readonly=True)
     temperature = fields.FloatField(readonly=True, null=True)
     target_temp = fields.FloatField(readonly=True, null=True)
