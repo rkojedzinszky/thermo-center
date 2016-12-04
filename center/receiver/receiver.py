@@ -71,6 +71,13 @@ class Receiver(RadioBase):
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 return
 
+            if data_len > 54:
+                logger.warn('CC1101 suspicious RXBYTES')
+                self._radio.sidle()
+                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+                return
+
             if data_len < 18:
                 break
 
