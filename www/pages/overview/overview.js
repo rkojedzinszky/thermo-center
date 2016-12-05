@@ -36,15 +36,18 @@ can.Component.extend({
 		inserted() {
 			var view = this.viewModel;
 			THSensor.findAll({'order_by': 'id'}).then(function(res) {
-				view.attr('sensors', res);
-				can.each(res, function(s) {
-					s.startRefresh();
-				});
+				if (view.attr('sensors')) {
+					view.attr('sensors', res);
+					can.each(res, function(s) {
+						s.startRefresh();
+					});
+				}
 			});
 		},
 		removed() {
 			var view = this.viewModel;
 			can.each(view.sensors, (s) => s.stopRefresh());
+			view.attr('sensors', undefined);
 		}
 	}
 });

@@ -20,14 +20,17 @@ can.Component.extend({
 		inserted() {
 			var view = this.viewModel;
 			HeatControl.findAll().then(function(res) {
-				view.attr('sensors', res);
-				can.each(view.sensors, (s) => s.startRefresh());
+				if (view.attr('sensors')) {
+					view.attr('sensors', res);
+					can.each(view.sensors, (s) => s.startRefresh());
+				}
 			});
 			view.attr('daytypes', DayType.findAll());
 		},
 		removed() {
 			var view = this.viewModel;
 			can.each(view.sensors, (s) => s.stopRefresh());
+			view.attr('sensors', undefined);
 		}
 	}
 });
