@@ -23,6 +23,8 @@
       "node_modules/can-zone/register"
     ],
     "bundle": [
+      "pages/login/",
+      "pages/logout/",
       "pages/overview/",
       "pages/heatcontrol/",
       "pages/edit/"
