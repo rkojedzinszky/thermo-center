@@ -12,6 +12,7 @@ can.Component.extend({
 		days: [],
 		overrides: [],
 		d: 1,
+		heatcontrol: null,
 		add() {
 			var self = this;
 			var st = new Date();
