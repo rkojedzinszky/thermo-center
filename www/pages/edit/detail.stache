@@ -1,22 +1,29 @@
-<div class="container-fluid">
+{{#heatcontrol}}
+<div class="container">
+	<h3 class="center-block">
+		Settings for {{name}}({{sensor_id}})
+	</h3>
+</div>
+{{/heatcontrol}}
+<div class="container">
 	<div class="col-sm-6 form-horizontal">
 		<legend>Add quick override</legend>
 		<div class="form-group">
-			<label class="col-sm-1 control-label">Time</label>
-			<div class="col-sm-2 input-group">
+			<label class="col-sm-2 control-label">Time</label>
+			<div class="col-sm-4 input-group">
 				<input {($value)}="d" type="number" min="1" max="100" step="0.5" class="form-control" aria-label="duration in hours" />
 				<div class="input-group-addon">hours</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-1 control-label">Temp</label>
-			<div class="col-sm-2 input-group">
+			<label class="col-sm-2 control-label">Temp</label>
+			<div class="col-sm-4 input-group">
 				<input {($value)}="t" type="number" class="form-control" step="0.5" aria-label="temperature" />
 				<div class="input-group-addon">&#8451;</div>
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-sm-offset-1 col-sm-1">
+			<div class="col-sm-offset-2 col-sm-2">
 				<button ($click)='add' class="btn btn-default">Add</button>
 			</div>
 		</div>
@@ -25,21 +32,21 @@
 	<div class="col-sm-6 form-horizontal">
 		<legend>Pid control loop parameters</legend>
 		<div class="form-group form-inline">
-			<div class="col-sm-2 input-group">
+			<div class="col-sm-3 input-group">
 				<div class="input-group-addon">Kp</div>
 				<input type="number" class="form-control" {($value)}="kp" />
 			</div>
-			<div class="col-sm-2 input-group">
+			<div class="col-sm-3 input-group">
 				<div class="input-group-addon">Ki</div>
 				<input type="number" class="form-control" {($value)}="ki" />
 			</div>
-			<div class="col-sm-2 input-group">
+			<div class="col-sm-3 input-group">
 				<div class="input-group-addon">Kd</div>
 				<input type="number" class="form-control" {($value)}="kd" />
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-sm-2">
+			<div class="col-sm-3">
 				<button class="form-control btn btn-default" ($click)="save">Save</button>
 			</div>
 		</div>
