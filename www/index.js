@@ -11,6 +11,7 @@ import Session from 'models/Session';
 import 'pages/login/';
 import 'pages/logout/';
 import './index.less!';
+import 'models/refresh';
 
 stache.registerSimpleHelper('format_num', function(f, w) {
 	if (typeof(f) == 'number') {
