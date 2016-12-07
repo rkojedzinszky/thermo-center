@@ -1,5 +1,4 @@
 import HeatControl from 'models/Heatcontrol';
-import DayType from 'models/Daytype';
 import 'can/component/';
 import list from './list.stache!';
 import stache from 'can/view/stache/';
@@ -25,7 +24,6 @@ can.Component.extend({
 					can.each(view.sensors, (s) => s.startRefresh());
 				}
 			});
-			view.attr('daytypes', DayType.findAll());
 		},
 		removed() {
 			var view = this.viewModel;
