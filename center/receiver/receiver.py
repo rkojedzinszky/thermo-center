@@ -42,6 +42,7 @@ class Receiver(RadioBase):
         self._radio.xfer2(self._config.config_bytes())
         self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
 
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
@@ -58,12 +59,9 @@ class Receiver(RadioBase):
         self._t = threading.Thread(target=self._receive_thread)
         self._t.start()
 
-        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
-
     def _wdt_timeout(self):
         logger.warn('Watchdog timeout, resetting radio')
         self._setup_radio()
-        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
 
     def stop(self):
         self._watchdog.cancel()
