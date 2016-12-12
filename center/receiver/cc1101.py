@@ -104,7 +104,7 @@ class CC1101(object):
         self.waitstate(1)
 
     def sidle(self):
-        self._spi.xfer([self.CommandStrobe.SIDLE])
+        self._spi.xfer2([self.CommandStrobe.SIDLE])
         self.wait_sidle()
 
     def get(self, reg):
