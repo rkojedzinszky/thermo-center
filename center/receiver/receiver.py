@@ -79,6 +79,7 @@ class Receiver(RadioBase):
             if data_len & 0x80:
                 logger.warn('CC1101 RX_OVERFLOW')
                 self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+                self._radio.wait_sidle()
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 return
 

@@ -100,9 +100,12 @@ class CC1101(object):
         self.set(self.ConfReg.IOCFG2, 0x2e)
         self.set(self.ConfReg.IOCFG0, 0x2e)
 
+    def wait_sidle(self):
+        self.waitstate(1)
+
     def sidle(self):
         self._spi.xfer([self.CommandStrobe.SIDLE])
-        self.waitstate(1)
+        self.wait_sidle()
 
     def get(self, reg):
         return self._spi.xfer2([reg | 0x80, 0])[1]
