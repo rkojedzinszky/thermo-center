@@ -5,7 +5,6 @@ from django.db import models
 from django.core.cache import cache
 import center.fields
 import datetime
-import pytz
 import time
 
 logger = logging.getLogger(__name__)

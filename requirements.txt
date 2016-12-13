@@ -4,9 +4,5 @@ pycrypto
 django<1.9
 django-tastypie
 uwsgi
-whisper
-cairocffi<0.7
-django-tagging
-pyparse
-pytz
 ipaddress
+twisted
