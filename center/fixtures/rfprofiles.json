@@ -1,11 +1,43 @@
 [
 {
   "fields": {
+    "name": "MSK, 62kBaud, 0dBm transmit power",
+    "confregs": "109b1139127313a215403e60"
+  },
+  "model": "center.rfprofile",
+  "pk": 1
+},
+{
+  "fields": {
+    "name": "MSK, 62kBaud, 10dBm transmit power",
+    "confregs": "109b1139127313a215403ec0"
+  },
+  "model": "center.rfprofile",
+  "pk": 2
+},
+{
+  "fields": {
+    "name": "MSK, 89kBaud, 0dBm transmit power",
+    "confregs": "108b11c1127313a215403e60"
+  },
+  "model": "center.rfprofile",
+  "pk": 3
+},
+{
+  "fields": {
+    "name": "MSK, 89kBaud, 10dBm transmit power",
+    "confregs": "108b11c1127313a215403ec0"
+  },
+  "model": "center.rfprofile",
+  "pk": 4
+},
+{
+  "fields": {
     "name": "MSK, 108kBaud, 0dBm transmit power",
     "confregs": "107c1111127313a215403e60"
   },
   "model": "center.rfprofile",
-  "pk": 1
+  "pk": 5
 },
 {
   "fields": {
@@ -13,7 +45,7 @@
     "confregs": "107c1111127313a215403ec0"
   },
   "model": "center.rfprofile",
-  "pk": 2
+  "pk": 6
 },
 {
   "fields": {
@@ -21,7 +53,7 @@
     "confregs": "106c1152127313a215403e60"
   },
   "model": "center.rfprofile",
-  "pk": 3
+  "pk": 7
 },
 {
   "fields": {
@@ -29,7 +61,7 @@
     "confregs": "106c1152127313a215403ec0"
   },
   "model": "center.rfprofile",
-  "pk": 4
+  "pk": 8
 },
 {
   "fields": {
@@ -37,7 +69,7 @@
     "confregs": "105c11ad127313a215403e60"
   },
   "model": "center.rfprofile",
-  "pk": 5
+  "pk": 9
 },
 {
   "fields": {
@@ -45,7 +77,7 @@
     "confregs": "105c11ad127313a215403ec0"
   },
   "model": "center.rfprofile",
-  "pk": 6
+  "pk": 10
 },
 {
   "fields": {
@@ -53,7 +85,7 @@
     "confregs": "104d111b127313a215403e60"
   },
   "model": "center.rfprofile",
-  "pk": 7
+  "pk": 11
 },
 {
   "fields": {
@@ -61,7 +93,7 @@
     "confregs": "104d111b127313a215403ec0"
   },
   "model": "center.rfprofile",
-  "pk": 8
+  "pk": 12
 },
 {
   "fields": {
@@ -69,7 +101,7 @@
     "confregs": "103d114b127313a215403e60"
   },
   "model": "center.rfprofile",
-  "pk": 9
+  "pk": 13
 },
 {
   "fields": {
@@ -77,6 +109,6 @@
     "confregs": "103d114b127313a215403ec0"
   },
   "model": "center.rfprofile",
-  "pk": 10
+  "pk": 14
 }
 ]
