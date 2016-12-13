@@ -6,10 +6,6 @@ cd "$ROOT"
 export LANG=en_US.UTF-8
 export PYTHONHASHSEED=random
 
-~/graphite/bin/carbon-cache.py stop
-rm -f ~/graphite/storage/carbon-cache-a.pid
-~/graphite/bin/carbon-cache.py start
-
 rm -f receiver.sock
 python manage.py receiver -d
 uwsgi --ini uwsgi.ini
