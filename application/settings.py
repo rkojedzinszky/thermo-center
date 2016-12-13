@@ -25,8 +25,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'graphite',
-    'graphite.account',
     'tastypie',
     'nauth',
     'center',
@@ -77,13 +75,6 @@ RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 SPI_MODE = 0
 SPI_FREQ = 100000
 
-# graphite-web settings
-STORAGE_DIR = ''
-LOG_DIR = ''
-WHISPER_DIR = ''
-DATA_DIRS = []
-CLUSTER_SERVERS = []
-
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
@@ -106,43 +97,3 @@ CACHES = {
         'LOCATION': CACHE_DIR
     }
 }
-
-# finalize graphite settings, most copied from graphite/settings.py
-if not STORAGE_DIR:
-  STORAGE_DIR = os.environ.get('GRAPHITE_STORAGE_DIR', os.path.join(GRAPHITE_ROOT, 'storage'))
-if not LOG_DIR:
-  LOG_DIR = os.path.join(STORAGE_DIR, 'log', 'webapp')
-if not WHISPER_DIR:
-  WHISPER_DIR = os.path.join(STORAGE_DIR, 'whisper/')
-if not DATA_DIRS:
-  DATA_DIRS = [WHISPER_DIR]
-
-# Memcache settings
-MEMCACHE_HOSTS = []
-DEFAULT_CACHE_DURATION = 60 #metric data and graphs are cached for one minute by default
-LOG_CACHE_PERFORMANCE = False
-
-# Remote store settings
-REMOTE_STORE_FETCH_TIMEOUT = 6
-REMOTE_STORE_FIND_TIMEOUT = 2.5
-REMOTE_STORE_RETRY_DELAY = 60
-REMOTE_STORE_USE_POST = False
-REMOTE_FIND_CACHE_DURATION = 300
-REMOTE_PREFETCH_DATA = False
-REMOTE_STORE_MERGE_RESULTS = True
-
-#Remote rendering settings
-REMOTE_RENDERING = False #if True, rendering is delegated to RENDERING_HOSTS
-RENDERING_HOSTS = []
-REMOTE_RENDER_CONNECT_TIMEOUT = 1.0
-LOG_RENDERING_PERFORMANCE = False
-
-#Miscellaneous settings
-CARBONLINK_HOSTS = ["127.0.0.1:7002"]
-CARBONLINK_TIMEOUT = 1.0
-CARBONLINK_QUERY_BULK = False
-SMTP_SERVER = "localhost"
-DOCUMENTATION_URL = "http://graphite.readthedocs.org/"
-ALLOW_ANONYMOUS_CLI = True
-LOG_METRIC_ACCESS = False
-LEGEND_MAX_ITEMS = 10

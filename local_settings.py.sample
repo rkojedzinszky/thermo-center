@@ -38,7 +38,4 @@ SPI_DEV = (0, 0)
 # specify alternate root url, _WITHOUT_ leading slash, and _WITH_ trailing slash
 #WWW_ROOT = 'thermo/'
 
-# graphite root
-GRAPHITE_ROOT = '@GRAPHITE_ROOT@'
-
 del os, BASE_DIR
