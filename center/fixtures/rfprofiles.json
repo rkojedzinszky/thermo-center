@@ -2,7 +2,7 @@
 {
   "fields": {
     "name": "MSK, 62kBaud, 0dBm transmit power",
-    "confregs": "109b1139127313a215403e60"
+    "confregs": "109b1139127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 1
@@ -10,7 +10,7 @@
 {
   "fields": {
     "name": "MSK, 62kBaud, 10dBm transmit power",
-    "confregs": "109b1139127313a215403ec0"
+    "confregs": "109b1139127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 2
@@ -18,7 +18,7 @@
 {
   "fields": {
     "name": "MSK, 89kBaud, 0dBm transmit power",
-    "confregs": "108b11c1127313a215403e60"
+    "confregs": "108b11c1127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 3
@@ -26,7 +26,7 @@
 {
   "fields": {
     "name": "MSK, 89kBaud, 10dBm transmit power",
-    "confregs": "108b11c1127313a215403ec0"
+    "confregs": "108b11c1127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 4
@@ -34,7 +34,7 @@
 {
   "fields": {
     "name": "MSK, 108kBaud, 0dBm transmit power",
-    "confregs": "107c1111127313a215403e60"
+    "confregs": "107c1111127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 5
@@ -42,7 +42,7 @@
 {
   "fields": {
     "name": "MSK, 108kBaud, 10dBm transmit power",
-    "confregs": "107c1111127313a215403ec0"
+    "confregs": "107c1111127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 6
@@ -50,7 +50,7 @@
 {
   "fields": {
     "name": "MSK, 134kBaud, 0dBm transmit power",
-    "confregs": "106c1152127313a215403e60"
+    "confregs": "106c1152127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 7
@@ -58,7 +58,7 @@
 {
   "fields": {
     "name": "MSK, 134kBaud, 10dBm transmit power",
-    "confregs": "106c1152127313a215403ec0"
+    "confregs": "106c1152127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 8
@@ -66,7 +66,7 @@
 {
   "fields": {
     "name": "MSK, 170kBaud, 0dBm transmit power",
-    "confregs": "105c11ad127313a215403e60"
+    "confregs": "105c11ad127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 9
@@ -74,7 +74,7 @@
 {
   "fields": {
     "name": "MSK, 170kBaud, 10dBm transmit power",
-    "confregs": "105c11ad127313a215403ec0"
+    "confregs": "105c11ad127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 10
@@ -82,7 +82,7 @@
 {
   "fields": {
     "name": "MSK, 224kBaud, 0dBm transmit power",
-    "confregs": "104d111b127313a215403e60"
+    "confregs": "104d111b127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 11
@@ -90,7 +90,7 @@
 {
   "fields": {
     "name": "MSK, 224kBaud, 10dBm transmit power",
-    "confregs": "104d111b127313a215403ec0"
+    "confregs": "104d111b127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 12
@@ -98,7 +98,7 @@
 {
   "fields": {
     "name": "MSK, 263kBaud, 0dBm transmit power",
-    "confregs": "103d114b127313a215403e60"
+    "confregs": "103d114b127313a015403e60"
   },
   "model": "center.rfprofile",
   "pk": 13
@@ -106,7 +106,7 @@
 {
   "fields": {
     "name": "MSK, 263kBaud, 10dBm transmit power",
-    "confregs": "103d114b127313a215403ec0"
+    "confregs": "103d114b127313a015403ec0"
   },
   "model": "center.rfprofile",
   "pk": 14
