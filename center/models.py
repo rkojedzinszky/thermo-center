@@ -59,7 +59,7 @@ class Sensor(models.Model):
             interval = ts - self.last_tsf
 
             if self.last_seq is None:
-                valid = interval <= 65
+                valid = interval <= 34
             else:
                 diff = (seq - self.last_seq) & 0x7fffffff
                 avg = interval / diff

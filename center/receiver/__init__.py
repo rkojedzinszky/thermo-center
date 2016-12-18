@@ -25,7 +25,7 @@ class Console(basic.LineOnlyReceiver):
             self._main.stop()
         elif line == 'configure':
             self._main.startconfigurator()
-            reactor.callLater(35, self._main.startreceiver)
+            reactor.callLater(15, self._main.startreceiver)
             self.sendLine('entered sensor configuration mode')
         elif line == 'reload':
             self._main.startreceiver()
