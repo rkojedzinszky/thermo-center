@@ -34,7 +34,7 @@ class HeatControl(models.Model):
     def get_target_temp(self):
         now = timezone.now()
 
-        hco = self.heatcontroloverride_set.filter(end__gt=now, start__lte=now).first()
+        hco = self.heatcontroloverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
         if hco is not None:
             return hco.target_temp
 
