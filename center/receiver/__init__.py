@@ -49,6 +49,13 @@ class Main(object):
         spi.max_speed_hz = settings.SPI_FREQ
         self._radio = radio.Radio(spi)
 
+        partnum = self._radio.status(radio.Radio.StatusReg.PARTNUM)
+        if partnum != 0x0:
+            raise RuntimeError('CC1101 identification failed: PARTNUM={:x}'.format(partnum))
+        version = self._radio.status(radio.Radio.StatusReg.VERSION)
+        if version != 0x14:
+            raise RuntimeError('CC1101 identification failed: VERSION={:x}'.format(version))
+
         self._gpio = gpio.GPIO(settings.INT_GPIO_DIR)
         self._gpio.input()
 
