@@ -30,5 +30,5 @@ class GPIO(object):
 
     def value(self):
         os.lseek(self._fd, 0, os.SEEK_SET)
-        return os.read(self._fd, 1) == '1'
+        return os.read(self._fd, 1) == b'1'
 

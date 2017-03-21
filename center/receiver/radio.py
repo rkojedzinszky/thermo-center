@@ -1,5 +1,5 @@
 
-import cc1101
+from . import cc1101
 
 class Radio(cc1101.CC1101):
     def calibrate(self):

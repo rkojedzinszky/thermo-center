@@ -4,7 +4,7 @@ import re
 import logging
 import time
 import threading
-import Queue
+import queue
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import connection
@@ -24,13 +24,6 @@ logger = logging.getLogger(__name__)
 class PIDControlValue(sensorvalue.Value):
     metric = 'pidcontrol'
 
-class StringOrdIter(object):
-    def __init__(self, s):
-        self._i = iter(s)
-
-    def next(self):
-        return ord(next(self._i))
-
 class Receiver(RadioBase):
     name = 'receiver'
 
@@ -47,7 +40,7 @@ class Receiver(RadioBase):
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
 
-        self._aes = AES.new(''.join(chr(int(c, base=16)) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)))
+        self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
 
         self._setup_radio()
 
@@ -55,7 +48,7 @@ class Receiver(RadioBase):
 
         self._icnt = 0
 
-        self._q = Queue.Queue()
+        self._q = queue.Queue()
         self._t = threading.Thread(target=self._receive_thread)
         self._t.start()
 
@@ -118,7 +111,7 @@ class Receiver(RadioBase):
 
     def _receive_packet(self, packet):
         metrics = [sensorvalue.RSSI(packet[16]), sensorvalue.LQI(packet[17] & 0x7f)]
-        packet = self._aes.decrypt(''.join(chr(c) for c in packet[:16]))
+        packet = self._aes.decrypt(bytes(packet[:16]))
 
         network, seq, length, id_ = struct.unpack('<HLBB', packet[:8])
 
@@ -137,7 +130,7 @@ class Receiver(RadioBase):
             logger.warn('Received packet for invalid network: %d' % network)
             return
 
-        si = StringOrdIter(rest)
+        si = iter(rest)
         try:
             while True:
                 try:
