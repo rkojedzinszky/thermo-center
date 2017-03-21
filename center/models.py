@@ -42,6 +42,14 @@ class RFConfig(models.Model):
     def aes_bytes(self):
         return _parse_hex(self.aes_key)
 
+    def _generate_config(self):
+        import random, os
+        generator = random.SystemRandom()
+
+        self.rf_channel = generator.randrange(256)
+        self.network_id = generator.randrange(65536)
+        self.aes_key = ''.join('{:02x}'.format(c) for c in os.urandom(16))
+
 class Sensor(models.Model):
     """ A sensor device """
     id = center.fields.SensorIdField(primary_key=True)
@@ -92,7 +100,7 @@ class Sensor(models.Model):
 
             if carbon:
                 tsi = int(ts)
-                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v)) for k, v in cachevalues.iteritems()]
+                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v)) for k, v in cachevalues.items()]
                 carbon.send(carbon_data)
 
             cachevalues['last_seq'] = self.last_seq
