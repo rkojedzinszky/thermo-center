@@ -20,16 +20,16 @@ class Console(basic.LineOnlyReceiver):
         return self
 
     def lineReceived(self, line):
-        if line == 'stop':
-            self.sendLine('exiting')
+        if line == b'stop':
+            self.sendLine(b'exiting')
             self._main.stop()
-        elif line == 'configure':
+        elif line == b'configure':
             self._main.startconfigurator()
             reactor.callLater(15, self._main.startreceiver)
-            self.sendLine('entered sensor configuration mode')
-        elif line == 'reload':
+            self.sendLine(b'entered sensor configuration mode')
+        elif line == b'reload':
             self._main.startreceiver()
-            self.sendLine('reloaded receiver mode')
+            self.sendLine(b'reloaded receiver mode')
 
 class ConsoleFactory(protocol.ServerFactory):
     def setMain(self, main):
