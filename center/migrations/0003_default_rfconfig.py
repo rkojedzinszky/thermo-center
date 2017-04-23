@@ -12,7 +12,7 @@ def create_rfconfig(apps, schema_editor):
         rf_channel=generator.randrange(256),
         rf_profile=apps.get_model('center', 'RFProfile').objects.get(pk=1),
         network_id=generator.randrange(65536),
-        aes_key=''.join('%02x' % ord(c) for c in os.urandom(16)),
+        aes_key=''.join('%02x' % c for c in os.urandom(16)),
     )
 
 def remove_rfconfig(apps, schema_editor):
