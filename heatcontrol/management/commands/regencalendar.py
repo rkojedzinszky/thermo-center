@@ -14,7 +14,7 @@ class Command(BaseCommand):
         sun = models.DayType.objects.create(name='Sunday')
 
         st = datetime.date.today()
-        for i in xrange(10000):
+        for i in range(10000):
             c = models.Calendar(day=st)
             if st.weekday() < 5:
                 c.daytype = w
