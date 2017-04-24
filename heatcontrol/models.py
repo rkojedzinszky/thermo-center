@@ -43,7 +43,7 @@ class Control(models.Model):
 
         day = now.date()
         tm = now.time()
-        hcp = self.heatcontrolprofile_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
+        hcp = self.profile_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
         if hcp is not None:
             return hcp.target_temp
 
@@ -52,7 +52,7 @@ class Control(models.Model):
     def __str__(self):
         return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
 
-class HeatControlProfile(models.Model):
+class Profile(models.Model):
     """ Profile setting for a Control unit """
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
     daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
@@ -72,7 +72,7 @@ class HeatControlProfile(models.Model):
         if self.end != datetime.time(0, 0) and self.end < self.start:
             raise ValidationError()
 
-        qs = HeatControlProfile.objects.filter(control=self.control, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
+        qs = Profile.objects.filter(control=self.control, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
         if self.end != datetime.time(0, 0):
             qs = qs.filter(start__lt=self.end)
 
@@ -82,7 +82,7 @@ class HeatControlProfile(models.Model):
         if qs.exists():
             raise IntegrityError()
 
-        return super(HeatControlProfile, self).save(*args, **kwargs)
+        return super(Profile, self).save(*args, **kwargs)
 
 class HeatControlOverride(models.Model):
     """ Simply override a setting for a period of time for a Control unit """

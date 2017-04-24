@@ -57,20 +57,20 @@ class ControlResource(resource.ModelResource):
 ControlResourceInstance = ControlResource()
 restapi.RestApi.register(ControlResourceInstance)
 
-class HeatControlProfileResource(resource.ModelResource):
+class ProfileResource(resource.ModelResource):
     control = fields.ForeignKey(ControlResource, 'control')
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
     class Meta(resource.ModelResource.Meta):
-        queryset = models.HeatControlProfile.objects.order_by('start')
+        queryset = models.Profile.objects.order_by('start')
         authorization = Authorization()
         filtering = {
                 'control': 'exact',
                 'daytype': 'exact',
                 }
 
-HeatControlProfileResourceInstance = HeatControlProfileResource()
-restapi.RestApi.register(HeatControlProfileResourceInstance)
+ProfileResourceInstance = ProfileResource()
+restapi.RestApi.register(ProfileResourceInstance)
 
 class HeatControlOverrideResource(resource.ModelResource):
     control = fields.ForeignKey(ControlResource, 'control')

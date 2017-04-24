@@ -2,7 +2,7 @@ import 'can/component/';
 import template from './detail.stache!';
 import DayType from 'models/Daytype';
 import Control from 'models/Control';
-import HeatControlProfile from 'models/Heatcontrolprofile';
+import Profile from 'models/Profile';
 import HeatControlOverride from 'models/Heatcontroloverride';
 
 can.Component.extend({
@@ -28,7 +28,7 @@ can.Component.extend({
 			});
 		},
 		addProfile(day) {
-			day.attr('times').push(new HeatControlProfile({daytype: day, control: this.attr('control'), target_temp: 20}));
+			day.attr('times').push(new Profile({daytype: day, control: this.attr('control'), target_temp: 20}));
 		},
 		hcSave() {
 			this.control.save();
@@ -49,7 +49,7 @@ can.Component.extend({
 				can.each(r, function(d) {
 					var dt = new DayType(d);
 					dt.attr('times', []);
-					HeatControlProfile.findAll({control: hc.getId(), daytype: dt.getId()}).then(function(times) {
+					Profile.findAll({control: hc.getId(), daytype: dt.getId()}).then(function(times) {
 						dt.attr('times', times);
 					});
 					days.push(dt);
