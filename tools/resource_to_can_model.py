@@ -82,7 +82,7 @@ def generate_canjs_models():
             fh.write('    _meta: meta\n')
             fh.write('}, { // dynamic members\n')
             fh.write('});\n')
-            print modeljsname,'generated, dont forget to add it to the repository'
+            print ('{} generated, dont forget to add it to the repository'.format(modeljsname))
 
 if __name__ == '__main__':
     generate_canjs_models()
