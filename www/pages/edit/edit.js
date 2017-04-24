@@ -3,7 +3,7 @@ import template from './detail.stache!';
 import DayType from 'models/Daytype';
 import Control from 'models/Control';
 import Profile from 'models/Profile';
-import HeatControlOverride from 'models/Heatcontroloverride';
+import ScheduledOverride from 'models/Scheduledoverride';
 
 can.Component.extend({
 	tag: 'page-edit',
@@ -17,14 +17,14 @@ can.Component.extend({
 			var self = this;
 			var st = new Date();
 			var end = new Date(st.getTime() + this.attr('d') * 3600 * 1000);
-			var hco = new HeatControlOverride({
+			var so = new ScheduledOverride({
 				control: self.attr('control'),
 				start: st,
 				end: end,
 				target_temp: self.attr('t'),
 			});
-			hco.save().then(function(hco) {
-				self.attr('overrides').push(hco);
+			so.save().then(function(so) {
+				self.attr('overrides').push(so);
 			});
 		},
 		addProfile(day) {
@@ -41,7 +41,7 @@ can.Component.extend({
 
 			can.when(Control.findOne({id: can.route.attr('id')}).then(function(hc) {
 				view.attr('control', hc);
-				HeatControlOverride.findAll({control: hc.getId()}).then(function(overrides) {
+				ScheduledOverride.findAll({control: hc.getId()}).then(function(overrides) {
 					view.attr('overrides', overrides);
 				});
 				return hc;

@@ -72,18 +72,18 @@ class ProfileResource(resource.ModelResource):
 ProfileResourceInstance = ProfileResource()
 restapi.RestApi.register(ProfileResourceInstance)
 
-class HeatControlOverrideResource(resource.ModelResource):
+class ScheduledOverrideResource(resource.ModelResource):
     control = fields.ForeignKey(ControlResource, 'control')
 
     class Meta(resource.ModelResource.Meta):
-        queryset = models.HeatControlOverride.objects.order_by('start')
+        queryset = models.ScheduledOverride.objects.order_by('start')
         authorization = Authorization()
         filtering = {
                 'control': 'exact',
                 }
 
     def get_object_list(self, request):
-        return super(HeatControlOverrideResource, self).get_object_list(request).filter(end__gt=timezone.now())
+        return super(ScheduledOverrideResource, self).get_object_list(request).filter(end__gt=timezone.now())
 
-HeatControlOverrideResourceInstance = HeatControlOverrideResource()
-restapi.RestApi.register(HeatControlOverrideResourceInstance)
+ScheduledOverrideResourceInstance = ScheduledOverrideResource()
+restapi.RestApi.register(ScheduledOverrideResourceInstance)

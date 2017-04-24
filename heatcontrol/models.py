@@ -37,9 +37,9 @@ class Control(models.Model):
         """
         now = timezone.now()
 
-        hco = self.heatcontroloverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
-        if hco is not None:
-            return hco.target_temp
+        so = self.scheduledoverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
+        if so is not None:
+            return so.target_temp
 
         day = now.date()
         tm = now.time()
@@ -84,7 +84,7 @@ class Profile(models.Model):
 
         return super(Profile, self).save(*args, **kwargs)
 
-class HeatControlOverride(models.Model):
+class ScheduledOverride(models.Model):
     """ Simply override a setting for a period of time for a Control unit """
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
     start = models.DateTimeField()
