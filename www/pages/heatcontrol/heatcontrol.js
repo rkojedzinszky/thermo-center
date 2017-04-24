@@ -1,4 +1,4 @@
-import HeatControl from 'models/Heatcontrol';
+import Control from 'models/Control';
 import 'can/component/';
 import list from './list.stache!';
 import stache from 'can/view/stache/';
@@ -18,7 +18,7 @@ can.Component.extend({
 	events: {
 		inserted() {
 			var view = this.viewModel;
-			HeatControl.findAll().then(function(res) {
+			Control.findAll().then(function(res) {
 				if (view.attr('sensors')) {
 					view.attr('sensors', res);
 					can.each(view.sensors, (s) => s.startRefresh());

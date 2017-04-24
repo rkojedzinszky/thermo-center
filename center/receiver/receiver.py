@@ -150,13 +150,13 @@ class Receiver(RadioBase):
             pass
 
         try:
-            s = models.Sensor.objects.select_related('heatcontrol').get(id=id_)
+            s = models.Sensor.objects.select_related('control').get(id=id_)
         except models.Sensor.DoesNotExist:
             logger.warn('Unknown device id: %02x' % id_)
             return
 
-        if hasattr(s, 'heatcontrol'):
-            pcp = s.heatcontrol
+        if hasattr(s, 'control'):
+            pcp = s.control
 
             try:
                 pc = self._pidmap[id_]

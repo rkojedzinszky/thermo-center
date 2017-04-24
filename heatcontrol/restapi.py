@@ -22,7 +22,7 @@ class DayTypeResource(resource.ModelResource):
 DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
 
-class HeatControlResource(resource.ModelResource):
+class ControlResource(resource.ModelResource):
     sensor_id = fields.IntegerField('sensor_id', readonly=True)
     name = fields.CharField(readonly=True)
     temperature = fields.FloatField(readonly=True, null=True)
@@ -31,7 +31,7 @@ class HeatControlResource(resource.ModelResource):
     age = fields.FloatField(null=True, readonly=True)
 
     class Meta(resource.ModelResource.Meta):
-        queryset = models.HeatControl.objects.select_related('sensor').order_by('sensor__id')
+        queryset = models.Control.objects.select_related('sensor').order_by('sensor__id')
         authorization = Authorization()
 
     def dehydrate_name(self, bundle):
@@ -54,18 +54,18 @@ class HeatControlResource(resource.ModelResource):
 
         return bundle
 
-HeatControlResourceInstance = HeatControlResource()
-restapi.RestApi.register(HeatControlResourceInstance)
+ControlResourceInstance = ControlResource()
+restapi.RestApi.register(ControlResourceInstance)
 
 class HeatControlProfileResource(resource.ModelResource):
-    heatcontrol = fields.ForeignKey(HeatControlResource, 'heatcontrol')
+    control = fields.ForeignKey(ControlResource, 'control')
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
     class Meta(resource.ModelResource.Meta):
         queryset = models.HeatControlProfile.objects.order_by('start')
         authorization = Authorization()
         filtering = {
-                'heatcontrol': 'exact',
+                'control': 'exact',
                 'daytype': 'exact',
                 }
 
@@ -73,13 +73,13 @@ HeatControlProfileResourceInstance = HeatControlProfileResource()
 restapi.RestApi.register(HeatControlProfileResourceInstance)
 
 class HeatControlOverrideResource(resource.ModelResource):
-    heatcontrol = fields.ForeignKey(HeatControlResource, 'heatcontrol')
+    control = fields.ForeignKey(ControlResource, 'control')
 
     class Meta(resource.ModelResource.Meta):
         queryset = models.HeatControlOverride.objects.order_by('start')
         authorization = Authorization()
         filtering = {
-                'heatcontrol': 'exact',
+                'control': 'exact',
                 }
 
     def get_object_list(self, request):

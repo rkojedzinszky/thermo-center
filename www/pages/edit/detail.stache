@@ -1,10 +1,10 @@
-{{#heatcontrol}}
+{{#control}}
 <div class="container">
 	<h3 class="center-block">
 		Settings for {{name}}({{sensor_id}})
 	</h3>
 </div>
-{{/heatcontrol}}
+{{/control}}
 <div class="container">
 	<div class="col-sm-6 form-horizontal">
 		<legend>Add quick override</legend>
@@ -28,7 +28,7 @@
 			</div>
 		</div>
 	</div>
-	{{#heatcontrol}}
+	{{#control}}
 	<div class="col-sm-6 form-horizontal">
 		<legend>Pid control loop parameters</legend>
 		<div class="form-group form-inline">
@@ -51,7 +51,7 @@
 			</div>
 		</div>
 	</div>
-	{{/heatcontrol}}
+	{{/control}}
 </div>
 <div class="container">
 	Felülbírálások

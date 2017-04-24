@@ -20,7 +20,7 @@ class Calendar(models.Model):
     def __str__(self):
         return '%s' % self.day
 
-class HeatControl(models.Model):
+class Control(models.Model):
     """
     This enables heat-control operation for a sensor
 
@@ -32,6 +32,9 @@ class HeatControl(models.Model):
     kd = models.FloatField()
 
     def get_target_temp(self):
+        """
+        This calculates the target temperature, taking into account the available overrides
+        """
         now = timezone.now()
 
         hco = self.heatcontroloverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
@@ -50,8 +53,8 @@ class HeatControl(models.Model):
         return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
 
 class HeatControlProfile(models.Model):
-    """ Profile setting for a HeatControl unit """
-    heatcontrol = models.ForeignKey(HeatControl, on_delete=models.CASCADE)
+    """ Profile setting for a Control unit """
+    control = models.ForeignKey(Control, on_delete=models.CASCADE)
     daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
     start = models.TimeField()
     end = models.TimeField()
@@ -59,17 +62,17 @@ class HeatControlProfile(models.Model):
 
     class Meta:
         index_together = (
-                ('heatcontrol', 'daytype'),
+                ('control', 'daytype'),
                 )
 
     def __str__(self):
-        return '%s at %s[%s-%s]: %f' % (self.heatcontrol.sensor, self.daytype, self.start, self.end, self.target_temp)
+        return '%s at %s[%s-%s]: %f' % (self.control.sensor, self.daytype, self.start, self.end, self.target_temp)
 
     def save(self, *args, **kwargs):
         if self.end != datetime.time(0, 0) and self.end < self.start:
             raise ValidationError()
 
-        qs = HeatControlProfile.objects.filter(heatcontrol=self.heatcontrol, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
+        qs = HeatControlProfile.objects.filter(control=self.control, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
         if self.end != datetime.time(0, 0):
             qs = qs.filter(start__lt=self.end)
 
@@ -82,13 +85,13 @@ class HeatControlProfile(models.Model):
         return super(HeatControlProfile, self).save(*args, **kwargs)
 
 class HeatControlOverride(models.Model):
-    """ Simply override a setting for a period of time for a HeatControl unit """
-    heatcontrol = models.ForeignKey(HeatControl, on_delete=models.CASCADE)
+    """ Simply override a setting for a period of time for a Control unit """
+    control = models.ForeignKey(Control, on_delete=models.CASCADE)
     start = models.DateTimeField()
     end = models.DateTimeField()
     target_temp = models.FloatField()
 
     class Meta:
         index_together = (
-                ('heatcontrol', 'end'),
+                ('control', 'end'),
                 )
