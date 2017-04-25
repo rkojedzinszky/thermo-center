@@ -9,7 +9,7 @@ class Backend(ModelBackend):
 
             if user is not None:
                 for n in user.networkauth_set.all():
-                    p = ipaddress.ip_network(unicode(n.address))
+                    p = ipaddress.ip_network(n.address)
                     if remote_addr in p:
                         return user
 
