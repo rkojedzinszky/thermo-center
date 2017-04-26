@@ -35,6 +35,11 @@ class Control(models.Model):
         """
         This calculates the target temperature, taking into account the available overrides
         """
+        try:
+            return self.instantoverride.target_temp
+        except InstantOverride.DoesNotExist:
+            pass
+
         now = timezone.now()
 
         so = self.scheduledoverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
@@ -95,3 +100,45 @@ class ScheduledOverride(models.Model):
         index_together = (
                 ('control', 'end'),
                 )
+
+class InstantProfile(models.Model):
+    """ A Profile which contains Instant overrides """
+    name = models.CharField(max_length=50)
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return 'InstantProfile<{}>'.format(self.name)
+
+    def save(self, **kwargs):
+        if self.pk is not None:
+            if self.active:
+                for e in self.instantprofileentry_set.all():
+                    self.instantoverride_set.create(control=e.control, target_temp=e.target_temp)
+            else:
+                for e in self.instantprofileentry_set.all():
+                    self.instantoverride_set.filter(control=e.control).delete()
+
+        return super(InstantProfile, self).save(**kwargs)
+
+class InstantProfileEntry(models.Model):
+    """ An entry for an InstantProfile """
+    profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
+    control = models.ForeignKey(Control, on_delete=models.CASCADE)
+    target_temp = models.FloatField()
+
+    def __str__(self):
+        return 'InstantProfileEntry<{},{},{}>'.format(self.profile, self.control, self.target_temp)
+
+    class Meta:
+        unique_together = (
+                ('profile', 'control'),
+                )
+
+class InstantOverride(models.Model):
+    """ An actual instant override entity """
+    profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
+    control = models.OneToOneField(Control, on_delete=models.CASCADE)
+    target_temp = models.FloatField()
+
+    def __str__(self):
+        return 'InstantOverride<{},{},{}>'.format(self.profile, self.control, self.target_temp)
