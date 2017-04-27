@@ -87,3 +87,15 @@ class ScheduledOverrideResource(resource.ModelResource):
 
 ScheduledOverrideResourceInstance = ScheduledOverrideResource()
 restapi.RestApi.register(ScheduledOverrideResourceInstance)
+
+class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
+    def update_detail(self, object_list, bundle):
+        return True
+
+class InstantProfileResource(resource.ModelResource):
+    class Meta(resource.ModelResource.Meta):
+        queryset = models.InstantProfile.objects.all()
+        authorization = InstantProfileResourceAuthorization()
+
+InstantProfileResourceInstance = InstantProfileResource()
+restapi.RestApi.register(InstantProfileResourceInstance)

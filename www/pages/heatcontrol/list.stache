@@ -20,3 +20,10 @@
 {{/each}}
 </tbody>
 </table>
+<ul class="list-unstyled list-inline iprofiles">
+{{#each instantprofiles}}
+<li>
+	<button class="iprofile btn btn-default btn-lg {{ ip_classes . }}" ($click)="toggle()">{{ name }}</button>
+</li>
+{{/each}}
+</ul>
