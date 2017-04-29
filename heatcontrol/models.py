@@ -124,7 +124,7 @@ class InstantProfileEntry(models.Model):
     """ An entry for an InstantProfile """
     profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
-    target_temp = models.FloatField()
+    target_temp = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return 'InstantProfileEntry<{},{},{}>'.format(self.profile, self.control, self.target_temp)
@@ -138,7 +138,7 @@ class InstantOverride(models.Model):
     """ An actual instant override entity """
     profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
     control = models.OneToOneField(Control, on_delete=models.CASCADE)
-    target_temp = models.FloatField()
+    target_temp = models.FloatField(null=True)
 
     def __str__(self):
         return 'InstantOverride<{},{},{}>'.format(self.profile, self.control, self.target_temp)
