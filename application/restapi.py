@@ -41,12 +41,7 @@ class SessionResource(Resource):
         raise http.ImmediateHttpResponse(http.HttpUnauthorized())
 
     def obj_create(self, bundle, **kwargs):
-        remote_addr = bundle.request.META.get('REMOTE_ADDR', None)
-
-        if remote_addr:
-            remote_addr = ipaddress.ip_address(remote_addr)
-
-        user = authenticate(username=bundle.data['username'], password=bundle.data.pop('password', None), remote_addr=remote_addr)
+        user = authenticate(request=bundle.request, username=bundle.data['username'], password=bundle.data.pop('password', None))
 
         if user is not None and user.is_active:
             login(bundle.request, user)
