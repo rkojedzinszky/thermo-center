@@ -36,8 +36,8 @@ class Control(models.Model):
         This calculates the target temperature, taking into account the available overrides
         """
         try:
-            return self.instantoverride.target_temp
-        except InstantOverride.DoesNotExist:
+            return self.instantprofileentry_set.get(active=True).target_temp
+        except InstantProfileEntry.DoesNotExist:
             pass
 
         now = timezone.now()
@@ -111,12 +111,7 @@ class InstantProfile(models.Model):
 
     def save(self, **kwargs):
         if self.pk is not None:
-            if self.active:
-                for e in self.instantprofileentry_set.all():
-                    self.instantoverride_set.create(control=e.control, target_temp=e.target_temp)
-            else:
-                for e in self.instantprofileentry_set.all():
-                    self.instantoverride_set.filter(control=e.control).delete()
+            self.instantprofileentry_set.update(active=self.active)
 
         return super(InstantProfile, self).save(**kwargs)
 
@@ -125,6 +120,7 @@ class InstantProfileEntry(models.Model):
     profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
     target_temp = models.FloatField(null=True, blank=True)
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return 'InstantProfileEntry<{},{},{}>'.format(self.profile, self.control, self.target_temp)
@@ -133,12 +129,3 @@ class InstantProfileEntry(models.Model):
         unique_together = (
                 ('profile', 'control'),
                 )
-
-class InstantOverride(models.Model):
-    """ An actual instant override entity """
-    profile = models.ForeignKey(InstantProfile, on_delete=models.CASCADE)
-    control = models.OneToOneField(Control, on_delete=models.CASCADE)
-    target_temp = models.FloatField(null=True)
-
-    def __str__(self):
-        return 'InstantOverride<{},{},{}>'.format(self.profile, self.control, self.target_temp)
