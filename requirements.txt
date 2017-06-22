@@ -6,3 +6,4 @@ django-tastypie
 uwsgi
 ipaddress
 twisted
+psycopg2

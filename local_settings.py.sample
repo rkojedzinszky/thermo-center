@@ -1,27 +1,25 @@
 
 import os
 import tempfile
-from application.settings import BASE_DIR
 
 DATABASES = {
     'default': {
-        # default db with sqlite
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-
         # postgresql db with schema support
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'NAME': 'dbname',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbname',
         #'SCHEMA': '',
 
 	'CONN_MAX_AGE': None,
     }
 }
 
+# Change SECRET_KEY to a random value
+SECRET_KEY = 'change-this'
 
-SECRET_KEY = '@SECRET_KEY@'
-CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-@CACHE_DIR@')
+# Change CACHE_DIR for each different instance on the same machine
+CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
 
+# Change this to False on production system
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -38,4 +36,4 @@ SPI_DEV = (0, 0)
 # specify alternate root url, _WITHOUT_ leading slash, and _WITH_ trailing slash
 #WWW_ROOT = 'thermo/'
 
-del os, BASE_DIR
+del os, tempfile
