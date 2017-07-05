@@ -56,7 +56,7 @@ Then you may use the script to expose that GPIO to userspace, with:
 
 And configure this GPIO in local_settings.py.
 
-Using the attached adapter, with one CC1101 module one may use the following table:
+Using the attached [adapter](./simple-adapter/) , with one CC1101 module one may use the following table:
 
 | Board | GPIO | pin name |
 |-------|-----:|----------|
