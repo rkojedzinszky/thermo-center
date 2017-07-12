@@ -112,8 +112,3 @@ If everything is set up correctly, you may open your browser at http://<domain o
 
 # Configuring sensors
 TBD
-
-# Supporting
-You can support my work by sending Litecoins to [LfHg44ohMwrrhzH1L5APVopoXEYH8Dkcbf].
-
-[LfHg44ohMwrrhzH1L5APVopoXEYH8Dkcbf]: litecoin:LfHg44ohMwrrhzH1L5APVopoXEYH8Dkcbf
