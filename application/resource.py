@@ -12,7 +12,7 @@ class Resource(tResource):
 
 class ModelResource(tModelResource):
     class Meta(Resource.Meta):
-        pass
+        object_class = None
 
 from tastypie.authorization import Authorization
 
