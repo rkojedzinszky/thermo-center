@@ -3,7 +3,6 @@ spidev
 pycrypto
 django<2
 django-tastypie
-uwsgi
 ipaddress
 twisted
 psycopg2
