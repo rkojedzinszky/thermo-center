@@ -5,6 +5,7 @@ import logging
 import time
 import threading
 import queue
+import paho.mqtt.client as mqtt
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import connection
@@ -37,6 +38,18 @@ class Receiver(RadioBase):
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
         self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
 
+    def _mqtt_setup(self):
+        if hasattr(settings, 'MQTT_HOST'):
+            self._mqtt = mqtt.Client()
+            self._mqtt.loop_start()
+            self._mqtt.connect(settings.MQTT_HOST, settings.MQTT_PORT)
+        else:
+            self._mqtt = None
+
+    def _mqtt_teardown(self):
+        if hasattr(self, '_mqtt') and self._mqtt:
+            self._mqtt.loop_stop()
+
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
 
@@ -51,12 +64,14 @@ class Receiver(RadioBase):
         self._q = queue.Queue()
         self._t = threading.Thread(target=self._receive_thread)
         self._t.start()
+        self._mqtt_setup()
 
     def _wdt_timeout(self):
         logger.warn('Watchdog timeout, resetting radio')
         self._setup_radio()
 
     def stop(self):
+        self._mqtt_teardown()
         self._watchdog.cancel()
         self._q.put(None)
         self._t.join()
@@ -170,6 +185,6 @@ class Receiver(RadioBase):
                 logger.debug('%s: pid control=%f', s, pcv)
                 metrics.append(PIDControlValue(pcv))
 
-        s.feed(seq, metrics, carbon=self._cc)
+        s.feed(seq, metrics, carbon=self._cc, mqtt=self._mqtt)
 
         self._watchdog.reset(WATCHDOG_TIMEOUT)

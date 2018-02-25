@@ -94,6 +94,11 @@ RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 SPI_MODE = 0
 SPI_FREQ = 100000
 
+# define MQTT_HOST to enable feeding data to mqtt broker
+#MQTT_HOST = 'localhost'
+MQTT_PORT = 1883
+MQTT_PREFIX = 'thsensor/'
+
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True

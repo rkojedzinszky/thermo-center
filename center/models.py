@@ -1,5 +1,6 @@
 import re
 import logging
+import json
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
@@ -85,7 +86,7 @@ class Sensor(models.Model):
     def _carbon_path(self):
         return 'sensor.%02x' % self.pk
 
-    def feed(self, seq, metrics, carbon=None):
+    def feed(self, seq, metrics, carbon=None, mqtt=None):
         ts = time.time()
         avg = self._validate_seq(ts, seq)
         cachevalues = {'valid': avg is not None}
@@ -107,6 +108,8 @@ class Sensor(models.Model):
             cachevalues['last_tsf'] = self.last_tsf
 
         cache.set(self._carbon_path(), cachevalues)
+        if mqtt:
+            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk), json.dumps(cachevalues))
 
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time

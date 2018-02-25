@@ -6,3 +6,4 @@ django-tastypie
 ipaddress
 twisted
 psycopg2
+paho-mqtt
