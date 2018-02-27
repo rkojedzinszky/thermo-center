@@ -109,7 +109,7 @@ class Sensor(models.Model):
 
         cache.set(self._carbon_path(), cachevalues)
         if mqtt:
-            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk), json.dumps(cachevalues))
+            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk), json.dumps(cachevalues, separators=(',',':')))
 
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time
