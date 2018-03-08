@@ -1,6 +1,6 @@
 """ API for heatcontrol """
 
-import time
+import datetime, time
 from tastypie import fields
 from django.core.cache import cache
 from tastypie.utils import timezone
@@ -9,7 +9,6 @@ from center.restapi import THSensorResource, THSensorResourceInstance
 from application import restapi, resource
 from heatcontrol import models
 from tastypie.bundle import Bundle
-from tastypie import fields
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,6 +17,9 @@ class DayTypeResource(resource.ModelResource):
     class Meta(resource.ModelResource.Meta):
         queryset = models.DayType.objects.all()
         authorization = ReadOnlyAuthorization()
+        filtering = {
+                'name': 'exact',
+                }
 
 DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
@@ -99,3 +101,30 @@ class InstantProfileResource(resource.ModelResource):
 
 InstantProfileResourceInstance = InstantProfileResource()
 restapi.RestApi.register(InstantProfileResourceInstance)
+
+class CurrentDaytypeAuthorization(ReadOnlyAuthorization):
+    def update_detail(self, object_list, bundle):
+        return True
+
+class CurrentDaytypeResource(resource.ModelResource):
+    daytype = fields.CharField()
+
+    class Meta(resource.ModelResource.Meta):
+        queryset = models.Calendar.objects.all()
+        authorization = CurrentDaytypeAuthorization()
+        list_allowed_methods = []
+        detail_allowed_methods = ['get', 'patch']
+        fields = ('daytype',)
+
+    def dehydrate_daytype(self, bundle):
+        return bundle.obj.daytype.name
+
+    def hydrate_daytype(self, bundle):
+        bundle.obj.daytype = DayTypeResourceInstance.obj_get(bundle=Bundle(request=bundle.request), name=bundle.data['daytype'])
+        return bundle
+
+    def obj_get(self, bundle, **kwargs):
+        return models.Calendar.objects.get(day=datetime.date.today())
+
+CurrentDaytypeResourceInstance = CurrentDaytypeResource()
+restapi.RestApi.register(CurrentDaytypeResourceInstance)
