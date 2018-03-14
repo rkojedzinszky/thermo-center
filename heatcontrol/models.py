@@ -1,5 +1,6 @@
 
 import datetime
+from django.conf import settings
 from django.utils import timezone
 from django.db import models, IntegrityError
 from django.core.exceptions import ValidationError
@@ -52,7 +53,7 @@ class Control(models.Model):
         if hcp is not None:
             return hcp.target_temp
 
-        return None
+        return settings.HEATCONTROL_DEFAULT_TARGET_TEMPERATURE
 
     def __str__(self):
         return '%s[Kp=%f,Ki=%f,Kd=%f]' % (self.sensor, self.kp, self.ki, self.kd)
