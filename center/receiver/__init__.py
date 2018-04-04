@@ -1,9 +1,8 @@
 import os, sys
+import asyncio
 import select
 import logging
-from twisted.internet import reactor, interfaces, protocol
-from twisted.protocols import basic
-from zope.interface import implementer
+import paho.mqtt.client as mqtt
 from center import models
 from django.db.backends import signals
 from django.conf import settings
@@ -12,32 +11,25 @@ from center.receiver import radio, gpio
 
 logger = logging.getLogger(__name__)
 
-class Console(basic.LineOnlyReceiver):
-    delimiter = b'\n'
+class ConsoleClient(asyncio.Protocol):
+    def __init__(self, main):
+        self.main = main
 
-    def setMain(self, main):
-        self._main = main
-        return self
+    def connection_made(self, transport):
+        self.transport = transport
 
-    def lineReceived(self, line):
-        if line == b'stop':
-            self.sendLine(b'exiting')
-            self._main.stop()
-        elif line == b'configure':
-            self._main.startconfigurator()
-            reactor.callLater(15, self._main.startreceiver)
-            self.sendLine(b'entered sensor configuration mode')
-        elif line == b'reload':
-            self._main.startreceiver()
-            self.sendLine(b'reloaded receiver mode')
+    def data_received(self, data):
+        data = data.decode().strip()
 
-class ConsoleFactory(protocol.ServerFactory):
-    def setMain(self, main):
-        self._main = main
-        return self
+        if data == 'stop':
+            self.main.stop()
+        elif data == 'configure':
+            self.main.startconfigurator()
+            self.main.loop.call_later(15, self.main.startreceiver)
+        elif data == 'reload':
+            self.main.startreceiver()
 
-    def buildProtocol(self, addr):
-        return Console().setMain(self._main)
+        self.transport.close()
 
 class Main(object):
     """ Main radio handler daemon """
@@ -78,13 +70,41 @@ class Main(object):
                 os.dup2(fh.fileno(), sys.stdout.fileno())
                 os.dup2(fh.fileno(), sys.stderr.fileno())
 
-        self._listen = reactor.listenUNIX(settings.RECEIVER_SOCKET, ConsoleFactory().setMain(self), mode=0o660)
-
         signals.connection_created.connect(self._set_sync_commit_to_off)
+
+        self._mqtt_setup()
+
+        self.loop = asyncio.get_event_loop()
+
+        self.loop.create_task(self.start_console())
 
         self.startreceiver()
 
-        reactor.run()
+        self.loop.run_forever()
+
+        self._listen.close()
+
+        self._mqtt_teardown()
+
+    def _mqtt_setup(self):
+        if hasattr(settings, 'MQTT_HOST'):
+            self._mqtt = mqtt.Client()
+            self._mqtt.loop_start()
+            self._mqtt.connect(settings.MQTT_HOST, settings.MQTT_PORT)
+        else:
+            self._mqtt = None
+
+    def _mqtt_teardown(self):
+        if hasattr(self, '_mqtt') and self._mqtt:
+            self._mqtt.loop_stop()
+
+    async def start_console(self):
+        uumask = os.umask(0o077)
+        self._listen = await self.loop.create_unix_server(self.create_console_client, path=settings.RECEIVER_SOCKET)
+        os.umask(umask)
+
+    def create_console_client(self):
+        return ConsoleClient(self)
 
     def _set_sync_commit_to_off(self, sender, connection, **kwargs):
         try:
@@ -104,20 +124,18 @@ class Main(object):
         if self._loop:
             self._loop._stop()
         if cls:
-            self._loop = cls(self._radio, self._gpio)
+            self._loop = cls(self.loop, self._radio, self._gpio, self._mqtt)
             self._loop._start()
         else:
             self._loop = None
 
     def stop(self):
         self._setloop(None)
-        self._listen.stopListening()
-        reactor.stop()
+        self.loop.stop()
 
 class RadioBase(object):
     """ Base class for receiver and configurator mode """
 
-    @implementer(interfaces.IReadDescriptor)
     class GPIOInterruptHandler(object):
         def __init__(self, gpio, cb):
             self._poller = select.epoll()
@@ -126,35 +144,33 @@ class RadioBase(object):
             self._poller.register(gpio.fileno(), select.POLLPRI)
             self._cb = cb
 
-        def fileno(self):
-            return self._poller.fileno()
+        def enable(self):
+            asyncio.get_event_loop().add_reader(self._poller.fileno(), self._onread)
 
-        def doRead(self):
+        def disable(self):
+            asyncio.get_event_loop().remove_reader(self._poller.fileno())
+
+        def _onread(self):
             self._poller.poll()
             while self._gpio.value():
                 self._cb()
 
-        def logPrefix(self):
-            return 'GPIOInterruptHandler'
-
-        def connectionLost(self, reason):
-            pass
-
-    def __init__(self, radio, gpio):
+    def __init__(self, loop, radio, gpio, mqtt):
+        self.loop = loop
         self._radio = radio
-
         self._radio.reset()
         self._ih = RadioBase.GPIOInterruptHandler(gpio, self.oninterrupt)
+        self._mqtt = mqtt
         self._config = models.RFConfig.objects.select_related('rf_profile').get(pk=1)
 
     def oninterrupt(self, cb):
         raise NotImplementedError()
 
     def enable_interrupt(self):
-        reactor.addReader(self._ih)
+        self._ih.enable()
 
     def disable_interrupt(self):
-        reactor.removeReader(self._ih)
+        self._ih.disable()
 
     def _start(self):
         logger.info('%s starting' % self.name)

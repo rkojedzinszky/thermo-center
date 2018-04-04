@@ -3,14 +3,10 @@ import struct
 import re
 import logging
 import time
-import threading
-import queue
-import paho.mqtt.client as mqtt
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import connection
 from django.core import exceptions
-from twisted.internet import reactor
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models
 from center.carbon import PickleClient
@@ -21,6 +17,23 @@ PIDCONTROL_INTERVAL = 10 * 60
 WATCHDOG_TIMEOUT = 300
 
 logger = logging.getLogger(__name__)
+
+class Watchdog:
+    def __init__(self, loop, timeout, cb):
+        self.loop = loop
+        self.timeout = timeout
+        self.cb = cb
+        self.handle = None
+
+    def reset(self):
+        self.clear()
+        self.handle = self.loop.call_later(self.timeout, self.cb)
+
+    def clear(self):
+        if self.handle:
+            self.handle.cancel()
+            self.handle = None
+
 
 class PIDControlValue(sensorvalue.Value):
     metric = 'pidcontrol'
@@ -36,19 +49,8 @@ class Receiver(RadioBase):
         self._radio.xfer2(self._config.config_bytes())
         self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-        self._watchdog = reactor.callLater(WATCHDOG_TIMEOUT, self._wdt_timeout)
-
-    def _mqtt_setup(self):
-        if hasattr(settings, 'MQTT_HOST'):
-            self._mqtt = mqtt.Client()
-            self._mqtt.loop_start()
-            self._mqtt.connect(settings.MQTT_HOST, settings.MQTT_PORT)
-        else:
-            self._mqtt = None
-
-    def _mqtt_teardown(self):
-        if hasattr(self, '_mqtt') and self._mqtt:
-            self._mqtt.loop_stop()
+        self._watchdog = Watchdog(self.loop, WATCHDOG_TIMEOUT, self._wdt_timeout)
+        self._watchdog.reset()
 
     def start(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
@@ -61,21 +63,12 @@ class Receiver(RadioBase):
 
         self._icnt = 0
 
-        self._q = queue.Queue()
-        self._t = threading.Thread(target=self._receive_thread)
-        self._t.start()
-        self._mqtt_setup()
-
     def _wdt_timeout(self):
         logger.warn('Watchdog timeout, resetting radio')
         self._setup_radio()
 
     def stop(self):
-        self._mqtt_teardown()
-        self._watchdog.cancel()
-        self._q.put(None)
-        self._t.join()
-        pass
+        self._watchdog.clear()
 
     def oninterrupt(self):
         logger.debug('Receiver.oninterrupt (#%d)' % self._icnt)
@@ -103,26 +96,20 @@ class Receiver(RadioBase):
 
             # read one packet from radio
             data = self._radio.read_rxfifo(18)
-            self._q.put(data)
 
-    def _receive_thread(self):
-        while True:
-            p = self._q.get()
-            if p is None:
-                break
+            self.receive(data)
 
-            start = time.time()
+    def receive(self, data):
+        start = time.time()
 
-            try:
-                self._receive_packet(p)
-            except Exception as e:
-                logger.error('error processing packet: %s' % str(e))
+        try:
+            self._receive_packet(data)
+        except Exception as e:
+            logger.error('error processing packet: %s' % str(e))
 
-            end = time.time()
+        end = time.time()
 
-            logger.debug('Packet processed in %f seconds' % (end - start))
-
-        connection.close()
+        logger.debug('Packet processed in %f seconds' % (end - start))
 
     def _receive_packet(self, packet):
         metrics = [sensorvalue.RSSI(packet[16]), sensorvalue.LQI(packet[17] & 0x7f)]
@@ -187,4 +174,4 @@ class Receiver(RadioBase):
 
         s.feed(seq, metrics, carbon=self._cc, mqtt=self._mqtt)
 
-        self._watchdog.reset(WATCHDOG_TIMEOUT)
+        self._watchdog.reset()

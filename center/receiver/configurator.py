@@ -1,7 +1,6 @@
 
 import logging
 import time
-from twisted.internet import reactor
 from center.receiver import RadioBase, radio
 from center.models import Sensor
 

@@ -4,6 +4,5 @@ pycrypto
 django<2
 django-tastypie
 ipaddress
-twisted
 psycopg2
 paho-mqtt
