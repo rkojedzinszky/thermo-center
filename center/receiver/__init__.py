@@ -76,13 +76,13 @@ class Main(object):
 
         self.loop = asyncio.get_event_loop()
 
-        self.loop.create_task(self.start_console())
+        self.start_console()
 
         self.startreceiver()
 
         self.loop.run_forever()
 
-        self._listen.close()
+        self.console.close()
 
         self._mqtt_teardown()
 
@@ -98,9 +98,9 @@ class Main(object):
         if hasattr(self, '_mqtt') and self._mqtt:
             self._mqtt.loop_stop()
 
-    async def start_console(self):
-        uumask = os.umask(0o077)
-        self._listen = await self.loop.create_unix_server(self.create_console_client, path=settings.RECEIVER_SOCKET)
+    def start_console(self):
+        umask = os.umask(0o077)
+        self.console = self.loop.run_until_complete(self.loop.create_unix_server(self.create_console_client, path=settings.RECEIVER_SOCKET))
         os.umask(umask)
 
     def create_console_client(self):
