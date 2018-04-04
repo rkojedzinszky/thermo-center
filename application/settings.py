@@ -99,6 +99,9 @@ SPI_FREQ = 100000
 MQTT_PORT = 1883
 MQTT_PREFIX = 'thsensor/'
 
+# default heatcontrol target temperature
+HEATCONTROL_DEFAULT_TARGET_TEMPERATURE = None
+
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
