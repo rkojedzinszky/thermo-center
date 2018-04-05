@@ -3,7 +3,7 @@
 Mirrors https://github.com/rkojedzinszky/thermo-sensor/blob/master/common/include/sensorvalue.hpp
 """
 
-class Value(object):
+class Value:
     """ Base object representing a Sensor's value """
 
     def __init__(self, raw):
@@ -85,7 +85,7 @@ class LQI(UnsignedValue):
     t = 1
     metric = 'LQI'
 
-class SensorValueParser(object):
+class SensorValueParser:
     class InvalidType(Exception):
         pass
 

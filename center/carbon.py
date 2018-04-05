@@ -4,7 +4,7 @@ import socket
 import pickle
 import struct
 
-class PickleClient(object):
+class PickleClient:
     def __init__(self, endpoint):
         self._endpoint = endpoint
         self._socket = None

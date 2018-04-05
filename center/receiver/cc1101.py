@@ -1,7 +1,7 @@
 
-class CC1101(object):
+class CC1101:
     """ Represents a CC1101 radio """
-    class ConfReg(object):
+    class ConfReg:
         IOCFG2 = 0x00
         IOCFG1 = 0x01
         IOCFG0 = 0x02
@@ -51,7 +51,7 @@ class CC1101(object):
         TEST0 = 0x2E
         PATABLE = 0x3E
 
-    class CommandStrobe(object):
+    class CommandStrobe:
         SRES = 0x30
         SFSTXON = 0x31
         SXOFF = 0x32
@@ -66,7 +66,7 @@ class CC1101(object):
         SWORRST = 0x3C
         SNOP = 0x3D
 
-    class StatusReg(object):
+    class StatusReg:
         PARTNUM = 0x30
         VERSION = 0x31
         FREQEST = 0x32

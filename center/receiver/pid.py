@@ -1,12 +1,12 @@
 import time
 
-class PID(object):
+class PID:
     """ A tuned PID controller to accumulate errors on a fix
     time interval """
 
     DERIV_SPAN = 2
 
-    class Value(object):
+    class Value:
         """ Represents a value in a time point """
         __slots__ = ('_ts', '_value')
 

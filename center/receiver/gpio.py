@@ -1,7 +1,7 @@
 
 import os
 
-class GPIO(object):
+class GPIO:
     def __init__(self, path):
         self._path = path
         self._fd = os.open(self._path + '/value', os.O_RDWR)

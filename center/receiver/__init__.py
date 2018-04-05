@@ -31,7 +31,7 @@ class ConsoleClient(asyncio.Protocol):
 
         self.transport.close()
 
-class Main(object):
+class Main:
     """ Main radio handler daemon """
 
     def run(self, daemonize=True):
@@ -133,10 +133,10 @@ class Main(object):
         self._setloop(None)
         self.loop.stop()
 
-class RadioBase(object):
+class RadioBase:
     """ Base class for receiver and configurator mode """
 
-    class GPIOInterruptHandler(object):
+    class GPIOInterruptHandler:
         def __init__(self, gpio, cb):
             self._poller = select.epoll()
             self._gpio = gpio
