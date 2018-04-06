@@ -22,12 +22,12 @@ class ConsoleClient(asyncio.Protocol):
         data = data.decode().strip()
 
         if data == 'stop':
-            self.main.stop()
+            self.main.loop.create_task(self.main.stop())
         elif data == 'configure':
-            self.main.startconfigurator()
-            self.main.loop.call_later(15, self.main.startreceiver)
+            self.main.loop.create_task(self.main.startconfigurator())
+            self.main.loop.call_later(1, self.main.startreceiver_sync)
         elif data == 'reload':
-            self.main.startreceiver()
+            self.main.loop.create_task(self.main.startreceiver())
 
         self.transport.close()
 
@@ -78,7 +78,7 @@ class Main:
 
         self.start_console()
 
-        self.startreceiver()
+        self.loop.create_task(self.startreceiver())
 
         self.loop.run_forever()
 
@@ -113,83 +113,81 @@ class Main:
         except:
             pass
 
-    def startreceiver(self):
-        self._setloop(receiver.Receiver)
+    def startreceiver_sync(self):
+        self.loop.create_task(self.startreceiver())
+
+    async def startreceiver(self):
+        await self._setloop(receiver.Receiver)
         self._loop.setpidmap(self._pidmap)
 
-    def startconfigurator(self):
-        self._setloop(configurator.Configurator)
+    async def startconfigurator(self):
+        await self._setloop(configurator.Configurator)
 
-    def _setloop(self, cls):
+    async def _setloop(self, cls):
         if self._loop:
-            self._loop._stop()
+            await self._loop.stop()
         if cls:
             self._loop = cls(self.loop, self._radio, self._gpio, self._mqtt)
-            self._loop._start()
+            self._loop.start()
         else:
             self._loop = None
 
-    def stop(self):
-        self._setloop(None)
+    async def stop(self):
+        await self._setloop(None)
         self.loop.stop()
 
 class RadioBase:
     """ Base class for receiver and configurator mode """
 
     class GPIOInterruptHandler:
-        def __init__(self, gpio, cb):
+        def __init__(self, loop, gpio):
+            self._loop = loop
             self._poller = select.epoll()
             self._gpio = gpio
             self._gpio.interrupt('rising')
             self._poller.register(gpio.fileno(), select.POLLPRI)
-            self._cb = cb
 
         def enable(self):
-            asyncio.get_event_loop().add_reader(self._poller.fileno(), self._onread)
+            self._loop.add_reader(self._poller.fileno(), self._onread)
 
         def disable(self):
-            asyncio.get_event_loop().remove_reader(self._poller.fileno())
+            self._loop.remove_reader(self._poller.fileno())
+
+        async def waitforinterrupt(self):
+            while True:
+                if self._gpio.value():
+                    return
+                self.interrupt = self._loop.create_future()
+                self.enable()
+                try:
+                    await self.interrupt
+                finally:
+                    self.disable()
 
         def _onread(self):
             self._poller.poll()
-            while self._gpio.value():
-                self._cb()
+            self.interrupt.set_result(True)
 
     def __init__(self, loop, radio, gpio, mqtt):
         self.loop = loop
         self._radio = radio
         self._radio.reset()
-        self._ih = RadioBase.GPIOInterruptHandler(gpio, self.oninterrupt)
+        self._ih = RadioBase.GPIOInterruptHandler(loop, gpio)
         self._mqtt = mqtt
         self._config = models.RFConfig.objects.select_related('rf_profile').get(pk=1)
 
-    def oninterrupt(self, cb):
-        raise NotImplementedError()
-
-    def enable_interrupt(self):
-        self._ih.enable()
-
-    def disable_interrupt(self):
-        self._ih.disable()
-
-    def _start(self):
-        logger.info('%s starting' % self.name)
-        self.start()
-        logger.info('%s started' % self.name)
-
     def start(self):
-        """ Override this in subclasses """
+        logger.info('{} starting'.format(self.name))
+        self.task = self.loop.create_task(self.main())
 
-    def _stop(self):
-        logger.info('%s stopping' % self.name)
-        self._radio.sidle()
-        self.disable_interrupt()
-        del self._ih
-        self.stop()
-        logger.info('%s stopped' % self.name)
+    async def stop(self):
+        logger.info('{} stopping'.format(self.name))
+        self.task.cancel()
+        await asyncio.wait([self.task])
+        logger.info('{} finished'.format(self.name))
 
-    def stop(self):
-        """ Override this in subclasses """
+    async def waitforinterrupt(self):
+        await self._ih.waitforinterrupt()
 
 from center.receiver import receiver
 from center.receiver import configurator

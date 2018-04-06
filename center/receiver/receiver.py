@@ -3,6 +3,7 @@ import struct
 import re
 import logging
 import time
+import asyncio
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import connection
@@ -18,23 +19,6 @@ WATCHDOG_TIMEOUT = 300
 
 logger = logging.getLogger(__name__)
 
-class Watchdog:
-    def __init__(self, loop, timeout, cb):
-        self.loop = loop
-        self.timeout = timeout
-        self.cb = cb
-        self.handle = None
-
-    def reset(self):
-        self.clear()
-        self.handle = self.loop.call_later(self.timeout, self.cb)
-
-    def clear(self):
-        if self.handle:
-            self.handle.cancel()
-            self.handle = None
-
-
 class PIDControlValue(sensorvalue.Value):
     metric = 'pidcontrol'
 
@@ -49,55 +33,46 @@ class Receiver(RadioBase):
         self._radio.xfer2(self._config.config_bytes())
         self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-        self._watchdog = Watchdog(self.loop, WATCHDOG_TIMEOUT, self._wdt_timeout)
-        self._watchdog.reset()
 
-    def start(self):
+    async def main(self):
         self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
-
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
-
         self._setup_radio()
 
-        self.enable_interrupt()
-
-        self._icnt = 0
-
-    def _wdt_timeout(self):
-        logger.warn('Watchdog timeout, resetting radio')
-        self._setup_radio()
-
-    def stop(self):
-        self._watchdog.clear()
-
-    def oninterrupt(self):
-        logger.debug('Receiver.oninterrupt (#%d)' % self._icnt)
-        self._icnt += 1
         while True:
-            data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
-            logger.debug('CC1101.RXBYTES=%d' % data_len)
+            try:
+                await asyncio.wait_for(self.waitforinterrupt(), timeout=WATCHDOG_TIMEOUT)
+            except asyncio.TimeoutError:
+                logger.warn('Watchdog timeout, resetting radio')
+                self._setup_radio()
+            else:
+                self.receive_one()
 
-            if data_len & 0x80:
-                logger.warn('CC1101 RX_OVERFLOW')
-                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-                self._radio.wait_sidle()
-                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-                return
+    def receive_one(self):
+        data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
+        logger.debug('CC1101.RXBYTES=%d' % data_len)
 
-            if data_len > 54:
-                logger.warn('CC1101 suspicious RXBYTES')
-                self._radio.sidle()
-                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-                return
+        if data_len & 0x80:
+            logger.warn('CC1101 RX_OVERFLOW')
+            self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+            self._radio.wait_sidle()
+            self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+            return
 
-            if data_len < 18:
-                break
+        if data_len > 54:
+            logger.warn('CC1101 suspicious RXBYTES')
+            self._radio.sidle()
+            self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+            self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+            return
 
-            # read one packet from radio
-            data = self._radio.read_rxfifo(18)
+        if data_len < 18:
+            return
 
-            self.receive(data)
+        # read one packet from radio
+        data = self._radio.read_rxfifo(18)
+
+        self.receive(data)
 
     def receive(self, data):
         start = time.time()
@@ -173,5 +148,3 @@ class Receiver(RadioBase):
                 metrics.append(PIDControlValue(pcv))
 
         s.feed(seq, metrics, carbon=self._cc, mqtt=self._mqtt)
-
-        self._watchdog.reset()

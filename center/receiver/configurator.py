@@ -27,20 +27,20 @@ class Configurator(RadioBase):
     def _gen_next_id(self):
         self._next_id = (set(range(1, 128)) - set([s.pk for s in Sensor.objects.all()])).pop()
 
-    def start(self):
+    async def main(self):
         self._prepare_config_reply()
         self._gen_next_id()
 
         self._radio.setup_basic()
         self._radio.setup_for_conf()
-        self.enable_interrupt()
 
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
 
-    def stop(self):
-        pass
+        while True:
+            await self.waitforinterrupt()
+            self.receive_one()
 
-    def oninterrupt(self):
+    def receive_one(self):
         data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
         data = self._radio.read_rxfifo(data_len)
         if data_len != 3 or data[0] != 2 or data[1] != 0:
