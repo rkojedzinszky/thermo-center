@@ -46,9 +46,9 @@ class Receiver(RadioBase):
                 logger.warn('Watchdog timeout, resetting radio')
                 self._setup_radio()
             else:
-                self.receive_one()
+                self.receive_many()
 
-    def receive_one(self):
+    def receive_many(self):
         data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
         logger.debug('CC1101.RXBYTES=%d' % data_len)
 
@@ -66,13 +66,11 @@ class Receiver(RadioBase):
             self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
             return
 
-        if data_len < 18:
-            return
-
-        # read one packet from radio
-        data = self._radio.read_rxfifo(18)
-
-        self.receive(data)
+        while data_len >= 18:
+            # read one packet from radio
+            data = self._radio.read_rxfifo(18)
+            self.receive(data)
+            data_len -= len(data)
 
     def receive(self, data):
         start = time.time()
