@@ -49,28 +49,30 @@ class Receiver(RadioBase):
                 self.receive_many()
 
     def receive_many(self):
-        data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
-        logger.debug('CC1101.RXBYTES=%d' % data_len)
+        while True:
+            data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
+            logger.debug('CC1101.RXBYTES=%d' % data_len)
 
-        if data_len & 0x80:
-            logger.warn('CC1101 RX_OVERFLOW')
-            self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-            self._radio.wait_sidle()
-            self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-            return
+            if data_len & 0x80:
+                logger.warn('CC1101 RX_OVERFLOW')
+                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+                self._radio.wait_sidle()
+                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+                return
 
-        if data_len > 54:
-            logger.warn('CC1101 suspicious RXBYTES')
-            self._radio.sidle()
-            self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-            self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-            return
+            if data_len > 54:
+                logger.warn('CC1101 suspicious RXBYTES')
+                self._radio.sidle()
+                self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
+                self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+                return
 
-        while data_len >= 18:
+            if data_len < 18:
+                break
+
             # read one packet from radio
             data = self._radio.read_rxfifo(18)
             self.receive(data)
-            data_len -= len(data)
 
     def receive(self, data):
         start = time.time()
