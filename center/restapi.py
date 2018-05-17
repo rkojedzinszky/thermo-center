@@ -4,13 +4,15 @@ import datetime
 import time
 from django.utils import timezone
 from django.core.cache import cache
-from application import restapi, resource
+from application import restapi
+from application.resource import ResourceMetaCommon
 from center.models import Sensor
+from tastypie import resources
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization, Authorization as RWAuthorization
 from tastypie import fields
 
-class SensorResource(resource.ModelResource):
+class SensorResource(resources.ModelResource):
     valid = fields.BooleanField(null=True, readonly=True, help_text='Recent update status')
     vcc = fields.FloatField(null=True, help_text='Power in battery in sensor')
     rssi = fields.FloatField(null=True, help_text='RSSI of sensor')
@@ -22,7 +24,7 @@ class SensorResource(resource.ModelResource):
     sensor_resync = fields.ForeignKey('center.restapi.SensorResyncResource', '', readonly=True, null=True)
     thsensor = fields.ForeignKey('center.restapi.THSensorResource', '', readonly=True, null=True)
 
-    class Meta(resource.ModelResource.Meta):
+    class Meta(ResourceMetaCommon):
         queryset = Sensor.objects.all()
         authorization = ReadOnlyAuthorization()
         excludes = ('last_seq',)

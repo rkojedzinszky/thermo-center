@@ -3,18 +3,20 @@
 import datetime, time
 from tastypie import fields
 from django.core.cache import cache
+from tastypie import resources
 from tastypie.utils import timezone
 from tastypie.authorization import ReadOnlyAuthorization, Authorization
 from center.restapi import THSensorResource, THSensorResourceInstance
-from application import restapi, resource
+from application import restapi
+from application.resource import ResourceMetaCommon
 from heatcontrol import models
 from tastypie.bundle import Bundle
 
 import logging
 logger = logging.getLogger(__name__)
 
-class DayTypeResource(resource.ModelResource):
-    class Meta(resource.ModelResource.Meta):
+class DayTypeResource(resources.ModelResource):
+    class Meta(ResourceMetaCommon):
         queryset = models.DayType.objects.all()
         authorization = ReadOnlyAuthorization()
         filtering = {
@@ -24,7 +26,7 @@ class DayTypeResource(resource.ModelResource):
 DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
 
-class ControlResource(resource.ModelResource):
+class ControlResource(resources.ModelResource):
     sensor_id = fields.IntegerField('sensor_id', readonly=True)
     name = fields.CharField(readonly=True)
     temperature = fields.FloatField(readonly=True, null=True)
@@ -32,7 +34,7 @@ class ControlResource(resource.ModelResource):
     pidcontrol = fields.FloatField(readonly=True, null=True)
     age = fields.FloatField(null=True, readonly=True)
 
-    class Meta(resource.ModelResource.Meta):
+    class Meta(ResourceMetaCommon):
         queryset = models.Control.objects.select_related('sensor').order_by('sensor__id')
         authorization = Authorization()
 
@@ -59,11 +61,11 @@ class ControlResource(resource.ModelResource):
 ControlResourceInstance = ControlResource()
 restapi.RestApi.register(ControlResourceInstance)
 
-class ProfileResource(resource.ModelResource):
+class ProfileResource(resources.ModelResource):
     control = fields.ForeignKey(ControlResource, 'control')
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
-    class Meta(resource.ModelResource.Meta):
+    class Meta(ResourceMetaCommon):
         queryset = models.Profile.objects.order_by('start')
         authorization = Authorization()
         filtering = {
@@ -74,10 +76,10 @@ class ProfileResource(resource.ModelResource):
 ProfileResourceInstance = ProfileResource()
 restapi.RestApi.register(ProfileResourceInstance)
 
-class ScheduledOverrideResource(resource.ModelResource):
+class ScheduledOverrideResource(resources.ModelResource):
     control = fields.ForeignKey(ControlResource, 'control')
 
-    class Meta(resource.ModelResource.Meta):
+    class Meta(ResourceMetaCommon):
         queryset = models.ScheduledOverride.objects.order_by('start')
         authorization = Authorization()
         filtering = {
@@ -94,8 +96,8 @@ class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
     def update_detail(self, object_list, bundle):
         return True
 
-class InstantProfileResource(resource.ModelResource):
-    class Meta(resource.ModelResource.Meta):
+class InstantProfileResource(resources.ModelResource):
+    class Meta(ResourceMetaCommon):
         queryset = models.InstantProfile.objects.all()
         authorization = InstantProfileResourceAuthorization()
 
@@ -106,10 +108,10 @@ class CurrentDaytypeAuthorization(ReadOnlyAuthorization):
     def update_detail(self, object_list, bundle):
         return True
 
-class CurrentDaytypeResource(resource.ModelResource):
+class CurrentDaytypeResource(resources.ModelResource):
     daytype = fields.CharField()
 
-    class Meta(resource.ModelResource.Meta):
+    class Meta(ResourceMetaCommon):
         queryset = models.Calendar.objects.all()
         authorization = CurrentDaytypeAuthorization()
         list_allowed_methods = []

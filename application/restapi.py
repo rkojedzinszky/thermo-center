@@ -4,7 +4,8 @@ import time
 import ipaddress
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
-from application.resource import Resource, ModelResource
+from tastypie.resources import Resource
+from application.resource import ResourceMetaCommon
 from tastypie.authentication import Authentication
 from tastypie import fields
 from tastypie.bundle import Bundle
@@ -16,9 +17,8 @@ RestApi = Api(api_name='v1')
 class SessionResource(Resource):
     id = fields.CharField()
 
-    class Meta(Resource.Meta):
+    class Meta(ResourceMetaCommon):
         authentication = Authentication()
-        always_return_data = True
         list_allowed_methods = ['get', 'post']
         detail_allowed_methods = ['delete']
 
