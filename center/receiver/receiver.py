@@ -41,15 +41,19 @@ class Receiver(RadioBase):
 
         while True:
             try:
-                await asyncio.wait_for(self.waitforinterrupt(), timeout=WATCHDOG_TIMEOUT)
+                packets = await asyncio.wait_for(self.receive_many(), timeout=WATCHDOG_TIMEOUT)
             except asyncio.TimeoutError:
                 logger.warn('Watchdog timeout, resetting radio')
                 self._setup_radio()
             else:
-                self.receive_many()
+                for packet in packets:
+                    self.receive(packet)
 
-    def receive_many(self):
-        while True:
+    async def receive_many(self):
+        packets = []
+        while len(packets) == 0:
+            await self.waitforinterrupt()
+
             data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
             logger.debug('CC1101.RXBYTES=%d' % data_len)
 
@@ -58,21 +62,21 @@ class Receiver(RadioBase):
                 self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
                 self._radio.wait_sidle()
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-                return
+                continue
 
             if data_len > 54:
                 logger.warn('CC1101 suspicious RXBYTES')
                 self._radio.sidle()
                 self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
-                return
+                continue
 
-            if data_len < 18:
-                break
+            while data_len >= 18:
+                # read one packet from radio
+                packets.append(self._radio.read_rxfifo(18))
+                data_len -= 18
 
-            # read one packet from radio
-            data = self._radio.read_rxfifo(18)
-            self.receive(data)
+        return packets
 
     def receive(self, data):
         start = time.time()
