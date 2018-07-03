@@ -35,7 +35,8 @@ class Receiver(RadioBase):
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
 
     async def main(self):
-        self._cc = PickleClient(settings.CARBON_PICKLE_ENDPOINT)
+        self._cc = PickleClient(self.loop, settings.CARBON_PICKLE_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE)
+        self._cc_task = self.loop.create_task(self._cc.feed())
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
         self._setup_radio()
 
@@ -48,6 +49,10 @@ class Receiver(RadioBase):
             else:
                 for packet in packets:
                     self.receive(packet)
+
+    async def stop(self):
+        self._cc_task.cancel()
+        await super().stop()
 
     async def receive_many(self):
         packets = []

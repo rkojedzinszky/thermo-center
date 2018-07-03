@@ -1,33 +1,35 @@
 """ Carbon pickle feed client """
 
 import socket
+import asyncio
 import pickle
 import struct
+from center.dropqueue import DropQueue
 
 class PickleClient:
-    def __init__(self, endpoint):
+    def __init__(self, loop, endpoint, maxsize):
+        self.loop = loop
         self._endpoint = endpoint
         self._socket = None
+        self.queue = DropQueue(maxsize=maxsize)
 
-    def _open(self):
-        """ open a new connection """
-        self._socket = None
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(self._endpoint)
-        self._socket = s
+    async def feed(self):
+        while True:
+            sock = None
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.setblocking(False)
+                await self.loop.sock_connect(sock, self._endpoint)
+                while True:
+                    await self.loop.sock_sendall(sock, await self.queue.get())
+            except asyncio.CancelledError:
+                break
+            except:
+                await asyncio.sleep(1)
+            finally:
+                sock.close()
 
     def send(self, data):
         payload = pickle.dumps(data, protocol=2)
         header = struct.pack('!L', len(payload))
-        loop = 2
-
-        while loop > 0:
-            if self._socket is not None:
-                try:
-                    self._socket.send(header + payload)
-                    break
-                except IOError:
-                    pass
-
-            self._open()
-            loop -= 1
+        self.queue.dput(header + payload)

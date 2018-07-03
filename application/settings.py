@@ -84,6 +84,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
 
 CARBON_PICKLE_ENDPOINT = ('127.0.0.1', 2004)
 CARBON_CACHE_ENDPOINT = ('127.0.0.1', 7002)
+# Carbon queue size
+CARBON_QUEUE_MAXSIZE = 100
 
 WWW_ROOT = '/'
 
