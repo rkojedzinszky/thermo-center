@@ -157,6 +157,7 @@ class RadioBase:
             while True:
                 if self._gpio.value():
                     return
+                await asyncio.sleep(0)
                 self.interrupt = self._loop.create_future()
                 self.enable()
                 try:
