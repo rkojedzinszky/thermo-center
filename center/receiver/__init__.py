@@ -2,7 +2,7 @@ import os, sys
 import asyncio
 import select
 import logging
-import paho.mqtt.client as mqtt
+from center.receiver.mqtt import MqttClient
 from center import models
 from django.db.backends import signals
 from django.conf import settings
@@ -72,9 +72,9 @@ class Main:
 
         signals.connection_created.connect(self._set_sync_commit_to_off)
 
-        self._mqtt_setup()
-
         self.loop = asyncio.get_event_loop()
+
+        self._mqtt_setup()
 
         self.start_console()
 
@@ -88,15 +88,15 @@ class Main:
 
     def _mqtt_setup(self):
         if hasattr(settings, 'MQTT_HOST'):
-            self._mqtt = mqtt.Client()
-            self._mqtt.loop_start()
-            self._mqtt.connect(settings.MQTT_HOST, settings.MQTT_PORT)
+            self._mqtt = MqttClient(self.loop, (settings.MQTT_HOST, settings.MQTT_PORT))
+            self._mqtt.start()
         else:
             self._mqtt = None
 
     def _mqtt_teardown(self):
-        if hasattr(self, '_mqtt') and self._mqtt:
-            self._mqtt.loop_stop()
+        if self._mqtt:
+            self.loop.run_until_complete(self._mqtt.stop())
+            self._mqtt = None
 
     def start_console(self):
         umask = os.umask(0o077)
