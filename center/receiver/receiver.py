@@ -12,6 +12,7 @@ from center.receiver import RadioBase, radio, sensorvalue
 from center import models
 from center.carbon import PickleClient
 from center.receiver import pid
+from center.receiver.tbf import TokenBucketFilter
 
 PIDCONTROL_INTERVAL = 10 * 60
 
@@ -25,6 +26,9 @@ class PIDControlValue(sensorvalue.Value):
 class Receiver(RadioBase):
     name = 'receiver'
 
+    class InterruptStorm(RuntimeError):
+        pass
+
     def setpidmap(self, pidmap):
         self._pidmap = pidmap
 
@@ -33,11 +37,13 @@ class Receiver(RadioBase):
         self._radio.xfer2(self._config.config_bytes())
         self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
+        self._tbf.reset()
 
     async def main(self):
         self._cc = PickleClient(self.loop, settings.CARBON_PICKLE_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE)
         self._cc_task = self.loop.create_task(self._cc.feed())
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
+        self._tbf = TokenBucketFilter(settings.INTERRUPT_MAX_RATE, settings.INTERRUPT_MAX_BURST, self.loop.time)
         self._setup_radio()
 
         while True:
@@ -45,6 +51,9 @@ class Receiver(RadioBase):
                 packets = await asyncio.wait_for(self.receive_many(), timeout=WATCHDOG_TIMEOUT)
             except asyncio.TimeoutError:
                 logger.warn('Watchdog timeout, resetting radio')
+                self._setup_radio()
+            except Receiver.InterruptStorm:
+                logger.warn('Interrupt storm detected, resetting radio')
                 self._setup_radio()
             else:
                 for packet in packets:
@@ -58,6 +67,10 @@ class Receiver(RadioBase):
         packets = []
         while len(packets) == 0:
             await self.waitforinterrupt()
+
+            logger.debug('INT TBF Capacity: {}'.format(self._tbf.capacity))
+            if not self._tbf.feed(1):
+                raise Receiver.InterruptStorm
 
             data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
             logger.debug('CC1101.RXBYTES=%d' % data_len)

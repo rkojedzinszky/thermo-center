@@ -104,6 +104,10 @@ MQTT_PREFIX = 'thsensor/'
 # default heatcontrol target temperature
 HEATCONTROL_DEFAULT_TARGET_TEMPERATURE = None
 
+# Interrupt Storm Control - defaults suitable for 30 devices
+INTERRUPT_MAX_RATE = 1
+INTERRUPT_MAX_BURST = 30
+
 from local_settings import *
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
