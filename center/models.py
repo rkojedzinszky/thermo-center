@@ -1,24 +1,27 @@
+""" thermo-center main models """
+
 import re
 import logging
 import json
+import time
+import random
+import os
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
 import center.fields
-import datetime
-import time
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # pylint: disable=invalid-name
 
-def _parse_hex(s):
-    return [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', s)]
+def _parse_hex(string):
+    return [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', string)]
 
 class RFProfile(models.Model):
     """ A profile for RF communication """
     name = models.CharField(max_length=50)
     confregs = models.CharField(max_length=128)
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods,missing-docstring
         ordering = ['pk']
 
     def __str__(self):
@@ -35,16 +38,18 @@ class RFConfig(models.Model):
         return 'RFConfig'
 
     def config_bytes(self):
+        """ Generate configuration bytes for CC1101 """
         from center.receiver import radio
-        regs = _parse_hex(self.rf_profile.confregs)
+        regs = _parse_hex(self.rf_profile.confregs) # pylint: disable=no-member
         regs.extend([radio.Radio.ConfReg.CHANNR, self.rf_channel])
         return regs
 
     def aes_bytes(self):
+        """ Parse aes_key into int array """
         return _parse_hex(self.aes_key)
 
     def _generate_config(self):
-        import random, os
+        """ Initialise a new RF envronment """
         generator = random.SystemRandom()
 
         self.rf_channel = generator.randrange(256)
@@ -61,11 +66,11 @@ class Sensor(models.Model):
     def __str__(self):
         return 'Sensor %02x' % self.id
 
-    def _validate_seq(self, ts, seq):
+    def _validate_seq(self, timestamp, seq):
         avg = 0
 
         if self.last_tsf:
-            interval = ts - self.last_tsf
+            interval = timestamp - self.last_tsf
 
             if self.last_seq is None:
                 valid = interval <= 34
@@ -75,11 +80,11 @@ class Sensor(models.Model):
                 valid = 26 <= avg <= 34
 
             if not valid:
-                logger.warn('%s: received invalid update' % self)
+                logger.warning('%s: received invalid update', self)
                 return None
 
         self.last_seq = seq
-        self.last_tsf = ts
+        self.last_tsf = timestamp
 
         return avg
 
@@ -87,12 +92,13 @@ class Sensor(models.Model):
         return 'sensor.%02x' % self.pk
 
     def feed(self, seq, metrics, carbon=None, mqtt=None):
-        ts = time.time()
-        avg = self._validate_seq(ts, seq)
+        """ Feed data to Sensor """
+        timestamp = time.time()
+        avg = self._validate_seq(timestamp, seq)
         cachevalues = {'valid': avg is not None}
 
         if cachevalues['valid']:
-            logger.info('%s: update: seq=%d' % (self, seq))
+            logger.info('%s: update: seq=%d', self, seq)
 
             self.save(update_fields=('last_seq', 'last_tsf'))
 
@@ -100,8 +106,9 @@ class Sensor(models.Model):
             cachevalues['intvl'] = avg
 
             if carbon:
-                tsi = int(ts)
-                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v)) for k, v in cachevalues.items()]
+                tsi = int(timestamp)
+                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v))
+                               for k, v in cachevalues.items()]
                 carbon.send(carbon_data)
 
             cachevalues['last_seq'] = self.last_seq
@@ -109,7 +116,8 @@ class Sensor(models.Model):
 
         cache.set(self._carbon_path(), cachevalues)
         if mqtt:
-            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk), json.dumps(cachevalues, separators=(',',':')).encode())
+            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk),
+                         json.dumps(cachevalues, separators=(',', ':')).encode())
 
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time
@@ -121,6 +129,5 @@ class Sensor(models.Model):
         self.save()
 
     def get_cache(self):
+        """ Retrieve metrics stored in cache """
         return cache.get(self._carbon_path())
-
-import heatcontrol.models
