@@ -5,4 +5,4 @@ django<2
 django-tastypie
 ipaddress
 psycopg2
-https://github.com/beerfactory/hbmqtt/archive/master.zip
+hbmqtt
