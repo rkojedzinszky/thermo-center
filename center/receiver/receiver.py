@@ -32,10 +32,10 @@ class Receiver(RadioBase):
     def setpidmap(self, pidmap):
         self._pidmap = pidmap
 
-    def _setup_radio(self):
-        self._radio.setup_basic()
+    async def _setup_radio(self):
+        await self._radio.setup_basic()
         self._radio.xfer2(self._config.config_bytes())
-        self._radio.setup_for_rx()
+        await self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
         self._tbf.reset()
 
@@ -44,7 +44,7 @@ class Receiver(RadioBase):
         self._cc_task = self.loop.create_task(self._cc.feed())
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
         self._tbf = TokenBucketFilter(settings.INTERRUPT_MAX_RATE, settings.INTERRUPT_MAX_BURST, self.loop.time)
-        self._setup_radio()
+        await self._setup_radio()
 
         while True:
             try:
@@ -54,7 +54,7 @@ class Receiver(RadioBase):
                 self._setup_radio()
             except Receiver.InterruptStorm:
                 logger.warn('Interrupt storm detected, resetting radio')
-                self._setup_radio()
+                await self._setup_radio()
             else:
                 for packet in packets:
                     self.receive(packet)
@@ -78,13 +78,13 @@ class Receiver(RadioBase):
             if data_len & 0x80:
                 logger.warn('CC1101 RX_OVERFLOW')
                 self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-                self._radio.wait_sidle()
+                await self._radio.wait_sidle()
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 continue
 
             if data_len > 54:
                 logger.warn('CC1101 suspicious RXBYTES')
-                self._radio.sidle()
+                await self._radio.sidle()
                 self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
                 self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 continue

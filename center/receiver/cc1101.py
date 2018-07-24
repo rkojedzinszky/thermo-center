@@ -1,3 +1,4 @@
+import asyncio
 
 class CC1101:
     """ Represents a CC1101 radio """
@@ -88,24 +89,25 @@ class CC1101:
     def marcstate(self):
         return self.status(self.StatusReg.MARCSTATE) & 0x1f
 
-    def waitstate(self, state):
+    async def waitstate(self, state):
         while self.marcstate() != state:
-            pass
+            await asyncio.sleep(0)
 
-    def reset(self):
+    async def reset(self):
         self._spi.xfer([self.CommandStrobe.SRES])
-        self.waitstate(1)
+        self._spi.xfer([self.CommandStrobe.SRES])
+        await self.waitstate(1)
 
         # disable GDO[0,2] pins
         self.set(self.ConfReg.IOCFG2, 0x2e)
         self.set(self.ConfReg.IOCFG0, 0x2e)
 
-    def wait_sidle(self):
-        self.waitstate(1)
+    async def wait_sidle(self):
+        await self.waitstate(1)
 
-    def sidle(self):
+    async def sidle(self):
         self._spi.xfer2([self.CommandStrobe.SIDLE])
-        self.wait_sidle()
+        await self.wait_sidle()
 
     def get(self, reg):
         return self._spi.xfer2([reg | 0x80, 0])[1]

@@ -172,7 +172,6 @@ class RadioBase:
     def __init__(self, loop, radio, gpio, mqtt):
         self.loop = loop
         self._radio = radio
-        self._radio.reset()
         self._ih = RadioBase.GPIOInterruptHandler(loop, gpio)
         self._mqtt = mqtt
         self._config = models.RFConfig.objects.select_related('rf_profile').get(pk=1)

@@ -2,12 +2,12 @@
 from . import cc1101
 
 class Radio(cc1101.CC1101):
-    def calibrate(self):
+    async def calibrate(self):
         self.wcmd(self.CommandStrobe.SCAL)
-        self.waitstate(1)
+        await self.waitstate(1)
 
-    def setup_basic(self):
-        self.reset()
+    async def setup_basic(self):
+        await self.reset()
 
         # frequency configuration
         self.set(self.ConfReg.FREQ2, 0x10)
@@ -23,7 +23,7 @@ class Radio(cc1101.CC1101):
         # PATABLE
         self.set(self.ConfReg.PATABLE, 0xc0)
 
-    def setup_for_rx(self):
+    async def setup_for_rx(self):
         # fix packet length
         self.set(self.ConfReg.PKTLEN, 16)
 
@@ -38,9 +38,9 @@ class Radio(cc1101.CC1101):
 
         self.set(self.ConfReg.IOCFG0, 0x07)
 
-        self.calibrate()
+        await self.calibrate()
 
-    def setup_for_conf(self):
+    async def setup_for_conf(self):
         # treat 0 as broadcast
         self.set(self.ConfReg.PKTLEN, 0x10)
         self.set(self.ConfReg.PKTCTRL1, 0x0a)
@@ -49,4 +49,4 @@ class Radio(cc1101.CC1101):
         self.set(self.ConfReg.MCSM1, 0x0b)
         self.set(self.ConfReg.ADDR, 0)
 
-        self.calibrate()
+        await self.calibrate()

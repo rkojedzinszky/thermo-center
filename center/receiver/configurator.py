@@ -31,21 +31,21 @@ class Configurator(RadioBase):
         self._prepare_config_reply()
         self._gen_next_id()
 
-        self._radio.setup_basic()
-        self._radio.setup_for_conf()
+        await self._radio.setup_basic()
+        await self._radio.setup_for_conf()
 
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
 
         while True:
             await self.waitforinterrupt()
-            self.receive_one()
+            await self.receive_one()
 
-    def receive_one(self):
+    async def receive_one(self):
         data_len = self._radio.status(radio.Radio.StatusReg.RXBYTES)
         data = self._radio.read_rxfifo(data_len)
         if data_len != 3 or data[0] != 2 or data[1] != 0:
             # re-enter RX mode
-            self._radio.sidle()
+            await self._radio.sidle()
             self._radio.wcmd(radio.Radio.CommandStrobe.SFRX)
             self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
             return
