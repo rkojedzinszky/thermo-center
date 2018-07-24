@@ -25,7 +25,7 @@ class ConsoleClient(asyncio.Protocol):
             self.main.loop.create_task(self.main.stop())
         elif data == 'configure':
             self.main.loop.create_task(self.main.startconfigurator())
-            self.main.loop.call_later(1, self.main.startreceiver_sync)
+            self.main.loop.call_later(15, self.main.startreceiver_sync)
         elif data == 'reload':
             self.main.loop.create_task(self.main.startreceiver())
 
