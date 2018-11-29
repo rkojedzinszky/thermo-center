@@ -1,32 +1,21 @@
-import Cookies from 'js-cookie';
+import {restModel, realtimeRestModel} from "can";
 
-function sameOrigin(url) {
-	var loc = window.location,
-		a = document.createElement('a');
-	a.href = url;
+function tastypieRestModel(options)
+{
+	var endpoint = options['url'];
 
-	return a.hostname == loc.hostname &&
-		a.port == loc.port &&
-		a.protocol == loc.protocol;
+	options['url'] = {
+		getListData: "GET " + endpoint,
+		getData: "GET " + endpoint + "{id}/",
+		createData: "POST " + endpoint,
+		updateData: "PUT " + endpoint + "{id}/",
+		destroyData: "DELETE " + endpoint + "{id}/"
+	};
+	options['parseListProp'] = 'objects';
+	options['updateInstanceWithAssignDeep'] = true;
+
+	return restModel(options);
 }
 
-jQuery.ajaxSetup({
-    processData: false,
-    beforeSend: function(xhr, settings) {
-        if (sameOrigin(settings.url) && !/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) {
-            xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
-        }
-    }
-});
-
-jQuery.ajaxPrefilter(function(options) {
-    if (options.data && options.type == 'GET' && typeof options.data !== "string") {
-        options.data = jQuery.param(options.data, options.traditional);
-        return;
-    }
-
-    if (typeof(options.data) == "object" && options.files == null) {
-        options.data = JSON.stringify(options.data);
-        options.contentType = 'application/json';
-    }
-});
+export {tastypieRestModel};
+export {tastypieRestModel as default};

@@ -1,106 +1,41 @@
-import 'can/map/';
-import 'can/map/define/';
-import 'can/route/';
-import 'can/construct/super/';
-import stache from 'can/view/stache/';
-import './menu';
+import {Component, DefineMap, stache, route} from 'can';
+import 'bootstrap/dist/css/bootstrap-reboot.css!';
 import 'bootstrap/dist/css/bootstrap.css!';
+import {Session} from 'models/Session';
 import $ from 'jquery';
-import './tastypie';
-import Session from 'models/Session';
-import './index.less!';
 
-stache.registerSimpleHelper('format_num', function(f, w) {
-	if (typeof(f) == 'number') {
-		return f.toFixed(w);
-	}
-
-	return f;
-});
-
-var AppState = can.Map.extend({
-	define: {
-		menu: {
-			get() {
-				if (!this.attr('ready')) {
-					return null;
-				}
-
-				if (this.loggedIn()) {
-					return can.route.attr('page');
-				} else {
-					return 'login';
-				}
-			},
-			serialize: false
-		},
-		menus: {
-			get() {
-				if (this.loggedIn()) {
-					return ['overview', 'heatcontrol', 'logout'];
-				} else {
-					return [];
-				}
-			},
-			serialize: false
-		},
-		ready: {
-			serialize: false,
-			set() {
-				can.route.ready();
-			}
-		},
-		session: {
+const AppState = DefineMap.extend({
+	'session': { default: null, serialize: false },
+	'page': { default: 'overview' },
+	'displaypage': {
+		get() {
+			if (this.session != null)
+				return this.page;
+			return 'login';
 		}
 	},
-	loggedIn() {
-		return this.attr('session') != null;
-	},
-	login(user, pass) {
+	setpage(element) {
 		var self = this;
-		var s = new Session({username: user, password: pass});
-		s.save().then(function(s) {
-			self.attr('session', s);
+		var page = this.displaypage;
+		System.import('pages/' + page + '/').then(function(module) {
+			element.html(stache('<thermo-p-' + page + ' appstate:bind="."/>')(self));
 		});
 	},
-	logout() {
-		if (this.attr('session')) {
-			var self = this;
-
-			this.attr('session').destroy().then(function(s) {
-				self.removeAttr('session');
-				if (can.route.attr('page') == 'logout') {
-					can.route.removeAttr('page');
-				}
-			});
-		}
+	connectedCallback(element) {
+		var self = this;
+		var element = $(element);
+		this.listenTo('displaypage', this.setpage.bind(this, element));
+		Session.getList().then(function(res) {
+			if (res.length == 1) {
+				self.session = res[0];
+			}
+			self.setpage(element);
+		});
 	}
 });
 
-var appState = new AppState();
-var body = $('body');
-body.append(stache('<thermo-menu />')(appState));
-var cdiv = $('<div>');
-body.append(cdiv);
-
-appState.bind('menu', function(ev, newVal, oldVal) {
-	var p = 'pages/' + newVal + '/';
-	System.import(p).then(function(m) {
-		if (m.init && typeof(m.init) === 'function') {
-			m.init(appState);
-		} else {
-			var t = '<page-' + newVal + ' {app}="app"/>';
-			cdiv.html(stache(t)({app: appState}));
-		}
-	});
-});
-
-can.route(':page', {'page': 'overview'});
-can.route(':page/:id');
-
-Session.findAll().then(function(res) {
-	if (res.length == 1) {
-		appState.attr('session', res[0]);
-	}
-	appState.attr('ready', true);
+Component.extend({
+	tag: 'thermo-main',
+	view: '<div />',
+	ViewModel: AppState
 });

@@ -70,7 +70,7 @@ class Main:
                 os.dup2(fh.fileno(), sys.stdout.fileno())
                 os.dup2(fh.fileno(), sys.stderr.fileno())
 
-        signals.connection_created.connect(self._set_sync_commit_to_off)
+        #signals.connection_created.connect(self._set_sync_commit_to_off)
 
         self.loop = asyncio.get_event_loop()
 
