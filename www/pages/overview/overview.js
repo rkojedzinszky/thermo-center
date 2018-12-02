@@ -25,14 +25,14 @@ Component.extend({
 		{{#for(s of this.sensors)}}
 			<tr class="">
 				<td>{{s.name}}</td>
-				<td>{{s.temperature}}</td>
-				<td>{{s.humidity}}</td>
+				<td>{{format('temperature', s.temperature)}}</td>
+				<td>{{format('humidity', s.humidity)}}</td>
 				{{#advanced}}
 				<td>{{s.id}}</td>
-				<td>{{s.vcc}}</td>
-				<td>{{s.interval}}</td>
-				<td>{{s.rssi}}</td>
-				<td>{{s.lqi}}</td>
+				<td>{{format('vcc', s.vcc)}}</td>
+				<td>{{format('interval', s.interval)}}</td>
+				<td>{{format('rssi', s.rssi)}}</td>
+				<td>{{format('lqi', s.lqi)}}</td>
 				{{/advanced}}
 				<td><sensor-resync sensor:bind="s" /></td>
 			</tr>
@@ -54,6 +54,15 @@ Component.extend({
 			THSensor.getList({'order_by': 'id'}).then(function(res) {
 				self.sensors = res;
 			});
+
+			self.appstate.onmessage = function(el) {
+				THSensor.get({id: el});
+			};
+
+			return function() {
+				self.appstate.onmessage = null;
+				self.stopListening();
+			};
 		}
 	}
 });

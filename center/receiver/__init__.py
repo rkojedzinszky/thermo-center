@@ -21,9 +21,7 @@ class ConsoleClient(asyncio.Protocol):
     def data_received(self, data):
         data = data.decode().strip()
 
-        if data == 'stop':
-            self.main.loop.create_task(self.main.stop())
-        elif data == 'configure':
+        if data == 'configure':
             self.main.loop.create_task(self.main.startconfigurator())
             self.main.loop.call_later(15, self.main.startreceiver_sync)
         elif data == 'reload':
@@ -33,8 +31,10 @@ class ConsoleClient(asyncio.Protocol):
 
 class Main:
     """ Main radio handler daemon """
+    def __init__(self, loop):
+        self.loop = loop
 
-    def run(self, daemonize=True):
+    async def run(self):
         spi = spidev.SpiDev()
         spi.open(*settings.SPI_DEV)
         spi.mode = settings.SPI_MODE
@@ -54,37 +54,11 @@ class Main:
         self._loop = None
         self._pidmap = {}
 
-        if daemonize:
-            if os.fork() > 0:
-                sys.exit()
-
-            os.chdir('/')
-            os.setsid()
-
-            if os.fork() > 0:
-                sys.exit()
-
-            with open('/dev/null', 'r') as fh:
-                os.dup2(fh.fileno(), sys.stdin.fileno())
-            with open('/dev/null', 'a+') as fh:
-                os.dup2(fh.fileno(), sys.stdout.fileno())
-                os.dup2(fh.fileno(), sys.stderr.fileno())
-
-        #signals.connection_created.connect(self._set_sync_commit_to_off)
-
-        self.loop = asyncio.get_event_loop()
-
         self._mqtt_setup()
 
-        self.start_console()
+        await self.start_console()
 
         self.loop.create_task(self.startreceiver())
-
-        self.loop.run_forever()
-
-        self.console.close()
-
-        self._mqtt_teardown()
 
     def _mqtt_setup(self):
         if hasattr(settings, 'MQTT_HOST'):
@@ -93,25 +67,13 @@ class Main:
         else:
             self._mqtt = None
 
-    def _mqtt_teardown(self):
-        if self._mqtt:
-            self.loop.run_until_complete(self._mqtt.stop())
-            self._mqtt = None
-
-    def start_console(self):
+    async def start_console(self):
         umask = os.umask(0o077)
-        self.console = self.loop.run_until_complete(self.loop.create_unix_server(self.create_console_client, path=settings.RECEIVER_SOCKET))
+        self.console = await self.loop.create_unix_server(self.create_console_client, path=settings.RECEIVER_SOCKET)
         os.umask(umask)
 
     def create_console_client(self):
         return ConsoleClient(self)
-
-    def _set_sync_commit_to_off(self, sender, connection, **kwargs):
-        try:
-            with connection.cursor() as c:
-                c.execute('set synchronous_commit to off')
-        except:
-            pass
 
     def startreceiver_sync(self):
         self.loop.create_task(self.startreceiver())
@@ -131,10 +93,6 @@ class Main:
             self._loop.start()
         else:
             self._loop = None
-
-    async def stop(self):
-        await self._setloop(None)
-        self.loop.stop()
 
 class RadioBase:
     """ Base class for receiver and configurator mode """

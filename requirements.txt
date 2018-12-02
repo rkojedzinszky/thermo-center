@@ -6,3 +6,4 @@ django-tastypie
 ipaddress
 psycopg2
 hbmqtt
+websockets

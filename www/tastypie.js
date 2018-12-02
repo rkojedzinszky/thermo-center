@@ -1,3 +1,4 @@
+'use strict';
 import {restModel, realtimeRestModel} from "can";
 
 function tastypieRestModel(options)
@@ -14,7 +15,7 @@ function tastypieRestModel(options)
 	options['parseListProp'] = 'objects';
 	options['updateInstanceWithAssignDeep'] = true;
 
-	return restModel(options);
+	return realtimeRestModel(options);
 }
 
 export {tastypieRestModel};
