@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.cache import cache
 from application import restapi
 from application.resource import ResourceMetaCommon
-from center.models import Sensor
+from center.models import Sensor, SensorResync
 from tastypie import resources
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization, Authorization as RWAuthorization
@@ -53,19 +53,6 @@ class SensorResource(resources.ModelResource):
 
         return bundle
 
-class SensorResyncResource(SensorResource):
-    class Meta(SensorResource.Meta):
-        fields = ('id',)
-        authorization = RWAuthorization()
-
-    def obj_update(self, bundle, **kwargs):
-        self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
-        bundle.obj.resync()
-        return bundle
-
-SensorResyncResourceInstance = SensorResyncResource()
-restapi.RestApi.register(SensorResyncResourceInstance)
-
 class THSensorResource(SensorResource):
     temperature = fields.FloatField(null=True)
     humidity = fields.FloatField(null=True)
@@ -86,3 +73,17 @@ THSensorResourceInstance = THSensorResource()
 
 restapi.RestApi.register(SensorResource())
 restapi.RestApi.register(THSensorResourceInstance)
+
+class SensorResyncResource(resources.ModelResource):
+    sensor = fields.ToOneField(THSensorResource, 'sensor')
+    ts = fields.DateTimeField('ts', readonly=True)
+
+    class Meta(ResourceMetaCommon):
+        queryset = SensorResync.objects.all()
+        authorization = RWAuthorization()
+        detail_allowed_methods = ['get']
+        list_allowed_methods = ['get', 'post']
+
+SensorResyncResourceInstance = SensorResyncResource()
+restapi.RestApi.register(SensorResyncResourceInstance)
+

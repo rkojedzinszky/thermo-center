@@ -131,3 +131,15 @@ class Sensor(models.Model):
     def get_cache(self):
         """ Retrieve metrics stored in cache """
         return cache.get(self._carbon_path())
+
+class SensorResync(models.Model):
+    """ Represents a resync event
+    """
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    ts = models.DateTimeField(auto_now_add=True)
+
+    def save(self, **kwargs):
+        if self.pk is None:
+            self.sensor.resync()
+
+        return super().save(**kwargs)

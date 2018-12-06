@@ -18,10 +18,10 @@ class RangedIntegerField(models.IntegerField):
         return name, path, args, kwargs
 
     def _check_ranges(self, value):
-        if self._min_value is not None and value < self._min_value:
+        if self._min_value is not None and value is not None and value < self._min_value:
             raise RangedIntegerField.InvalidIdException()
 
-        if self._max_value is not None and value > self._max_value:
+        if self._max_value is not None and value is not None and value > self._max_value:
             raise RangedIntegerField.InvalidIdException()
 
         return value
