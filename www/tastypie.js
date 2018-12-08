@@ -1,5 +1,5 @@
 'use strict';
-import {restModel, realtimeRestModel} from 'can';
+import realtimeRestModel from 'can-realtime-rest-model';
 import {default as ajax, ajaxSetup} from 'can-ajax';
 import {default as Cookies} from 'js-cookie';
 

@@ -1,6 +1,8 @@
 'use strict';
 import meta from './g/Profile';
-import {DefineMap, DefineList, Reflect} from 'can';
+import DefineMap from 'can-define/map/map';
+import DefineList from 'can-define/list/list';
+import Reflect from 'can-reflect';
 import {tastypieRestModel} from '../tastypie';
 
 const staticProps = {

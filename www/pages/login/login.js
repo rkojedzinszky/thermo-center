@@ -1,5 +1,5 @@
 'use strict';
-import {Component} from 'can';
+import Component from 'can-component';
 import './login.less!';
 import {Session} from 'models/Session';
 
@@ -49,7 +49,7 @@ Component.extend({
 			self.loginerror = false;
 			scope.event.preventDefault();
 			new Session({username: this.username, password: this.password}).save().then(function(s) {
-				self.appstate.session = s;
+				self.app.session = s;
 			}, function() {
 				self.loginerror = true;
 			});

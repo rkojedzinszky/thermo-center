@@ -1,5 +1,5 @@
 'use strict';
-import {Component} from 'can';
+import Component from 'can-component';
 import {THSensor} from 'models/THSensor';
 import {SensorResync} from 'models/SensorResync';
 
@@ -9,9 +9,7 @@ Component.extend({
 		<table class="table table-striped table-bordered table-hover table-sm">
 		<thead>
 		<tr>
-			{{#advanced}}
 			<th scope="col">#</th>
-			{{/advanced}}
 			<th scope="col">Name</th>
 			<th scope="col">Temperature</th>
 			<th scope="col">Humidity</th>
@@ -26,9 +24,7 @@ Component.extend({
 		<tbody>
 		{{#for(s of this.sensors)}}
 			<tr class="{{#s.sensor_resync}}table-danger{{/s.sensor_resync}}">
-				{{#advanced}}
 				<th scope="row">{{s.id}}</th>
-				{{/advanced}}
 				<td>{{s.name}}</td>
 				{{#s.sensor_resync}}
 				<td colspan="2"><thermo-sensor-resync sensor:bind="s" /></td>
@@ -60,14 +56,14 @@ Component.extend({
 			var self = this;
 			THSensor.getList({'order_by': 'id'}).then(function(res) {
 				self.sensors = res;
+
+				self.app.onmessage = function(el) {
+					THSensor.get({id: el});
+				};
 			});
 
-			self.appstate.onmessage = function(el) {
-				THSensor.get({id: el});
-			};
-
 			return function() {
-				self.appstate.onmessage = null;
+				self.app.onmessage = null;
 				self.stopListening();
 			};
 		}

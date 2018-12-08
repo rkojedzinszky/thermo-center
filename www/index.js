@@ -1,9 +1,14 @@
 'use strict';
-import {Component, DefineMap, stache, route} from 'can';
 import 'bootstrap/dist/css/bootstrap-reboot.css!';
 import 'bootstrap/dist/css/bootstrap.css!';
+import Component from 'can-component';
+import DefineMap from 'can-define/map/map';
+import stache from 'can-stache';
+import 'can-stache-bindings';
+import route from 'can-route';
 import {Session} from 'models/Session';
 import $ from 'jquery';
+import './navbar';
 
 // Register number formatting helpers
 const Precisions = new (DefineMap.extend({
@@ -13,6 +18,8 @@ const Precisions = new (DefineMap.extend({
 	interval: { type: 'number', default: 2 },
 	rssi: { type: 'number', default: 0 },
 	lqi: { type: 'number', default: 0 },
+	target_temp: { type: 'number', default: 2 },
+	pidcontrol: { type: 'number', default: 3 },
 }))();
 
 stache.addHelper('format', function(metric, value) {
@@ -33,33 +40,44 @@ const wsurl = function() {
 }();
 
 const AppState = DefineMap.extend({
-	'session': { default: null, serialize: false },
-	'page': { default: 'overview' },
+	'session': { serialize: false },
+	'url': { default: () => new DefineMap() },
 	'ws': { serialize: false, default: null },
 	'onmessage': { serialize: false },
 	'displaypage': {
 		get() {
 			if (this.session != null)
-				return this.page;
+				return this.url.page;
 			return 'login';
 		}
 	},
 	setpage(element) {
 		var self = this;
 		var page = this.displaypage;
-		System.import('pages/' + page + '/').then(function(module) {
-			element.html(stache('<thermo-p-' + page + ' appstate:bind="."/>')(self));
+
+		steal.import('~/pages/' + page + '/').then(function(module) {
+			if (typeof(module.default) === 'function') {
+				module.default(self);
+			} else {
+				element.html(stache('<thermo-p-' + page + ' app:bind="."/>')(self));
+			}
 		});
 	},
 	connectedCallback(element) {
 		var self = this;
-		var element = $(element).find(".content");
+		var element = $(element).find('.content');
+
+		route.data = this.url;
+		route.register('{page}', {'page': 'overview'});
+		route.start();
+
 		this.listenTo('displaypage', this.setpage.bind(this, element));
 		Session.getList().then(function(res) {
 			if (res.length == 1) {
-				self.session = res[0];
+				self.session = res[0]; // will call setpage
+			} else {
+				self.setpage(element);
 			}
-			self.setpage(element);
 		});
 
 		this._openws();
@@ -90,6 +108,10 @@ const AppState = DefineMap.extend({
 
 Component.extend({
 	tag: 'thermo-main',
-	view: '<div><h3>{{#ws}}{{else}}NOT {{/ws}}CONNECTED</h3><div class="content" /></div>',
+	view: `
+	<thermo-navbar app:bind="." />
+	<div class="content" />
+	`,
 	ViewModel: AppState
 });
+

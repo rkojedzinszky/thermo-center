@@ -37,6 +37,9 @@ class ControlResource(resources.ModelResource):
     class Meta(ResourceMetaCommon):
         queryset = models.Control.objects.select_related('sensor').order_by('sensor__id')
         authorization = Authorization()
+        filtering = {
+                'sensor_id': 'exact',
+                }
 
     def dehydrate_name(self, bundle):
         return bundle.obj.sensor.name
@@ -98,7 +101,7 @@ class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
 
 class InstantProfileResource(resources.ModelResource):
     class Meta(ResourceMetaCommon):
-        queryset = models.InstantProfile.objects.all()
+        queryset = models.InstantProfile.objects.order_by('id')
         authorization = InstantProfileResourceAuthorization()
 
 InstantProfileResourceInstance = InstantProfileResource()
