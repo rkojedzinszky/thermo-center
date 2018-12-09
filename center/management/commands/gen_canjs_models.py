@@ -54,7 +54,9 @@ def _gen_model(name, force=False):
 
     content = """'use strict';
 import meta from './g/{name}';
-import {{DefineMap, DefineList, Reflect}} from 'can';
+import DefineMap from 'can-define/map/map';
+import DefineList from 'can-define/list/list';
+import Reflect from 'can-reflect';
 import {{tastypieRestModel}} from '../tastypie';
 
 const staticProps = {{
