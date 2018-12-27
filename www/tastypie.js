@@ -2,6 +2,7 @@
 import realtimeRestModel from 'can-realtime-rest-model';
 import {default as ajax, ajaxSetup} from 'can-ajax';
 import {default as Cookies} from 'js-cookie';
+import assign from 'can-assign';
 
 function sameOrigin(url) {
 	const loc = window.location, a = document.createElement('a');
@@ -20,6 +21,28 @@ ajaxSetup({
 	}
 });
 
+function tastypieajax(options)
+{
+	if (options.type.toUpperCase() == 'GET' && typeof options.data === 'object') {
+		if (options.data.hasOwnProperty('filter') || options.data.hasOwnProperty('sort')) {
+			const filter = options.data.filter || {};
+			const tastypiefilter = options.data.tastypiefilter || {};
+			const order_by = options.data.sort;
+
+			let newfilter = {};
+			assign(newfilter, filter);
+			assign(newfilter, tastypiefilter);
+			if (order_by !== undefined) {
+				newfilter['order_by'] = order_by;
+			}
+
+			options.data = newfilter;
+		}
+	}
+
+	return ajax(options);
+}
+
 function tastypieRestModel(options)
 {
 	var endpoint = options['url'];
@@ -33,6 +56,7 @@ function tastypieRestModel(options)
 	};
 	options['parseListProp'] = 'objects';
 	options['updateInstanceWithAssignDeep'] = true;
+	options['ajax'] = tastypieajax;
 
 	const connection = realtimeRestModel(options);
 

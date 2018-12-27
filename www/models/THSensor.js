@@ -2,7 +2,7 @@
 import meta from './g/THSensor';
 import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
-import Reflect from 'can-reflect';
+import assign from 'can-assign';
 import {tastypieRestModel} from '../tastypie';
 
 const staticProps = {
@@ -10,7 +10,7 @@ const staticProps = {
 };
 const prototype = {
 };
-Reflect.assign(prototype, meta.d);
+assign(prototype, meta.d);
 
 const THSensor = DefineMap.extend('THSensor', staticProps, prototype);
 THSensor.List = DefineList.extend('THSensorList', {'#': THSensor});

@@ -2,7 +2,7 @@
 import meta from './g/Control';
 import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
-import Reflect from 'can-reflect';
+import assign from 'can-assign';
 import {tastypieRestModel} from '../tastypie';
 
 const staticProps = {
@@ -10,7 +10,7 @@ const staticProps = {
 };
 const prototype = {
 };
-Reflect.assign(prototype, meta.d);
+assign(prototype, meta.d);
 
 const Control = DefineMap.extend('Control', staticProps, prototype);
 Control.List = DefineList.extend('ControlList', {'#': Control});

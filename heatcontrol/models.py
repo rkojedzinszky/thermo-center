@@ -49,7 +49,7 @@ class Control(models.Model):
 
         day = now.date()
         tm = now.time()
-        hcp = self.profile_set.filter(daytype__calendar__day=day).filter(models.Q(end='00:00:00') | models.Q(end__gt=tm), start__lte=tm).first()
+        hcp = self.profile_set.filter(daytype__calendar__day=day).filter(start__lte=tm).order_by('-start').first()
         if hcp is not None:
             return hcp.target_temp
 
@@ -63,32 +63,16 @@ class Profile(models.Model):
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
     daytype = models.ForeignKey(DayType, on_delete=models.CASCADE)
     start = models.TimeField()
-    end = models.TimeField()
-    target_temp = models.FloatField()
+    target_temp = models.FloatField(null=True, blank=True)
 
     class Meta:
         index_together = (
-                ('control', 'daytype'),
+                ('control', 'daytype', 'start'),
                 )
 
     def __str__(self):
-        return '%s at %s[%s-%s]: %f' % (self.control.sensor, self.daytype, self.start, self.end, self.target_temp)
+        return '%s at %s[from %s]: %f' % (self.control.sensor, self.daytype, self.start, self.target_temp)
 
-    def save(self, *args, **kwargs):
-        if self.end != datetime.time(0, 0) and self.end < self.start:
-            raise ValidationError()
-
-        qs = Profile.objects.filter(control=self.control, daytype=self.daytype).filter(models.Q(end='00:00:00') | models.Q(end__gt=self.start))
-        if self.end != datetime.time(0, 0):
-            qs = qs.filter(start__lt=self.end)
-
-        if self.pk is not None:
-            qs = qs.exclude(pk=self.pk)
-
-        if qs.exists():
-            raise IntegrityError()
-
-        return super(Profile, self).save(*args, **kwargs)
 
 class ScheduledOverride(models.Model):
     """ Simply override a setting for a period of time for a Control unit """

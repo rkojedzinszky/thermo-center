@@ -20,6 +20,7 @@ Component.extend({
 Component.extend({
 	tag: 'thermo-p-edit-overrides',
 	view: `
+<legend>Quick overrides</legend>
 <table class="table table-striped table-bordered table-hover table-sm">
 <thead>
 <tr>
@@ -57,7 +58,7 @@ Component.extend({
 		overrides: { default: () => new ScheduledOverride.List() },
 		connectedCallback(element) {
 			var self = this;
-			ScheduledOverride.findAll({control: this.control.id}).then(function(res) {
+			ScheduledOverride.getList({control: this.control.id}).then(function(res) {
 				self.overrides = res;
 			});
 		},

@@ -56,7 +56,7 @@ def _gen_model(name, force=False):
 import meta from './g/{name}';
 import DefineMap from 'can-define/map/map';
 import DefineList from 'can-define/list/list';
-import Reflect from 'can-reflect';
+import assign from 'can-assign';
 import {{tastypieRestModel}} from '../tastypie';
 
 const staticProps = {{
@@ -64,7 +64,7 @@ const staticProps = {{
 }};
 const prototype = {{
 }};
-Reflect.assign(prototype, meta.d);
+assign(prototype, meta.d);
 
 const {name} = DefineMap.extend('{name}', staticProps, prototype);
 {name}.List = DefineList.extend('{name}List', {{'#': {name}}});

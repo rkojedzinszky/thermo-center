@@ -75,6 +75,7 @@ class ProfileResource(resources.ModelResource):
                 'control': 'exact',
                 'daytype': 'exact',
                 }
+        ordering = ('start',)
 
 ProfileResourceInstance = ProfileResource()
 restapi.RestApi.register(ProfileResourceInstance)
