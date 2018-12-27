@@ -1,59 +1,69 @@
-import 'can/component/';
-import template from './detail.stache!';
-import DayType from 'models/Daytype';
+import Component from 'can-component';
+import DayType from 'models/DayType';
 import Control from 'models/Control';
 import Profile from 'models/Profile';
-import ScheduledOverride from 'models/Scheduledoverride';
+import './overrides';
 
-can.Component.extend({
-	tag: 'page-edit',
-	template: template,
-	viewModel: {
-		days: [],
-		overrides: [],
-		d: 1,
-		control: null,
-		add() {
-			var self = this;
-			var st = new Date();
-			var end = new Date(st.getTime() + this.attr('d') * 3600 * 1000);
-			var so = new ScheduledOverride({
-				control: self.attr('control'),
-				start: st,
-				end: end,
-				target_temp: self.attr('t'),
-			});
-			so.save().then(function(so) {
-				self.attr('overrides').push(so);
-			});
-		},
+Component.extend({
+	tag: 'thermo-p-edit',
+	view: `
+<div class="container-fluid">
+{{#control}}
+	<h3 class="center-block">
+		Settings for {{name}}({{sensor_id}})
+	</h3>
+{{/control}}
+	<div class="row">
+	{{#if control}}
+		<div class="col-sm-4">
+			<legend>Quick overrides</legend>
+			<thermo-p-edit-overrides control:bind="control" />
+		</div>
+		<div class="col-sm-4">
+			<fieldset {{#if control.isSaving()}}disabled{{/if}}>
+			<legend>Pid control loop parameters</legend>
+			<div class="form-group form-inline">
+				<div class="input-group col-sm-4">
+					<div class="input-group-prepend"><div class="input-group-text">Kp</div></div>
+					<input type="number" class="form-control" value:bind="control.kp" on:blur="control.save()"/>
+				</div>
+				<div class="input-group col-sm-4">
+					<div class="input-group-prepend"><div class="input-group-text">Ki</div></div>
+					<input type="number" class="form-control" value:bind="control.ki" on:blur="control.save()"/>
+				</div>
+				<div class="input-group col-sm-4">
+					<div class="input-group-prepend"><div class="input-group-text">Kd</div></div>
+					<input type="number" class="form-control" value:bind="control.kd" on:blur="control.save()"/>
+				</div>
+			</div>
+			</fieldset>
+		</div>
+	{{/if}}
+	</div>
+</div>
+	`,
+	ViewModel: {
+		days: { default: () => [] },
+		control: { default: null },
 		addProfile(day) {
 			day.attr('times').push(new Profile({daytype: day, control: this.attr('control'), target_temp: 20}));
 		},
 		hcSave() {
 			this.control.save();
 		},
-	},
-	events: {
-		inserted() {
-			var view = this.viewModel;
-			var days = view.attr('days');
+		connectedCallback(element) {
+			var self = this;
+			var days = this.days;
 
-			can.when(Control.findOne({id: can.route.attr('id')}).then(function(hc) {
-				view.attr('control', hc);
-				ScheduledOverride.findAll({control: hc.getId()}).then(function(overrides) {
-					view.attr('overrides', overrides);
-				});
+			Promise.all([Control.findOne({id: this.app.url.id}).then(function(hc) {
+				self.control = hc;
 				return hc;
-			}), DayType.findAll()).then(function(hc, r) {
-				can.each(r, function(d) {
-					var dt = new DayType(d);
-					dt.attr('times', []);
-					Profile.findAll({control: hc.getId(), daytype: dt.getId()}).then(function(times) {
-						dt.attr('times', times);
-					});
-					days.push(dt);
-				});
+			}), DayType.findAll()]).then(function(values) {
+				const hc = values[0];
+				const dt = values[1];
+
+				console.log(hc);
+				console.log(dt);
 			});
 		}
 	}

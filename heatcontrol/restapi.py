@@ -101,6 +101,7 @@ class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
 
 class InstantProfileResource(resources.ModelResource):
     class Meta(ResourceMetaCommon):
+        always_return_data = False
         queryset = models.InstantProfile.objects.order_by('id')
         authorization = InstantProfileResourceAuthorization()
 

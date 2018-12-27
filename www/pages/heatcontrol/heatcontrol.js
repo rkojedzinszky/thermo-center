@@ -1,45 +1,54 @@
 'use strict';
 import Component from 'can-component';
+import route from 'can-route';
 import {Control} from 'models/Control';
 import {InstantProfile} from 'models/InstantProfile';
 
 Component.extend({
 	tag: 'thermo-p-heatcontrol',
 	view: `
-	<table class="table table-striped table-bordered table-condensed table-hover table-sm">
-	<thead>
-	<tr>
-		<th>Name</th>
-		<th>Temp</th>
-		<th>Target temp</th>
-		<th>Pid control</th>
-		<th>Edit</th>
-	</tr>
-	</thead>
-	<tbody>
-	{{#for (s of sensors)}}
-	<tr>
-		<td>{{s.name}}</td>
-		<td>{{format('temperature', s.temperature)}}</td>
-		<td>{{format('target_temp', s.target_temp)}}</td>
-		<td>{{format('pidcontrol', s.pidcontrol)}}</td>
-		<td><a class="btn btn-default btn-xs" href="{{ edit_link }}">Edit</a></td>
-	</tr>
-	{{/for}}
-	</tbody>
-	</table>
-	<ul class="list-unstyled list-inline iprofiles">
-	{{#for (i of instantprofiles)}}
-	<li>
-		<button class="iprofile btn btn-default btn-lg {{ ip_classes . }}" on:click="toggle(i)">{{ i.name }}</button>
-	</li>
-	{{/for}}
-	</ul>
+<table class="table table-striped table-bordered table-hover table-sm">
+<thead>
+<tr>
+	<th>Name</th>
+	<th>Temp</th>
+	<th>Target temp</th>
+	<th>Pid control</th>
+	<th>Edit</th>
+</tr>
+</thead>
+<tbody>
+{{#for (s of sensors)}}
+<tr>
+	<td>{{s.name}}</td>
+	<td>{{format('temperature', s.temperature)}}</td>
+	<td>{{format('target_temp', s.target_temp)}}</td>
+	<td>{{format('pidcontrol', s.pidcontrol)}}</td>
+	<td><a class="btn btn-default btn-xs" href="{{{ edit_link(s) }}}">Edit</a></td>
+</tr>
+{{/for}}
+</tbody>
+</table>
+<ul class="list-unstyled list-inline iprofiles">
+{{#for (i of instantprofiles)}}
+<li>
+	<button class="iprofile btn btn-default btn-lg {{#if (i.active)}}bg-success{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
+</li>
+{{/for}}
+</ul>
 	`,
 	ViewModel: {
 		sensors: { default: () => [] },
 		instantprofiles: { default: () => [] },
 		daytypes: { default: null },
+
+		toggle(i) {
+			const saved = i.active;
+			i.active = !saved;
+			i.save().then(() => true, function() {
+				i.active = saved;
+			});
+		},
 
 		connectedCallback(element) {
 			var self = this;
@@ -63,7 +72,7 @@ Component.extend({
 	},
 	helpers: {
 		edit_link(sensor) {
-			return stache.safeString(can.route.url({'page': 'edit', 'id': sensor.getId()}));
+			return route.url({'page': 'edit', 'id': sensor.id});
 		},
 	},
 });

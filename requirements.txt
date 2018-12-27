@@ -2,7 +2,8 @@
 spidev
 pycrypto
 django<2
-django-tastypie
+#django-tastypie
+https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
 ipaddress
 psycopg2
 hbmqtt
