@@ -6,7 +6,7 @@ import Profile from 'models/Profile';
 Component.extend({
 	tag: 'thermo-p-edit-daytype',
 	view: `
-Profiles for {{control.name}} / {{daytype.name}}
+<h3 class="text-center">Profiles for {{control.name}} / {{daytype.name}}</h3>
 <table class="table table-striped table-bordered table-hover table-sm">
 <thead>
 <tr>
@@ -17,16 +17,16 @@ Profiles for {{control.name}} / {{daytype.name}}
 </thead>
 <tbody>
 	{{#for (profile of profiles)}}
-<tr>
-	<td><input type="time" value:bind="profile.start" on:blur="profile.save()"/></td>
-	<td><input type="number" step="0.5" value:bind="profile.target_temp_s" on:blur="profile.save()"/></td>
-	<td class="align-middle text-center"><i class="btn btn-sm btn-danger fas fa-trash" on:click="profile.destroy()"></i></td>
+<tr class="form-group">
+	<td><input class="form-control" type="time" value:bind="profile.start" on:blur="profile.save()"/></td>
+	<td><input class="form-control" type="number" step="0.5" value:bind="profile.target_temp_s" on:blur="profile.save()"/></td>
+	<td class="align-middle text-center"><i class="form-control btn btn-sm btn-danger fas fa-trash" on:click="profile.destroy()"></i></td>
 </tr>
 	{{/for}}
-<tr>
-	<td><input type="time" value:bind="newp.start" /></td>
-	<td><input type="number" step="0.5" value:bind="newp.target_temp_s" /></td>
-	<td class="align-middle text-center"><i class="btn btn-sm btn-primary fas fa-plus" on:click="createNewP()"></i></td>
+<tr class="form-group">
+	<td><input class="form-control" type="time" value:bind="newp.start" /></td>
+	<td><input class="form-control" type="number" step="0.5" value:bind="newp.target_temp_s" /></td>
+	<td class="align-middle text-center"><i class="form-control btn btn-sm btn-primary fas fa-plus" on:click="createNewP()"></i></td>
 </tr>
 </tbody>
 </table>`,
@@ -40,7 +40,6 @@ Profiles for {{control.name}} / {{daytype.name}}
 			this.newp.control = this.control.resource_uri;
 
 			this.newp.save().then(function(newp) {
-				// self.profiles.push(newp);
 				self.newp = new Profile();
 			});
 		},
@@ -56,12 +55,9 @@ Profiles for {{control.name}} / {{daytype.name}}
 Component.extend({
 	tag: 'thermo-p-edit-profiles',
 	view: `
-<legend>Profiles</legend>
-<ul>
 	{{#for (daytype of daytypes)}}
-		<li><thermo-p-edit-daytype daytype:from="daytype" control:from="control" /></li>
+		<thermo-p-edit-daytype daytype:from="daytype" control:from="control" />
 	{{/for}}
-</ul>
 	`,
 	ViewModel: {
 		daytypes: { Default: DayType.List },

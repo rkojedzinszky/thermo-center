@@ -24,9 +24,11 @@ Component.extend({
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-10">
+		<div class="col-sm-3" />
+		<div class="col-sm-6">
 			<thermo-p-edit-profiles control:from="control" />
 		</div>
+		<div class="col-sm-3" />
 	</div>
 	{{/if}}
 </div>

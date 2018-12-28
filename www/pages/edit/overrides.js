@@ -20,7 +20,7 @@ Component.extend({
 Component.extend({
 	tag: 'thermo-p-edit-overrides',
 	view: `
-<legend>Quick overrides</legend>
+<h3 class="text-center">Quick overrides</h3>
 <table class="table table-striped table-bordered table-hover table-sm">
 <thead>
 <tr>

@@ -4,8 +4,8 @@ import Component from 'can-component';
 Component.extend({
 	tag: 'thermo-p-edit-pidsettings',
 	view: `
+<h3 class="text-center">Pid control loop parameters</h3>
 <fieldset {{#if control.isSaving()}}disabled{{/if}}>
-<legend>Pid control loop parameters</legend>
 <div class="form-group form-inline">
 	<div class="input-group col-sm-4">
 		<div class="input-group-prepend"><div class="input-group-text">Kp</div></div>
