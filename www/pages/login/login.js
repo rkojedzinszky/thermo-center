@@ -1,44 +1,28 @@
 'use strict';
 import Component from 'can-component';
-import './login.less!';
 import {Session} from 'models/Session';
+import './login.less!';
 
 Component.extend({
 	tag: 'thermo-p-login',
 	view: `
-	<div class="loginbox container-fluid">
-		<div class="row">
-		<div class="col-sm-4"></div>
-		<form class="col-sm-4 container-fluid form-horizontal" on:submit="submit(scope)">
-			<div class="form-group row">
-				<label class="col-sm-2 col-xs-2 control-label">Username</label>
-				<div class="col-sm-4">
-					<input class="form-control" value:to="username" />
-				</div>
-			</div>
-			<div class="form-group row">
-				<label class="col-sm-2 col-xs-2 control-label">Password</label>
-				<div class="col-sm-4">
-					<input class="form-control" type="password" value:to="password" />
-				</div>
-			</div>
-			<div class="form-group row">
-				<div class="col-sm-2"></div>
-				<div class="col-sm-4">
-					<button type="submit" class="btn btn-default">Login</button>
-				</div>
-			</div>
-			{{#loginerror}}
-			<div class="form-group row">
-				<div class="col-sm-2"></div>
-				<div class="col-sm-2 bg-danger">Login error</div>
-				<div class="col-sm-2"></div>
-			</div>
-			{{/loginerror}}
-		</form>
-		<div class="col-sm-4"></div>
-		</div>
+<form class="loginbox text-center form-horizontal" on:submit="submit(scope)">
+	<h3>Thermo Center login</h3>
+	<div class="form-group">
+		<input class="form-control" placeholder="Username" value:to="username" />
 	</div>
+	<div class="form-group">
+		<input class="form-control" placeholder="Password" type="password" value:to="password" />
+	</div>
+	<div class="form-group">
+		<button type="submit" class="btn btn-default">Login</button>
+	</div>
+	{{#loginerror}}
+	<div class="form-group">
+		<div class="bg-danger">Login error</div>
+	</div>
+	{{/loginerror}}
+</form>
 	`,
 	ViewModel: {
 		username: 'string',
