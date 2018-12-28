@@ -6,7 +6,6 @@ import time
 import asyncio
 from Crypto.Cipher import AES
 from django.conf import settings
-from django.db import connection
 from django.core import exceptions
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models

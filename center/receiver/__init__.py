@@ -2,6 +2,7 @@ import os, sys
 import asyncio
 import select
 import logging
+from django.db import connection
 from center.receiver.mqtt import MqttClient
 from center import models
 from django.db.backends import signals
@@ -98,6 +99,7 @@ class Main:
                 break
 
             try:
+                connection.close()
                 logger.info('Instantiating application %s', cls.name)
                 self._loop = cls(self.loop, self._radio, self._gpio, self._mqtt, self._pidmap)
                 await self._loop.run()
