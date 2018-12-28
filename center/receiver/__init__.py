@@ -58,7 +58,9 @@ class Main:
 
         await self.start_console()
 
-        self.loop.create_task(self.startreceiver())
+        self._loop_cls = receiver.Receiver
+
+        self.loop.create_task(self._loop_runner())
 
     def _mqtt_setup(self):
         if hasattr(settings, 'MQTT_HOST'):
@@ -80,19 +82,31 @@ class Main:
 
     async def startreceiver(self):
         await self._setloop(receiver.Receiver)
-        self._loop.setpidmap(self._pidmap)
 
     async def startconfigurator(self):
         await self._setloop(configurator.Configurator)
 
     async def _setloop(self, cls):
+        self._loop_cls = cls
         if self._loop:
             await self._loop.stop()
-        if cls:
-            self._loop = cls(self.loop, self._radio, self._gpio, self._mqtt)
-            self._loop.start()
-        else:
-            self._loop = None
+
+    async def _loop_runner(self):
+        while True:
+            cls = self._loop_cls
+            if not cls:
+                break
+
+            try:
+                logger.info('Instantiating application %s', cls.name)
+                self._loop = cls(self.loop, self._radio, self._gpio, self._mqtt, self._pidmap)
+                await self._loop.run()
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.warn('Application %s:', cls.name, exc_info=True)
+                await asyncio.sleep(1)
 
 class RadioBase:
     """ Base class for receiver and configurator mode """
@@ -127,22 +141,24 @@ class RadioBase:
             self._poller.poll()
             self.interrupt.set_result(True)
 
-    def __init__(self, loop, radio, gpio, mqtt):
+    def __init__(self, loop, radio, gpio, mqtt, pidmap):
         self.loop = loop
         self._radio = radio
         self._ih = RadioBase.GPIOInterruptHandler(loop, gpio)
         self._mqtt = mqtt
         self._config = models.RFConfig.objects.select_related('rf_profile').get(pk=1)
+        self._pidmap = pidmap
 
-    def start(self):
+    async def run(self):
         logger.info('{} starting'.format(self.name))
         self.task = self.loop.create_task(self.main())
+        await asyncio.wait([self.task])
+        logger.info('{} finished'.format(self.name))
 
     async def stop(self):
         logger.info('{} stopping'.format(self.name))
         self.task.cancel()
         await asyncio.wait([self.task])
-        logger.info('{} finished'.format(self.name))
 
     async def waitforinterrupt(self):
         await self._ih.waitforinterrupt()

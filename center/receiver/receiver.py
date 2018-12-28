@@ -29,9 +29,6 @@ class Receiver(RadioBase):
     class InterruptStorm(RuntimeError):
         pass
 
-    def setpidmap(self, pidmap):
-        self._pidmap = pidmap
-
     async def _setup_radio(self):
         await self._radio.setup_basic()
         self._radio.xfer2(self._config.config_bytes())
