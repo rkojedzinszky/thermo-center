@@ -41,9 +41,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'change-this')
 CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
 
 # Change this to False on production system
-DEBUG = os.getenv('DEBUG') != ''
+DEBUG = os.getenv('DEBUG') is not None
 
-ALLOWED_HOSTS = ['*'] if DEBUG else os.getenv('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = ['*'] if DEBUG else os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # Application definition
 
