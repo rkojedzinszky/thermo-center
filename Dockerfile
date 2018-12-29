@@ -38,11 +38,12 @@ FROM app-build
 
 RUN apk add --no-cache nginx
 
-RUN mkdir -p /var/www/html/tc/dist/ /var/www/html/tc/icons/
+RUN mkdir -p /var/www/html/tc/dist/ /var/www/html/tc/icons/ /var/www/html/tc/static/
 
 COPY --from=frontend /work/index.html /var/www/html/tc
 COPY --from=frontend /work/dist /var/www/html/tc/dist
 COPY --from=frontend /work/icons /var/www/html/tc/icons
+COPY --from=app-build /opt/thermo-center/www/static /var/www/html/tc/static
 
 RUN apk add --no-cache supervisor
 
