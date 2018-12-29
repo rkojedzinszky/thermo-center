@@ -62,7 +62,8 @@ Using the attached [adapter](./simple-adapter/) , with one CC1101 module one may
 |-------|-----:|----------|
 | Banana PI M1+ | 272 | PI16 |
 | Banana PI M2 | 200 | PG8 |
-| Banana PI M2+ | 2 | PA2 |
+| Banana PI M2+ (H3) | 2 | PA2 |
+| Orange PI Plus 2E (H3) | 2 | PA2 |
 
 (Others to be listed here...)
 
