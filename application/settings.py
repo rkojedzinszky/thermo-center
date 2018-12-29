@@ -12,12 +12,38 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import tempfile
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DATABASES = {
+    'default': {
+        # postgresql db with schema support
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DBNAME', 'thermo-center'),
+        'HOST': os.getenv('DBHOST', 'postgres'),
+        'USER': os.getenv('DBUSER', 'thermo-center'),
+        'PASSWORD': os.getenv('DBPASSWORD', 'thermo-center'),
+        #'SCHEMA': '',
+
+	'CONN_MAX_AGE': None,
+    }
+}
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+
+# Change SECRET_KEY to a random value
+SECRET_KEY = os.getenv('SECRET_KEY', 'change-this')
+
+# Change CACHE_DIR for each different instance on the same machine
+CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
+
+# Change this to False on production system
+DEBUG = os.getenv('DEBUG') != ''
+
+ALLOWED_HOSTS = ['*'] if DEBUG else os.getenv('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -82,23 +108,27 @@ USE_TZ = False
 STATIC_URL = '/tc/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
 
-CARBON_PICKLE_ENDPOINT = ('127.0.0.1', 2004)
-CARBON_CACHE_ENDPOINT = ('127.0.0.1', 7002)
+CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', 'carbon-cache'), int(os.getenv('CARBON_PICKLE_RECEIVER_PORT', '2004')))
 # Carbon queue size
 CARBON_QUEUE_MAXSIZE = 100
 
-WWW_ROOT = '/'
+WWW_ROOT = 'tc/'
 
 # receiver control socket
 RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
 
 # receiver SPI defaults
+SPI_DEV = (0, 0)
 SPI_MODE = 0
 SPI_FREQ = 100000
 
+# This must be defined for receiver to work
+# an interrupt-enabled gpio must be given
+INT_GPIO_DIR = os.getenv('INT_GPIO_DIR', '/gpio')
+
 # define MQTT_HOST to enable feeding data to mqtt broker
-#MQTT_HOST = 'localhost'
-MQTT_PORT = 1883
+MQTT_HOST = os.getenv('MQTT_HOST', 'mqtt') or None
+MQTT_PORT = int(os.getenv('MQTT_PORT', '1883'))
 MQTT_PREFIX = 'thsensor/'
 
 # default heatcontrol target temperature
@@ -108,7 +138,10 @@ HEATCONTROL_DEFAULT_TARGET_TEMPERATURE = None
 INTERRUPT_MAX_RATE = 1
 INTERRUPT_MAX_BURST = 30
 
-from local_settings import *
+try:
+    from local_settings import *
+except ImportError:
+    pass
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -130,3 +163,5 @@ CACHES = {
         'LOCATION': CACHE_DIR
     }
 }
+
+del tempfile

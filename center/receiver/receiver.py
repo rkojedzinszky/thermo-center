@@ -36,7 +36,7 @@ class Receiver(RadioBase):
         self._tbf.reset()
 
     async def main(self):
-        self._cc = PickleClient(self.loop, settings.CARBON_PICKLE_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE)
+        self._cc = PickleClient(self.loop, settings.CARBON_PICKLE_RECEIVER_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE)
         self._cc_task = self.loop.create_task(self._cc.feed())
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
         self._tbf = TokenBucketFilter(settings.INTERRUPT_MAX_RATE, settings.INTERRUPT_MAX_BURST, self.loop.time)
