@@ -104,4 +104,4 @@ class Main:
 
     async def run(self):
         self.loop.create_task(self.mqtt.run())
-        await websockets.serve(self._handler, '127.0.0.1', 8081)
+        await websockets.serve(self._handler, '0.0.0.0', 8081)
