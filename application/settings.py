@@ -124,7 +124,7 @@ SPI_FREQ = 100000
 
 # This must be defined for receiver to work
 # an interrupt-enabled gpio must be given
-INT_GPIO_DIR = os.getenv('INT_GPIO_DIR', '/gpio')
+INT_GPIO_DIR = '/gpio'
 
 # define MQTT_HOST to enable feeding data to mqtt broker
 MQTT_HOST = os.getenv('MQTT_HOST', 'mqtt') or None
