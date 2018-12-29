@@ -115,7 +115,7 @@ CARBON_QUEUE_MAXSIZE = 100
 WWW_ROOT = 'tc/'
 
 # receiver control socket
-RECEIVER_SOCKET = '%s/receiver.sock' % BASE_DIR
+RECEIVER_SOCKET = os.getenv('APPDAEMON_SOCKET', os.path.join(BASE_DIR, 'receiver.sock'))
 
 # receiver SPI defaults
 SPI_DEV = (0, 0)
