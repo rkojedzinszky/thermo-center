@@ -6,5 +6,5 @@ cd "$ROOT"
 export LANG=en_US.UTF-8
 
 rm -f receiver.sock
-python manage.py receiver -d
+python manage.py appdaemon -d
 uwsgi --ini uwsgi.ini
