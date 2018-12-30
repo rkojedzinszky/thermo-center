@@ -45,9 +45,6 @@ class Main:
         partnum = self._radio.status(radio.Radio.StatusReg.PARTNUM)
         if partnum != 0x0:
             raise RuntimeError('CC1101 identification failed: PARTNUM={:x}'.format(partnum))
-        version = self._radio.status(radio.Radio.StatusReg.VERSION)
-        if version != 0x14:
-            raise RuntimeError('CC1101 identification failed: VERSION={:x}'.format(version))
 
         self._gpio = gpio.GPIO(settings.INT_GPIO_DIR)
         self._gpio.input()
@@ -61,7 +58,7 @@ class Main:
 
         self._loop_cls = receiver.Receiver
 
-        self.loop.create_task(self._loop_runner())
+        await self._loop_runner()
 
     def _mqtt_setup(self):
         if hasattr(settings, 'MQTT_HOST'):

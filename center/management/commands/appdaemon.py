@@ -30,10 +30,17 @@ class Command(BaseCommand):
 
         from center import websocket
         websocketDaemon = websocket.Main(loop)
-        loop.create_task(websocketDaemon.run())
+        wstask = loop.create_task(websocketDaemon.run())
 
         from center import receiver
         receiverDaemon = receiver.Main(loop)
-        loop.create_task(receiverDaemon.run())
+        recvtask = loop.create_task(receiverDaemon.run())
 
-        loop.run_forever()
+        tasks = {wstask, recvtask}
+
+        loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED))
+
+        for t in tasks:
+            t.cancel()
+
+        loop.run_until_complete(asyncio.wait(tasks))
