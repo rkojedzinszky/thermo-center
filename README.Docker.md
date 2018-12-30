@@ -56,6 +56,16 @@ Also for the first time one should create a superuser for the application with:
 $ docker exec -it center python manage.py createsuperuser
 ```
 
+## Timezone
+
+For the heatcontrol feature to work correctly, timezone should be set. The simplest way is to mount the timezone database into the container at /etc/localtime. For example,
+    specify the additional arguments to docker:
+```bash
+$ docker run ... \
+	-v /usr/share/zoneinfo/Europe/Budapest:/etc/localtime:ro
+	...
+```
+
 ## Exported ports
 
 The image exports port 80, on which the whole application is available, under /tc/. So after a successful installation one should open http://thermo-center/tc/ in a browser, and it should work.
