@@ -4,7 +4,7 @@ MAINTAINER Richard Kojedzinszky <krichy@nmdps.net>
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 
 RUN mkdir -p $APP_HOME && \
-	adduser -D -H -h $APP_HOME $APP_USER
+	adduser -S -D -H -h $APP_HOME $APP_USER
 
 ADD . $APP_HOME/
 
