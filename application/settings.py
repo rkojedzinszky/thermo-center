@@ -94,7 +94,7 @@ TEMPLATES = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'CET'
+TIME_ZONE = os.getenv('TIME_ZONE', 'Europe/Budapest')
 
 USE_I18N = True
 

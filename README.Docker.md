@@ -20,6 +20,7 @@ The available environment variables are as:
 | SECRET_KEY | Django SECRET_KEY | change-this |
 | DEBUG | Run Django in DEBUG mode | '' |
 | ALLOWED_HOSTS | Django ALLOWED_HOSTS, comma separated list | '' |
+| TIME_ZONE | Timezone setting for application | Europe/Budapest |
 | CARBON_PICKLE_RECEIVER_HOST | Carbon Pickle receiver host | carbon-cache |
 | CARBON_PICKLE_RECEIVER_PORT | Carbon Pickle receiver port | 2004 |
 | APPDAEMON_SOCKET | Application daemon control socket (will be deprecated/refactored) | /tmp/appdaemon.sock |
@@ -54,16 +55,6 @@ $ docker exec -it center python manage.py migrate
 Also for the first time one should create a superuser for the application with:
 ```bash
 $ docker exec -it center python manage.py createsuperuser
-```
-
-## Timezone
-
-For the heatcontrol feature to work correctly, timezone should be set. The simplest way is to mount the timezone database into the container at /etc/localtime. For example,
-    specify the additional arguments to docker:
-```bash
-$ docker run ... \
-	-v /usr/share/zoneinfo/Europe/Budapest:/etc/localtime:ro
-	...
 ```
 
 ## Exported ports

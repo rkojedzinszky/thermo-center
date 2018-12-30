@@ -31,7 +31,7 @@ RUN npm install && sh build.sh && rm -rf node_modules
 
 FROM app-build
 
-RUN apk add --no-cache nginx supervisor
+RUN apk add --no-cache nginx supervisor tzdata
 
 RUN mkdir -p /var/www/html/tc/dist/ /var/www/html/tc/icons/ /var/www/html/tc/static/
 
