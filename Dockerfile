@@ -12,15 +12,12 @@ WORKDIR $APP_HOME
 
 RUN apk add --no-cache -t .build-deps gcc make libffi-dev postgresql-dev git libc-dev linux-headers && \
 	pip install -U pip uwsgi -r requirements.txt && \
-	apk del .build-deps
+	apk del .build-deps && \
+	rm -rf /root/.cache
 
-RUN apk add --no-cache libpq
-
-RUN python manage.py collectstatic --no-input
-
-RUN python manage.py gen_canjs_models
-
-RUN rm -rf /root/.cache
+RUN apk add --no-cache libpq && \
+	python manage.py collectstatic --no-input && \
+	python manage.py gen_canjs_models
 
 FROM node:lts-alpine AS frontend
 
@@ -28,15 +25,13 @@ ADD www /work
 
 WORKDIR /work
 
-RUN npm install
-
 COPY --from=app-build /opt/thermo-center/www/models/g/ /work/models/g/
 
-RUN sh build.sh
+RUN npm install && sh build.sh && rm -rf node_modules
 
 FROM app-build
 
-RUN apk add --no-cache nginx
+RUN apk add --no-cache nginx supervisor
 
 RUN mkdir -p /var/www/html/tc/dist/ /var/www/html/tc/icons/ /var/www/html/tc/static/
 
@@ -44,8 +39,6 @@ COPY --from=frontend /work/index.html /var/www/html/tc
 COPY --from=frontend /work/dist /var/www/html/tc/dist
 COPY --from=frontend /work/icons /var/www/html/tc/icons
 COPY --from=app-build /opt/thermo-center/www/static /var/www/html/tc/static
-
-RUN apk add --no-cache supervisor
 
 ADD docker-assets /
 
