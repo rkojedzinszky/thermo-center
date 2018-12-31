@@ -9,6 +9,7 @@ import route from 'can-route';
 import {Session} from 'models/Session';
 import $ from 'jquery';
 import './navbar';
+import './common.less!';
 
 // Register number formatting helpers
 const Precisions = new (DefineMap.extend({

@@ -6,7 +6,7 @@ import {SensorResync} from 'models/SensorResync';
 Component.extend({
 	tag: 'thermo-p-overview',
 	view: `
-<table class="table table-striped table-bordered table-hover table-sm">
+<table class="table table-striped table-bordered table-hover table-sm cell-align-middle">
 <thead>
 <tr>
 	<th scope="col">#</th>
@@ -43,15 +43,15 @@ Component.extend({
 </tbody>
 </table>
 <div class="checkbox">
-	<label>
-		<input type="checkbox" checked:bind="advanced" />
-		Show advanced fields
-	</label>
+	<button class="btn btn-primary {{#if advanced}}active{{//if}}" {{#if active}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
 </div>
 	`,
 	ViewModel: {
 		sensors: { default: () => [] },
 		advanced: 'boolean',
+		toggle_advanced() {
+			this.advanced = !this.advanced;
+		},
 		connectedCallback(element) {
 			var self = this;
 			THSensor.getList({'order_by': 'id'}).then(function(res) {
@@ -72,7 +72,7 @@ Component.extend({
 
 Component.extend({
 	tag: 'thermo-sensor-resync',
-	view: `<button class="btn btn-sm btn-secondary" on:click="do_resync(scope.event)">Resync!</button>`,
+	view: `<button class="btn btn-secondary" on:click="do_resync(scope.event)">Resync!</button>`,
 	ViewModel: {
 		do_resync(event) {
 			event.preventDefault();

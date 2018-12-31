@@ -20,13 +20,13 @@ Component.extend({
 <tr class="form-group">
 	<td><input class="form-control" type="time" value:bind="profile.start" on:blur="profile.save()"/></td>
 	<td><input class="form-control" type="number" step="0.5" value:bind="profile.target_temp_s" on:blur="profile.save()"/></td>
-	<td class="align-middle text-center"><i class="form-control btn btn-sm btn-danger fas fa-trash" on:click="profile.destroy()"></i></td>
+	<td class="align-middle text-center"><i class="btn btn-danger fas fa-trash" on:click="profile.destroy()"></i></td>
 </tr>
 	{{/for}}
 <tr class="form-group">
 	<td><input class="form-control" type="time" value:bind="newp.start" /></td>
 	<td><input class="form-control" type="number" step="0.5" value:bind="newp.target_temp_s" /></td>
-	<td class="align-middle text-center"><i class="form-control btn btn-sm btn-primary fas fa-plus" on:click="createNewP()"></i></td>
+	<td class="align-middle text-center"><i class="btn btn-primary fas fa-plus" on:click="createNewP()"></i></td>
 </tr>
 </tbody>
 </table>`,

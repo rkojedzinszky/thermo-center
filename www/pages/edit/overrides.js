@@ -8,7 +8,7 @@ Component.extend({
 	<td>{{dateformat(o.start)}}
 	<td>{{dateformat(o.end)}}
 	<td>{{o.target_temp}}</td>
-	<td class="align-middle text-center"><i class="btn btn-sm btn-danger fas fa-trash" on:click="o.destroy()"></i></td>
+	<td class="align-middle text-center"><i class="btn btn-danger fas fa-trash" on:click="o.destroy()"></i></td>
 	`,
 	helpers: {
 		dateformat(date) {
@@ -44,7 +44,7 @@ Component.extend({
 			<div class="input-group-append"><div class="input-group-text">℃</div></div>
 		</div>
 	</td>
-	<td class="align-middle text-center"><i class="btn btn-sm btn-primary fas fa-plus" on:click="create()"></i></td>
+	<td class="align-middle text-center"><i class="btn btn-primary fas fa-plus" on:click="create()"></i></td>
 </tr>
 	{{#for (o of overrides)}}
 	<thermo-p-edit-override style="display: table-row" o:bind="o" />

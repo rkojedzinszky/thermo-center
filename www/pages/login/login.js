@@ -15,7 +15,7 @@ Component.extend({
 		<input class="form-control" placeholder="Password" type="password" value:to="password" />
 	</div>
 	<div class="form-group">
-		<button type="submit" class="btn btn-default">Login</button>
+		<button type="submit" class="btn btn-primary">Login</button>
 	</div>
 	{{#loginerror}}
 	<div class="form-group">

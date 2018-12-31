@@ -7,7 +7,7 @@ import {InstantProfile} from 'models/InstantProfile';
 Component.extend({
 	tag: 'thermo-p-heatcontrol',
 	view: `
-<table class="table table-striped table-bordered table-hover table-sm">
+<table class="table table-striped table-bordered table-hover table-sm cell-align-middle">
 <thead>
 <tr>
 	<th>Name</th>
@@ -24,15 +24,15 @@ Component.extend({
 	<td>{{format('temperature', s.temperature)}}</td>
 	<td>{{format('target_temp', s.target_temp)}}</td>
 	<td>{{format('pidcontrol', s.pidcontrol)}}</td>
-	<td><a class="btn btn-default btn-xs" href="{{{ edit_link(s) }}}">Edit</a></td>
+	<td><a class="btn btn-primary" role="button" href="{{{ edit_link(s) }}}">Edit</a></td>
 </tr>
 {{/for}}
 </tbody>
 </table>
-<ul class="list-unstyled list-inline iprofiles">
+<ul class="list-unstyled list-inline">
 {{#for (i of instantprofiles)}}
-<li>
-	<button class="iprofile btn btn-default btn-lg {{#if (i.active)}}bg-success{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
+<li class="list-inline-item">
+	<button class="btn btn-primary {{#if (i.active)}}active{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
 </li>
 {{/for}}
 </ul>
