@@ -9,7 +9,7 @@ Component.extend({
 	tag: 'thermo-navbar',
 	view: `
 	<nav class="navbar navbar-expand-sm navbar-light bg-light">
-	 <a class="navbar-brand" href="#">Thermo Center</a>
+	 <a class="navbar-brand" href="#"><i class="fas fa-thermometer-half"></i></a>
          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 	  <span class="navbar-toggler-icon"></span>
 	 </button>
@@ -36,6 +36,7 @@ Component.extend({
 			get() {
 				if (this.is_logged_in) {
 					return [
+						{name: 'Overview', link: 'overview'},
 						{name: 'Heat control', link: 'heatcontrol'},
 						{name: 'Logout', link: 'logout'},
 					];
