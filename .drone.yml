@@ -1,0 +1,9 @@
+---
+kind: pipeline
+name: default
+
+steps:
+- name: Success
+  image: python:3.6-alpine
+  commands:
+  - /bin/true
