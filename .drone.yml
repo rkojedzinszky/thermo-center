@@ -2,6 +2,10 @@
 kind: pipeline
 name: default
 
+platform:
+  os: linux
+  arch: arm
+
 steps:
 - name: Success
   image: python:3.6-alpine
