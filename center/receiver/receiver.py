@@ -13,7 +13,7 @@ from center.carbon import PickleClient
 from center.receiver import pid
 from center.receiver.tbf import TokenBucketFilter
 
-PIDCONTROL_INTERVAL = 10 * 60
+PIDCONTROL_INT_ABS_MAX = 100.0
 
 WATCHDOG_TIMEOUT = 300
 
@@ -156,12 +156,13 @@ class Receiver(RadioBase):
             try:
                 pc = self._pidmap[id_]
             except KeyError:
-                pc = self._pidmap.setdefault(id_, pid.PID(PIDCONTROL_INTERVAL))
+                pc = self._pidmap.setdefault(id_, pid.PID())
 
-            pc.feed(mh['Temperature'].value())
             target_temp = pcp.get_target_temp()
             if target_temp is not None:
-                pcv = pc.value(target_temp, kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
+                error = target_temp - mh['Temperature'].value()
+                pc.feed(error=error, intabsmax=PIDCONTROL_INT_ABS_MAX)
+                pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
                 logger.debug('%s: pid control=%f', s, pcv)
                 metrics.append(PIDControlValue(pcv))
 

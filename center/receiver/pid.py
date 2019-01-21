@@ -1,64 +1,56 @@
 import time
 
 class PID:
-    """ A tuned PID controller to accumulate errors on a fix
-    time interval """
+    """ A tuned PID controller, which can limit the
+    integral part in a range """
 
-    DERIV_SPAN = 2
+    class Error:
+        """ Represents an error in a time point """
+        __slots__ = ('_ts', '_error')
 
-    class Value:
-        """ Represents a value in a time point """
-        __slots__ = ('_ts', '_value')
-
-        def __init__(self, value, ts=time.time):
+        def __init__(self, error, ts=time.time):
             if callable(ts):
                 ts = ts()
             self._ts = ts
-            self._value = value
+            self._error = error
 
         @property
         def ts(self):
             return self._ts
 
         @property
-        def value(self):
-            return self._value
+        def error(self):
+            return self._error
 
         def __str__(self):
-            return 'V: %f @ %f' % (self._value, self._ts)
+            return 'V: %f @ %f' % (self._error, self._ts)
 
-    def __init__(self, intvl):
-        self._intvl = intvl
-        self._values = []
+    def __init__(self):
+        self._int = 0
+        self._last = None
+        self._cur = None
 
-    def feed(self, value, ts=time.time):
-        v = PID.Value(value, ts)
-        self._values.append(v)
-        left = v.ts - self._intvl
-        popped = None
+    def feed(self, error, intabsmax=None, ts=time.time):
+        self._last = self._cur
+        self._cur = PID.Error(error, ts)
 
-        while self._values[0].ts < left:
-            popped = self._values.pop(0)
+        if self._last:
+            newint = self._int + (self._last.error + error) * (self._cur.ts - self._last.ts) / 2
 
-        if popped is not None:
-            nv = PID.Value(popped.value + (self._values[0].value - popped.value) / (self._values[0].ts - popped.ts) * (left - popped.ts), left)
-            self._values.insert(0, nv)
+            # handle maximum
+            if intabsmax is not None:
+                if newint < -intabsmax:
+                    newint = -intabsmax
+                elif newint > intabsmax:
+                    newint = intabsmax
 
-    def value(self, sp, kp=1.0, ki=1.0, kd=1.0):
-        fv = self._values[0]       # very first value
-        li = len(self._values) - 1 # last index
-        lv = self._values[li]      # last value
+            self._int = newint
 
-        error = sp - lv.value
+    def value(self, kp=1.0, ki=1.0, kd=1.0):
+        pv = self._cur.error
+        iv = self._int
+        dv = 0
+        if self._last:
+            dv = (self._cur.error - self._last.error) / (self._cur.ts - self._last.ts)
 
-        accum = sp * (lv.ts - fv.ts)
-        for i in range(1, len(self._values)):
-            accum -= (self._values[i - 1].value + self._values[i].value) / 2.0 * (self._values[i].ts - self._values[i-1].ts)
-
-        deriv = 0
-        if li >= self.DERIV_SPAN:
-            a = self._values[li - self.DERIV_SPAN]
-
-            deriv = (a.value - lv.value) / (lv.ts - a.ts)
-
-        return kp * error + ki * accum + kd * deriv
+        return kp * pv + kd * dv + ki * iv
