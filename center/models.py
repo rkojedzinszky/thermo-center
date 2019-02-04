@@ -64,7 +64,7 @@ class Sensor(models.Model):
     last_tsf = models.FloatField(null=True)
 
     def __str__(self):
-        return 'Sensor %02x' % self.id
+        return '{} ({:02x})'.format(self.name or 'NONAME', self.id)
 
     def _validate_seq(self, timestamp, seq):
         avg = 0

@@ -14,5 +14,15 @@ admin.site.register(models.Calendar, CalendarAdmin)
 admin.site.register(models.Control)
 admin.site.register(models.Profile)
 admin.site.register(models.ScheduledOverride)
-admin.site.register(models.InstantProfile)
-admin.site.register(models.InstantProfileEntry)
+
+@admin.register(models.InstantProfile)
+class InstantProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active')
+    readonly_fields = ('active', )
+
+@admin.register(models.InstantProfileEntry)
+class InstantProfileEntryAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'control', 'target_temp', 'active')
+    list_display_links = ('profile', 'control')
+    list_filter = ('profile', 'control')
+    readonly_fields = ('active', )

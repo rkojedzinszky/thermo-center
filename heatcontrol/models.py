@@ -97,7 +97,7 @@ class InstantProfile(models.Model):
     active = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'InstantProfile<{}>'.format(self.name)
+        return self.name
 
     def save(self, **kwargs):
         if self.pk is not None:
