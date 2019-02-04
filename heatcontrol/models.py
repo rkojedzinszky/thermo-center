@@ -35,17 +35,22 @@ class Control(models.Model):
     def get_target_temp(self):
         """
         This calculates the target temperature, taking into account the available overrides
+
+        The priority is:
+        - Scheduled override
+        - Instant profile
+        - Normal profile
+        - System default target temperature
+
         """
-        try:
-            return self.instantprofileentry_set.get(active=True).target_temp
-        except InstantProfileEntry.DoesNotExist:
-            pass
-
         now = timezone.now()
-
         so = self.scheduledoverride_set.filter(end__gt=now, start__lte=now).order_by('-pk').first()
         if so is not None:
             return so.target_temp
+
+        ip = self.instantprofileentry_set.filter(active=True).first()
+        if ip is not None:
+            return ip.target_temp
 
         day = now.date()
         tm = now.time()
