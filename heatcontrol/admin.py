@@ -13,7 +13,15 @@ admin.site.register(models.DayType)
 admin.site.register(models.Calendar, CalendarAdmin)
 admin.site.register(models.Control)
 admin.site.register(models.Profile)
-admin.site.register(models.ScheduledOverride)
+
+@admin.register(models.ScheduledOverride)
+class ScheduledOverrideAdmin(admin.ModelAdmin):
+    list_display = ('control', 'start', 'end', 'target_temp')
+    list_filter = ('control', )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(end__gte=timezone.now()).order_by('start')
 
 @admin.register(models.InstantProfile)
 class InstantProfileAdmin(admin.ModelAdmin):

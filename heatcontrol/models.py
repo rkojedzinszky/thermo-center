@@ -82,8 +82,8 @@ class Profile(models.Model):
 class ScheduledOverride(models.Model):
     """ Simply override a setting for a period of time for a Control unit """
     control = models.ForeignKey(Control, on_delete=models.CASCADE)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    start = models.DateTimeField(db_index=True)
+    end = models.DateTimeField(db_index=True)
     target_temp = models.FloatField()
 
     class Meta:
