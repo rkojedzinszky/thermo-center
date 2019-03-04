@@ -6,7 +6,10 @@ platform:
   arch: arm
 
 steps:
-- name: Success
-  image: python:3.6-alpine
-  commands:
-  - /bin/true
+- name: docker
+  image: plugins/docker
+  settings:
+    repo: rkojedzinszky/thermo-center
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
