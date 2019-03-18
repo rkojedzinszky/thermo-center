@@ -6,5 +6,6 @@ django<2
 https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
 ipaddress
 psycopg2
-hbmqtt
+#hbmqtt
+https://github.com/rkojedzinszky/hbmqtt/archive/task_leak_fix.zip
 websockets
