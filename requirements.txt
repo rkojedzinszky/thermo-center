@@ -7,5 +7,5 @@ https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
 ipaddress
 psycopg2
 #hbmqtt
-https://github.com/rkojedzinszky/hbmqtt/archive/task_leak_fix.zip
+https://github.com/beerfactory/hbmqtt/archive/master.zip
 websockets
