@@ -4,6 +4,8 @@ import re
 import logging
 import time
 import asyncio
+from django.db import connection
+from django.db.utils import OperationalError
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.core import exceptions
@@ -97,6 +99,9 @@ class Receiver(RadioBase):
 
         try:
             self._receive_packet(data)
+        except OperationalError as e:
+            logger.error('database error during processing packet: %s' % str(e))
+            connection.close()
         except Exception as e:
             logger.error('error processing packet: %s' % str(e))
 
