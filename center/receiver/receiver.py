@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core import exceptions
 from center.receiver import RadioBase, radio, sensorvalue
 from center import models
-from center.carbon import PickleClient
+from center.carbon import LineClient, PickleClient
 from center.receiver import pid
 from center.receiver.tbf import TokenBucketFilter
 
@@ -38,11 +38,19 @@ class Receiver(RadioBase):
         self._tbf.reset()
 
     async def main(self):
-        self._cc = PickleClient(self.loop, settings.CARBON_PICKLE_RECEIVER_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE)
-        self._cc_task = self.loop.create_task(self._cc.feed())
+        self._ccs = [] # Carbon cache clients
         self._aes = AES.new(bytes([int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', self._config.aes_key)]))
         self._tbf = TokenBucketFilter(settings.INTERRUPT_MAX_RATE, settings.INTERRUPT_MAX_BURST, self.loop.time)
         await self._setup_radio()
+
+        if settings.CARBON_LINE_RECEIVER_ENDPOINT[0]:
+            self._ccs.append(LineClient(self.loop, settings.CARBON_LINE_RECEIVER_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE))
+
+        if settings.CARBON_PICKLE_RECEIVER_ENDPOINT[0]:
+            self._ccs.append(PickleClient(self.loop, settings.CARBON_PICKLE_RECEIVER_ENDPOINT, maxsize=settings.CARBON_QUEUE_MAXSIZE))
+
+        for cc in self._ccs:
+            cc.start()
 
         while True:
             try:
@@ -58,7 +66,9 @@ class Receiver(RadioBase):
                     self.receive(packet)
 
     async def stop(self):
-        self._cc_task.cancel()
+        for cc in self._ccs:
+            cc.stop()
+
         await super().stop()
 
     async def receive_many(self):
@@ -171,4 +181,4 @@ class Receiver(RadioBase):
                 logger.debug('%s: pid control=%f', s, pcv)
                 metrics.append(PIDControlValue(pcv))
 
-        s.feed(seq, metrics, carbon=self._cc, mqtt=self._mqtt)
+        s.feed(seq, metrics, carbons=self._ccs, mqtt=self._mqtt)

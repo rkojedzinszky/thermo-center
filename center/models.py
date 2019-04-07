@@ -91,7 +91,7 @@ class Sensor(models.Model):
     def _carbon_path(self):
         return 'sensor.%02x' % self.pk
 
-    def feed(self, seq, metrics, carbon=None, mqtt=None):
+    def feed(self, seq, metrics, carbons=[], mqtt=None):
         """ Feed data to Sensor """
         timestamp = time.time()
         avg = self._validate_seq(timestamp, seq)
@@ -105,11 +105,12 @@ class Sensor(models.Model):
             cachevalues.update({m.metric: m.value() for m in metrics})
             cachevalues['intvl'] = avg
 
-            if carbon:
-                tsi = int(timestamp)
-                carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v))
-                               for k, v in cachevalues.items()]
-                carbon.send(carbon_data)
+            tsi = int(timestamp)
+            carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v))
+                           for k, v in cachevalues.items()]
+
+            for cc in carbons:
+                cc.send(carbon_data)
 
             cachevalues['last_seq'] = self.last_seq
             cachevalues['last_tsf'] = self.last_tsf

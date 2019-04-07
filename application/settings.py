@@ -111,8 +111,9 @@ WWW_FILES = os.path.join(BASE_DIR, 'www')
 STATIC_URL = '/tc/static/'
 STATIC_ROOT = os.path.join(WWW_FILES, 'static')
 
-CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', 'carbon-cache'), int(os.getenv('CARBON_PICKLE_RECEIVER_PORT', '2004')))
-# Carbon queue size
+CARBON_LINE_RECEIVER_ENDPOINT = (os.getenv('CARBON_LINE_RECEIVER_HOST', None), int(os.getenv('CARBON_LINE_RECEIVER_PORT', '2003')))
+CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', None), int(os.getenv('CARBON_PICKLE_RECEIVER_PORT', '2004')))
+# Carbon queues' size
 CARBON_QUEUE_MAXSIZE = 100
 
 # receiver control socket

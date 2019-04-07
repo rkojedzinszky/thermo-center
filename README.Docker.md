@@ -21,7 +21,9 @@ The available environment variables are as:
 | DEBUG | Run Django in DEBUG mode | '' |
 | ALLOWED_HOSTS | Django ALLOWED_HOSTS, comma separated list | '' |
 | TIME_ZONE | Timezone setting for application | Europe/Budapest |
-| CARBON_PICKLE_RECEIVER_HOST | Carbon Pickle receiver host | carbon-cache |
+| CARBON_LINE_RECEIVER_HOST | Carbon Line receiver host | None |
+| CARBON_LINE_RECEIVER_PORT | Carbon Line receiver port | 2003 |
+| CARBON_PICKLE_RECEIVER_HOST | Carbon Pickle receiver host | None |
 | CARBON_PICKLE_RECEIVER_PORT | Carbon Pickle receiver port | 2004 |
 | APPDAEMON_SOCKET | Application daemon control socket (will be deprecated/refactored) | /tmp/appdaemon.sock |
 | MQTT_HOST | MQTT host for sensor updates | mqtt |

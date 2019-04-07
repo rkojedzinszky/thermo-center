@@ -6,14 +6,16 @@ import pickle
 import struct
 from center.dropqueue import DropQueue
 
-class PickleClient:
+class Client:
+    """ Base for carbon clients """
     def __init__(self, loop, endpoint, maxsize):
         self.loop = loop
         self._endpoint = endpoint
         self._socket = None
         self.queue = DropQueue(maxsize=maxsize)
+        self._task = None
 
-    async def feed(self):
+    async def _feed(self):
         while True:
             sock = None
             try:
@@ -29,7 +31,30 @@ class PickleClient:
             finally:
                 sock.close()
 
+    def start(self):
+        """ Start task """
+        self._task = self.loop.create_task(self._feed())
+
+    def stop(self):
+        """ Stop task """
+        self._task.cancel()
+
+
+class LineClient(Client):
+    """ Carbon feeder using the simple Line protocol """
+    def send(self, data):
+        payload = ''.join([
+                '{} {} {}\n'.format(r[0], r[1][1], r[1][0])
+                for r in data]
+                )
+        payload = payload.encode()
+        self.queue.dput(payload)
+
+
+class PickleClient(Client):
+    """ Carbon feeder using the Pickle protocol """
     def send(self, data):
         payload = pickle.dumps(data, protocol=2)
         header = struct.pack('!L', len(payload))
         self.queue.dput(header + payload)
+
