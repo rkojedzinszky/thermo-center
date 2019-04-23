@@ -57,7 +57,7 @@ class Receiver(RadioBase):
                 packets = await asyncio.wait_for(self.receive_many(), timeout=WATCHDOG_TIMEOUT)
             except asyncio.TimeoutError:
                 logger.warn('Watchdog timeout, resetting radio')
-                self._setup_radio()
+                await self._setup_radio()
             except Receiver.InterruptStorm:
                 logger.warn('Interrupt storm detected, resetting radio')
                 await self._setup_radio()
