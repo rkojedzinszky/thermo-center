@@ -1,5 +1,5 @@
 FROM python:3.6-alpine AS app-build
-MAINTAINER Richard Kojedzinszky <krichy@nmdps.net>
+MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 
