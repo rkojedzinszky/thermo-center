@@ -16,8 +16,11 @@ DATABASES = {
 # Change SECRET_KEY to a random value
 SECRET_KEY = 'change-this'
 
-# Change CACHE_DIR for each different instance on the same machine
-CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
+# CACHES
+# Use either MEMCACHED_HOST or CACHE_DIR, see application/settings.py
+# MEMCACHED_HOST = 'memcached'
+# MEMCACHED_PORT = 11211
+# CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
 
 # Change this to False on production system
 DEBUG = True

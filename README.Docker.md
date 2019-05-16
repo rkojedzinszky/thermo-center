@@ -28,6 +28,9 @@ The available environment variables are as:
 | APPDAEMON_SOCKET | Application daemon control socket (will be deprecated/refactored) | /tmp/appdaemon.sock |
 | MQTT_HOST | MQTT host for sensor updates | mqtt |
 | MQTT_PORT | MQTT port for sensor updates | 1883 |
+| CACHE_DIR | Django file based CACHE | /tmp/thermo-1 |
+| MEMCACHED_HOST | Django memcached based CACHE host | None |
+| MEMCACHED_PORT | Django memcached based CACHE port | 11211 |
 
 Thus the minimal needed docker command is something like this:
 ```bash

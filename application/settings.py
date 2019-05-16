@@ -37,9 +37,6 @@ DATABASES = {
 # Change SECRET_KEY to a random value
 SECRET_KEY = os.getenv('SECRET_KEY', 'change-this')
 
-# Change CACHE_DIR for each different instance on the same machine
-CACHE_DIR = os.path.join(tempfile.gettempdir(), 'thermo-1')
-
 # Change this to False on production system
 DEBUG = os.getenv('DEBUG') is not None
 
@@ -140,6 +137,19 @@ HEATCONTROL_DEFAULT_TARGET_TEMPERATURE = None
 INTERRUPT_MAX_RATE = 1
 INTERRUPT_MAX_BURST = 30
 
+# Cache setup
+# You can setup CACHES through environment variables. First set option takes effect.
+# For backwards compatibility, CACHE_DIR is set to a default. If you want to set full
+# CACHES setting, CACHE_DIR must be set to empty string, and then set CACHES in
+# local_settings.
+# To use memcached, set MEMCACHED_HOST and MEMCACHED_PORT
+# To use a file based cache, set CACHE_DIR
+# To use your own cache setting, set CACHE_DIR to empty, and set CACHES variable.
+MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', None)
+MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
+CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(tempfile.gettempdir(), 'thermo-1'))
+KEY_PREFIX = 'tc'
+
 try:
     from local_settings import *
 except ImportError:
@@ -159,11 +169,20 @@ del re
 # default tastypie.api object
 RESTAPI_CLASS = 'application.restapi.RestApi'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': CACHE_DIR
+# Setup CACHES
+if MEMCACHED_HOST:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
+        }
     }
-}
+elif CACHE_DIR:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': CACHE_DIR,
+        }
+    }
 
 del tempfile

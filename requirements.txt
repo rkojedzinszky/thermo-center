@@ -9,3 +9,4 @@ psycopg2
 #hbmqtt
 https://github.com/beerfactory/hbmqtt/archive/master.zip
 websockets
+python-memcached

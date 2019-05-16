@@ -54,7 +54,7 @@ class ControlResource(resources.ModelResource):
         return None
 
     def dehydrate(self, bundle):
-        c = cache.get(bundle.obj.sensor._carbon_path())
+        c = bundle.obj.sensor.get_cache()
         if c:
             bundle.data['temperature'] = c.get('Temperature')
             bundle.data['pidcontrol'] = c.get('pidcontrol')
