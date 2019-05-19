@@ -14,6 +14,7 @@ steps:
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
+    auto_tag: true
 
 - name: app
   image: plugins/docker
@@ -23,6 +24,7 @@ steps:
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
+    auto_tag: true
     cache_from:
     - rkojedzinszky/thermo-center-api
 
@@ -34,6 +36,7 @@ steps:
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
+    auto_tag: true
     cache_from:
     - rkojedzinszky/thermo-center-api
     - rkojedzinszky/thermo-center-app
