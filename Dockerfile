@@ -39,6 +39,7 @@ CMD ["uwsgi", \
     "--http-socket=:8082", \
     "--wsgi-file=application/wsgi.py", \
     "--master", \
+    "--die-on-term", \
     "--workers=2", \
     "--threads=4", \
     "--cheaper=1", \
