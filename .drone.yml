@@ -6,10 +6,37 @@ platform:
   arch: arm
 
 steps:
-- name: docker
+- name: api
   image: plugins/docker
   settings:
-    repo: rkojedzinszky/thermo-center
+    target: api
+    repo: rkojedzinszky/thermo-center-api
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
+    auto_tag: true
+
+- name: app
+  image: plugins/docker
+  settings:
+    target: app
+    repo: rkojedzinszky/thermo-center-app
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+    cache_from:
+    - rkojedzinszky/thermo-center-api
+
+- name: ui
+  image: plugins/docker
+  settings:
+    target: ui
+    repo: rkojedzinszky/thermo-center-ui
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+    cache_from:
+    - rkojedzinszky/thermo-center-api
+    - rkojedzinszky/thermo-center-app

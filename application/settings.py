@@ -66,8 +66,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = ['nauth.backend.Backend']
-
 ROOT_URLCONF = 'application.urls'
 
 TEMPLATES = [

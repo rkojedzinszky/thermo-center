@@ -1,0 +1,9 @@
+# requirements for DIY wireless Temp/Humidity sensor solution
+django<2
+#django-tastypie
+https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
+ipaddress
+psycopg2
+#hbmqtt
+https://github.com/beerfactory/hbmqtt/archive/master.zip
+python-memcached
