@@ -32,7 +32,7 @@ Component.extend({
 <ul class="list-unstyled list-inline">
 {{#for (i of instantprofiles)}}
 <li class="list-inline-item">
-	<button class="btn btn-primary {{#if (i.active)}}active{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
+	<button class="btn {{#if (i.active)}}btn-primary{{else}}btn-outline-primary{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
 </li>
 {{/for}}
 </ul>
