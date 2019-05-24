@@ -146,7 +146,7 @@ INTERRUPT_MAX_BURST = 30
 MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', None)
 MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
 CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(tempfile.gettempdir(), 'thermo-1'))
-KEY_PREFIX = 'tc'
+CACHE_KEY_PREFIX = os.getenv('CACHE_KEY_PREFIX', 'tc')
 
 try:
     from local_settings import *
@@ -173,6 +173,7 @@ if MEMCACHED_HOST:
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
+            'KEY_PREFIX': CACHE_KEY_PREFIX,
         }
     }
 elif CACHE_DIR:
@@ -180,6 +181,7 @@ elif CACHE_DIR:
         'default': {
             'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
             'LOCATION': CACHE_DIR,
+            'KEY_PREFIX': CACHE_KEY_PREFIX,
         }
     }
 
