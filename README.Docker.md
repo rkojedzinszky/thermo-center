@@ -31,6 +31,7 @@ The available environment variables are as:
 | CACHE_DIR | Django file based CACHE | /tmp/thermo-1 |
 | MEMCACHED_HOST | Django memcached based CACHE host | None |
 | MEMCACHED_PORT | Django memcached based CACHE port | 11211 |
+| CACHE_KEY_PREFIX | Django cache KEY_PREFIX | 'tc' |
 
 Thus the minimal needed docker command is something like this:
 ```bash
