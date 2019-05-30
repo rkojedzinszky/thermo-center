@@ -37,7 +37,7 @@ class RFConfig(models.Model):
     def __str__(self):
         return 'RFConfig'
 
-    def config_bytes(self):
+    def config_bytes_legacy(self):
         """ Generate configuration bytes for CC1101 """
         from center.receiver import radio
         regs = _parse_hex(self.rf_profile.confregs) # pylint: disable=no-member

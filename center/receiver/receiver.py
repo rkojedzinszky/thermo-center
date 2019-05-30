@@ -32,7 +32,7 @@ class Receiver(RadioBase):
 
     async def _setup_radio(self):
         await self._radio.setup_basic()
-        self._radio.xfer2(self._config.config_bytes())
+        self._radio.xfer2(self._config.config_bytes_legacy())
         await self._radio.setup_for_rx()
         self._radio.wcmd(radio.Radio.CommandStrobe.SRX)
         self._tbf.reset()

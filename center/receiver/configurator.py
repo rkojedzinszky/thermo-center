@@ -20,7 +20,7 @@ class Configurator(RadioBase):
                 self._config.network_id >> 8    # network id msb
                 ]
         self._configpacket.extend(self._config.aes_bytes())
-        self._configpacket.extend(self._config.config_bytes())
+        self._configpacket.extend(self._config.config_bytes_legacy())
         self._configpacket.extend([0xff] * (self._configpacket[0] - len(self._configpacket)))
         self._configpacket[0] -= 1 # fixup for total length
 
