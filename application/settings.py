@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'django_dbconn_retry',
     'tastypie',
     'nauth',
     'center',
