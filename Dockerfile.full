@@ -1,10 +1,5 @@
-FROM alpine:3.9 AS app-build
+FROM rkojedzinszky/alpine-python-grpcio AS app-build
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
-
-# Install python3
-RUN apk add --no-cache python3 && \
-    ln -sf python3 /usr/bin/python && ln -sf pip3 /usr/bin/pip && \
-    pip install -U pip
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 

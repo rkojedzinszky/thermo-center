@@ -1,10 +1,5 @@
-FROM alpine:3.9 AS common
+FROM rkojedzinszky/alpine-python-grpcio AS common
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
-
-# Install python3
-RUN apk add --no-cache python3 && \
-    ln -sf python3 /usr/bin/python && ln -sf pip3 /usr/bin/pip && \
-    pip install -U pip
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 
@@ -53,7 +48,7 @@ FROM common AS app
 ADD requirements.app.txt $APP_HOME/
 
 RUN apk add --no-cache py3-crypto && \
-    apk add --no-cache -t .build-deps python3-dev gcc make libffi-dev libc-dev linux-headers && \
+    apk add --no-cache -t .build-deps python3-dev gcc make libffi-dev libc-dev && \
     pip install -r requirements.app.txt && \
     apk del .build-deps && \
     rm -rf /root/.cache
