@@ -11,21 +11,26 @@ from django.db import models
 from django.core.cache import cache
 import center.fields
 
-logger = logging.getLogger(__name__) # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+_METRICS_CACHE_TIMEOUT = 120
+
 
 def _parse_hex(string):
     return [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', string)]
+
 
 class RFProfile(models.Model):
     """ A profile for RF communication """
     name = models.CharField(max_length=50)
     confregs = models.CharField(max_length=128)
 
-    class Meta: # pylint: disable=too-few-public-methods,missing-docstring
+    class Meta:  # pylint: disable=too-few-public-methods,missing-docstring
         ordering = ['pk']
 
     def __str__(self):
         return 'RFProfile %s' % self.name
+
 
 class RFConfig(models.Model):
     """ The current RF configuration """
@@ -40,8 +45,15 @@ class RFConfig(models.Model):
     def config_bytes_legacy(self):
         """ Generate configuration bytes for CC1101 """
         from center.receiver import radio
-        regs = _parse_hex(self.rf_profile.confregs) # pylint: disable=no-member
+        regs = _parse_hex(self.rf_profile.confregs)  # pylint: disable=no-member
         regs.extend([radio.Radio.ConfReg.CHANNR, self.rf_channel])
+        return regs
+
+    def config_bytes(self):
+        """ Generate configuration bytes for CC1101 """
+        from center.receiver import radio
+        regs = bytes.fromhex(self.rf_profile.confregs)  # pylint: disable=no-member
+        regs += bytes([radio.Radio.ConfReg.CHANNR, self.rf_channel])
         return regs
 
     def aes_bytes(self):
@@ -56,6 +68,7 @@ class RFConfig(models.Model):
         self.network_id = generator.randrange(65536)
         self.aes_key = ''.join('{:02x}'.format(c) for c in os.urandom(16))
 
+
 class Sensor(models.Model):
     """ A sensor device """
     id = center.fields.SensorIdField(primary_key=True)
@@ -66,7 +79,8 @@ class Sensor(models.Model):
     def __str__(self):
         return '{} ({:02x})'.format(self.name or 'NONAME', self.id)
 
-    def _validate_seq(self, timestamp, seq):
+    def validate_seq(self, timestamp, seq):
+        """ Validate received packet against stored sequence/timestamp """
         avg = 0
 
         if self.last_tsf:
@@ -94,7 +108,7 @@ class Sensor(models.Model):
     def feed(self, seq, metrics, carbons=[], mqtt=None):
         """ Feed data to Sensor """
         timestamp = time.time()
-        avg = self._validate_seq(timestamp, seq)
+        avg = self.validate_seq(timestamp, seq)
         cachevalues = {'valid': avg is not None}
 
         if cachevalues['valid']:
@@ -112,10 +126,7 @@ class Sensor(models.Model):
             for cc in carbons:
                 cc.send(carbon_data)
 
-            cachevalues['last_seq'] = self.last_seq
-            cachevalues['last_tsf'] = self.last_tsf
-
-        cache.set(self._carbon_path(), cachevalues)
+        self.set_cache(cachevalues)
         if mqtt:
             mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk),
                          json.dumps(cachevalues, separators=(',', ':')).encode())
@@ -127,11 +138,25 @@ class Sensor(models.Model):
 
         self.last_seq = None
         self.last_tsf = time.time()
+        self.set_cache({'valid': False})
         self.save()
 
     def get_cache(self):
         """ Retrieve metrics stored in cache """
-        return cache.get(self._carbon_path())
+        values = cache.get(self._carbon_path())
+        if values:
+            self.last_seq = values['last_seq']
+            self.last_tsf = values['last_tsf']
+
+        return values or {}
+
+    def set_cache(self, values):
+        """ Saves values in cache, replacing last_seq and last_tsf from model """
+        values['last_seq'] = self.last_seq
+        values['last_tsf'] = self.last_tsf
+
+        cache.set(self._carbon_path(), values, timeout=_METRICS_CACHE_TIMEOUT)
+
 
 class SensorResync(models.Model):
     """ Represents a resync event
