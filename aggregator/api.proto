@@ -1,0 +1,22 @@
+// Aggregator interface
+
+syntax = "proto3";
+
+package aggregator;
+
+service Aggregator {
+	// Feed packet to processor
+	rpc FeedSensorPacket(SensorPacket) returns (FeedResponse) {}
+}
+
+message SensorPacket {
+	uint32 id = 1;
+	uint32 seq = 2;
+	float rssi = 3;
+	uint32 lqi = 4;
+	bytes raw = 5;
+}
+
+message FeedResponse {
+	bool processed = 1;
+}

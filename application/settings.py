@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import re
 import os
 import tempfile
 
@@ -107,13 +108,16 @@ WWW_FILES = os.path.join(BASE_DIR, 'www')
 STATIC_URL = '/tc/static/'
 STATIC_ROOT = os.path.join(WWW_FILES, 'static')
 
-CARBON_LINE_RECEIVER_ENDPOINT = (os.getenv('CARBON_LINE_RECEIVER_HOST', None), int(os.getenv('CARBON_LINE_RECEIVER_PORT', '2003')))
-CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', None), int(os.getenv('CARBON_PICKLE_RECEIVER_PORT', '2004')))
+CARBON_LINE_RECEIVER_ENDPOINT = (os.getenv('CARBON_LINE_RECEIVER_HOST', None), int(
+    os.getenv('CARBON_LINE_RECEIVER_PORT', '2003')))
+CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', None), int(
+    os.getenv('CARBON_PICKLE_RECEIVER_PORT', '2004')))
 # Carbon queues' size
 CARBON_QUEUE_MAXSIZE = 100
 
 # receiver control socket
-RECEIVER_SOCKET = os.getenv('APPDAEMON_SOCKET', os.path.join(BASE_DIR, 'receiver.sock'))
+RECEIVER_SOCKET = os.getenv(
+    'APPDAEMON_SOCKET', os.path.join(BASE_DIR, 'receiver.sock'))
 
 # receiver SPI defaults
 SPI_DEV = (0, 0)
@@ -146,8 +150,20 @@ INTERRUPT_MAX_BURST = 30
 # To use your own cache setting, set CACHE_DIR to empty, and set CACHES variable.
 MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', None)
 MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
-CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(tempfile.gettempdir(), 'thermo-1'))
+CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(
+    tempfile.gettempdir(), 'thermo-1'))
 CACHE_KEY_PREFIX = os.getenv('CACHE_KEY_PREFIX', 'tc')
+
+# Database/Sensor update tuning
+# This can reduce write load on database with just updating the database
+# based on the probability here.
+# Only affects data needed for received packet validation.
+# Range is: [0, 1].
+# 0 means never update, which is discouraged
+# 1 means always update
+# The default is 0.01, which results in 1 percent of the updates
+# sent to db
+SENSOR_DB_UPDATE_PROBABILITY = 0.01
 
 try:
     from local_settings import *
@@ -156,12 +172,12 @@ except ImportError:
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
-import re
 
 # fixup for SCHEMA
 if re.search(r'backends\.(postgresql_psycopg2|postgis)$', DATABASES['default']['ENGINE']) and DATABASES['default'].get('SCHEMA', None) is not None:
     opts = DATABASES['default'].setdefault('OPTIONS', {})
-    opts['options'] = opts.get('options', '') + ' -c search_path=%s' % DATABASES['default']['SCHEMA']
+    opts['options'] = opts.get(
+        'options', '') + ' -c search_path=%s' % DATABASES['default']['SCHEMA']
 
 del re
 

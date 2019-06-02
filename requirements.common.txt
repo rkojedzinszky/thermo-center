@@ -8,3 +8,5 @@ psycopg2
 https://github.com/beerfactory/hbmqtt/archive/master.zip
 python-memcached
 django-dbconn-retry
+grpcio
+protobuf

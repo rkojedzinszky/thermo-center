@@ -1,0 +1,20 @@
+// Configuration servicer interface
+
+syntax = "proto3";
+
+package configurator;
+
+service Configurator {
+	// Return radio configuration for receiver
+	rpc GetRadioCfg(RadioCfgRequest) returns (RadioCfgResponse) {}
+}
+
+message RadioCfgRequest {
+	uint32 cluster = 1;
+}
+
+message RadioCfgResponse {
+	uint32 network = 1;
+	bytes radio_config = 2;
+	bytes aes_key = 3;
+}
