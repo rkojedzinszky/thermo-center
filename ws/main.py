@@ -19,7 +19,7 @@ class MqttClient:
     async def _run(self):
         cl = MQTTClient(config={'auto_reconnect':False})
         logger.debug('Connecting to MQTT broker')
-        await cl.connect('mqtt://{}:{}'.format(self.wsserver.args['mqtt_port'], self.wsserver.args['mqtt_port'])
+        await cl.connect('mqtt://{}:{}'.format(self.wsserver.args['mqtt_port'], self.wsserver.args['mqtt_port']))
         logger.info('Connected to MQTT broker')
         await cl.subscribe([(MQTT_PREFIX + '+/report', QOS_0)])
 
