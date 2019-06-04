@@ -7,7 +7,7 @@ RUN mkdir -p $APP_HOME && \
 	adduser -D -H -h $APP_HOME $APP_USER
 
 ADD lib $APP_HOME/lib
-ADD requirements.common.txt manage.py $APP_HOME/
+ADD requirements.txt manage.py $APP_HOME/
 ADD application $APP_HOME/application
 ADD center $APP_HOME/center
 ADD heatcontrol $APP_HOME/heatcontrol
@@ -18,7 +18,7 @@ ADD aggregator $APP_HOME/aggregator
 WORKDIR $APP_HOME
 
 RUN apk add --no-cache tzdata py3-django py3-psycopg2 && \
-    pip install -r requirements.common.txt && \
+    pip install -r requirements.txt && \
     rm -rf /root/.cache
 
 ### API
