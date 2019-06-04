@@ -9,7 +9,7 @@ RUN mkdir -p $APP_HOME && \
 WORKDIR $APP_HOME
 
 ADD lib lib
-ADD requirements.txt manage.py .
+ADD requirements.txt manage.py ./
 ADD application application
 ADD center center
 ADD heatcontrol heatcontrol
