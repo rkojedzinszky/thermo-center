@@ -16,7 +16,7 @@ steps:
       from_secret: hub_docker_password
     auto_tag: true
 
-- name: app
+- name: grpcserver
   image: plugins/docker
   settings:
     target: grpcserver
