@@ -17,7 +17,7 @@ ADD aggregator $APP_HOME/aggregator
 
 WORKDIR $APP_HOME
 
-RUN apk add --no-cache tzdata py3-django py3-psycopg2 py3-ipaddress && \
+RUN apk add --no-cache tzdata py3-django py3-psycopg2 && \
     pip install -r requirements.common.txt && \
     rm -rf /root/.cache
 

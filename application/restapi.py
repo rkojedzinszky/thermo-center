@@ -1,7 +1,6 @@
 """ Rest API """
 
 import time
-import ipaddress
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 from tastypie.resources import Resource

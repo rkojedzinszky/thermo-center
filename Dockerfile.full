@@ -14,7 +14,7 @@ ADD nauth $APP_HOME/nauth
 
 WORKDIR $APP_HOME
 
-RUN apk add --no-cache py3-django py3-psycopg2 py3-ipaddress py3-crypto uwsgi-python3 && \
+RUN apk add --no-cache py3-django py3-psycopg2 py3-crypto uwsgi-python3 && \
     apk add --no-cache -t .build-deps gcc make libffi-dev git libc-dev linux-headers python3-dev && \
     pip install -r requirements.txt && \
     apk del .build-deps && \
