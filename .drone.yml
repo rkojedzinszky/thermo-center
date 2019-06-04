@@ -27,6 +27,8 @@ steps:
     auto_tag: true
     cache_from:
     - rkojedzinszky/thermo-center-api
+  depends_on:
+  - api
 
 - name: receiver
   image: plugins/docker
@@ -60,3 +62,5 @@ steps:
     cache_from:
     - rkojedzinszky/thermo-center-api
     - rkojedzinszky/thermo-center-app
+  depends_on:
+  - api
