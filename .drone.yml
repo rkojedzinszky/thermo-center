@@ -40,3 +40,13 @@ steps:
     cache_from:
     - rkojedzinszky/thermo-center-api
     - rkojedzinszky/thermo-center-app
+
+- name: receiver
+  image: plugins/docker
+  settings:
+    dockerfile: receiver/Dockerfile
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
