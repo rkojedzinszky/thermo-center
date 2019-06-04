@@ -11,6 +11,8 @@ ADD application $APP_HOME/application
 ADD center $APP_HOME/center
 ADD heatcontrol $APP_HOME/heatcontrol
 ADD nauth $APP_HOME/nauth
+ADD configurator $APP_HOME/configurator
+ADD aggregator $APP_HOME/aggregator
 
 WORKDIR $APP_HOME
 
