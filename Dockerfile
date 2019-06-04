@@ -6,16 +6,14 @@ ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 RUN mkdir -p $APP_HOME && \
 	adduser -D -H -h $APP_HOME $APP_USER
 
-ADD lib $APP_HOME/lib
-ADD requirements.txt manage.py $APP_HOME/
-ADD application $APP_HOME/application
-ADD center $APP_HOME/center
-ADD heatcontrol $APP_HOME/heatcontrol
-ADD nauth $APP_HOME/nauth
-ADD configurator $APP_HOME/configurator
-ADD aggregator $APP_HOME/aggregator
-
 WORKDIR $APP_HOME
+
+ADD lib lib
+ADD requirements.txt manage.py .
+ADD application application
+ADD center center
+ADD heatcontrol heatcontrol
+ADD nauth nauth
 
 RUN apk add --no-cache tzdata py3-django py3-psycopg2 && \
     pip install -r requirements.txt && \
@@ -47,6 +45,9 @@ CMD ["uwsgi", \
 
 ### APP
 FROM common AS grpcserver
+
+ADD configurator configurator
+ADD aggregator aggregator
 
 EXPOSE 8079
 
