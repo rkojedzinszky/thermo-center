@@ -1,0 +1,4 @@
+spidev
+pycrypto
+grpcio
+protobuf
