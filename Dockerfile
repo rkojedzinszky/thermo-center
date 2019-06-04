@@ -6,6 +6,7 @@ ENV APP_USER=thermo APP_HOME=/opt/thermo-center
 RUN mkdir -p $APP_HOME && \
 	adduser -D -H -h $APP_HOME $APP_USER
 
+ADD lib $APP_HOME/lib
 ADD requirements.common.txt manage.py $APP_HOME/
 ADD application $APP_HOME/application
 ADD center $APP_HOME/center
