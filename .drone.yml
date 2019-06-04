@@ -28,19 +28,6 @@ steps:
     cache_from:
     - rkojedzinszky/thermo-center-api
 
-- name: ui
-  image: plugins/docker
-  settings:
-    target: ui
-    repo: rkojedzinszky/thermo-center-ui
-    username: rkojedzinszky
-    password:
-      from_secret: hub_docker_password
-    auto_tag: true
-    cache_from:
-    - rkojedzinszky/thermo-center-api
-    - rkojedzinszky/thermo-center-app
-
 - name: receiver
   image: plugins/docker
   settings:
@@ -60,3 +47,16 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+
+- name: ui
+  image: plugins/docker
+  settings:
+    target: ui
+    repo: rkojedzinszky/thermo-center-ui
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+    cache_from:
+    - rkojedzinszky/thermo-center-api
+    - rkojedzinszky/thermo-center-app
