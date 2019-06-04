@@ -46,7 +46,7 @@ CMD ["uwsgi", \
     "--thunder-lock"]
 
 ### APP
-FROM common AS app
+FROM common AS grpcserver
 
 EXPOSE 8079
 

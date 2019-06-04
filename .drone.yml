@@ -19,8 +19,8 @@ steps:
 - name: app
   image: plugins/docker
   settings:
-    target: app
-    repo: rkojedzinszky/thermo-center-app
+    target: grpcserver
+    repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
