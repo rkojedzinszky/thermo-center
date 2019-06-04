@@ -19,7 +19,7 @@ class MqttClient:
     async def _run(self):
         cl = MQTTClient(config={'auto_reconnect':False})
         logger.debug('Connecting to MQTT broker')
-        await cl.connect('mqtt://{}:{}'.format(self.wsserver.args['mqtt_port'], self.wsserver.args['mqtt_port']))
+        await cl.connect('mqtt://{}:{}'.format(self.wsserver.args.mqtt_host, self.wsserver.args.mqtt_port))
         logger.info('Connected to MQTT broker')
         await cl.subscribe([(MQTT_PREFIX + '+/report', QOS_0)])
 
@@ -104,13 +104,14 @@ class Main:
 
     async def run(self):
         self.loop.create_task(self.mqtt.run())
-        server = await websockets.serve(self._handler, '0.0.0.0', args['mqtt_port'])
+        server = await websockets.serve(self._handler, '0.0.0.0', args.mqtt_port)
         await server.wait_closed()
 
 
 if __name__ == '__main__':
     import argparse
     import os
+    import sys
 
     parser = argparse.ArgumentParser(description='Thermo center websocket daemon')
     parser.add_argument('--mqtt-host', default=os.environ.get('MQTT_HOST', 'mqtt'),
