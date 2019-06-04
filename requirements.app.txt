@@ -1,3 +1,0 @@
-spidev
-pycrypto
-websockets
