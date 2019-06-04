@@ -2,9 +2,8 @@
 import asyncio
 import logging
 from lib import aiothread
-from . import (
-        gpio, cc1101
-)
+from lib import cc1101
+from . import gpio
 
 logger = logging.getLogger(__name__)
 

@@ -42,18 +42,11 @@ class RFConfig(models.Model):
     def __str__(self):
         return 'RFConfig'
 
-    def config_bytes_legacy(self):
-        """ Generate configuration bytes for CC1101 """
-        from center.receiver import radio
-        regs = _parse_hex(self.rf_profile.confregs)  # pylint: disable=no-member
-        regs.extend([radio.Radio.ConfReg.CHANNR, self.rf_channel])
-        return regs
-
     def config_bytes(self):
         """ Generate configuration bytes for CC1101 """
-        from center.receiver import radio
+        from lib import cc1101
         regs = bytes.fromhex(self.rf_profile.confregs)  # pylint: disable=no-member
-        regs += bytes([radio.Radio.ConfReg.CHANNR, self.rf_channel])
+        regs += bytes([cc1101.CC1101.ConfReg.CHANNR, self.rf_channel])
         return regs
 
     def aes_bytes(self):

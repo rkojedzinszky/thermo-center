@@ -48,19 +48,9 @@ CMD ["uwsgi", \
 ### APP
 FROM common AS app
 
-ADD requirements.app.txt $APP_HOME/
+EXPOSE 8079
 
-RUN apk add --no-cache py3-crypto && \
-    apk add --no-cache -t .build-deps python3-dev gcc make libffi-dev libc-dev && \
-    pip install -r requirements.app.txt && \
-    apk del .build-deps && \
-    rm -rf /root/.cache
-
-ENV APPDAEMON_SOCKET /tmp/appdaemon.sock
-
-EXPOSE 8081
-
-CMD ["python", "manage.py", "appdaemon"]
+CMD ["python", "manage.py", "grpcserver", "--configurator", "--aggregator"]
 
 ### UI
 FROM common AS fe-prepare
