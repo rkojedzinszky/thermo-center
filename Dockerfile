@@ -51,6 +51,8 @@ ADD aggregator aggregator
 
 EXPOSE 8079
 
+USER $APP_USER
+
 CMD ["python", "manage.py", "grpcserver", "--configurator", "--aggregator"]
 
 ### UI
