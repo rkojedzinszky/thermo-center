@@ -50,3 +50,13 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+
+- name: ws
+  image: plugins/docker
+  settings:
+    dockerfile: ws/Dockerfile
+    repo: rkojedzinszky/thermo-center-ws
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
