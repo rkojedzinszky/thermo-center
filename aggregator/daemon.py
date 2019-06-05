@@ -46,7 +46,7 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
             return True
 
         holder = cache.get(key)
-        logger.warn('Locking sensor {} failed: {} holds lock'.format(sensor_id, holder))
+        logger.info('Locking sensor {} failed: {} holds lock'.format(sensor_id, holder))
         return False
 
     def _parse_metrics(self, packet):
