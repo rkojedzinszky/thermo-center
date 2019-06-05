@@ -37,7 +37,7 @@ class SensorResource(resources.ModelResource):
         now = timezone.now()
 
         bundle.data['thsensor'] = THSensorResourceInstance.get_resource_uri(bundle.obj)
-        bundle._cache = cache.get(bundle.obj._carbon_path())
+        bundle._cache = bundle.obj.get_cache()
         if bundle._cache:
             bundle.data['valid'] = bundle._cache.get('valid', None)
             bundle.data['vcc'] = bundle._cache.get('Power', None)
