@@ -99,32 +99,6 @@ class Sensor(models.Model):
     def _carbon_path(self):
         return 'sensor.%02x' % self.pk
 
-    def feed(self, seq, metrics, carbons=[], mqtt=None):
-        """ Feed data to Sensor """
-        timestamp = time.time()
-        avg = self.validate_seq(timestamp, seq)
-        cachevalues = {'valid': avg is not None}
-
-        if cachevalues['valid']:
-            logger.info('%s: update: seq=%d', self, seq)
-
-            self.save(update_fields=('last_seq', 'last_tsf'))
-
-            cachevalues.update({m.metric: m.value() for m in metrics})
-            cachevalues['intvl'] = avg
-
-            tsi = int(timestamp)
-            carbon_data = [('%s.%s' % (self._carbon_path(), k), (tsi, v))
-                           for k, v in cachevalues.items()]
-
-            for cc in carbons:
-                cc.send(carbon_data)
-
-        self.set_cache(cachevalues)
-        if mqtt:
-            mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, self.pk),
-                         json.dumps(cachevalues, separators=(',', ':')).encode())
-
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time
         synchronization error occured.
