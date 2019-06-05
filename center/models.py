@@ -96,8 +96,8 @@ class Sensor(models.Model):
 
         return avg
 
-    def _carbon_path(self):
-        return 'sensor.%02x' % self.pk
+    def _cache_key(self):
+        return 'sensor.{:02x}'.format(self.pk)
 
     def resync(self):
         """ Resync a sensor, when a battery change or rarely a time
@@ -111,7 +111,7 @@ class Sensor(models.Model):
 
     def get_cache(self):
         """ Retrieve metrics stored in cache """
-        values = cache.get(self._carbon_path())
+        values = cache.get(self._cache_key())
         if values:
             self.last_seq = values['last_seq']
             self.last_tsf = values['last_tsf']
@@ -123,7 +123,7 @@ class Sensor(models.Model):
         values['last_seq'] = self.last_seq
         values['last_tsf'] = self.last_tsf
 
-        cache.set(self._carbon_path(), values, timeout=_METRICS_CACHE_TIMEOUT)
+        cache.set(self._cache_key(), values, timeout=_METRICS_CACHE_TIMEOUT)
 
 
 class SensorResync(models.Model):
