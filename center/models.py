@@ -10,6 +10,7 @@ from django.conf import settings
 from django.db import models
 from django.core.cache import cache
 import center.fields
+import aggregator.pid
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
