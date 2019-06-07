@@ -25,9 +25,14 @@ class AIOThread(threading.Thread):
         except asyncio.CancelledError:
             pass  # noqa
         finally:
+            self.deinit()
             self.loop.close()
 
     def init(self):
+        """ Can be overridden, defaults to nothing """
+        pass
+
+    def deinit(self):
         """ Can be overridden, defaults to nothing """
         pass
 
