@@ -1,0 +1,19 @@
+// Receiver interface
+
+syntax = "proto3";
+
+package receiver;
+
+service Receiver {
+	// Request a receiver to enter configuration mode
+	rpc ConfigureSensor(ConfigureRequest) returns (ConfigureResponse) {}
+}
+
+message ConfigureRequest {
+	uint32 sensor_id = 1;
+	string token = 2;
+}
+
+message ConfigureResponse {
+	bool started = 1;
+}

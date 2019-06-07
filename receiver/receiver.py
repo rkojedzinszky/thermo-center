@@ -5,10 +5,9 @@ import logging
 import struct
 import json
 import time
-from . import (
-        radio, config
+from receiver import (
+        base, radio, config
 )
-from configurator import api_pb2 as cfg_msg, api_pb2_grpc as cfg_grpc
 from aggregator import api_pb2 as agg_msg, api_pb2_grpc as agg_grpc
 
 WATCHDOG_TIMEOUT = 300
@@ -16,25 +15,8 @@ WATCHDOG_TIMEOUT = 300
 logger = logging.getLogger(__name__)
 
 
-class Receiver(radio.Base):
+class Receiver(base.Base):
     name = 'receiver'
-
-    def _read_config(self):
-        """ Read configuration from configurator """
-        channel = grpc.insecure_channel('{}:{}'.format(self.args.configurator_host, self.args.configurator_port),
-                                        (
-                    ('grpc.keepalive_time_ms', 10000),
-                    ('grpc.keepalive_timeout_ms', 1000),
-                )
-            )
-        stub = cfg_grpc.ConfiguratorStub(channel)
-
-        cfg = config.Config(
-            stub.GetRadioCfg(cfg_msg.RadioCfgRequest(cluster=1)))
-
-        channel.close()
-
-        return cfg
 
     def _create_astub(self):
         """ Creates stub to aggregator """
@@ -46,7 +28,6 @@ class Receiver(radio.Base):
             )
 
         return agg_grpc.AggregatorStub(channel)
-
 
     async def _setup_radio(self):
         await self.radio.setup_basic()

@@ -1,11 +1,6 @@
 
-import asyncio
-import logging
-from lib import aiothread
 from lib import cc1101
-from . import gpio
 
-logger = logging.getLogger(__name__)
 
 class Radio(cc1101.CC1101):
     async def calibrate(self):
@@ -52,23 +47,7 @@ class Radio(cc1101.CC1101):
         self.set(self.ConfReg.PKTCTRL1, 0x0a)
         self.set(self.ConfReg.PKTCTRL0, 0x45)
         self.set(self.ConfReg.IOCFG0, 0x07)
-        self.set(self.ConfReg.MCSM1, 0x0b)
+        self.set(self.ConfReg.MCSM1, 0x08)
         self.set(self.ConfReg.ADDR, 0)
 
         await self.calibrate()
-
-
-class Base(aiothread.AIOThread):
-    """ Base class for radio tasks """
-    def __init__(self, args, radio):
-        super().__init__()
-
-        self.args = args
-        self.radio = radio
-
-    def init(self):
-        """ Set up gpio interrupt handler """
-        self.gpio = gpio.InterruptHandler(loop=self.loop, gpiopath=self.args.gpio_dir)
-
-    def __str__(self):
-        return self.name
