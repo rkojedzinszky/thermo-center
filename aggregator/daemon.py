@@ -83,7 +83,7 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         try:
             s = models.Sensor.objects.select_related('control').get(id=packet.id)
         except models.Sensor.DoesNotExist:
-            logger.warn('Unknown device id: %02x' % id_)
+            logger.warning('Unknown device id: %02x', packet.id)
             return api_pb2.FeedResponse(processed=False)
 
         cachevalues = s.get_cache()
