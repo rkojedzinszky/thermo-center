@@ -17,10 +17,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 _METRICS_CACHE_TIMEOUT = 120
 
 
-def _parse_hex(string):
-    return [int(c, base=16) for c in re.findall(r'[0-9a-f]{2}', string)]
-
-
 class RFProfile(models.Model):
     """ A profile for RF communication """
     name = models.CharField(max_length=50)
@@ -49,10 +45,6 @@ class RFConfig(models.Model):
         regs = bytes.fromhex(self.rf_profile.confregs)  # pylint: disable=no-member
         regs += bytes([cc1101.CC1101.ConfReg.CHANNR, self.rf_channel])
         return regs
-
-    def aes_bytes(self):
-        """ Parse aes_key into int array """
-        return _parse_hex(self.aes_key)
 
     def _generate_config(self):
         """ Initialise a new RF envronment """

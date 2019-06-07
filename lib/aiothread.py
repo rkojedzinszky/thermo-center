@@ -10,7 +10,7 @@ class AIOThread(threading.Thread):
         self.loop = None
         self._arunTask = None
 
-    async def _aioStop(self):
+    async def _cancel(self):
         self._arunTask.cancel()
 
     def run(self):
@@ -25,15 +25,24 @@ class AIOThread(threading.Thread):
         except asyncio.CancelledError:
             pass  # noqa
         finally:
+            self.deinit()
             self.loop.close()
 
     def init(self):
         """ Can be overridden, defaults to nothing """
         pass
 
-    def stop(self):
-        """ Stops the thread """
-        asyncio.run_coroutine_threadsafe(self._aioStop(), self.loop)
+    def deinit(self):
+        """ Can be overridden, defaults to nothing """
+        pass
+
+    def cancel(self):
+        """ Cancel the thread
+
+        Imitates posix cancel, though the async loop might
+        catch the exception and simply ignore it
+        """
+        asyncio.run_coroutine_threadsafe(self._cancel(), self.loop)
 
     async def arun(self):
         raise NotImplementedError()

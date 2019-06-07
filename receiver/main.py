@@ -73,13 +73,9 @@ class Daemon:
         while True:
             self.task = self.task_class(args=self.args, radio=self.radio)
             logger.info('%s: starting', self.task)
-            try:
-                self.task.run()
-            except Exception as e:
-                logger.warn('%s: exception', self.task, exc_info=True)
-            else:
-                logger.info('%s: finished', self.task)
-
+            self.task.start()
+            self.task.join()
+            logger.info('%s: finished', self.task)
             time.sleep(1)
 
 
