@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {
     'default': {
         # postgresql db with schema support
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DBNAME', 'thermo-center'),
         'HOST': os.getenv('DBHOST', 'postgres'),
         'USER': os.getenv('DBUSER', 'thermo-center'),
@@ -159,7 +159,7 @@ DATABASES['default']['ATOMIC_REQUESTS'] = True
 import re
 
 # fixup for SCHEMA
-if re.search(r'backends\.(postgresql_psycopg2|postgis)$', DATABASES['default']['ENGINE']) and DATABASES['default'].get('SCHEMA', None) is not None:
+if re.search(r'backends\.(postgresql|postgresql_psycopg2|postgis)$', DATABASES['default']['ENGINE']) and DATABASES['default'].get('SCHEMA', None) is not None:
     opts = DATABASES['default'].setdefault('OPTIONS', {})
     opts['options'] = opts.get('options', '') + ' -c search_path=%s' % DATABASES['default']['SCHEMA']
 
