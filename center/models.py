@@ -32,7 +32,7 @@ class RFProfile(models.Model):
 class RFConfig(models.Model):
     """ The current RF configuration """
     rf_channel = center.fields.RangedIntegerField(min_value=0, max_value=255)
-    rf_profile = models.ForeignKey(RFProfile)
+    rf_profile = models.ForeignKey(RFProfile, on_delete=models.PROTECT)
     network_id = center.fields.RangedIntegerField(min_value=0, max_value=65535)
     aes_key = models.CharField(max_length=32)
 

@@ -1,5 +1,6 @@
 # requirements for DIY wireless Temp/Humidity sensor solution
-django<2
+# Django 2.2 LTS with atomic migrations
+https://github.com/rkojedzinszky/django/archive/stable/2.2.x-atomic-migrations.zip
 #django-tastypie
 https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
 psycopg2

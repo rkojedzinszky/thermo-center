@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
                 ('start', models.TimeField()),
                 ('end', models.TimeField()),
                 ('target_temp', models.FloatField()),
-                ('daytype', models.ForeignKey(to='heatcontrol.DayType')),
-                ('sensor', models.ForeignKey(to='center.Sensor')),
+                ('daytype', models.ForeignKey(to='heatcontrol.DayType', on_delete=models.PROTECT)),
+                ('sensor', models.ForeignKey(to='center.Sensor', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('start', models.DateTimeField()),
                 ('end', models.DateTimeField()),
                 ('target_temp', models.FloatField()),
-                ('sensor', models.ForeignKey(to='center.Sensor')),
+                ('sensor', models.ForeignKey(to='center.Sensor', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -53,13 +53,13 @@ class Migration(migrations.Migration):
                 ('kp', models.FloatField()),
                 ('ki', models.FloatField()),
                 ('kd', models.FloatField()),
-                ('sensor', models.OneToOneField(to='center.Sensor')),
+                ('sensor', models.OneToOneField(to='center.Sensor', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='calendar',
             name='daytype',
-            field=models.ForeignKey(to='heatcontrol.DayType'),
+            field=models.ForeignKey(to='heatcontrol.DayType', on_delete=models.PROTECT),
         ),
         migrations.AlterIndexTogether(
             name='heatsensoroverride',

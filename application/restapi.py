@@ -28,13 +28,13 @@ class SessionResource(Resource):
         return None
 
     def obj_get_list(self, bundle, **kwargs):
-        if bundle.request.user.is_authenticated():
+        if bundle.request.user.is_authenticated:
             return [bundle.request.user]
 
         return []
 
     def obj_get(self, bundle, **kwargs):
-        if bundle.request.user.is_authenticated() and kwargs['pk'] == bundle.request.session.session_key:
+        if bundle.request.user.is_authenticated and kwargs['pk'] == bundle.request.session.session_key:
             return bundle.request.user
 
         raise http.ImmediateHttpResponse(http.HttpUnauthorized())
