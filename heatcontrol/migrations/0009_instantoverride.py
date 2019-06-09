@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('target_temp', models.FloatField()),
-                ('control', models.ForeignKey(to='heatcontrol.Control')),
-                ('profile', models.ForeignKey(to='heatcontrol.InstantProfile')),
+                ('control', models.ForeignKey(to='heatcontrol.Control', on_delete=models.CASCADE)),
+                ('profile', models.ForeignKey(to='heatcontrol.InstantProfile', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(
@@ -37,8 +37,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('target_temp', models.FloatField()),
-                ('control', models.OneToOneField(to='heatcontrol.Control')),
-                ('profile', models.ForeignKey(to='heatcontrol.InstantProfile')),
+                ('control', models.OneToOneField(to='heatcontrol.Control', on_delete=models.CASCADE)),
+                ('profile', models.ForeignKey(to='heatcontrol.InstantProfile', on_delete=models.CASCADE)),
             ],
         ),
         migrations.RunSQL(

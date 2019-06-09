@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('start', models.DateTimeField()),
                 ('end', models.DateTimeField()),
                 ('target_temp', models.FloatField()),
-                ('heatcontrol', models.ForeignKey(to='heatcontrol.HeatControl')),
+                ('heatcontrol', models.ForeignKey(to='heatcontrol.HeatControl', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -28,8 +28,8 @@ class Migration(migrations.Migration):
                 ('start', models.TimeField()),
                 ('end', models.TimeField()),
                 ('target_temp', models.FloatField()),
-                ('daytype', models.ForeignKey(to='heatcontrol.DayType')),
-                ('heatcontrol', models.ForeignKey(to='heatcontrol.HeatControl')),
+                ('daytype', models.ForeignKey(to='heatcontrol.DayType', on_delete=models.CASCADE)),
+                ('heatcontrol', models.ForeignKey(to='heatcontrol.HeatControl', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterIndexTogether(

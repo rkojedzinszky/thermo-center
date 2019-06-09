@@ -16,7 +16,7 @@ class DayType(models.Model):
 class Calendar(models.Model):
     """ A calendar, map each day to a daytype """
     day = models.DateField(unique=True)
-    daytype = models.ForeignKey(DayType)
+    daytype = models.ForeignKey(DayType, on_delete=models.PROTECT)
 
     def __str__(self):
         return '%s' % self.day
