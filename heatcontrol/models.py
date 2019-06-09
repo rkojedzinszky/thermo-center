@@ -76,7 +76,7 @@ class Profile(models.Model):
                 )
 
     def __str__(self):
-        return '%s at %s[from %s]: %f' % (self.control.sensor, self.daytype, self.start, self.target_temp)
+        return '{} at {}[from {}]: {}'.format(self.control.sensor, self.daytype, self.start, self.target_temp)
 
 
 class ScheduledOverride(models.Model):
