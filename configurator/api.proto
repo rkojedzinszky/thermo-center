@@ -8,8 +8,8 @@ service Configurator {
 	// Return radio configuration for receiver
 	rpc GetRadioCfg(RadioCfgRequest) returns (RadioCfgResponse) {}
 
-	// Sensor configuration task: Start
-	rpc TaskStart(Task) returns (TaskStartResponse) {}
+	// Sensor configuration task: Acquire
+	rpc TaskAcquire(Task) returns (TaskDetails) {}
 
 	// Sensor configuration task: Discovery received
 	rpc TaskDiscoveryReceived(Task) returns (TaskUpdateResponse) {}
@@ -32,9 +32,10 @@ message Task {
 	uint32 task_id = 1;
 }
 
-message TaskStartResponse {
-	uint32 sensor_id = 1;
-	RadioCfgResponse config = 2;
+message TaskDetails {
+	uint32 task_id = 1;
+	uint32 sensor_id = 2;
+	RadioCfgResponse config = 3;
 }
 
 message TaskUpdateResponse {

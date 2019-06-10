@@ -19,10 +19,10 @@ class ConfiguratorStub(object):
         request_serializer=configurator_dot_api__pb2.RadioCfgRequest.SerializeToString,
         response_deserializer=configurator_dot_api__pb2.RadioCfgResponse.FromString,
         )
-    self.TaskStart = channel.unary_unary(
-        '/configurator.Configurator/TaskStart',
+    self.TaskAcquire = channel.unary_unary(
+        '/configurator.Configurator/TaskAcquire',
         request_serializer=configurator_dot_api__pb2.Task.SerializeToString,
-        response_deserializer=configurator_dot_api__pb2.TaskStartResponse.FromString,
+        response_deserializer=configurator_dot_api__pb2.TaskDetails.FromString,
         )
     self.TaskDiscoveryReceived = channel.unary_unary(
         '/configurator.Configurator/TaskDiscoveryReceived',
@@ -47,8 +47,8 @@ class ConfiguratorServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def TaskStart(self, request, context):
-    """Sensor configuration task: Start
+  def TaskAcquire(self, request, context):
+    """Sensor configuration task: Acquire
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -76,10 +76,10 @@ def add_ConfiguratorServicer_to_server(servicer, server):
           request_deserializer=configurator_dot_api__pb2.RadioCfgRequest.FromString,
           response_serializer=configurator_dot_api__pb2.RadioCfgResponse.SerializeToString,
       ),
-      'TaskStart': grpc.unary_unary_rpc_method_handler(
-          servicer.TaskStart,
+      'TaskAcquire': grpc.unary_unary_rpc_method_handler(
+          servicer.TaskAcquire,
           request_deserializer=configurator_dot_api__pb2.Task.FromString,
-          response_serializer=configurator_dot_api__pb2.TaskStartResponse.SerializeToString,
+          response_serializer=configurator_dot_api__pb2.TaskDetails.SerializeToString,
       ),
       'TaskDiscoveryReceived': grpc.unary_unary_rpc_method_handler(
           servicer.TaskDiscoveryReceived,
