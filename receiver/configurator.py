@@ -5,6 +5,8 @@ from receiver import (
         base, radio
 )
 
+DISCOVERY_PACKET_TIMEOUT = 22
+
 logger = logging.getLogger(__name__)
 
 
@@ -42,12 +44,13 @@ class Configurator(base.Base):
         await self.radio.setup_basic()
         await self.radio.setup_for_conf()
 
+        deadline = self.loop.time() + DISCOVERY_PACKET_TIMEOUT
+
         seen = None
         while True:
             # Wait for a packet with timeout
-            self.radio.wcmd(radio.Radio.CommandStrobe.SRX)
             try:
-                sensor_id = await asyncio.wait_for(self._wait_discovery_packet(), timeout=22)
+                sensor_id = await asyncio.wait_for(self._wait_discovery_packet(), timeout=deadline - self.loop.time())
             except asyncio.TimeoutError:
                 break
 
@@ -77,17 +80,22 @@ class Configurator(base.Base):
             await self._send_replypacket(replypacket)
             logging.info('Replied to %d', seen)
 
+            # Wait another DISCOVERY_PACKET_TIMEOUT to check if the
+            # sensor has received our reply, thus not sending discovery
+            # packets
+            deadline = self.loop.time() + DISCOVERY_PACKET_TIMEOUT
+
         logger.info('Exiting discovery loop')
 
     async def _wait_discovery_packet(self):
         while True:
+            self.radio.wcmd(radio.Radio.CommandStrobe.SRX)
             await self.gpio.waitforinterrupt()
 
             data_len = self.radio.status(radio.Radio.StatusReg.RXBYTES)
             data = self.radio.read_rxfifo(data_len)
             if data_len != 3 or data[0] != 2 or data[1] != 0:
                 self.radio.wcmd(radio.Radio.CommandStrobe.SFRX)
-                self.radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 continue
 
             return data[2]
