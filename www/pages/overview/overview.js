@@ -78,7 +78,7 @@ Component.extend({
 				if (elapsed < 0) {
 					elapsed = 0;
 				}
-				return prettyMilliseconds(elapsed, {unitCount: 2, secondsDecimalDigits: 0});
+				return prettyMilliseconds(elapsed, {compact: true});
 			} else {
 				return '';
 			}
