@@ -7,6 +7,15 @@ package configurator;
 service Configurator {
 	// Return radio configuration for receiver
 	rpc GetRadioCfg(RadioCfgRequest) returns (RadioCfgResponse) {}
+
+	// Sensor configuration task: Start
+	rpc TaskStart(Task) returns (TaskStartResponse) {}
+
+	// Sensor configuration task: Discovery received
+	rpc TaskDiscoveryReceived(Task) returns (TaskUpdateResponse) {}
+
+	// Sensor configuration task: finished
+	rpc TaskFinished(TaskFinishedRequest) returns (TaskUpdateResponse) {}
 }
 
 message RadioCfgRequest {
@@ -17,4 +26,22 @@ message RadioCfgResponse {
 	uint32 network = 1;
 	bytes radio_config = 2;
 	bytes aes_key = 3;
+}
+
+message Task {
+	uint32 task_id = 1;
+}
+
+message TaskStartResponse {
+	uint32 sensor_id = 1;
+	RadioCfgResponse config = 2;
+}
+
+message TaskUpdateResponse {
+	bool success = 1;
+}
+
+message TaskFinishedRequest {
+	uint32 task_id = 1;
+	string error = 2;
 }

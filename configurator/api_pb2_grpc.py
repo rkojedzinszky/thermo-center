@@ -19,6 +19,21 @@ class ConfiguratorStub(object):
         request_serializer=configurator_dot_api__pb2.RadioCfgRequest.SerializeToString,
         response_deserializer=configurator_dot_api__pb2.RadioCfgResponse.FromString,
         )
+    self.TaskStart = channel.unary_unary(
+        '/configurator.Configurator/TaskStart',
+        request_serializer=configurator_dot_api__pb2.Task.SerializeToString,
+        response_deserializer=configurator_dot_api__pb2.TaskStartResponse.FromString,
+        )
+    self.TaskDiscoveryReceived = channel.unary_unary(
+        '/configurator.Configurator/TaskDiscoveryReceived',
+        request_serializer=configurator_dot_api__pb2.Task.SerializeToString,
+        response_deserializer=configurator_dot_api__pb2.TaskUpdateResponse.FromString,
+        )
+    self.TaskFinished = channel.unary_unary(
+        '/configurator.Configurator/TaskFinished',
+        request_serializer=configurator_dot_api__pb2.TaskFinishedRequest.SerializeToString,
+        response_deserializer=configurator_dot_api__pb2.TaskUpdateResponse.FromString,
+        )
 
 
 class ConfiguratorServicer(object):
@@ -32,6 +47,27 @@ class ConfiguratorServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def TaskStart(self, request, context):
+    """Sensor configuration task: Start
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def TaskDiscoveryReceived(self, request, context):
+    """Sensor configuration task: Discovery received
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def TaskFinished(self, request, context):
+    """Sensor configuration task: finished
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_ConfiguratorServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -39,6 +75,21 @@ def add_ConfiguratorServicer_to_server(servicer, server):
           servicer.GetRadioCfg,
           request_deserializer=configurator_dot_api__pb2.RadioCfgRequest.FromString,
           response_serializer=configurator_dot_api__pb2.RadioCfgResponse.SerializeToString,
+      ),
+      'TaskStart': grpc.unary_unary_rpc_method_handler(
+          servicer.TaskStart,
+          request_deserializer=configurator_dot_api__pb2.Task.FromString,
+          response_serializer=configurator_dot_api__pb2.TaskStartResponse.SerializeToString,
+      ),
+      'TaskDiscoveryReceived': grpc.unary_unary_rpc_method_handler(
+          servicer.TaskDiscoveryReceived,
+          request_deserializer=configurator_dot_api__pb2.Task.FromString,
+          response_serializer=configurator_dot_api__pb2.TaskUpdateResponse.SerializeToString,
+      ),
+      'TaskFinished': grpc.unary_unary_rpc_method_handler(
+          servicer.TaskFinished,
+          request_deserializer=configurator_dot_api__pb2.TaskFinishedRequest.FromString,
+          response_serializer=configurator_dot_api__pb2.TaskUpdateResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

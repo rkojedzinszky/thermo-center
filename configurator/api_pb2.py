@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='configurator',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16\x63onfigurator/api.proto\x12\x0c\x63onfigurator\"\"\n\x0fRadioCfgRequest\x12\x0f\n\x07\x63luster\x18\x01 \x01(\r\"J\n\x10RadioCfgResponse\x12\x0f\n\x07network\x18\x01 \x01(\r\x12\x14\n\x0cradio_config\x18\x02 \x01(\x0c\x12\x0f\n\x07\x61\x65s_key\x18\x03 \x01(\x0c\x32^\n\x0c\x43onfigurator\x12N\n\x0bGetRadioCfg\x12\x1d.configurator.RadioCfgRequest\x1a\x1e.configurator.RadioCfgResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x16\x63onfigurator/api.proto\x12\x0c\x63onfigurator\"\"\n\x0fRadioCfgRequest\x12\x0f\n\x07\x63luster\x18\x01 \x01(\r\"J\n\x10RadioCfgResponse\x12\x0f\n\x07network\x18\x01 \x01(\r\x12\x14\n\x0cradio_config\x18\x02 \x01(\x0c\x12\x0f\n\x07\x61\x65s_key\x18\x03 \x01(\x0c\"\x17\n\x04Task\x12\x0f\n\x07task_id\x18\x01 \x01(\r\"V\n\x11TaskStartResponse\x12\x11\n\tsensor_id\x18\x01 \x01(\r\x12.\n\x06\x63onfig\x18\x02 \x01(\x0b\x32\x1e.configurator.RadioCfgResponse\"%\n\x12TaskUpdateResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"5\n\x13TaskFinishedRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\r\x12\r\n\x05\x65rror\x18\x02 \x01(\t2\xca\x02\n\x0c\x43onfigurator\x12N\n\x0bGetRadioCfg\x12\x1d.configurator.RadioCfgRequest\x1a\x1e.configurator.RadioCfgResponse\"\x00\x12\x42\n\tTaskStart\x12\x12.configurator.Task\x1a\x1f.configurator.TaskStartResponse\"\x00\x12O\n\x15TaskDiscoveryReceived\x12\x12.configurator.Task\x1a .configurator.TaskUpdateResponse\"\x00\x12U\n\x0cTaskFinished\x12!.configurator.TaskFinishedRequest\x1a .configurator.TaskUpdateResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -101,8 +101,151 @@ _RADIOCFGRESPONSE = _descriptor.Descriptor(
   serialized_end=150,
 )
 
+
+_TASK = _descriptor.Descriptor(
+  name='Task',
+  full_name='configurator.Task',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='task_id', full_name='configurator.Task.task_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=152,
+  serialized_end=175,
+)
+
+
+_TASKSTARTRESPONSE = _descriptor.Descriptor(
+  name='TaskStartResponse',
+  full_name='configurator.TaskStartResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='sensor_id', full_name='configurator.TaskStartResponse.sensor_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='config', full_name='configurator.TaskStartResponse.config', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=177,
+  serialized_end=263,
+)
+
+
+_TASKUPDATERESPONSE = _descriptor.Descriptor(
+  name='TaskUpdateResponse',
+  full_name='configurator.TaskUpdateResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='success', full_name='configurator.TaskUpdateResponse.success', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=265,
+  serialized_end=302,
+)
+
+
+_TASKFINISHEDREQUEST = _descriptor.Descriptor(
+  name='TaskFinishedRequest',
+  full_name='configurator.TaskFinishedRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='task_id', full_name='configurator.TaskFinishedRequest.task_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='error', full_name='configurator.TaskFinishedRequest.error', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=304,
+  serialized_end=357,
+)
+
+_TASKSTARTRESPONSE.fields_by_name['config'].message_type = _RADIOCFGRESPONSE
 DESCRIPTOR.message_types_by_name['RadioCfgRequest'] = _RADIOCFGREQUEST
 DESCRIPTOR.message_types_by_name['RadioCfgResponse'] = _RADIOCFGRESPONSE
+DESCRIPTOR.message_types_by_name['Task'] = _TASK
+DESCRIPTOR.message_types_by_name['TaskStartResponse'] = _TASKSTARTRESPONSE
+DESCRIPTOR.message_types_by_name['TaskUpdateResponse'] = _TASKUPDATERESPONSE
+DESCRIPTOR.message_types_by_name['TaskFinishedRequest'] = _TASKFINISHEDREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 RadioCfgRequest = _reflection.GeneratedProtocolMessageType('RadioCfgRequest', (_message.Message,), dict(
@@ -119,6 +262,34 @@ RadioCfgResponse = _reflection.GeneratedProtocolMessageType('RadioCfgResponse', 
   ))
 _sym_db.RegisterMessage(RadioCfgResponse)
 
+Task = _reflection.GeneratedProtocolMessageType('Task', (_message.Message,), dict(
+  DESCRIPTOR = _TASK,
+  __module__ = 'configurator.api_pb2'
+  # @@protoc_insertion_point(class_scope:configurator.Task)
+  ))
+_sym_db.RegisterMessage(Task)
+
+TaskStartResponse = _reflection.GeneratedProtocolMessageType('TaskStartResponse', (_message.Message,), dict(
+  DESCRIPTOR = _TASKSTARTRESPONSE,
+  __module__ = 'configurator.api_pb2'
+  # @@protoc_insertion_point(class_scope:configurator.TaskStartResponse)
+  ))
+_sym_db.RegisterMessage(TaskStartResponse)
+
+TaskUpdateResponse = _reflection.GeneratedProtocolMessageType('TaskUpdateResponse', (_message.Message,), dict(
+  DESCRIPTOR = _TASKUPDATERESPONSE,
+  __module__ = 'configurator.api_pb2'
+  # @@protoc_insertion_point(class_scope:configurator.TaskUpdateResponse)
+  ))
+_sym_db.RegisterMessage(TaskUpdateResponse)
+
+TaskFinishedRequest = _reflection.GeneratedProtocolMessageType('TaskFinishedRequest', (_message.Message,), dict(
+  DESCRIPTOR = _TASKFINISHEDREQUEST,
+  __module__ = 'configurator.api_pb2'
+  # @@protoc_insertion_point(class_scope:configurator.TaskFinishedRequest)
+  ))
+_sym_db.RegisterMessage(TaskFinishedRequest)
+
 
 
 _CONFIGURATOR = _descriptor.ServiceDescriptor(
@@ -127,8 +298,8 @@ _CONFIGURATOR = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=152,
-  serialized_end=246,
+  serialized_start=360,
+  serialized_end=690,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetRadioCfg',
@@ -137,6 +308,33 @@ _CONFIGURATOR = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_RADIOCFGREQUEST,
     output_type=_RADIOCFGRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='TaskStart',
+    full_name='configurator.Configurator.TaskStart',
+    index=1,
+    containing_service=None,
+    input_type=_TASK,
+    output_type=_TASKSTARTRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='TaskDiscoveryReceived',
+    full_name='configurator.Configurator.TaskDiscoveryReceived',
+    index=2,
+    containing_service=None,
+    input_type=_TASK,
+    output_type=_TASKUPDATERESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='TaskFinished',
+    full_name='configurator.Configurator.TaskFinished',
+    index=3,
+    containing_service=None,
+    input_type=_TASKFINISHEDREQUEST,
+    output_type=_TASKUPDATERESPONSE,
     serialized_options=None,
   ),
 ])
