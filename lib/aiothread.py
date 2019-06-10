@@ -42,7 +42,8 @@ class AIOThread(threading.Thread):
         Imitates posix cancel, though the async loop might
         catch the exception and simply ignore it
         """
-        asyncio.run_coroutine_threadsafe(self._cancel(), self.loop)
+        if self.loop:
+            self.loop.call_soon_threadsafe(self._cancel())
 
     async def arun(self):
         raise NotImplementedError()
