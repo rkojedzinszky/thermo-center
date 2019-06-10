@@ -129,3 +129,19 @@ class SensorResync(models.Model):
             self.sensor.resync()
 
         return super().save(**kwargs)
+
+
+class ConfigureSensorTask(models.Model):
+    """ Represents a sensor configuration task
+
+    Once created, a ConfigureRequest should be called on a receiver
+    with pk. The receiver will update status on this.
+    """
+
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    started = models.DateTimeField(null=True)
+    first_discovery = models.DateTimeField(null=True)
+    last_discovery = models.DateTimeField(null=True)
+    finished = models.DateTimeField(null=True)
+    error = models.CharField(max_length=100, blank=True, null=True)
