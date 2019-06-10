@@ -10,8 +10,7 @@ service Receiver {
 }
 
 message ConfigureRequest {
-	uint32 sensor_id = 1;
-	string token = 2;
+	uint32 task_id = 1;
 }
 
 message ConfigureResponse {

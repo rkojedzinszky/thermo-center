@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='receiver',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12receiver/api.proto\x12\x08receiver\"4\n\x10\x43onfigureRequest\x12\x11\n\tsensor_id\x18\x01 \x01(\r\x12\r\n\x05token\x18\x02 \x01(\t\"$\n\x11\x43onfigureResponse\x12\x0f\n\x07started\x18\x01 \x01(\x08\x32X\n\x08Receiver\x12L\n\x0f\x43onfigureSensor\x12\x1a.receiver.ConfigureRequest\x1a\x1b.receiver.ConfigureResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x12receiver/api.proto\x12\x08receiver\"#\n\x10\x43onfigureRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\r\"$\n\x11\x43onfigureResponse\x12\x0f\n\x07started\x18\x01 \x01(\x08\x32X\n\x08Receiver\x12L\n\x0f\x43onfigureSensor\x12\x1a.receiver.ConfigureRequest\x1a\x1b.receiver.ConfigureResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -34,16 +34,9 @@ _CONFIGUREREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='sensor_id', full_name='receiver.ConfigureRequest.sensor_id', index=0,
+      name='task_id', full_name='receiver.ConfigureRequest.task_id', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='token', full_name='receiver.ConfigureRequest.token', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -60,7 +53,7 @@ _CONFIGUREREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=32,
-  serialized_end=84,
+  serialized_end=67,
 )
 
 
@@ -90,8 +83,8 @@ _CONFIGURERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=86,
-  serialized_end=122,
+  serialized_start=69,
+  serialized_end=105,
 )
 
 DESCRIPTOR.message_types_by_name['ConfigureRequest'] = _CONFIGUREREQUEST
@@ -120,8 +113,8 @@ _RECEIVER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=124,
-  serialized_end=212,
+  serialized_start=107,
+  serialized_end=195,
   methods=[
   _descriptor.MethodDescriptor(
     name='ConfigureSensor',
