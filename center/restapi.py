@@ -2,15 +2,21 @@
 
 import datetime
 import time
+import grpc
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.core.cache import cache
+from django.conf import settings
 from application import restapi
 from application.resource import ResourceMetaCommon
-from center.models import Sensor, SensorResync
+from center.models import Sensor, SensorResync, ConfigureSensorTask
 from tastypie import resources
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization, Authorization as RWAuthorization
 from tastypie import fields
+from receiver import api_pb2_grpc
+from configurator import api_pb2 as cfg_pb2
 
 class SensorResource(resources.ModelResource):
     valid = fields.BooleanField(null=True, readonly=True, help_text='Recent update status')
@@ -88,3 +94,48 @@ class SensorResyncResource(resources.ModelResource):
 SensorResyncResourceInstance = SensorResyncResource()
 restapi.RestApi.register(SensorResyncResourceInstance)
 
+class ConfigureSensorTaskResource(resources.ModelResource):
+    sensor_id = fields.IntegerField()
+    sensor_name = fields.CharField()
+    created = fields.DateTimeField('created', null=True, readonly=True)
+    started = fields.DateTimeField('started', null=True, readonly=True)
+    first_discovery = fields.DateTimeField('first_discovery', null=True, readonly=True)
+    last_discovery = fields.DateTimeField('last_discovery', null=True, readonly=True)
+    finished = fields.DateTimeField('finished', null=True, readonly=True)
+    error = fields.CharField('error', null=True, readonly=True)
+
+    class Meta(ResourceMetaCommon):
+        queryset = ConfigureSensorTask.objects.select_related('sensor')
+        authorization = RWAuthorization()
+        detail_allowed_methods = ['get']
+        list_allowed_methods = ['get', 'post']
+        fields = ['id']
+
+    def obj_create(self, bundle, **kwargs):
+        if 'sensor_name' in bundle.data:
+            sensor_id = (set(range(1, 128)) - set([s.pk for s in Sensor.objects.all()])).pop()
+            sensor = Sensor.objects.create(
+                    id=sensor_id,
+                    name=bundle.data['sensor_name'],
+                    )
+        else:
+            sensor = Sensor.objects.get(pk=bundle.data['sensor_id'])
+
+        return super().obj_create(bundle, sensor=sensor)
+
+    def dehydrate(self, bundle):
+        bundle.data['sensor_id'] = bundle.obj.sensor.id
+        bundle.data['sensor_name'] = bundle.obj.sensor.name
+
+        return bundle
+
+ConfigureSensorTaskResourceInstance = ConfigureSensorTaskResource()
+restapi.RestApi.register(ConfigureSensorTaskResourceInstance)
+
+@receiver(post_save, sender=ConfigureSensorTask)
+def _receiver_handletask(sender, instance, created, **kwargs):
+    if created:
+        channel = grpc.insecure_channel('{}:{}'.format(settings.RECEIVER_HOST, settings.RECEIVER_PORT))
+        receiver = api_pb2_grpc.ReceiverStub(channel)
+        receiver.HandleTask(cfg_pb2.Task(task_id=instance.id))
+        channel.close()

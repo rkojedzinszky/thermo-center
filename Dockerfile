@@ -15,6 +15,8 @@ ADD center center
 ADD heatcontrol heatcontrol
 ADD nauth nauth
 ADD aggregator/pid.py aggregator/pid.py
+ADD receiver/api_pb2.py receiver/api_pb2_grpc.py receiver/
+ADD configurator/api_pb2.py configurator/
 
 RUN apk add --no-cache tzdata py3-psycopg2 && \
     pip install -r requirements.txt && \

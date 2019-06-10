@@ -150,6 +150,10 @@ CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(
     tempfile.gettempdir(), 'thermo-1'))
 CACHE_KEY_PREFIX = os.getenv('CACHE_KEY_PREFIX', 'tc')
 
+# Receiver endpoint
+RECEIVER_HOST = os.getenv('RECEIVER_HOST', 'receiver')
+RECEIVER_PORT = int(os.getenv('RECEIVER_PORT', '8079'))
+
 # Database/Sensor update tuning
 # This can reduce write load on database with just updating the database
 # based on the probability here.
