@@ -20,27 +20,28 @@ class Base(aiothread.AIOThread):
 
         self.args = args
         self.radio = radio
+        self._configurator_channel = None
+        self.configurator = None
 
     def init(self):
         """ Set up gpio interrupt handler """
         self.gpio = gpio.InterruptHandler(loop=self.loop, gpiopath=self.args.gpio_dir)
 
-    def _read_config(self):
-        """ Read configuration from configurator """
-        channel = grpc.insecure_channel('{}:{}'.format(self.args.configurator_host, self.args.configurator_port),
-                                        (
+        self._configurator_channel = grpc.insecure_channel('{}:{}'.format(self.args.configurator_host, self.args.configurator_port),
+                (
                     ('grpc.keepalive_time_ms', 10000),
                     ('grpc.keepalive_timeout_ms', 1000),
                 )
             )
-        stub = cfg_grpc.ConfiguratorStub(channel)
+        self.configurator = cfg_grpc.ConfiguratorStub(self._configurator_channel)
 
-        cfg = config.Config(
-            stub.GetRadioCfg(cfg_msg.RadioCfgRequest(cluster=1)))
+    def deinit(self):
+        self.configurator = None
+        self._configurator_channel.close()
 
-        channel.close()
-
-        return cfg
+    def _read_config(self):
+        """ Read configuration from configurator """
+        return config.Config(self.configurator.GetRadioCfg(cfg_msg.RadioCfgRequest(cluster=1)))
 
     def __str__(self):
         return self.name
