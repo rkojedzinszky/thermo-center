@@ -45,6 +45,8 @@ const AppState = DefineMap.extend({
 	'url': { default: () => new DefineMap() },
 	'ws': { serialize: false, default: null },
 	'onmessage': { serialize: false },
+	'current_time': { serialize: false, default: function() { return new Date() } },
+	'current_timer': { serialize: false },
 	'displaypage': {
 		get() {
 			if (this.session != null)
@@ -82,6 +84,7 @@ const AppState = DefineMap.extend({
 		});
 
 		this._openws();
+		this._startTimer();
 	},
 	_openws() {
 		var self = this;
@@ -104,7 +107,13 @@ const AppState = DefineMap.extend({
 				self._openws();
 			}, 1000);
 		});
-	}
+	},
+	_startTimer() {
+		var self = this;
+		this.current_timer = window.setInterval(function() {
+			self.current_time = new Date();
+		}, 1000);
+	},
 });
 
 Component.extend({

@@ -44,6 +44,7 @@ class SensorResource(resources.ModelResource):
             bundle.data['rssi'] = bundle._cache.get('RSSI', None)
             bundle.data['lqi'] = bundle._cache.get('LQI', None)
             bundle.data['interval'] = bundle._cache.get('intvl', None)
+            bundle.data['last_tsf'] = bundle._cache.get('last_tsf', None)
             if bundle.data['valid'] == False:
                 bundle.data['sensor_resync'] = SensorResyncResourceInstance.get_resource_uri(bundle.obj)
 

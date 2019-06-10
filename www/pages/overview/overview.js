@@ -2,6 +2,7 @@
 import Component from 'can-component';
 import {THSensor} from 'models/THSensor';
 import {SensorResync} from 'models/SensorResync';
+import prettyMilliseconds from 'pretty-ms';
 
 Component.extend({
 	tag: 'thermo-p-overview',
@@ -18,6 +19,7 @@ Component.extend({
 	<th scope="col">Interval</th>
 	<th scope="col">RSSI</th>
 	<th scope="col">LQI</th>
+	<th scope="col">Age</th>
 	{{/advanced}}
 </tr>
 </thead>
@@ -37,6 +39,7 @@ Component.extend({
 		<td>{{format('interval', s.interval)}}</td>
 		<td>{{format('rssi', s.rssi)}}</td>
 		<td>{{format('lqi', s.lqi)}}</td>
+		<td>{{calculate_age(s)}}</td>
 		{{/advanced}}
 	</tr>
 {{/for}}
@@ -67,7 +70,20 @@ Component.extend({
 				self.stopListening();
 			};
 		}
-	}
+	},
+	helpers: {
+		calculate_age(s) {
+			if (s.last_tsf != null) {
+				var elapsed = Math.ceil(this.app.current_time - 1000 * s.last_tsf);
+				if (elapsed < 0) {
+					elapsed = 0;
+				}
+				return prettyMilliseconds(elapsed, {unitCount: 2, secondsDecimalDigits: 0});
+			} else {
+				return '';
+			}
+		}
+	},
 });
 
 Component.extend({
