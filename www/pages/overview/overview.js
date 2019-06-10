@@ -19,7 +19,7 @@ Component.extend({
 	<th scope="col">Interval</th>
 	<th scope="col">RSSI</th>
 	<th scope="col">LQI</th>
-	<th scope="col">Age</th>
+	<th scope="col" class="overview-age">Age</th>
 	{{/advanced}}
 </tr>
 </thead>
