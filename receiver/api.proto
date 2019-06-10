@@ -4,15 +4,13 @@ syntax = "proto3";
 
 package receiver;
 
+import "configurator/api.proto";
+
 service Receiver {
-	// Request a receiver to enter configuration mode
-	rpc ConfigureSensor(ConfigureRequest) returns (ConfigureResponse) {}
+	// Request to handle a sensor configuration task
+	rpc HandleTask(configurator.Task) returns (HandleResponse) {}
 }
 
-message ConfigureRequest {
-	uint32 task_id = 1;
-}
-
-message ConfigureResponse {
-	bool started = 1;
+message HandleResponse {
+	bool success = 1;
 }

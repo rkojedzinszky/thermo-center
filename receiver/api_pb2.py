@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from configurator import api_pb2 as configurator_dot_api__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,52 +21,22 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='receiver',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12receiver/api.proto\x12\x08receiver\"#\n\x10\x43onfigureRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\r\"$\n\x11\x43onfigureResponse\x12\x0f\n\x07started\x18\x01 \x01(\x08\x32X\n\x08Receiver\x12L\n\x0f\x43onfigureSensor\x12\x1a.receiver.ConfigureRequest\x1a\x1b.receiver.ConfigureResponse\"\x00\x62\x06proto3')
-)
+  serialized_pb=_b('\n\x12receiver/api.proto\x12\x08receiver\x1a\x16\x63onfigurator/api.proto\"!\n\x0eHandleResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32H\n\x08Receiver\x12<\n\nHandleTask\x12\x12.configurator.Task\x1a\x18.receiver.HandleResponse\"\x00\x62\x06proto3')
+  ,
+  dependencies=[configurator_dot_api__pb2.DESCRIPTOR,])
 
 
 
 
-_CONFIGUREREQUEST = _descriptor.Descriptor(
-  name='ConfigureRequest',
-  full_name='receiver.ConfigureRequest',
+_HANDLERESPONSE = _descriptor.Descriptor(
+  name='HandleResponse',
+  full_name='receiver.HandleResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='task_id', full_name='receiver.ConfigureRequest.task_id', index=0,
-      number=1, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=32,
-  serialized_end=67,
-)
-
-
-_CONFIGURERESPONSE = _descriptor.Descriptor(
-  name='ConfigureResponse',
-  full_name='receiver.ConfigureResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='started', full_name='receiver.ConfigureResponse.started', index=0,
+      name='success', full_name='receiver.HandleResponse.success', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -83,27 +54,19 @@ _CONFIGURERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=69,
-  serialized_end=105,
+  serialized_start=56,
+  serialized_end=89,
 )
 
-DESCRIPTOR.message_types_by_name['ConfigureRequest'] = _CONFIGUREREQUEST
-DESCRIPTOR.message_types_by_name['ConfigureResponse'] = _CONFIGURERESPONSE
+DESCRIPTOR.message_types_by_name['HandleResponse'] = _HANDLERESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ConfigureRequest = _reflection.GeneratedProtocolMessageType('ConfigureRequest', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGUREREQUEST,
+HandleResponse = _reflection.GeneratedProtocolMessageType('HandleResponse', (_message.Message,), dict(
+  DESCRIPTOR = _HANDLERESPONSE,
   __module__ = 'receiver.api_pb2'
-  # @@protoc_insertion_point(class_scope:receiver.ConfigureRequest)
+  # @@protoc_insertion_point(class_scope:receiver.HandleResponse)
   ))
-_sym_db.RegisterMessage(ConfigureRequest)
-
-ConfigureResponse = _reflection.GeneratedProtocolMessageType('ConfigureResponse', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGURERESPONSE,
-  __module__ = 'receiver.api_pb2'
-  # @@protoc_insertion_point(class_scope:receiver.ConfigureResponse)
-  ))
-_sym_db.RegisterMessage(ConfigureResponse)
+_sym_db.RegisterMessage(HandleResponse)
 
 
 
@@ -113,16 +76,16 @@ _RECEIVER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=107,
-  serialized_end=195,
+  serialized_start=91,
+  serialized_end=163,
   methods=[
   _descriptor.MethodDescriptor(
-    name='ConfigureSensor',
-    full_name='receiver.Receiver.ConfigureSensor',
+    name='HandleTask',
+    full_name='receiver.Receiver.HandleTask',
     index=0,
     containing_service=None,
-    input_type=_CONFIGUREREQUEST,
-    output_type=_CONFIGURERESPONSE,
+    input_type=configurator_dot_api__pb2._TASK,
+    output_type=_HANDLERESPONSE,
     serialized_options=None,
   ),
 ])
