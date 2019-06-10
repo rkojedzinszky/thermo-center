@@ -43,7 +43,7 @@ class AIOThread(threading.Thread):
         catch the exception and simply ignore it
         """
         if self.loop:
-            self.loop.call_soon_threadsafe(self._cancel())
+            asyncio.run_coroutine_threadsafe(self._cancel(), self.loop)
 
     async def arun(self):
         raise NotImplementedError()
