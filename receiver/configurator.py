@@ -19,13 +19,13 @@ class Configurator(base.Base):
 
         self.task = task
 
-    def _prepare_config_reply(self, config):
+    def _prepare_config_reply(self, sensor_id, config):
         packet = [
                 54, # total length
                 0,  # reply address
                 # configuration is from here
                 0,  # crc
-                0,  # id
+                sensor_id,  # id
                 config.network & 0xff, # network id lsb
                 config.network >> 8    # network id msb
                 ]
@@ -51,7 +51,7 @@ class Configurator(base.Base):
     async def arun(self):
         task = await self._task_acquire()
 
-        replypacket = self._prepare_config_reply(task.config)
+        replypacket = self._prepare_config_reply(task.sensor_id, task.config)
 
         await self.radio.setup_basic()
         await self.radio.setup_for_conf()
@@ -66,22 +66,16 @@ class Configurator(base.Base):
             except asyncio.TimeoutError:
                 break
 
-            logger.info('Received discovery packet from %d', sensor_id)
+            if sensor_id & 128:
+                logger.info('Received discovery packet from %d', sensor_id)
+            else:
+                logger.info('Received reconfiguration request from %d', sensor_id)
+
+            if (sensor_id & 128) == 0 and sensor_id != task.sensor_id:
+                logging.warning('Received unexpected reconfiguration discovery packet')
+                continue
 
             if seen is None:
-                if task.sensor_id == -1:  # only existing
-                    if sensor_id < 128:
-                        replypacket[3] = sensor_id
-                    else:
-                        logging.warning('Received unexpected initial discovery packet')
-                        continue
-                else:
-                    if sensor_id < 128:
-                        logging.warning('Received unexpected reconfiguration discovery packet')
-                        continue
-                    else:
-                        replypacket[3] = task.sensor_id
-
                 replypacket[1] = sensor_id
                 seen = sensor_id
 
