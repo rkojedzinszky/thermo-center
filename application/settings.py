@@ -115,10 +115,6 @@ CARBON_PICKLE_RECEIVER_ENDPOINT = (os.getenv('CARBON_PICKLE_RECEIVER_HOST', None
 # Carbon queues' size
 CARBON_QUEUE_MAXSIZE = 100
 
-# receiver control socket
-RECEIVER_SOCKET = os.getenv(
-    'APPDAEMON_SOCKET', os.path.join(BASE_DIR, 'receiver.sock'))
-
 # receiver SPI defaults
 SPI_DEV = (0, 0)
 SPI_MODE = 0
