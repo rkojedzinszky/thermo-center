@@ -21,12 +21,12 @@ class ReceiverServicer(api_pb2_grpc.ReceiverServicer):
 
         self.daemon = daemon
 
-    def ConfigureSensor(self, request, context):
+    def HandleTask(self, request, context):
         """ Enter the daemon into sensor configurator mode """
-        logger.info('Received configurator request for %d', request.sensor_id)
+        logger.info('Received configurator request for task %d', request.task_id)
         self.daemon.ConfigureSensor(request)
 
-        return api_pb2.ConfigureResponse(started=True)
+        return api_pb2.HandleResponse(success=True)
 
 class Daemon:
     """ Main receiver class """
@@ -50,11 +50,9 @@ class Daemon:
         if old:
             old.cancel()
 
-    def ConfigureSensor(self, params):
+    def ConfigureSensor(self, task):
         """ Set configurator mode """
-        self._start_new_task(configurator.Configurator(args=self.args, radio=self.radio, params=params))
-
-        return api_pb2.ConfigureResponse(started=True)
+        self._start_new_task(configurator.Configurator(args=self.args, radio=self.radio, task=task))
 
     def daemonize(self):
         """ Become a daemon """

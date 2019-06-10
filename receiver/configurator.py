@@ -4,6 +4,7 @@ import logging
 from receiver import (
         base, radio
 )
+from configurator import api_pb2 as cfg_pb2
 
 DISCOVERY_PACKET_TIMEOUT = 22
 
@@ -13,10 +14,10 @@ logger = logging.getLogger(__name__)
 class Configurator(base.Base):
     name = 'configurator'
 
-    def __init__(self, args, radio, params):
+    def __init__(self, args, radio, task):
         super().__init__(args=args, radio=radio)
 
-        self.params = params
+        self.task = task
 
     def _prepare_config_reply(self, config):
         packet = [
@@ -35,11 +36,22 @@ class Configurator(base.Base):
 
         return packet
 
-    async def arun(self):
-        print ('Configuring sensor {}'.format(self.params.sensor_id))
-        config = self._read_config()
+    async def _task_acquire(self):
+        return await self.loop.run_in_executor(None, self.configurator.TaskAcquire, self.task)
 
-        replypacket = self._prepare_config_reply(config)
+    async def _task_discovery_received(self):
+        await self.loop.run_in_executor(None, self.configurator.TaskDiscoveryReceived, self.task)
+
+    async def _task_finished(self, error=None):
+        await self.loop.run_in_executor(None,
+                self.configurator.TaskFinished,
+                cfg_pb2.TaskFinishedRequest(task_id=self.task.task_id, error=error)
+        )
+
+    async def arun(self):
+        task = await self._task_acquire()
+
+        replypacket = self._prepare_config_reply(task.config)
 
         await self.radio.setup_basic()
         await self.radio.setup_for_conf()
@@ -57,7 +69,7 @@ class Configurator(base.Base):
             logger.info('Received discovery packet from %d', sensor_id)
 
             if seen is None:
-                if self.params.sensor_id == -1:  # only existing
+                if task.sensor_id == -1:  # only existing
                     if sensor_id < 128:
                         replypacket[3] = sensor_id
                     else:
@@ -68,7 +80,7 @@ class Configurator(base.Base):
                         logging.warning('Received unexpected reconfiguration discovery packet')
                         continue
                     else:
-                        replypacket[3] = self.params.sensor_id
+                        replypacket[3] = task.sensor_id
 
                 replypacket[1] = sensor_id
                 seen = sensor_id
@@ -80,10 +92,19 @@ class Configurator(base.Base):
             await self._send_replypacket(replypacket)
             logging.info('Replied to %d', seen)
 
+            # Just do logging now
+            await self._task_discovery_received()
+
             # Wait another DISCOVERY_PACKET_TIMEOUT to check if the
             # sensor has received our reply, thus not sending discovery
             # packets
             deadline = self.loop.time() + DISCOVERY_PACKET_TIMEOUT
+
+        error = None
+        if seen is None:
+            error = 'No discovery received'
+
+        await self._task_finished(error=error)
 
         logger.info('Exiting discovery loop')
 
