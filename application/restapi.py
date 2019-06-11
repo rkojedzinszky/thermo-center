@@ -15,6 +15,7 @@ RestApi = Api(api_name='v1')
 
 class SessionResource(Resource):
     id = fields.CharField()
+    is_admin = fields.BooleanField(readonly=True)
 
     class Meta(ResourceMetaCommon):
         authentication = Authentication()
@@ -55,8 +56,8 @@ class SessionResource(Resource):
         logout(bundle.request)
 
     def dehydrate(self, bundle):
-        bundle = super(SessionResource, self).dehydrate(bundle)
         bundle.data['id'] = bundle.request.session.session_key
+        bundle.data['is_admin'] = bundle.obj.is_superuser
 
         return bundle
 
