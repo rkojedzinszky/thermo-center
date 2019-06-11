@@ -9,7 +9,7 @@ from django.db.models.signals import post_save
 from django.core.cache import cache
 from django.conf import settings
 from application import restapi
-from application.resource import ResourceMetaCommon
+from application.resource import ResourceMetaCommon, NoAuthorization
 from center.models import Sensor, SensorResync, ConfigureSensorTask
 from tastypie import resources
 from tastypie.authentication import Authentication
@@ -17,6 +17,13 @@ from tastypie.authorization import ReadOnlyAuthorization, Authorization as RWAut
 from tastypie import fields
 from receiver import api_pb2_grpc
 from configurator import api_pb2 as cfg_pb2
+
+class SensorAuthorization(ReadOnlyAuthorization):
+    def update_detail(self, object_list, bundle):
+        return bundle.request.user.is_superuser
+
+    def delete_detail(self, object_list, bundle):
+        return bundle.request.user.is_superuser
 
 class SensorResource(resources.ModelResource):
     valid = fields.BooleanField(null=True, readonly=True, help_text='Recent update status')
@@ -32,7 +39,7 @@ class SensorResource(resources.ModelResource):
 
     class Meta(ResourceMetaCommon):
         queryset = Sensor.objects.all()
-        authorization = ReadOnlyAuthorization()
+        authorization = SensorAuthorization()
         excludes = ('last_seq',)
         ordering = (
                 'id',
@@ -94,6 +101,14 @@ class SensorResyncResource(resources.ModelResource):
 SensorResyncResourceInstance = SensorResyncResource()
 restapi.RestApi.register(SensorResyncResourceInstance)
 
+class ConfigureSensorTaskAuthorization(NoAuthorization):
+    def read_detail(self, object_list, bundle):
+        return bundle.request.user.is_superuser
+
+    def create_detail(self, object_list, bundle):
+        return bundle.request.user.is_superuser
+
+
 class ConfigureSensorTaskResource(resources.ModelResource):
     sensor_id = fields.IntegerField()
     sensor_name = fields.CharField()
@@ -106,9 +121,9 @@ class ConfigureSensorTaskResource(resources.ModelResource):
 
     class Meta(ResourceMetaCommon):
         queryset = ConfigureSensorTask.objects.select_related('sensor')
-        authorization = RWAuthorization()
+        authorization = ConfigureSensorTaskAuthorization()
         detail_allowed_methods = ['get']
-        list_allowed_methods = ['get', 'post']
+        list_allowed_methods = ['post']
         fields = ['id']
 
     def obj_create(self, bundle, **kwargs):
