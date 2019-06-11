@@ -9,7 +9,8 @@
       "~/pages/login/",
       "~/pages/logout/",
       "~/pages/heatcontrol/",
-      "~/pages/edit/"
+      "~/pages/edit/",
+      "~/pages/admin/"
     ],
     "plugins": [
       "steal-less"

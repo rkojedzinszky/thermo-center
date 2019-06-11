@@ -32,17 +32,26 @@ Component.extend({
 				return this.app.session != null;
 			}
 		},
+		is_admin: {
+			type: 'boolean',
+			get() {
+				return this.app.session.is_admin;
+			}
+		},
 		pages: {
 			get() {
+				let list = [];
 				if (this.is_logged_in) {
-					return [
+					list = list.concat([
 						{name: 'Overview', link: 'overview'},
 						{name: 'Heat control', link: 'heatcontrol'},
-						{name: 'Logout', link: 'logout'},
-					];
-				} else {
-					return []
+					]);
+					if (this.is_admin) {
+						list.push({name: 'Admin', link: 'admin'});
+					};
+					list.push({name: 'Logout', link: 'logout'});
 				}
+				return list;
 			}
 		},
 	}
