@@ -14,6 +14,7 @@ from aggregator import api_pb2
 from aggregator import api_pb2_grpc
 from aggregator import sensorvalue
 from aggregator import (mqtt, pid)
+from aggregator import carbon
 
 PIDCONTROL_INT_ABS_MAX = 100.0
 
@@ -33,10 +34,15 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         super().__init__()
 
         self.mqtt = None
+        self.carbon = None
 
         if settings.MQTT_HOST:
             self.mqtt = mqtt.MqttClient((settings.MQTT_HOST, settings.MQTT_PORT))
             self.mqtt.start()
+
+        if settings.CARBON_LINE_RECEIVER_ENDPOINT[0]:
+            self.carbon = carbon.LineClient(settings.CARBON_LINE_RECEIVER_ENDPOINT, settings.CARBON_QUEUE_MAXSIZE)
+            self.carbon.start()
 
     def lock_sensor(self, sensor_id):
         thread_id = '{}-{}-{}'.format(socket.gethostname(), os.getpid(), threading.get_ident())
@@ -128,10 +134,21 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         # XXX: remove pid to avoid serialization
         cachevalues.pop('pid', None)
 
-        # Publish mh to mqtt, carbon
+        # Publish mh to mqtt
         if self.mqtt:
             self.mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, s.pk),
                 json.dumps(cachevalues, separators=(',', ':')).encode())
+
+        if self.carbon:
+            tstamp = int(cachevalues.pop('last_tsf'))
+            cachevalues.pop('last_seq')
+            cachevalues.pop('valid')
+            prefix = 'sensor.{:02x}.'.format(s.pk)
+            metrics = [
+                    ['{}{}'.format(prefix, k), (v, tstamp)]
+                    for k, v in cachevalues.items()
+                    ]
+            self.carbon.send(metrics)
 
         return api_pb2.FeedResponse(processed=True)
 
