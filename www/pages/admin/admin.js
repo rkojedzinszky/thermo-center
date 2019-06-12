@@ -80,7 +80,7 @@ Component.extend({
 		task: {},
 		modal: {},
 		connectedCallback(element) {
-			var self = this;
+			let self = this;
 			self.element = element;
 			self.modal = $(this.element.querySelector('.mmodal'));
 
@@ -98,7 +98,7 @@ Component.extend({
 			};
 		},
 		_pollTask() {
-			var self = this;
+			let self = this;
 			let task = self.task;
 			if (!task)
 				return;
@@ -120,14 +120,15 @@ Component.extend({
 			});
 		},
 		_newTask(params) {
-			var self = this;
-			self.task = new ConfigureSensorTask(params);
-			self.task.save().then(function() {
-				self.modal.html(taskView({task: self.task, fields: taskFields}));
+			let self = this;
+			let task = new ConfigureSensorTask(params);
+			task.save().then(function() {
+				self.task = task;
+				self.modal.html(taskView({task: task, fields: taskFields}));
 				self.modal.find('.taskmodal').modal();
 				self._pollTask();
 				if (params.sensor_id == null) {
-					THSensor.get({id: self.task.sensor_id}).then(function(s) {
+					THSensor.get({id: task.sensor_id}).then(function(s) {
 						self.sensors.push(s);
 					});
 				}
@@ -137,7 +138,7 @@ Component.extend({
 	helpers: {
 		calculate_age(s) {
 			if (s.last_tsf != null) {
-				var elapsed = Math.ceil(this.app.current_time - 1000 * s.last_tsf);
+				let elapsed = Math.ceil(this.app.current_time - 1000 * s.last_tsf);
 				if (elapsed < 0) {
 					elapsed = 0;
 				}
