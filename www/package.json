@@ -52,7 +52,7 @@
     "humidity"
   ],
   "name": "thermo-center",
-  "version": "0.0.0",
+  "version": "2.0.0-rc1",
   "author": "Richard Kojedzinszky",
   "bugs": {
     "url": "https://github.com/rkojedzinszky/thermo-center/issues"
