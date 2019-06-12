@@ -7,8 +7,19 @@ import stache from 'can-stache';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal';
 
+const taskFields = [
+	{desc: 'Name', field: 'sensor_name', okclass: 'bg-primary'},
+	{desc: 'Id', field: 'sensor_id', okclass: 'bg-primary'},
+	{desc: 'Created', field: 'created', okclass: 'bg-success'},
+	{desc: 'Started', field: 'started', okclass: 'bg-success', notokclass: 'bg-warning'},
+	{desc: 'First discovery', field: 'first_discovery', okclass: 'bg-success', notokclass: 'bg-warning'},
+	{desc: 'Last discovery', field: 'last_discovery', okclass: 'bg-success', notokclass: 'bg-warning'},
+	{desc: 'Finished', field: 'finished', okclass: 'bg-success', notokclass: 'bg-warning'},
+	{desc: 'Error', field: 'error', okclass: 'bg-danger', notokclass: 'bg-success'},
+];
+
 const taskView = stache(`
-<div class="modal taskmodal" tabindex="-1" role="dialog">
+<div class="modal fade taskmodal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -17,15 +28,14 @@ const taskView = stache(`
 	</h5>
       </div>
       <div class="modal-body">
-<ul>
-	<li>Name: {{task.sensor_name}}</li>
-	<li>Id: {{task.sensor_id}}</li>
-	<li>Created: {{task.created}}</li>
-	<li>Started: {{task.started}}</li>
-	<li>First disc: {{task.first_discovery}}</li>
-	<li>Last disc: {{task.last_discovery}}</li>
-	<li>Finished: {{task.finished}}</li>
-	<li>Error: {{task.error}}</li>
+        <div class="container-fluid">
+	{{#for (f of fields)}}
+          <div class="row {{#if (task[f.field])}}{{f.okclass}}{{else}}{{f.notokclass}}{{/if}}">
+            <div class="col-sm-4">{{f.desc}}</div>
+            <div class="col-sm-8">{{task[f.field]}}</div>
+          </div>
+        {{/for}}
+	</div>
       </div>
     </div>
   </div>
@@ -41,7 +51,6 @@ Component.extend({
 	<th scope="col">#</th>
 	<th scope="col">Name</th>
 	<th scope="col">VCC</th>
-	<th scope="col">Interval</th>
 	<th scope="col">RSSI</th>
 	<th scope="col">LQI</th>
 	<th scope="col" class="overview-age">Age</th>
@@ -54,7 +63,6 @@ Component.extend({
 		<th scope="row">{{s.id}}</th>
 		<td>{{s.name}}</td>
 		<td>{{format('vcc', s.vcc)}}</td>
-		<td>{{format('interval', s.interval)}}</td>
 		<td>{{format('rssi', s.rssi)}}</td>
 		<td>{{format('lqi', s.lqi)}}</td>
 		<td>{{calculate_age(s)}}</td>
@@ -100,10 +108,14 @@ Component.extend({
 					window.setTimeout(self._pollTask.bind(self), 1000);
 				} else {
 					self.task = null;
+					let timeout = 1000;
+					if (task.error) {
+						timeout = 3000;
+					}
 
 					window.setTimeout(function() {
 						self.modal.find('.taskmodal').modal('hide');
-					}, 1000);
+					}, timeout);
 				}
 			});
 		},
@@ -111,7 +123,7 @@ Component.extend({
 			var self = this;
 			self.task = new ConfigureSensorTask(params);
 			self.task.save().then(function() {
-				self.modal.html(taskView({task: self.task}));
+				self.modal.html(taskView({task: self.task, fields: taskFields}));
 				self.modal.find('.taskmodal').modal();
 				self._pollTask();
 				if (params.sensor_id == null) {
