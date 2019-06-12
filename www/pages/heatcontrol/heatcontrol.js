@@ -24,7 +24,7 @@ Component.extend({
 	<td>{{format('temperature', s.temperature)}}</td>
 	<td>{{format('target_temp', s.target_temp)}}</td>
 	<td>{{format('pidcontrol', s.pidcontrol)}}</td>
-	<td><a class="btn btn-primary" role="button" href="{{{ edit_link(s) }}}">Edit</a></td>
+	<td><a class="btn btn-primary mx-1" role="button" href="{{{ edit_link(s) }}}">Edit</a></td>
 </tr>
 {{/for}}
 </tbody>
@@ -32,7 +32,7 @@ Component.extend({
 <ul class="list-unstyled list-inline">
 {{#for (i of instantprofiles)}}
 <li class="list-inline-item">
-	<button class="btn {{#if (i.active)}}btn-primary{{else}}btn-outline-primary{{/if}}" on:click="toggle(i)">{{ i.name }}</button>
+	<button class="btn {{#if (i.active)}}btn-primary{{else}}btn-outline-primary{{/if}} mx-1" on:click="toggle(i)">{{ i.name }}</button>
 </li>
 {{/for}}
 </ul>

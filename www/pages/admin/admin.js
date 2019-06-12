@@ -66,12 +66,12 @@ Component.extend({
 		<td>{{format('rssi', s.rssi)}}</td>
 		<td>{{format('lqi', s.lqi)}}</td>
 		<td>{{calculate_age(s)}}</td>
-		<td><button class="btn btn-primary" on:click="reprogram(s)">Configure</button><button class="btn btn-danger" on:click="destroy(s)">Delete</button></td>
+		<td><button class="btn btn-primary mx-1" on:click="reprogram(s)">Configure</button><button class="btn btn-danger mx-1" on:click="destroy(s)">Delete</button></td>
 	</tr>
 {{/for}}
 </tbody>
 </table>
-<button class="btn btn-primary" on:click="addSensor()">Add Sensor</button>
+<button class="btn btn-primary mx-1" on:click="addSensor()">Add Sensor</button>
 <div class="mmodal"></div>
 	`,
 	ViewModel: {

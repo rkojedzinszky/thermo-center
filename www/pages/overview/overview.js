@@ -43,7 +43,7 @@ Component.extend({
 </tbody>
 </table>
 <div class="checkbox">
-	<button class="btn btn-primary {{#if advanced}}active{{//if}}" {{#if active}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
+	<button class="btn btn-primary mx-1 {{#if advanced}}active{{//if}}" {{#if active}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
 </div>
 	`,
 	ViewModel: {
@@ -72,7 +72,7 @@ Component.extend({
 
 Component.extend({
 	tag: 'thermo-sensor-resync',
-	view: `<button class="btn btn-secondary" on:click="do_resync(scope.event)">Resync!</button>`,
+	view: `<button class="btn btn-secondary mx-1" on:click="do_resync(scope.event)">Resync!</button>`,
 	ViewModel: {
 		do_resync(event) {
 			event.preventDefault();
