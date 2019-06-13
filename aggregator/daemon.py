@@ -122,8 +122,11 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
                 pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
                 logger.debug('%s: pid control=%f', s, pcv)
                 mh['pidcontrol'] = PIDControlValue(pcv)
+            else:
+                cachevalues.pop('pidcontrol', None)
         else:
             cachevalues.pop('pid', None)
+            cachevalues.pop('pidcontrol', None)
 
         # Update cache
         cachevalues.update({m.metric: m.value() for m in mh.values()})
