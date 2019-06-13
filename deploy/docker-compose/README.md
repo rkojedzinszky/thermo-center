@@ -1,3 +1,0 @@
-# Deployment using docker-compose
-
-A sample compose file will be placed here...
