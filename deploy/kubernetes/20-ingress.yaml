@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: thermo-center
+spec:
+  rules:
+  - host: thermo-center.lan
+    http:
+      paths:
+      - backend:
+          serviceName: thermo-center-api
+          servicePort: http-api
+        path: /tc/api/
+      - backend:
+          serviceName: thermo-center-api
+          servicePort: http-api
+        path: /tc/admin/
+      - backend:
+          serviceName: thermo-center-ws
+          servicePort: http-ws
+        path: /tc/ws/
+      - backend:
+          serviceName: thermo-center-ui
+          servicePort: http-ui
+        path: /tc/

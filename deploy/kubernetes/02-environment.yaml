@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  ALLOWED_HOSTS: thermo-center.lan
+  MEMCACHED_HOST: memcached
+kind: ConfigMap
+metadata:
+  name: thermo-center-environment

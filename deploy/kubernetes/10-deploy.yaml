@@ -1,0 +1,297 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: memcached
+  name: memcached
+spec:
+  selector:
+    matchLabels:
+      app: memcached
+  template:
+    metadata:
+      labels:
+        app: memcached
+    spec:
+      enableServiceLinks: false
+      containers:
+      - command:
+        - memcached
+        - -m
+        - "8"
+        image: memcached:alpine
+        name: memcached
+        ports:
+        - containerPort: 11211
+          protocol: TCP
+        resources:
+          limits:
+            memory: 16M
+          requests:
+            cpu: 100m
+      securityContext:
+        runAsGroup: 11211
+        runAsUser: 11211
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: mqtt-broker
+  name: mqtt-broker
+spec:
+  selector:
+    matchLabels:
+      app: mqtt-broker
+  template:
+    metadata:
+      labels:
+        app: mqtt-broker
+    spec:
+      enableServiceLinks: false
+      containers:
+      - image: eclipse-mosquitto:1.5
+        name: mqtt-broker
+        ports:
+        - containerPort: 1883
+          protocol: TCP
+        resources:
+          limits:
+            memory: 16M
+          requests:
+            cpu: 100m
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-receiver
+    app-group: thermo-center
+  name: thermo-center-receiver
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-receiver
+  template:
+    metadata:
+      labels:
+        app: thermo-center-receiver
+    spec:
+      enableServiceLinks: false
+      containers:
+      - command:
+        - sh
+        - -c
+        - chown nobody /dev/spidev0.0 /gpio/direction /gpio/value /gpio/edge &&
+          exec su -s /bin/sh nobody -c "python -m receiver.main"
+        image: rkojedzinszky/thermo-center-receiver
+        name: thermo-center-receiver
+        ports:
+        - containerPort: 8079
+          protocol: TCP
+        resources:
+          limits:
+            hardware/cc1101: "1"
+            memory: 64Mi
+          requests:
+            cpu: 250m
+        securityContext:
+          runAsUser: 0
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-configurator
+    app-group: thermo-center
+  name: thermo-center-configurator
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-configurator
+  template:
+    metadata:
+      labels:
+        app: thermo-center-configurator
+    spec:
+      enableServiceLinks: false
+      containers:
+      - command:
+        - python
+        - manage.py
+        - grpcserver
+        - --configurator
+        envFrom:
+        - secretRef:
+            name: thermo-center-secret
+        image: rkojedzinszky/thermo-center-grpcserver
+        name: thermo-center-configurator
+        ports:
+        - containerPort: 8079
+          name: grpc
+          protocol: TCP
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 250m
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-aggregator
+    app-group: thermo-center
+  name: thermo-center-aggregator
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-aggregator
+  template:
+    metadata:
+      labels:
+        app: thermo-center-aggregator
+    spec:
+      enableServiceLinks: false
+      containers:
+      - command:
+        - python
+        - manage.py
+        - grpcserver
+        - --aggregator
+        envFrom:
+        - secretRef:
+            name: thermo-center-secret
+        - configMapRef:
+            name: thermo-center-environment
+        image: rkojedzinszky/thermo-center-grpcserver
+        name: thermo-center-aggregator
+        ports:
+        - containerPort: 8079
+          name: grpc
+          protocol: TCP
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 250m
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-api
+    app-group: thermo-center
+  name: thermo-center-api
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-api
+  template:
+    metadata:
+      labels:
+        app: thermo-center-api
+    spec:
+      enableServiceLinks: false
+      containers:
+      - envFrom:
+        - secretRef:
+            name: thermo-center-secret
+        - configMapRef:
+            name: thermo-center-environment
+        image: rkojedzinszky/thermo-center-api
+        name: thermo-center-api
+        ports:
+        - containerPort: 8080
+          name: uwsgi-api
+          protocol: TCP
+        - containerPort: 8082
+          name: http-api
+          protocol: TCP
+        resources:
+          limits:
+            memory: 96Mi
+          requests:
+            cpu: 250m
+      initContainers:
+      - command:
+        - python
+        - manage.py
+        - migrate
+        envFrom:
+        - secretRef:
+            name: thermo-center-secret
+        image: rkojedzinszky/thermo-center-api
+        name: migrate
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-ws
+    app-group: thermo-center
+  name: thermo-center-ws
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-ws
+  template:
+    metadata:
+      labels:
+        app: thermo-center-ws
+    spec:
+      enableServiceLinks: false
+      containers:
+      - image: rkojedzinszky/thermo-center-ws
+        name: thermo-center-ws
+        ports:
+        - containerPort: 8081
+          name: http-websocket
+          protocol: TCP
+        resources:
+          limits:
+            memory: 32Mi
+          requests:
+            cpu: 250m
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: thermo-center-ui
+    app-group: thermo-center
+  name: thermo-center-ui
+spec:
+  selector:
+    matchLabels:
+      app: thermo-center-ui
+  template:
+    metadata:
+      labels:
+        app: thermo-center-ui
+    spec:
+      enableServiceLinks: false
+      containers:
+      - image: rkojedzinszky/thermo-center-ui
+        livenessProbe:
+          initialDelaySeconds: 5
+          httpGet:
+            path: /tc/index.html
+            port: 80
+        name: thermo-center-ui
+        ports:
+        - containerPort: 80
+          name: http-ui
+          protocol: TCP
+        resources:
+          limits:
+            memory: 32Mi
+          requests:
+            cpu: 250m
