@@ -161,7 +161,7 @@ RECEIVER_PORT = int(os.getenv('RECEIVER_PORT', '8079'))
 # 1 means always update
 # The default is 0.01, which results in 1 percent of the updates
 # sent to db
-SENSOR_DB_UPDATE_PROBABILITY = 0.01
+SENSOR_DB_UPDATE_PROBABILITY = float(os.getenv('SENSOR_DB_UPDATE_PROBABILITY', '0.01'))
 
 try:
     from local_settings import *
