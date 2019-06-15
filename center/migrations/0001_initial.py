@@ -43,6 +43,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rfconfig',
             name='rf_profile',
-            field=models.ForeignKey(to='center.RFProfile', on_delete=models.PROTECT),
+            field=models.ForeignKey(to='center.RFProfile', on_delete=models.CASCADE),
         ),
     ]
