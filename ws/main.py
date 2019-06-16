@@ -117,7 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--mqtt-host', default=os.environ.get('MQTT_HOST', 'mqtt'),
             help='MQTT hostname/address')
     parser.add_argument('--mqtt-port', type=int, default=int(os.environ.get('MQTT_PORT', '1883')),
-            help='Aggregator port')
+            help='MQTT port')
     parser.add_argument('--ws-port', type=int, default=int(os.environ.get('WS_PORT', '8081')),
             help='Websocket port')
 
