@@ -134,14 +134,16 @@ INTERRUPT_MAX_RATE = 1
 INTERRUPT_MAX_BURST = 30
 
 # Cache setup
-# You can setup CACHES through environment variables. First set option takes effect.
+# You can setup CACHES through environment variables. Default is to use memcached.
+# If you want file based cache, you must set MEMCACHED_HOST to empty.
 # For backwards compatibility, CACHE_DIR is set to a default. If you want to set full
-# CACHES setting, CACHE_DIR must be set to empty string, and then set CACHES in
+# CACHES setting, CACHE_DIR must be set to empty too, and then set CACHES in
 # local_settings.
-# To use memcached, set MEMCACHED_HOST and MEMCACHED_PORT
+# To use a different memcached, set MEMCACHED_HOST and MEMCACHED_PORT
 # To use a file based cache, set CACHE_DIR
-# To use your own cache setting, set CACHE_DIR to empty, and set CACHES variable.
-MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', None)
+# To use your own cache setting, set MEMCACHED_HOST and CACHE_DIR to empty,
+# and set CACHES variable.
+MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', 'memcached')
 MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
 CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(
     tempfile.gettempdir(), 'thermo-1'))
