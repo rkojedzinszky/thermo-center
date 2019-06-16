@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 8
+    user: "11211"
+  mqtt:
+    image: eclipse-mosquitto:1.5
+  receiver:
+    image: rkojedzinszky/thermo-center-receiver
+    command: sh -c 'chown nobody /dev/spidev0.0 /gpio/direction /gpio/value /gpio/edge && exec su -s /bin/sh nobody -c "python -m receiver.main"'
+    user: "0"
+    volumes:
+    - "/sys/class/gpio/gpio200:/gpio"
+    devices:
+    - "/dev/spidev0.0:/dev/spidev0.0"
+  configurator:
+    image: rkojedzinszky/thermo-center-grpcserver
+    command: python manage.py grpcserver --configurator
+    environment:
+      DBNAME: ${DBNAME}
+      DBHOST: ${DBHOST}
+      DBUSER: ${DBUSER}
+      DBPASSWORD: ${DBPASSWORD}
+  aggregator:
+    image: rkojedzinszky/thermo-center-grpcserver
+    command: python manage.py grpcserver --aggregator
+    environment:
+      DBNAME: ${DBNAME}
+      DBHOST: ${DBHOST}
+      DBUSER: ${DBUSER}
+      DBPASSWORD: ${DBPASSWORD}
+  api:
+    image: rkojedzinszky/thermo-center-api
+    ports:
+    - "8080:8080"
+    environment:
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      DBNAME: ${DBNAME}
+      DBHOST: ${DBHOST}
+      DBUSER: ${DBUSER}
+      DBPASSWORD: ${DBPASSWORD}
+  ws:
+    image: rkojedzinszky/thermo-center-ws
+    ports:
+    - "8081:8081"
+  ui:
+    image: rkojedzinszky/thermo-center-ui
+    ports:
+    - "8082:80"
+
