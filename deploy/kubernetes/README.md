@@ -72,7 +72,7 @@ For Thermo-center to work, an empty postgres database will be needed, the first 
 
 - To deploy Thermo-center, you will need to have a hostname on which you want to reach its UI. That must be edited in `02-environment.yaml` and in `20-ingress.yaml`. You will have to fill DB parameters in `03-secret.yaml`. Then, just load the files into k8s with:
 ```
-# kubectl -n thermo-center create -f 00-services.yaml -f 02-environment.yaml -f 03-secret.yaml -f 10-deploy.yaml -f 20-ingress.yaml
+# kubectl -n thermo-center create -f 00-services-external.yaml -f 01-services-internal.yaml -f 02-environment.yaml -f 03-secret.yaml -f 10-deploy.yaml -f 20-ingress.yaml
 ```
 
 For the first time, a superuser must be created in Django. This is done by executing a django command in the api pod. First, find out the pod's name:
