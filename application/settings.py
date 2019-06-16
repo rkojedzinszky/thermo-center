@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django_dbconn_retry',
     'tastypie',
-    'nauth',
     'center',
     'heatcontrol',
 )
