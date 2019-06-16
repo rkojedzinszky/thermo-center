@@ -1,0 +1,42 @@
+# Services used externally
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thermo-center-api
+spec:
+  ports:
+  - name: http-api
+    port: 8082
+    protocol: TCP
+    targetPort: 8082
+  selector:
+    app: thermo-center-api
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thermo-center-ui
+spec:
+  ports:
+  - name: http-ui
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: thermo-center-ui
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thermo-center-ws
+spec:
+  ports:
+  - name: http-ws
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: thermo-center-ws
