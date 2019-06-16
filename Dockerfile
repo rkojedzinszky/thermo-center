@@ -27,15 +27,14 @@ FROM common AS api
 
 RUN apk add --no-cache uwsgi-python3 uwsgi-cheaper_busyness
 
-EXPOSE 8080 8082
+EXPOSE 8080
 
 USER $APP_USER
 
 CMD ["uwsgi", \
     "--need-plugin=python3", \
     "--need-plugin=cheaper_busyness", \
-    "--uwsgi-socket=:8080", \
-    "--http-socket=:8082", \
+    "--http-socket=:8080", \
     "--wsgi-file=application/wsgi.py", \
     "--master", \
     "--die-on-term", \

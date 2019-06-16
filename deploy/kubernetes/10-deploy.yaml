@@ -210,9 +210,6 @@ spec:
         name: thermo-center-api
         ports:
         - containerPort: 8080
-          name: uwsgi-api
-          protocol: TCP
-        - containerPort: 8082
           name: http-api
           protocol: TCP
         resources:

@@ -68,18 +68,3 @@ spec:
     targetPort: 1883
   selector:
     app: mqtt-broker
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: thermo-center-uwsgi
-spec:
-  ports:
-  - name: uwsgi-api
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
-  selector:
-    app: thermo-center-api
-
