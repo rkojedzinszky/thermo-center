@@ -1,3 +1,5 @@
+# Environment variables
+---
 apiVersion: v1
 data:
   ALLOWED_HOSTS: thermo-center.lan
