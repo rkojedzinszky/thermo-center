@@ -81,23 +81,8 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
 
         return mh
 
-    def FeedSensorPacket(self, packet, context):
-        timestamp = time.time()
-        if not self.lock_sensor(packet.id):
-            return api_pb2.FeedResponse(processed=False)
-
-        try:
-            s = models.Sensor.objects.select_related('control').get(id=packet.id)
-        except models.Sensor.DoesNotExist:
-            logger.warning('Unknown device id: %02x', packet.id)
-            return api_pb2.FeedResponse(processed=False)
-
-        cachevalues = s.get_cache()
-        cachevalues['intvl'] = s.validate_seq(timestamp, packet.seq)
-        cachevalues['valid'] = cachevalues['intvl'] is not None
-        if not cachevalues['valid']:
-            s.set_cache(cachevalues)
-            return api_pb2.FeedResponse(processed=False)
+    def _handle_valid_packet(self, s, packet, cache):
+        """ Handle packet, fill in cache values """
 
         # Save to db using probability
         if random.random() < settings.SENSOR_DB_UPDATE_PROBABILITY:
@@ -111,9 +96,9 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
             pcp = s.control
 
             try:
-                pc = cachevalues['pid']
+                pc = cache['pid']
             except KeyError:
-                pc = cachevalues['pid'] = pid.PID()
+                pc = cache['pid'] = pid.PID()
 
             target_temp = pcp.get_target_temp()
             if target_temp is not None:
@@ -122,14 +107,34 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
                 pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
                 logger.debug('%s: pid control=%f', s, pcv)
                 mh['pidcontrol'] = PIDControlValue(pcv)
-            else:
-                cachevalues.pop('pidcontrol', None)
         else:
-            cachevalues.pop('pid', None)
-            cachevalues.pop('pidcontrol', None)
+            cache.pop('pid', None)
 
         # Update cache
-        cachevalues.update({m.metric: m.value() for m in mh.values()})
+        cache.update({m.metric: m.value() for m in mh.values()})
+
+    def FeedSensorPacket(self, packet, context):
+        timestamp = time.time()
+        if not self.lock_sensor(packet.id):
+            return api_pb2.FeedResponse(processed=False)
+
+        try:
+            s = models.Sensor.objects.select_related('control').get(id=packet.id)
+        except models.Sensor.DoesNotExist:
+            logger.warning('Unknown device id: %02x', packet.id)
+            return api_pb2.FeedResponse(processed=False)
+
+        oldcache = s.get_cache()
+        cachevalues = {}
+        # Preserve pid value
+        if 'pid' in oldcache:
+            cachevalues['pid'] = oldcache['pid']
+
+        cachevalues['intvl'] = s.validate_seq(timestamp, packet.seq)
+        cachevalues['valid'] = cachevalues['intvl'] is not None
+
+        if cachevalues['valid']:
+            self._handle_valid_packet(s, packet, cachevalues)
 
         # Save cache
         s.set_cache(cachevalues)
@@ -137,12 +142,13 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         # XXX: remove pid to avoid serialization
         cachevalues.pop('pid', None)
 
-        # Publish mh to mqtt
+        # Publish values to mqtt
         if self.mqtt:
             self.mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, s.pk),
                 json.dumps(cachevalues, separators=(',', ':')).encode())
 
-        if self.carbon:
+        # Publish valid values to carbon
+        if cachevalues['valid'] and self.carbon:
             tstamp = int(cachevalues.pop('last_tsf'))
             cachevalues.pop('last_seq')
             cachevalues.pop('valid')
