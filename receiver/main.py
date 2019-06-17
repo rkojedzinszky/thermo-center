@@ -3,6 +3,7 @@ import os
 import spidev
 import logging
 import time
+import signal
 import concurrent.futures
 import grpc
 from receiver import (
@@ -50,6 +51,12 @@ class Daemon:
         if old:
             old.cancel()
 
+    def _sigterm_handler(self, signum, stack):
+        task = self.task
+        self.task = None
+        if task:
+            task.cancel()
+
     def ConfigureSensor(self, task):
         """ Set configurator mode """
         self._start_new_task(configurator.Configurator(args=self.args, radio=self.radio, task=task))
@@ -80,7 +87,7 @@ class Daemon:
         self.grpcserver.start()
 
     def _stop_grpcserver(self):
-        self.grpcserver.stop()
+        self.grpcserver.stop(None)
 
     def run(self):
         """ Main entrypoint """
@@ -89,6 +96,8 @@ class Daemon:
 
         if self.args.daemonize:
             self.daemonize()
+
+        signal.signal(signal.SIGTERM, self._sigterm_handler)
 
         self._init_radio()
 
