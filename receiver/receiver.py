@@ -129,4 +129,6 @@ class Receiver(base.Base):
                 raw=raw
                 )
 
-        await self.loop.run_in_executor(None, self.astub.FeedSensorPacket, sensorpacket)
+        response = await self.loop.run_in_executor(None, self.astub.FeedSensorPacket, sensorpacket)
+
+        logger.info('Packet from %02x: processed=%s', id_, response.processed)
