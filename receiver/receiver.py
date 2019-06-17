@@ -62,7 +62,7 @@ class Receiver(base.Base):
             await self.gpio.waitforinterrupt()
 
             data_len = self.radio.status(radio.Radio.StatusReg.RXBYTES)
-            logger.debug('CC1101.RXBYTES=%d' % data_len)
+            logger.debug('CC1101.RXBYTES=%d', data_len)
 
             if data_len & 0x80:
                 logger.warn('CC1101 RX_OVERFLOW')
@@ -90,12 +90,12 @@ class Receiver(base.Base):
 
         try:
             await self._receive_packet(data)
-        except Exception as e:
-            logger.error('error processing packet: %s' % str(e))
+        except Exception:
+            logger.error('error processing packet', exc_info=True)
 
         end = time.time()
 
-        logger.debug('Packet processed in %f seconds' % (end - start))
+        logger.debug('Packet processed in %f seconds', end - start)
 
     async def _receive_packet(self, packet):
         rssi = struct.unpack('b', bytes([packet[16]]))[0] / 2.0 - 74
@@ -104,20 +104,20 @@ class Receiver(base.Base):
 
         network, seq, length, id_ = struct.unpack('<HLBB', packet[:8])
 
-        logger.debug('packet header: network=%04x seq=%08x len=%02x id=%02x' % (
-            network, seq, length, id_))
+        logger.debug('packet header: network=%04x seq=%08x len=%02x id=%02x',
+            network, seq, length, id_)
 
         if length < 8:
             logger.error(
-                'Invalid packet data received, short length: %d' % length)
+                'Invalid packet data received, short length: %d', length)
             return
         if length > 16:
             logger.error(
-                'Invalid packet data received, large length: %d' % length)
+                'Invalid packet data received, large length: %d', length)
             return
 
         if network != self.config.network:
-            logger.warn('Received packet for invalid network: %d' % network)
+            logger.warn('Received packet for invalid network: %d', network)
             return
 
         raw = bytes(packet[8:length])
