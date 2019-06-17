@@ -50,7 +50,7 @@ class Receiver(base.Base):
             try:
                 packets = await asyncio.wait_for(self.receive_many(), timeout=WATCHDOG_TIMEOUT)
             except asyncio.TimeoutError:
-                logger.warn('Watchdog timeout, resetting radio')
+                logger.warning('Watchdog timeout, resetting radio')
                 await self._setup_radio()
             else:
                 for packet in packets:
@@ -65,14 +65,14 @@ class Receiver(base.Base):
             logger.debug('CC1101.RXBYTES=%d', data_len)
 
             if data_len & 0x80:
-                logger.warn('CC1101 RX_OVERFLOW')
+                logger.warning('CC1101 RX_OVERFLOW')
                 self.radio.wcmd(radio.Radio.CommandStrobe.SFRX)
                 await self.radio.wait_sidle()
                 self.radio.wcmd(radio.Radio.CommandStrobe.SRX)
                 continue
 
             if data_len > 54:
-                logger.warn('CC1101 suspicious RXBYTES')
+                logger.warning('CC1101 suspicious RXBYTES')
                 await self.radio.sidle()
                 self.radio.wcmd(radio.Radio.CommandStrobe.SFRX)
                 self.radio.wcmd(radio.Radio.CommandStrobe.SRX)
@@ -117,7 +117,7 @@ class Receiver(base.Base):
             return
 
         if network != self.config.network:
-            logger.warn('Received packet for invalid network: %d', network)
+            logger.warning('Received packet for invalid network: %d', network)
             return
 
         raw = bytes(packet[8:length])

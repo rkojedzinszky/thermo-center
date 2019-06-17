@@ -56,7 +56,7 @@ class MqttClient(aiothread.AIOThread):
             except asyncio.CancelledError:
                 break
             except ClientException as e:
-                logger.warn('MQTT Exception: {}'.format(e))
+                logger.warning('MQTT Exception: {}'.format(e))
 
             try:
                 await asyncio.sleep(1)

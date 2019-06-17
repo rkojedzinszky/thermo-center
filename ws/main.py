@@ -39,7 +39,7 @@ class MqttClient:
             except asyncio.CancelledError:
                 return
             except Exception as e:
-                logger.warn(e, exc_info=True)
+                logger.warning(e, exc_info=True)
 
             await asyncio.sleep(1)
 
@@ -59,7 +59,7 @@ class WsClient:
                 await self.ws.send(el)
 
         except Exception as e:
-            logger.warn('%s: exiting', self, exc_info=True)
+            logger.warning('%s: exiting', self, exc_info=True)
 
     async def done(self):
         self._task = self.loop.create_task(self._loop())
@@ -69,7 +69,7 @@ class WsClient:
         try:
             self._q.put_nowait(payload)
         except asyncio.QueueFull:
-            logger.warn('%s: buffer overrun, exiting', self)
+            logger.warning('%s: buffer overrun, exiting', self)
             self._task.cancel()
 
     def remote(self):
