@@ -80,7 +80,7 @@ class WsClient:
                 self.ws.remote_address[0]
 
     def __str__(self):
-        return self.remote
+        return self.remote()
 
 class Main:
     def __init__(self, args, loop):
@@ -121,9 +121,7 @@ if __name__ == '__main__':
     parser.add_argument('--ws-port', type=int, default=int(os.environ.get('WS_PORT', '8081')),
             help='Websocket port')
 
-    logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
-
-    logging.getLogger('ws').setLevel(logging.INFO)
+    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
     args = parser.parse_args()
 

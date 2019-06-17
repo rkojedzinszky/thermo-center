@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import re
 import os
 import tempfile
+import logging
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -107,6 +108,27 @@ WWW_FILES = os.path.join(BASE_DIR, 'www')
 STATIC_URL = '/tc/static/'
 STATIC_ROOT = os.path.join(WWW_FILES, 'static')
 
+# Default logging: info and higher messages to stderr
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': logging.BASIC_FORMAT,
+        },
+    },
+    'handlers': {
+        'default': {
+            'class': 'logging.StreamHandler',  # sys.stderr is default output
+            'formatter': 'default',
+        },
+    },
+    'root': {
+        'level': logging.INFO,
+        'handlers': ['default'],
+    },
+}
+
+# Carbon cache address
 CARBON_LINE_RECEIVER_ENDPOINT = (os.getenv('CARBON_LINE_RECEIVER_HOST', None), int(
     os.getenv('CARBON_LINE_RECEIVER_PORT', '2003')))
 # Carbon queues' size
