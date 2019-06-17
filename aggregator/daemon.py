@@ -28,7 +28,7 @@ class PIDControlValue(sensorvalue.Value):
 
 class Aggregator(api_pb2_grpc.AggregatorServicer):
     SENSOR_CACHE_LOCK_KEY = 'tc-sensor-{}-lock'
-    SENSOR_CACHE_LOCK_TIMEOUT = 15
+    SENSOR_CACHE_LOCK_TIMEOUT = 2
 
     def __init__(self):
         super().__init__()
