@@ -41,7 +41,6 @@ class Receiver(base.Base):
     async def arun(self):
         self.config = await self.loop.run_in_executor(None, self._read_config)
         self.astub = await self.loop.run_in_executor(None, self._create_astub)
-        self.inflight = 0
 
         await self._setup_radio()
         self.gpio.resettbf()
