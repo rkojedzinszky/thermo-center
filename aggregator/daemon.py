@@ -48,11 +48,11 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         thread_id = '{}-{}-{}'.format(socket.gethostname(), os.getpid(), threading.get_ident())
         key = self.SENSOR_CACHE_LOCK_KEY.format(sensor_id)
         if cache.add(key, thread_id, timeout=self.SENSOR_CACHE_LOCK_TIMEOUT):
-            logger.info('Locked sensor {}'.format(sensor_id))
+            logger.info('Locked sensor %02x', sensor_id)
             return True
 
         holder = cache.get(key)
-        logger.info('Locking sensor {} failed: {} holds lock'.format(sensor_id, holder))
+        logger.info('Locking sensor %02x failed: %s holds lock', sensor_id, holder)
         return False
 
     def _parse_metrics(self, packet):
