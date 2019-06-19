@@ -24,25 +24,15 @@ RUN apk add --no-cache tzdata py3-psycopg2 && \
 ### API
 FROM common AS api
 
+ADD uwsgi.api.ini ./
+
 RUN apk add --no-cache uwsgi-python3 uwsgi-cheaper_busyness
 
 EXPOSE 8080
 
 USER $APP_USER
 
-CMD ["uwsgi", \
-    "--need-plugin=python3", \
-    "--need-plugin=cheaper_busyness", \
-    "--http-socket=:8080", \
-    "--wsgi-file=application/wsgi.py", \
-    "--master", \
-    "--die-on-term", \
-    "--workers=2", \
-    "--threads=4", \
-    "--cheaper=1", \
-    "--cheaper-algo=busyness", \
-    "--cheaper-overload=10", \
-    "--thunder-lock"]
+CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
 
 ### APP
 FROM common AS grpcserver
