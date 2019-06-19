@@ -3,10 +3,17 @@
 from django.db import transaction
 from django.utils.timezone import now
 from center import models
+from lib.grpc import BaseServicer
 from configurator import api_pb2
 from configurator import api_pb2_grpc
 
-class Configurator(api_pb2_grpc.ConfiguratorServicer):
+class Configurator(BaseServicer, api_pb2_grpc.ConfiguratorServicer):
+    """ Configurator servicer """
+
+    def start(self, server):
+        """ Start the servicer """
+        api_pb2_grpc.add_ConfiguratorServicer_to_server(self, server)
+
     def GetRadioCfg(self, request, context):
         if request.cluster != 1:
             raise RuntimeError("Invalid cluster ID received")
@@ -67,5 +74,5 @@ class Configurator(api_pb2_grpc.ConfiguratorServicer):
             return api_pb2.TaskUpdateResponse(success=True)
 
 
-def add_services(server):
-    api_pb2_grpc.add_ConfiguratorServicer_to_server(Configurator(), server)
+def get_servicer():
+    return Configurator()

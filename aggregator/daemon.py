@@ -10,6 +10,7 @@ import json
 from django.conf import settings
 from django.core.cache import cache
 from center import models
+from lib.grpc import BaseServicer
 from aggregator import api_pb2
 from aggregator import api_pb2_grpc
 from aggregator import sensorvalue
@@ -26,7 +27,7 @@ class PIDControlValue(sensorvalue.Value):
     metric = 'pidcontrol'
 
 
-class Aggregator(api_pb2_grpc.AggregatorServicer):
+class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
     SENSOR_CACHE_LOCK_KEY = 'tc-sensor-{}-lock'
     SENSOR_CACHE_LOCK_TIMEOUT = 2
 
@@ -36,6 +37,8 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         self.mqtt = None
         self.carbon = None
 
+    def start(self, server):
+        """ Start additional threads """
         if settings.MQTT_HOST:
             self.mqtt = mqtt.MqttClient((settings.MQTT_HOST, settings.MQTT_PORT))
             self.mqtt.start()
@@ -43,6 +46,18 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         if settings.CARBON_LINE_RECEIVER_ENDPOINT[0]:
             self.carbon = carbon.LineClient(settings.CARBON_LINE_RECEIVER_ENDPOINT, settings.CARBON_QUEUE_MAXSIZE)
             self.carbon.start()
+
+        api_pb2_grpc.add_AggregatorServicer_to_server(self, server)
+
+    def shutdown(self):
+        """ Stop additional threads """
+        if self.mqtt:
+            self.mqtt.cancel()
+            self.mqtt.join()
+
+        if self.carbon:
+            self.carbon.cancel()
+            self.carbon.join()
 
     def lock_sensor(self, sensor_id):
         thread_id = '{}-{}-{}'.format(socket.gethostname(), os.getpid(), threading.get_ident())
@@ -162,6 +177,5 @@ class Aggregator(api_pb2_grpc.AggregatorServicer):
         return api_pb2.FeedResponse(processed=True)
 
 
-def add_services(server):
-    """ Register services """
-    api_pb2_grpc.add_AggregatorServicer_to_server(Aggregator(), server)
+def get_servicer():
+    return Aggregator()

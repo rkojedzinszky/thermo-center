@@ -2,10 +2,20 @@ import os
 import sys
 import time
 import concurrent.futures
+import signal
+import threading
 from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = 'Thermo center grpc server'
+
+    def __init__(self):
+        super().__init__()
+
+        self.stopEvent = threading.Event()
+
+    def shutdown(self, signo, trace):
+        self.stopEvent.set()
 
     def add_arguments(self, parser):
         parser.add_argument('--grpc-port', type=int, default=int(os.environ.get('GRPC_PORT', '8079')),
@@ -42,22 +52,29 @@ class Command(BaseCommand):
             ('grpc.http2.min_ping_interval_without_data_ms', 1000))
         )
 
-        services = 0
+        servicers = []
         if options['configurator']:
             import configurator.daemon
-            configurator.daemon.add_services(server)
-            services += 1
+            servicers.append(configurator.daemon.get_servicer())
 
         if options['aggregator']:
             import aggregator.daemon
-            aggregator.daemon.add_services(server)
-            services += 1
+            servicers.append(aggregator.daemon.get_servicer())
 
-        if services == 0:
+        if len(servicers) == 0:
             raise RuntimeError('No services enabled')
+
+        for s in servicers:
+            s.start(server)
 
         server.add_insecure_port('0.0.0.0:{}'.format(options['grpc_port']))
         server.start()
 
-        while True:
-            time.sleep(60)
+        signal.signal(signal.SIGTERM, self.shutdown)
+
+        self.stopEvent.wait()
+
+        server.stop(None).wait()
+
+        for s in servicers:
+            s.shutdown()
