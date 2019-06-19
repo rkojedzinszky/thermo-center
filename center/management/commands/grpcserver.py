@@ -4,7 +4,11 @@ import time
 import concurrent.futures
 import signal
 import threading
+import logging
 from django.core.management.base import BaseCommand
+
+logger = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     help = 'Thermo center grpc server'
@@ -15,6 +19,8 @@ class Command(BaseCommand):
         self.stopEvent = threading.Event()
 
     def shutdown(self, *args, **kwargs):
+        logger.warning('shutdown request received')
+
         self.stopEvent.set()
 
     def add_arguments(self, parser):

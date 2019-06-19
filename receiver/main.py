@@ -52,6 +52,8 @@ class Daemon:
             old.cancel()
 
     def shutdown(self, *args, **kwargs):
+        logger.warning('shutdown request received')
+
         task = self.task
         self.task = None
         if task:

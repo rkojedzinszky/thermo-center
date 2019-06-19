@@ -112,6 +112,8 @@ class Main:
         await mqtt_task
 
     def shutdown(self, *args, **kwargs):
+        logger.warning('shutdown request received')
+
         self.stopserver.set()
 
 
