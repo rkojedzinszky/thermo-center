@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         self.stopEvent = threading.Event()
 
-    def shutdown(self, signo, trace):
+    def shutdown(self, *args, **kwargs):
         self.stopEvent.set()
 
     def add_arguments(self, parser):

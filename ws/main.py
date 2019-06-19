@@ -111,7 +111,7 @@ class Main:
         mqtt_task.cancel()
         await mqtt_task
 
-    def shutdown(self, signo, trace):
+    def shutdown(self, *args, **kwargs):
         self.stopserver.set()
 
 

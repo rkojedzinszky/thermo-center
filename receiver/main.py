@@ -51,7 +51,7 @@ class Daemon:
         if old:
             old.cancel()
 
-    def _sigterm_handler(self, signum, stack):
+    def shutdown(self, *args, **kwargs):
         task = self.task
         self.task = None
         if task:
@@ -96,8 +96,6 @@ class Daemon:
 
         if self.args.daemonize:
             self.daemonize()
-
-        signal.signal(signal.SIGTERM, self._sigterm_handler)
 
         self._init_radio()
 
@@ -157,4 +155,8 @@ if __name__ == '__main__':
 
     config = parser.parse_args()
 
-    Daemon(config).run()
+    daemon = Daemon(config)
+
+    signal.signal(signal.SIGTERM, daemon.shutdown)
+
+    daemon.run()
