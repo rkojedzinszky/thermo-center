@@ -3,6 +3,7 @@ import re
 import asyncio
 import websockets
 import logging
+import signal
 from hbmqtt.client import MQTTClient, ClientException, QOS_0
 
 logger = logging.getLogger(__name__)
@@ -87,6 +88,7 @@ class Main:
         self.args = args
         self.loop = loop
         self.mqtt = MqttClient(self.loop, self)
+        self.stopserver = asyncio.Event(loop=loop)
         self.clients = set()
 
     async def _handler(self, ws, path):
@@ -103,9 +105,14 @@ class Main:
             cl.send(id_)
 
     async def run(self):
-        self.loop.create_task(self.mqtt.run())
-        server = await websockets.serve(self._handler, '0.0.0.0', args.ws_port)
-        await server.wait_closed()
+        mqtt_task = self.loop.create_task(self.mqtt.run())
+        async with websockets.serve(self._handler, '0.0.0.0', args.ws_port):
+            await self.stopserver.wait()
+        mqtt_task.cancel()
+        await mqtt_task
+
+    def shutdown(self, signo, trace):
+        self.stopserver.set()
 
 
 if __name__ == '__main__':
@@ -128,5 +135,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
     daemon = Main(args=args, loop=loop)
+
+    signal.signal(signal.SIGTERM, daemon.shutdown)
 
     loop.run_until_complete(daemon.run())
