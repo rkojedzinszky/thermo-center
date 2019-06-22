@@ -255,9 +255,9 @@ spec:
           protocol: TCP
         resources:
           limits:
-            memory: 32Mi
+            memory: 16Mi
           requests:
-            cpu: 250m
+            cpu: 100m
 
 ---
 apiVersion: extensions/v1beta1

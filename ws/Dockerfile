@@ -1,20 +1,23 @@
-FROM rkojedzinszky/alpine-python-grpcio
+FROM golang:1.12-alpine3.10 AS go-build
 
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
-ENV APP_HOME=/opt/thermo-center-ws
+RUN apk --no-cache add git binutils
 
-RUN mkdir -p $APP_HOME
+WORKDIR /go/src/thermo-center-ws
 
-WORKDIR $APP_HOME
+ADD ws .
 
-ADD ws ws
+RUN go get -d && \
+    CGO_ENABLED=0 go build && \
+    strip -s thermo-center-ws
 
-RUN pip install -r ws/requirements.txt && \
-    rm -rf /root/.cache
+FROM scratch
 
-USER nobody
+COPY --from=go-build /go/src/thermo-center-ws/thermo-center-ws /
+
+USER 65535
 
 EXPOSE 8081
 
-CMD ["python", "-m", "ws.main"]
+CMD ["/thermo-center-ws"]
