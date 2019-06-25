@@ -1,4 +1,4 @@
-# thermo-center
+# thermo-center [![Build Status](https://drone.srv.kojedz.in/api/badges/krichy/thermo-center/status.svg)](https://drone.srv.kojedz.in/krichy/thermo-center)
 
 DIY thermo solution center component
 
