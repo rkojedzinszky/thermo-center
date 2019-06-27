@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/eclipse/paho.mqtt.golang"
 )
@@ -22,7 +23,7 @@ func newMqttClient(hub *Hub, mqttHost string, mqttPort int) *mqttClient {
 		stop:    make(chan struct{}),
 	}
 
-	m.options.SetAutoReconnect(true)
+	m.options.SetMaxReconnectInterval(10 * time.Second)
 	m.options.AddBroker(fmt.Sprintf("tcp://%s:%d", mqttHost, mqttPort))
 	m.options.SetOnConnectHandler(func(cl mqtt.Client) {
 		m.onConnect(cl)
