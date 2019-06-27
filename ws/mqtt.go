@@ -23,6 +23,7 @@ func newMqttClient(hub *Hub, mqttHost string, mqttPort int) *mqttClient {
 		stop:    make(chan struct{}),
 	}
 
+	m.options.SetConnectTimeout(5 * time.Second)
 	m.options.SetMaxReconnectInterval(10 * time.Second)
 	m.options.AddBroker(fmt.Sprintf("tcp://%s:%d", mqttHost, mqttPort))
 	m.options.SetOnConnectHandler(func(cl mqtt.Client) {
@@ -33,15 +34,32 @@ func newMqttClient(hub *Hub, mqttHost string, mqttPort int) *mqttClient {
 }
 
 func (m *mqttClient) run() {
-	client := mqtt.NewClient(m.options)
+	var client mqtt.Client
 
-	client.Connect().Wait()
+	// Try connecting
+	// Once connected, mqtt will keep reconnecting
+	for {
+		client = mqtt.NewClient(m.options)
+		token := client.Connect()
+		token.Wait()
+		if token.Error() == nil {
+			break
+		}
+
+		// Handle stop request during just connection attempts
+		select {
+		case <-m.stop:
+			close(m.hub.fromMqtt)
+			return
+		default:
+		}
+	}
 
 	<-m.stop
 
-	client.Disconnect(0)
-
 	close(m.hub.fromMqtt)
+
+	client.Disconnect(0)
 }
 
 func (m *mqttClient) onConnect(cl mqtt.Client) {
