@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/namsral/flag"
 )
@@ -19,11 +18,14 @@ func main() {
 	wsPort := flag.Int("ws-port", 8081, "Websocket port")
 	flag.Parse()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	hub := newHub()
-	go hub.run()
+	go hub.run(ctx)
 
 	mqttclient := newMqttClient(hub, *mqttHost, *mqttPort)
-	go mqttclient.run()
+	go mqttclient.run(ctx)
 
 	httpServer := http.Server{
 		Addr:    fmt.Sprintf(":%d", *wsPort),
@@ -34,13 +36,8 @@ func main() {
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGTERM)
-
 	<-sc
-
-	close(mqttclient.stop)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+	cancel()
 	if err := httpServer.Shutdown(ctx); err != nil {
 		log.Print(err)
 	}

@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -35,9 +36,15 @@ func newHub() *Hub {
 	}
 }
 
-func (h *Hub) run() {
+func (h *Hub) run(ctx context.Context) {
 	for {
 		select {
+		case <-ctx.Done():
+			for client := range h.clients {
+				close(client.send)
+				delete(h.clients, client)
+			}
+			return
 		case client := <-h.register:
 			h.clients[client] = true
 		case client := <-h.unregister:
@@ -45,15 +52,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
-		case message, ok := <-h.fromMqtt:
-			if !ok {
-				for client := range h.clients {
-					close(client.send)
-					delete(h.clients, client)
-				}
-				return
-			}
-
+		case message := <-h.fromMqtt:
 			wsMessage := []byte(fmt.Sprintf("%v", message))
 			for client := range h.clients {
 				select {

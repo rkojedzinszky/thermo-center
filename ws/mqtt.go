@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -13,14 +14,12 @@ import (
 type mqttClient struct {
 	options *mqtt.ClientOptions
 	hub     *Hub
-	stop    chan struct{}
 }
 
 func newMqttClient(hub *Hub, mqttHost string, mqttPort int) *mqttClient {
 	m := &mqttClient{
 		options: mqtt.NewClientOptions(),
 		hub:     hub,
-		stop:    make(chan struct{}),
 	}
 
 	m.options.SetConnectTimeout(5 * time.Second)
@@ -33,7 +32,7 @@ func newMqttClient(hub *Hub, mqttHost string, mqttPort int) *mqttClient {
 	return m
 }
 
-func (m *mqttClient) run() {
+func (m *mqttClient) run(ctx context.Context) {
 	var client mqtt.Client
 
 	// Try connecting
@@ -48,17 +47,13 @@ func (m *mqttClient) run() {
 
 		// Handle stop request during just connection attempts
 		select {
-		case <-m.stop:
-			close(m.hub.fromMqtt)
+		case <-ctx.Done():
 			return
 		default:
 		}
 	}
 
-	<-m.stop
-
-	close(m.hub.fromMqtt)
-
+	<-ctx.Done()
 	client.Disconnect(0)
 }
 
