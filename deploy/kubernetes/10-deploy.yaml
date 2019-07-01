@@ -214,9 +214,9 @@ spec:
           protocol: TCP
         resources:
           limits:
-            memory: 96Mi
+            memory: 64Mi
           requests:
-            cpu: 250m
+            cpu: 100m
       initContainers:
       - command:
         - python
@@ -227,6 +227,9 @@ spec:
             name: thermo-center-secret
         image: rkojedzinszky/thermo-center-api
         name: migrate
+        resources:
+          limits:
+            memory: 64Mi
 
 ---
 apiVersion: extensions/v1beta1
@@ -291,6 +294,6 @@ spec:
           protocol: TCP
         resources:
           limits:
-            memory: 32Mi
+            memory: 16Mi
           requests:
-            cpu: 250m
+            cpu: 100m
