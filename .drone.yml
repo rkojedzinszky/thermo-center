@@ -15,6 +15,9 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: grpcserver
   image: plugins/docker
@@ -25,10 +28,9 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
-    cache_from:
-    - rkojedzinszky/thermo-center-api
-  depends_on:
-  - api
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: receiver
   image: plugins/docker
@@ -39,6 +41,9 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: ws
   image: plugins/docker
@@ -49,6 +54,9 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: ui
   image: plugins/docker
@@ -59,8 +67,11 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
-    cache_from:
-    - rkojedzinszky/thermo-center-api
-    - rkojedzinszky/thermo-center-app
-  depends_on:
-  - api
+  volumes:
+  - name: docker
+    path: /var/lib/docker
+
+
+volumes:
+- name: docker
+  temp: {}
