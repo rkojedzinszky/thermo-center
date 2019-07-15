@@ -1,6 +1,6 @@
 'use strict';
 import realtimeRestModel from 'can-realtime-rest-model';
-import {default as ajax, ajaxSetup} from 'can-ajax';
+import {default as ajax} from 'can-ajax';
 import {default as Cookies} from 'js-cookie';
 import assign from 'can-assign';
 
@@ -13,13 +13,12 @@ function sameOrigin(url) {
 		a.protocol == loc.protocol;
 }
 
-ajaxSetup({
-	beforeSend(xhr, settings) {
-		if (sameOrigin(settings.url) && !/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) {
-			xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
-		}
+function beforeSend(xhr, settings)
+{
+	if (sameOrigin(settings.url) && !/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) {
+		xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
 	}
-});
+}
 
 function tastypieajax(options)
 {
@@ -52,7 +51,8 @@ function tastypieRestModel(options)
 		getData: "GET " + endpoint + "{id}/",
 		createData: "POST " + endpoint,
 		updateData: "PUT " + endpoint + "{id}/",
-		destroyData: "DELETE " + endpoint + "{id}/"
+		destroyData: "DELETE " + endpoint + "{id}/",
+		beforeSend: beforeSend,
 	};
 	options['parseListProp'] = 'objects';
 	options['updateInstanceWithAssignDeep'] = true;
