@@ -90,6 +90,11 @@ spec:
           exec su -s /bin/sh nobody -c "python -m receiver.main"
         image: rkojedzinszky/thermo-center-receiver
         name: thermo-center-receiver
+        env:
+        - name: AGGREGATOR_HOST
+          value: grpcserver
+        - name: CONFIGURATOR_HOST
+          value: grpcserver
         ports:
         - containerPort: 8079
           protocol: TCP
@@ -107,78 +112,34 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: thermo-center-configurator
+    app: thermo-center-grpcserver
     app-group: thermo-center
-  name: thermo-center-configurator
+  name: thermo-center-grpcserver
 spec:
   selector:
     matchLabels:
-      app: thermo-center-configurator
+      app: thermo-center-grpcserver
   template:
     metadata:
       labels:
-        app: thermo-center-configurator
+        app: thermo-center-grpcserver
     spec:
       enableServiceLinks: false
       containers:
-      - command:
-        - python
-        - manage.py
-        - grpcserver
-        - --configurator
-        envFrom:
-        - secretRef:
-            name: thermo-center-secret
-        image: rkojedzinszky/thermo-center-grpcserver
-        name: thermo-center-configurator
-        ports:
-        - containerPort: 8079
-          name: grpc
-          protocol: TCP
-        resources:
-          limits:
-            memory: 32Mi
-          requests:
-            cpu: 100m
-
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  labels:
-    app: thermo-center-aggregator
-    app-group: thermo-center
-  name: thermo-center-aggregator
-spec:
-  selector:
-    matchLabels:
-      app: thermo-center-aggregator
-  template:
-    metadata:
-      labels:
-        app: thermo-center-aggregator
-    spec:
-      enableServiceLinks: false
-      containers:
-      - command:
-        - python
-        - manage.py
-        - grpcserver
-        - --aggregator
-        envFrom:
+      - envFrom:
         - secretRef:
             name: thermo-center-secret
         - configMapRef:
             name: thermo-center-environment
         image: rkojedzinszky/thermo-center-grpcserver
-        name: thermo-center-aggregator
+        name: thermo-center-grpcserver
         ports:
         - containerPort: 8079
           name: grpc
           protocol: TCP
         resources:
           limits:
-            memory: 32Mi
+            memory: 48Mi
           requests:
             cpu: 100m
 

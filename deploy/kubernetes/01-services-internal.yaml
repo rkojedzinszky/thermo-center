@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: configurator
+  name: grpcserver
 spec:
   ports:
   - name: grpc
@@ -25,21 +25,7 @@ spec:
     protocol: TCP
     targetPort: 8079
   selector:
-    app: thermo-center-configurator
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: aggregator
-spec:
-  ports:
-  - name: grpc
-    port: 8079
-    protocol: TCP
-    targetPort: 8079
-  selector:
-    app: thermo-center-aggregator
+    app: thermo-center-grpcserver
 
 ---
 apiVersion: v1
