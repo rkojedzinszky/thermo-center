@@ -30,7 +30,7 @@ spec:
           limits:
             memory: 16M
           requests:
-            cpu: 100m
+            cpu: 50m
       securityContext:
         runAsGroup: 11211
         runAsUser: 11211
@@ -62,7 +62,7 @@ spec:
           limits:
             memory: 16M
           requests:
-            cpu: 100m
+            cpu: 50m
 
 ---
 apiVersion: extensions/v1beta1
@@ -103,7 +103,7 @@ spec:
             hardware/cc1101: "1"
             memory: 32Mi
           requests:
-            cpu: 100m
+            cpu: 50m
         securityContext:
           runAsUser: 0
 
@@ -141,7 +141,7 @@ spec:
           limits:
             memory: 48Mi
           requests:
-            cpu: 100m
+            cpu: 50m
 
 ---
 apiVersion: extensions/v1beta1
@@ -177,7 +177,7 @@ spec:
           limits:
             memory: 64Mi
           requests:
-            cpu: 100m
+            cpu: 50m
       initContainers:
       - command:
         - python
@@ -221,7 +221,7 @@ spec:
           limits:
             memory: 16Mi
           requests:
-            cpu: 100m
+            cpu: 50m
 
 ---
 apiVersion: extensions/v1beta1
@@ -257,4 +257,4 @@ spec:
           limits:
             memory: 16Mi
           requests:
-            cpu: 100m
+            cpu: 50m
