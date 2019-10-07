@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.messages',
+    'django_atomic_migrations.AtomicMigrations',
     'django_dbconn_retry',
     'tastypie',
     'center',
