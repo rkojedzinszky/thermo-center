@@ -17,8 +17,6 @@ from aggregator import sensorvalue
 from aggregator import (mqtt, pid)
 from aggregator import carbon
 
-PIDCONTROL_INT_ABS_MAX = 100.0
-
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +116,7 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
             target_temp = pcp.get_target_temp()
             if target_temp is not None:
                 error = target_temp - mh['Temperature'].value()
-                pc.feed(error=error, intabsmax=PIDCONTROL_INT_ABS_MAX)
+                pc.feed(error=error, intabsmax=pcp.intabsmax)
                 pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
                 logger.debug('%s: pid control=%f', s, pcv)
                 mh['pidcontrol'] = PIDControlValue(pcv)
