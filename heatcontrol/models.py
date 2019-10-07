@@ -31,7 +31,7 @@ class Control(models.Model):
     kp = models.FloatField()
     ki = models.FloatField()
     kd = models.FloatField()
-    intabsmax = models.FloatField(null=True, default=100.0)
+    intabsmax = models.FloatField(null=True, blank=True, default=100.0)
 
     def get_target_temp(self):
         """

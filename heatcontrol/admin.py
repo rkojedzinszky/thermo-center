@@ -11,8 +11,11 @@ class CalendarAdmin(admin.ModelAdmin):
 
 admin.site.register(models.DayType)
 admin.site.register(models.Calendar, CalendarAdmin)
-admin.site.register(models.Control)
 admin.site.register(models.Profile)
+
+@admin.register(models.Control)
+class ControlAdmin(admin.ModelAdmin):
+    list_display = ('sensor', 'kp', 'ki', 'kd', 'intabsmax')
 
 @admin.register(models.ScheduledOverride)
 class ScheduledOverrideAdmin(admin.ModelAdmin):
