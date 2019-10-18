@@ -2,7 +2,7 @@
 django<2.3
 django-atomic-migrations
 #django-tastypie
-https://github.com/rkojedzinszky/django-tastypie/archive/fix-1576.zip
+https://github.com/django-tastypie/django-tastypie/archive/master.zip
 psycopg2
 #hbmqtt
 https://github.com/beerfactory/hbmqtt/archive/master.zip
