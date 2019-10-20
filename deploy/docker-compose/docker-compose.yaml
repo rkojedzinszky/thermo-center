@@ -41,6 +41,7 @@ services:
       DBHOST: ${DBHOST}
       DBUSER: ${DBUSER}
       DBPASSWORD: ${DBPASSWORD}
+      DBCONNMAXAGE: ""
   ws:
     image: rkojedzinszky/thermo-center-ws
     ports:
