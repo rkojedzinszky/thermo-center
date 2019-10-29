@@ -53,7 +53,7 @@ RUN python manage.py collectstatic --no-input && \
     mkdir -p www/models/g && \
     python manage.py gen_canjs_models
 
-FROM node:lts-alpine AS fe-build
+FROM node:10-alpine AS fe-build
 
 ADD www /work
 
