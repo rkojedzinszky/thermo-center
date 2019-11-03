@@ -1,0 +1,56 @@
+kind: pipeline
+name: build
+
+platform:
+  os: linux
+
+steps:
+- name: api
+  image: plugins/docker
+  settings:
+    target: api
+    repo: rkojedzinszky/thermo-center-api
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+
+- name: grpcserver
+  image: plugins/docker
+  settings:
+    target: grpcserver
+    repo: rkojedzinszky/thermo-center-grpcserver
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+
+- name: receiver
+  image: plugins/docker
+  settings:
+    dockerfile: receiver/Dockerfile
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+
+- name: ws
+  image: plugins/docker
+  settings:
+    dockerfile: ws/Dockerfile
+    repo: rkojedzinszky/thermo-center-ws
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+
+- name: ui
+  image: plugins/docker
+  settings:
+    target: ui
+    repo: rkojedzinszky/thermo-center-ui
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
