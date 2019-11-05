@@ -11,7 +11,7 @@ droneTemplateFile = ".drone.build.yml"
 droneManifestTemplateFile = ".drone.manifest.yml"
 droneFile = ".drone.yml"
 manifestsBase = "manifests"
-architectures = ("arm",)
+architectures = ("arm","amd64")
 
 def parseYaml(f: str):
     with open(f, "r") as fh:
@@ -35,7 +35,7 @@ manifests:
         for arch in architectures:
             mf.write("""- image: @REPO@:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}@ARCH@
   platform:
-    architecture: arm
+    architecture: @ARCH@
     os: linux
 """.replace('@REPO@', repo).replace('@ARCH@', arch))
 

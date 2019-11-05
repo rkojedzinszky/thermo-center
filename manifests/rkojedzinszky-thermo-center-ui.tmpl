@@ -10,3 +10,7 @@ manifests:
   platform:
     architecture: arm
     os: linux
+- image: rkojedzinszky/thermo-center-ui:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}amd64
+  platform:
+    architecture: amd64
+    os: linux
