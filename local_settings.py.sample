@@ -36,9 +36,6 @@ SPI_DEV = (0, 0)
 # an interrupt-enabled gpio must be given
 #INT_GPIO_DIR = '/sys/class/gpio/gpio200/'
 
-# specify alternate root url, _WITHOUT_ leading slash, and _WITH_ trailing slash
-#WWW_ROOT = 'thermo/'
-
 # uncomment this to enable feeding data to mqtt broker, see application/settings.py
 #MQTT_HOST = 'localhost'
 

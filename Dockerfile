@@ -65,11 +65,11 @@ RUN yarn && sh build.sh && rm -rf node_modules
 
 FROM nginx:alpine AS ui
 
-RUN mkdir -p /var/www/html/tc/dist/ /var/www/html/tc/icons/ /var/www/html/tc/static/
+RUN mkdir -p /var/www/html/dist/ /var/www/html/icons/ /var/www/html/static/
 
-ADD www/index.html /var/www/html/tc/
-ADD www/icons /var/www/html/tc/icons/
-COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/tc/static/
-COPY --from=fe-build /work/dist /var/www/html/tc/dist
+ADD www/index.html /var/www/html/
+ADD www/icons /var/www/html/icons/
+COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/static/
+COPY --from=fe-build /work/dist /var/www/html/dist
 
 ADD docker-assets-ui /

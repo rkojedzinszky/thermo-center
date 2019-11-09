@@ -92,6 +92,6 @@ Password (again):
 Superuser created successfully.
 ```
 
-Then you can log into the UI at `http://<hostname>/tc/`
+Then you can log into the UI at `http://<hostname>/`
 
-Django admin can be accessed at `http://<hostname>/tc/admin/`
+Django admin can be accessed at `http://<hostname>/admin/`

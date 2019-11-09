@@ -103,10 +103,9 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-WWW_ROOT = 'tc/'
 WWW_FILES = os.path.join(BASE_DIR, 'www')
 
-STATIC_URL = '/tc/static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(WWW_FILES, 'static')
 
 # Default logging: info and higher messages to stderr

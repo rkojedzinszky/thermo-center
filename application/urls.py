@@ -10,7 +10,7 @@ autodiscover_modules('restapi')
 RestApi = import_string(settings.RESTAPI_CLASS)
 
 urlpatterns = [
-    url(r'^' + settings.WWW_ROOT + 'api/', include(RestApi.urls)),
-    url(r'^' + settings.WWW_ROOT + 'admin/', admin.site.urls),
+    url(r'^api/', include(RestApi.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^healthz$', views.healthz),
-] + static(settings.WWW_ROOT, document_root=settings.WWW_FILES)
+] + static('/', document_root=settings.WWW_FILES)

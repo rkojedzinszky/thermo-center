@@ -67,8 +67,8 @@ With the sample `nginx.conf.sample`, you can run a reverse proxy on the same hos
 # nginx -c $(pwd)/nginx.conf.sample
 ```
 
-Then you can log into the UI at `http://<hostname>/tc/`
+Then you can log into the UI at `http://<hostname>/`
 
-Django admin can be accessed at `http://<hostname>/tc/admin/`
+Django admin can be accessed at `http://<hostname>/admin/`
 
 <hostname> is the hostname set in `.env` and points to the running proxy.

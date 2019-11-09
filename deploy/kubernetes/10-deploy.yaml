@@ -246,7 +246,7 @@ spec:
         livenessProbe:
           initialDelaySeconds: 5
           httpGet:
-            path: /tc/index.html
+            path: /index.html
             port: 80
         name: thermo-center-ui
         ports:

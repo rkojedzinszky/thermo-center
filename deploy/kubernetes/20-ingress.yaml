@@ -12,16 +12,16 @@ spec:
       - backend:
           serviceName: thermo-center-api
           servicePort: http-api
-        path: /tc/api/
+        path: /api/
       - backend:
           serviceName: thermo-center-api
           servicePort: http-api
-        path: /tc/admin/
+        path: /admin/
       - backend:
           serviceName: thermo-center-ws
           servicePort: http-ws
-        path: /tc/ws/
+        path: /ws/
       - backend:
           serviceName: thermo-center-ui
           servicePort: http-ui
-        path: /tc/
+        path: /
