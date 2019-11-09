@@ -13,7 +13,8 @@ steps:
     repo: rkojedzinszky/thermo-center-api
     target: api
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -40,7 +41,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -64,7 +66,8 @@ steps:
     repo: rkojedzinszky/thermo-center-api
     target: api
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -91,7 +94,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true

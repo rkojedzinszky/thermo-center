@@ -24,6 +24,8 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  depends_on:
+  - api
 
 - name: receiver
   image: plugins/docker
@@ -54,3 +56,5 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  depends_on:
+  - api
