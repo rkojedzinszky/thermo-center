@@ -1,10 +1,10 @@
 FROM rkojedzinszky/alpine-python-grpcio AS common
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
-ENV APP_USER=thermo APP_HOME=/opt/thermo-center
+ENV APP_USER=thermo APP_HOME=/opt/thermo-center APP_UID=10101
 
 RUN mkdir -p $APP_HOME && \
-	adduser -D -H -h $APP_HOME $APP_USER
+	adduser -D -H -h $APP_HOME -u $APP_UID $APP_USER
 
 WORKDIR $APP_HOME
 
@@ -30,7 +30,7 @@ RUN apk add --no-cache uwsgi-python3 uwsgi-cheaper_busyness
 
 EXPOSE 8080
 
-USER $APP_USER
+USER $APP_UID
 
 CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
 
@@ -42,7 +42,7 @@ ADD aggregator aggregator
 
 EXPOSE 8079
 
-USER $APP_USER
+USER $APP_UID
 
 CMD ["python", "manage.py", "grpcserver", "--configurator", "--aggregator"]
 
