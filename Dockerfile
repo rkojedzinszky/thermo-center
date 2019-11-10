@@ -73,3 +73,14 @@ COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/static/
 COPY --from=fe-build /work/dist /var/www/html/dist
 
 ADD docker-assets-ui /
+
+# Tune for rootless
+RUN sed -r -i \
+        -e '/^user/s/^/#/' \
+        -e '/^pid/s!.*!pid /tmp/nginx.pid;!' \
+	/etc/nginx/nginx.conf && \
+	chown 8080:8080 /var/cache/nginx
+
+USER 8080
+
+EXPOSE 8080

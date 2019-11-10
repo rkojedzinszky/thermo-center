@@ -49,5 +49,5 @@ services:
   ui:
     image: rkojedzinszky/thermo-center-ui
     ports:
-    - "8082:80"
+    - "8082:8080"
 

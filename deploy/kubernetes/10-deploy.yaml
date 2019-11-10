@@ -247,7 +247,7 @@ spec:
           initialDelaySeconds: 5
           httpGet:
             path: /index.html
-            port: 80
+            port: 8080
         name: thermo-center-ui
         ports:
         - containerPort: 80
