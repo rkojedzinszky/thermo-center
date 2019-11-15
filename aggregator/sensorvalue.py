@@ -80,6 +80,12 @@ class AM2302Humidity(UnsignedValue):
         self._value /= 10.0
 
 
+class ADC1(UnsignedValue):
+    T = 2
+    t = 2
+    metric = 'ADC1'
+
+
 class RSSI(Value):
     metric = 'RSSI'
 
@@ -126,3 +132,4 @@ SensorValueParser.register(HTU21DHumidty)
 SensorValueParser.register(AM2302Temperature)
 SensorValueParser.register(VCC)
 SensorValueParser.register(AM2302Humidity)
+SensorValueParser.register(ADC1)
