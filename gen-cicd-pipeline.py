@@ -11,7 +11,7 @@ droneTemplateFile = ".drone.build.yml"
 droneManifestTemplateFile = ".drone.manifest.yml"
 droneFile = ".drone.yml"
 manifestsBase = "manifests"
-architectures = ("arm","amd64")
+architectures = ("arm","arm64","amd64")
 
 def parseYaml(f: str):
     with open(f, "r") as fh:
