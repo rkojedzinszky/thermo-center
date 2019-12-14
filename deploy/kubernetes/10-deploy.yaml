@@ -184,7 +184,7 @@ spec:
           limits:
             memory: 64Mi
           requests:
-            cpu: 50m
+            cpu: 200m
       initContainers:
       - command:
         - python
@@ -198,6 +198,8 @@ spec:
         resources:
           limits:
             memory: 64Mi
+          requests:
+            cpu: 200m
       securityContext:
         runAsNonRoot: true
 
