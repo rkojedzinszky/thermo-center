@@ -27,13 +27,11 @@ Component.extend({
 	`,
 	ViewModel: {
 		is_logged_in: {
-			type: 'boolean',
 			get() {
 				return this.app.session != null;
 			}
 		},
 		is_admin: {
-			type: 'boolean',
 			get() {
 				return this.app.session && this.app.session.is_admin;
 			}
