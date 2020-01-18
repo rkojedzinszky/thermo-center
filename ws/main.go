@@ -17,6 +17,9 @@ func main() {
 	mqttPort := flag.Int("mqtt-port", 1883, "MQTT port")
 	wsPort := flag.Int("ws-port", 8081, "Websocket port")
 	noOriginCheck := flag.Bool("noOriginCheck", false, "Disable request origin check")
+	thermoCenterAPIHost := flag.String("thermo-center-api-host", "thermo-center-api", "Hostname of thermo-center-api component")
+	thermoCenterAPIPort := flag.Int("thermo-center-api-port", 8080, "Port of thermo-center-api component")
+
 	flag.Parse()
 
 	if *noOriginCheck {
@@ -28,7 +31,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	hub := newHub()
+	hub := newHub(*thermoCenterAPIHost, *thermoCenterAPIPort)
 	go hub.run(ctx)
 
 	mqttclient := newMqttClient(hub, *mqttHost, *mqttPort)

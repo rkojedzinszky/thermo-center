@@ -11,6 +11,8 @@ import (
 	"net/http"
 )
 
+const sessionResourceURI = "/api/v1/session/"
+
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
 type Hub struct {
@@ -25,14 +27,21 @@ type Hub struct {
 
 	// Unregister requests from clients.
 	unregister chan *Client
+
+	// session resource url
+	sessionResourceHost string
 }
 
-func newHub() *Hub {
+func newHub(apiHost string, apiPort int) *Hub {
+
 	return &Hub{
 		fromMqtt:   make(chan uint8),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
+
+		// For now, only http is supported
+		sessionResourceHost: fmt.Sprintf("%s:%d", apiHost, apiPort),
 	}
 }
 
@@ -73,6 +82,11 @@ func (h *Hub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !h.authenticateClient(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -86,4 +100,38 @@ func (h *Hub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go client.writePump()
 	go client.readPump()
+}
+
+// The name of the cookie used for sessions
+const sessionIDCookie = "sessionid"
+
+func (h *Hub) authenticateClient(r *http.Request) bool {
+	sessionID, err := r.Cookie(sessionIDCookie)
+	if err != nil {
+		return false
+	}
+
+	// Only http is supported for now
+	newReq, err := http.NewRequestWithContext(r.Context(), "GET", fmt.Sprintf("http://%s%s%s/", h.sessionResourceHost, sessionResourceURI, sessionID.Value), nil)
+	if err != nil {
+		return false
+	}
+
+	// Copy original Host
+	newReq.Host = r.Host
+
+	// Copy cookies
+	for _, cookie := range r.Cookies() {
+		newReq.AddCookie(cookie)
+	}
+
+	client := &http.Client{}
+
+	resp, err := client.Do(newReq)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return resp.StatusCode == 200
 }

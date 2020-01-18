@@ -1,4 +1,4 @@
-FROM golang:1.12-alpine3.10 AS go-build
+FROM golang:1.13-alpine AS go-build
 
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
