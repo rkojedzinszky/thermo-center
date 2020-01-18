@@ -43,8 +43,14 @@ const wsurl = function() {
 const WsHandler = DefineMap.extend({
 	'ws': { serialize: false, default: null },
 	'app': { serialize: false, default: null },
+	'_timeout': { serialize: false, default: null },
 
 	start() {
+		this._timeout = null;
+		if (this.app == null) {
+			return;
+		}
+
 		const ws = new WebSocket(wsurl);
 		var self = this;
 		ws.addEventListener('open', function() {
@@ -60,8 +66,8 @@ const WsHandler = DefineMap.extend({
 		ws.addEventListener('close', function(e) {
 			console.log(e);
 			self.ws = null;
-			if (self.app) { // reconnect if still needed
-				setTimeout(function() {
+			if (self.app) {
+				self._timeout = setTimeout(function() {
 					self.start();
 				}, 1000);
 			}
@@ -69,9 +75,12 @@ const WsHandler = DefineMap.extend({
 	},
 
 	stop() {
-		self.app = null;
-		if (self.ws) {
-			self.ws.close();
+		this.app = null;
+		if (this.ws) {
+			this.ws.close();
+		}
+		if (this._timeout) {
+			clearTimeout(this._timeout);
 		}
 	},
 
@@ -132,12 +141,14 @@ const AppState = DefineMap.extend({
 		this._startTimer();
 	},
 
-	_ws(ev, new_) {
+	// Start and stop ws handler based on session
+	_ws() {
 		if (this.ws) {
 			this.ws.stop();
 			this.ws = null;
 		}
-		if (new_) {
+
+		if (this.session) {
 			this.ws = new WsHandler();
 			this.ws.app = this;
 			this.ws.start()
