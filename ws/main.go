@@ -16,7 +16,14 @@ func main() {
 	mqttHost := flag.String("mqtt-host", "mqtt", "MQTT hostname/address")
 	mqttPort := flag.Int("mqtt-port", 1883, "MQTT port")
 	wsPort := flag.Int("ws-port", 8081, "Websocket port")
+	noOriginCheck := flag.Bool("noOriginCheck", true, "Disable request origin check")
 	flag.Parse()
+
+	if *noOriginCheck {
+		upgrader.CheckOrigin = func(r *http.Request) bool {
+			return true
+		}
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
