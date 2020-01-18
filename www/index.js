@@ -40,6 +40,46 @@ const wsurl = function() {
 	return protocol + '//' + document.location.host + path.join('/') + '/';
 }();
 
+const WsHandler = DefineMap.extend({
+	'ws': { serialize: false, default: null },
+	'app': { serialize: false, default: null },
+
+	start() {
+		const ws = new WebSocket(wsurl);
+		var self = this;
+		ws.addEventListener('open', function() {
+			self.ws = ws;
+		});
+
+		ws.addEventListener('message', function(e) {
+			if (self.app && self.app.onmessage) {
+				self.app.onmessage(e.data);
+			}
+		});
+
+		ws.addEventListener('close', function(e) {
+			console.log(e);
+			self.ws = null;
+			if (self.app) { // reconnect if still needed
+				setTimeout(function() {
+					self.start();
+				}, 1000);
+			}
+		});
+	},
+
+	stop() {
+		self.app = null;
+		if (self.ws) {
+			self.ws.close();
+		}
+	},
+
+	is_connected() {
+		return this.ws != null;
+	}
+});
+
 const AppState = DefineMap.extend({
 	'session': { serialize: false },
 	'url': { default: () => new DefineMap() },
@@ -52,6 +92,11 @@ const AppState = DefineMap.extend({
 			if (this.session != null)
 				return this.url.page;
 			return 'login';
+		}
+	},
+	'ws_connected': {
+		get() {
+			return this.ws && this.ws.is_connected();
 		}
 	},
 	setpage(element) {
@@ -74,6 +119,7 @@ const AppState = DefineMap.extend({
 		route.register('{page}', {'page': 'overview'});
 		route.start();
 
+		this.listenTo('session', this._ws.bind(this));
 		this.listenTo('displaypage', this.setpage.bind(this, element));
 		Session.getList().then(function(res) {
 			if (res.length == 1) {
@@ -83,31 +129,21 @@ const AppState = DefineMap.extend({
 			}
 		});
 
-		this._openws();
 		this._startTimer();
 	},
-	_openws() {
-		var self = this;
-		const ws = new WebSocket(wsurl);
-		ws.addEventListener('open', function() {
-			self.ws = ws;
-		});
 
-		ws.addEventListener('message', function(e) {
-			// console.log('wsmsg: ' + e.data);
-			if (self.onmessage) {
-				self.onmessage(e.data);
-			}
-		});
-
-		ws.addEventListener('close', function(e) {
-			console.log(e);
-			self.ws = null;
-			setTimeout(function() {
-				self._openws();
-			}, 1000);
-		});
+	_ws(ev, new_) {
+		if (this.ws) {
+			this.ws.stop();
+			this.ws = null;
+		}
+		if (new_) {
+			this.ws = new WsHandler();
+			this.ws.app = this;
+			this.ws.start()
+		}
 	},
+
 	_startTimer() {
 		var self = this;
 		this.current_timer = window.setInterval(function() {
@@ -124,4 +160,3 @@ Component.extend({
 	`,
 	ViewModel: AppState
 });
-

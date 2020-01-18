@@ -21,7 +21,7 @@ Component.extend({
 	    </li>
 	   {{/for}}
 	  </ul>
-	  <i style="margin-left: auto" class="nav-item nav-link fas fa-asterisk {{#if (app.ws)}}text-success{{else}}text-warning{{/if}}" title="{{#if (this.app.ws)}}{{else}}not {{/if}}connected"></i>
+	  <i style="margin-left: auto" class="nav-item nav-link fas fa-asterisk {{#if (app.ws_connected)}}text-success{{else}}text-warning{{/if}}" title="{{#if (app.ws_connected)}}{{else}}not {{/if}}connected"></i>
 	 </div>
 	</nav>
 	`,
