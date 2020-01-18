@@ -35,7 +35,7 @@ Component.extend({
 		is_admin: {
 			type: 'boolean',
 			get() {
-				return this.app.session.is_admin;
+				return this.app.session && this.app.session.is_admin;
 			}
 		},
 		pages: {
