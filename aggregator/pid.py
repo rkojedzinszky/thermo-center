@@ -1,3 +1,5 @@
+""" PID controller module """
+
 import time
 
 class PID:
@@ -8,10 +10,8 @@ class PID:
         """ Represents an error in a time point """
         __slots__ = ('_ts', '_error')
 
-        def __init__(self, error, ts=time.time):
-            if callable(ts):
-                ts = ts()
-            self._ts = ts
+        def __init__(self, error):
+            self._ts = time.time()
             self._error = error
 
         @property
@@ -30,9 +30,9 @@ class PID:
         self._last = None
         self._cur = None
 
-    def feed(self, error, intabsmax=None, ts=time.time):
+    def feed(self, error, intabsmax: int):
         self._last = self._cur
-        self._cur = PID.Error(error, ts)
+        self._cur = PID.Error(error)
 
         if self._last:
             newint = self._int + (self._last.error + error) * (self._cur.ts - self._last.ts) / 2
