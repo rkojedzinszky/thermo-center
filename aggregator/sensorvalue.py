@@ -94,7 +94,7 @@ class LQI(Value):
     metric = 'LQI'
 
 
-class SensorValueParser:
+class _SensorValueParser:
     class InvalidType(Exception):
         pass
 
@@ -125,7 +125,7 @@ class SensorValueParser:
         self._T.setdefault(cls.T, {})[cls.t] = cls
 
 
-SensorValueParser = SensorValueParser()
+SensorValueParser = _SensorValueParser()
 
 SensorValueParser.register(HTU21DTemperature)
 SensorValueParser.register(HTU21DHumidty)

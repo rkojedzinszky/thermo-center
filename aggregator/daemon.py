@@ -25,6 +25,66 @@ class PIDControlValue(sensorvalue.Value):
     metric = 'pidcontrol'
 
 
+def _parse_metrics(packet):
+    """ Prepare metrics dictionary """
+    metrics = [sensorvalue.RSSI(packet.rssi), sensorvalue.LQI(packet.lqi)]
+
+    si = iter(packet.raw)
+    try:
+        while True:
+            try:
+                metrics.append(sensorvalue.SensorValueParser.parse(next(si), next(si)))
+            except sensorvalue.SensorValueParser.InvalidType:
+                pass
+    except StopIteration:
+        pass
+
+    mh = {m.metric: m for m in metrics}
+    try:
+        t = mh['Temperature']
+        h = mh['Humidity']
+        if (isinstance(t, sensorvalue.HTU21DTemperature)
+                and isinstance(h, sensorvalue.HTU21DHumidty)):
+            h.temp_compensate(t)
+    except KeyError:
+        pass
+
+    return mh
+
+
+def _handle_valid_packet(s, packet, cached):
+    """ Handle packet, fill in cache values """
+
+    # Save to db using probability
+    if random.random() < settings.SENSOR_DB_UPDATE_PROBABILITY:
+        s.save(update_fields=('last_seq', 'last_tsf'))
+
+    # Prepare metrics dictionary
+    mh = _parse_metrics(packet)
+
+    # Calculate PID
+    if hasattr(s, 'control'):
+        pcp = s.control
+
+        try:
+            pc = cached['pid']
+        except KeyError:
+            pc = cached['pid'] = pid.PID()
+
+        target_temp = pcp.get_target_temp()
+        if target_temp is not None:
+            error = target_temp - mh['Temperature'].value()
+            pc.feed(error=error, intabsmax=pcp.intabsmax)
+            pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
+            logger.debug('%s: pid control=%f', s, pcv)
+            mh['pidcontrol'] = PIDControlValue(pcv)
+    else:
+        cached.pop('pid', None)
+
+    # Update cache
+    cached.update({m.metric: m.value() for m in mh.values()})
+
+
 class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
     SENSOR_CACHE_LOCK_KEY = 'tc-sensor-{}-lock'
     SENSOR_CACHE_LOCK_TIMEOUT = 2
@@ -42,7 +102,8 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
             self.mqtt.start()
 
         if settings.CARBON_LINE_RECEIVER_ENDPOINT[0]:
-            self.carbon = carbon.LineClient(settings.CARBON_LINE_RECEIVER_ENDPOINT, settings.CARBON_QUEUE_MAXSIZE)
+            self.carbon = carbon.LineClient(
+                settings.CARBON_LINE_RECEIVER_ENDPOINT, settings.CARBON_QUEUE_MAXSIZE)
             self.carbon.start()
 
         api_pb2_grpc.add_AggregatorServicer_to_server(self, server)
@@ -68,64 +129,6 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
         logger.info('Locking sensor %02x failed: %s holds lock', sensor_id, holder)
         return False
 
-    def _parse_metrics(self, packet):
-        """ Prepare metrics dictionary """
-        metrics = [sensorvalue.RSSI(packet.rssi), sensorvalue.LQI(packet.lqi)]
-
-        si = iter(packet.raw)
-        try:
-            while True:
-                try:
-                    metrics.append(sensorvalue.SensorValueParser.parse(next(si), next(si)))
-                except sensorvalue.SensorValueParser.InvalidType:
-                    pass
-        except StopIteration:
-            pass
-
-        mh = {m.metric: m for m in metrics}
-        try:
-            t = mh['Temperature']
-            h = mh['Humidity']
-            if (isinstance(t, sensorvalue.HTU21DTemperature)
-                    and isinstance(h, sensorvalue.HTU21DHumidty)):
-                h.temp_compensate(t)
-        except KeyError:
-            pass
-
-        return mh
-
-    def _handle_valid_packet(self, s, packet, cache):
-        """ Handle packet, fill in cache values """
-
-        # Save to db using probability
-        if random.random() < settings.SENSOR_DB_UPDATE_PROBABILITY:
-            s.save(update_fields=('last_seq', 'last_tsf'))
-
-        # Prepare metrics dictionary
-        mh = self._parse_metrics(packet)
-
-        # Calculate PID
-        if hasattr(s, 'control'):
-            pcp = s.control
-
-            try:
-                pc = cache['pid']
-            except KeyError:
-                pc = cache['pid'] = pid.PID()
-
-            target_temp = pcp.get_target_temp()
-            if target_temp is not None:
-                error = target_temp - mh['Temperature'].value()
-                pc.feed(error=error, intabsmax=pcp.intabsmax)
-                pcv = pc.value(kp=pcp.kp, ki=pcp.ki, kd=pcp.kd)
-                logger.debug('%s: pid control=%f', s, pcv)
-                mh['pidcontrol'] = PIDControlValue(pcv)
-        else:
-            cache.pop('pid', None)
-
-        # Update cache
-        cache.update({m.metric: m.value() for m in mh.values()})
-
     def FeedSensorPacket(self, packet, context):
         timestamp = time.time()
         if not self.lock_sensor(packet.id):
@@ -147,17 +150,18 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
         cachevalues['valid'] = cachevalues['intvl'] is not None
 
         if cachevalues['valid']:
-            self._handle_valid_packet(s, packet, cachevalues)
+            _handle_valid_packet(s, packet, cachevalues)
 
         # Save cache
         s.set_cache(cachevalues)
 
-        # XXX: remove pid to avoid serialization
+        # remove pid to avoid serialization
         cachevalues.pop('pid', None)
 
         # Publish values to mqtt
         if self.mqtt:
-            self.mqtt.publish('{}{:02x}/report'.format(settings.MQTT_PREFIX, s.pk),
+            self.mqtt.publish(
+                '{}{:02x}/report'.format(settings.MQTT_PREFIX, s.pk),
                 json.dumps(cachevalues, separators=(',', ':')).encode())
 
         # Publish valid values to carbon
@@ -167,9 +171,8 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
             cachevalues.pop('valid')
             prefix = 'sensor.{:02x}.'.format(s.pk)
             metrics = [
-                    ['{}{}'.format(prefix, k), (v, tstamp)]
-                    for k, v in cachevalues.items()
-                    ]
+                ['{}{}'.format(prefix, k), (v, tstamp)] for k, v in cachevalues.items()
+            ]
             self.carbon.send(metrics)
 
         return api_pb2.FeedResponse(processed=True)
