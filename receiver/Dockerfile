@@ -19,7 +19,7 @@ RUN apk --no-cache add py3-crypto && \
     apk del .build-deps && \
     rm -rf /root/.cache
 
-USER nobody
+USER 10102
 
 EXPOSE 8079
 
