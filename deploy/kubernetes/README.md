@@ -23,10 +23,17 @@ crw------- 1 root root 153, 0 Nov  3  2016 /dev/spidev0.0
 
 Also, for receiving interrupts from CC1101 module, we will need a GPIO port. On H3 boards, with the example adapter, you would use the `A2` pin, this can be exported to userspace as:
 ```
+# echo 2 > /sys/class/gpio/export
+```
+
+To persist this and grant permissions to rootless containers, the following `rc.local` snippet can be used:
+
+```
 # cat /etc/rc.local
 #!/bin/sh
 
 echo 2 > /sys/class/gpio/export
+chmod 666 /dev/spidev0.0 /sys/class/gpio/gpio2/*
 
 exit 0
 ```

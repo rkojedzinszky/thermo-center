@@ -9,8 +9,6 @@ services:
     image: eclipse-mosquitto:1.5
   receiver:
     image: rkojedzinszky/thermo-center-receiver
-    command: sh -c 'chown nobody /dev/spidev0.0 /gpio/direction /gpio/value /gpio/edge && exec su -s /bin/sh nobody -c "python -m receiver.main"'
-    user: "0"
     volumes:
     - "/sys/class/gpio/gpio200:/gpio"
     devices:
