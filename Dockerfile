@@ -17,8 +17,10 @@ ADD aggregator/pid.py aggregator/pid.py
 ADD receiver/api_pb2.py receiver/api_pb2_grpc.py receiver/
 ADD configurator/api_pb2.py configurator/
 
-RUN apk add --no-cache tzdata py3-psycopg2 && \
+RUN apk add --no-cache tzdata py3-psycopg2 libmemcached && \
+    apk --no-cache add -t .build-deps gcc libc-dev python3-dev zlib-dev libmemcached-dev && \
     pip install -r requirements.txt && \
+    apk del .build-deps && \
     rm -rf /root/.cache
 
 ### API

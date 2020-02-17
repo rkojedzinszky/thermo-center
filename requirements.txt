@@ -6,7 +6,7 @@ https://github.com/django-tastypie/django-tastypie/archive/master.zip
 psycopg2
 #hbmqtt
 https://github.com/beerfactory/hbmqtt/archive/master.zip
-python-memcached
+pylibmc
 django-dbconn-retry
 grpcio
 protobuf

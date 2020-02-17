@@ -209,7 +209,7 @@ RESTAPI_CLASS = 'application.restapi.RestApi'
 if MEMCACHED_HOST:
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
             'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
             'KEY_PREFIX': CACHE_KEY_PREFIX,
         }
