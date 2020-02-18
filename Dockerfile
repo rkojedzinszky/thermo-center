@@ -1,4 +1,4 @@
-FROM rkojedzinszky/alpine-python-grpcio AS common
+FROM rkojedzinszky/alpine-python-grpcio:3.11 AS common
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center APP_UID=10101
