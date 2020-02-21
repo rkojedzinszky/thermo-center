@@ -4,6 +4,8 @@ syntax = "proto3";
 
 package receiver;
 
+option go_package = "github.com/rkojedzinszky/thermo-center/receiver";
+
 import "configurator/api.proto";
 
 service Receiver {

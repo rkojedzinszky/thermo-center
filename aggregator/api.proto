@@ -2,6 +2,8 @@
 
 syntax = "proto3";
 
+option go_package = "github.com/rkojedzinszky/thermo-center/aggregator";
+
 package aggregator;
 
 service Aggregator {

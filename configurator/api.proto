@@ -4,6 +4,8 @@ syntax = "proto3";
 
 package configurator;
 
+option go_package = "github.com/rkojedzinszky/thermo-center/configurator";
+
 service Configurator {
 	// Return radio configuration for receiver
 	rpc GetRadioCfg(RadioCfgRequest) returns (RadioCfgResponse) {}
