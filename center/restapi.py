@@ -6,7 +6,6 @@ import grpc
 from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from django.core.cache import cache
 from django.conf import settings
 from application import restapi
 from application.resource import ResourceMetaCommon, NoAuthorization

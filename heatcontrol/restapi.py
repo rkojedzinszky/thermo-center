@@ -2,7 +2,6 @@
 
 import datetime, time
 from tastypie import fields
-from django.core.cache import cache
 from tastypie import resources
 from tastypie.utils import timezone
 from tastypie.authorization import ReadOnlyAuthorization, Authorization
