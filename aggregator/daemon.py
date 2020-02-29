@@ -8,7 +8,7 @@ import time
 import random
 import json
 from django.conf import settings
-from django.core.cache import cache
+from application.cache import cache
 from center import models
 from lib.grpc import BaseServicer
 from aggregator import api_pb2
@@ -121,7 +121,7 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
     def lock_sensor(self, sensor_id):
         thread_id = '{}-{}-{}'.format(socket.gethostname(), os.getpid(), threading.get_ident())
         key = self.SENSOR_CACHE_LOCK_KEY.format(sensor_id)
-        if cache.add(key, thread_id, timeout=self.SENSOR_CACHE_LOCK_TIMEOUT):
+        if cache.add(key, thread_id, time=self.SENSOR_CACHE_LOCK_TIMEOUT):
             logger.info('Locked sensor %02x', sensor_id)
             return True
 
