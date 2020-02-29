@@ -21,9 +21,9 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
+    dockerfile: cmd/grpcserver/Dockerfile
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
-    target: grpcserver
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
@@ -36,7 +36,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [grpcserver]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -45,7 +46,9 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [grpcserver]
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- depends_on: [ws]
   image: plugins/docker
   name: ui
   settings:
@@ -83,9 +86,9 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
+    dockerfile: cmd/grpcserver/Dockerfile
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
-    target: grpcserver
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
@@ -98,7 +101,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [grpcserver]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -107,7 +111,9 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [grpcserver]
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- depends_on: [ws]
   image: plugins/docker
   name: ui
   settings:
@@ -145,9 +151,9 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
+    dockerfile: cmd/grpcserver/Dockerfile
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
-    target: grpcserver
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
@@ -160,7 +166,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-- image: plugins/docker
+- depends_on: [grpcserver]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -169,7 +176,9 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [grpcserver]
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- depends_on: [ws]
   image: plugins/docker
   name: ui
   settings:

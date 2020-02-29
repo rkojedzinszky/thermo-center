@@ -10,7 +10,6 @@ from django.conf import settings
 from django.db import models
 from application.cache import cache
 import center.fields
-import aggregator.pid
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -104,13 +103,9 @@ class Sensor(models.Model):
     def get_cache(self):
         """ Retrieve metrics stored in cache """
         data = cache.get(self._cache_key())
+
         if data:
-            values = json.loads(data)
-
-            self.last_seq = values['last_seq']
-            self.last_tsf = values['last_tsf']
-
-            return values
+            return json.loads(data)
 
         return {}
 

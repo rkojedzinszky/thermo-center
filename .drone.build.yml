@@ -21,7 +21,7 @@ steps:
 - name: grpcserver
   image: plugins/docker
   settings:
-    target: grpcserver
+    dockerfile: cmd/grpcserver/Dockerfile
     repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
     password:
@@ -52,6 +52,11 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  depends_on:
+  - grpcserver
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: ui
   image: plugins/docker
@@ -63,7 +68,7 @@ steps:
       from_secret: hub_docker_password
     auto_tag: true
   depends_on:
-  - grpcserver
+  - ws
   volumes:
   - name: docker
     path: /var/lib/docker

@@ -13,7 +13,6 @@ ADD requirements.txt manage.py ./
 ADD application application
 ADD center center
 ADD heatcontrol heatcontrol
-ADD aggregator/pid.py aggregator/pid.py
 ADD receiver/api_pb2.py receiver/api_pb2_grpc.py receiver/
 ADD configurator/api_pb2.py configurator/
 
@@ -35,18 +34,6 @@ EXPOSE 8080
 USER $APP_UID
 
 CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
-
-### APP
-FROM common AS grpcserver
-
-ADD configurator configurator
-ADD aggregator aggregator
-
-EXPOSE 8079
-
-USER $APP_UID
-
-CMD ["python", "manage.py", "grpcserver", "--configurator", "--aggregator"]
 
 ### UI
 FROM common AS fe-prepare
