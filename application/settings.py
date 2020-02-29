@@ -156,19 +156,10 @@ INTERRUPT_MAX_RATE = 1
 INTERRUPT_MAX_BURST = 30
 
 # Cache setup
-# You can setup CACHES through environment variables. Default is to use memcached.
-# If you want file based cache, you must set MEMCACHED_HOST to empty.
-# For backwards compatibility, CACHE_DIR is set to a default. If you want to set full
-# CACHES setting, CACHE_DIR must be set to empty too, and then set CACHES in
-# local_settings.
-# To use a different memcached, set MEMCACHED_HOST and MEMCACHED_PORT
-# To use a file based cache, set CACHE_DIR
-# To use your own cache setting, set MEMCACHED_HOST and CACHE_DIR to empty,
-# and set CACHES variable.
+# You can setup CACHES through environment variables. For now only memcached
+# is supported. To use a different memcached, set MEMCACHED_HOST and MEMCACHED_PORT
 MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', 'memcached')
 MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
-CACHE_DIR = os.getenv('CACHE_DIR', os.path.join(
-    tempfile.gettempdir(), 'thermo-1'))
 CACHE_KEY_PREFIX = os.getenv('CACHE_KEY_PREFIX', 'tc')
 
 # Receiver endpoint
@@ -206,21 +197,12 @@ del re
 RESTAPI_CLASS = 'application.restapi.RestApi'
 
 # Setup CACHES
-if MEMCACHED_HOST:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-            'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
-            'KEY_PREFIX': CACHE_KEY_PREFIX,
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
+        'KEY_PREFIX': CACHE_KEY_PREFIX,
     }
-elif CACHE_DIR:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': CACHE_DIR,
-            'KEY_PREFIX': CACHE_KEY_PREFIX,
-        }
-    }
+}
 
 del tempfile
