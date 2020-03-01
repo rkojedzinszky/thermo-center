@@ -8,7 +8,7 @@ import random
 import os
 from django.conf import settings
 from django.db import models
-from django.core.cache import cache
+from application.cache import cache
 import center.fields
 import aggregator.pid
 
@@ -103,19 +103,25 @@ class Sensor(models.Model):
 
     def get_cache(self):
         """ Retrieve metrics stored in cache """
-        values = cache.get(self._cache_key())
-        if values:
+        data = cache.get(self._cache_key())
+        if data:
+            values = json.loads(data)
+
             self.last_seq = values['last_seq']
             self.last_tsf = values['last_tsf']
 
-        return values or {}
+            return values
+
+        return {}
 
     def set_cache(self, values):
         """ Saves values in cache, replacing last_seq and last_tsf from model """
         values['last_seq'] = self.last_seq
         values['last_tsf'] = self.last_tsf
 
-        cache.set(self._cache_key(), values, timeout=_METRICS_CACHE_TIMEOUT)
+        data = json.dumps(values)
+
+        cache.set(self._cache_key(), data, time=_METRICS_CACHE_TIMEOUT)
 
 
 class SensorResync(models.Model):

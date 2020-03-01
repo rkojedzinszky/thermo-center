@@ -144,13 +144,17 @@ class Aggregator(BaseServicer, api_pb2_grpc.AggregatorServicer):
         cachevalues = {}
         # Preserve pid value
         if 'pid' in oldcache:
-            cachevalues['pid'] = oldcache['pid']
+            cachevalues['pid'] = pid.PID.from_dict(oldcache['pid'])
 
         cachevalues['intvl'] = s.validate_seq(timestamp, packet.seq)
         cachevalues['valid'] = cachevalues['intvl'] is not None
 
         if cachevalues['valid']:
             _handle_valid_packet(s, packet, cachevalues)
+
+        # Serialize pid field
+        if 'pid' in cachevalues:
+            cachevalues['pid'] = cachevalues['pid'].to_dict()
 
         # Save cache
         s.set_cache(cachevalues)
