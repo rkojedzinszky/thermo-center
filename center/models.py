@@ -119,7 +119,7 @@ class Sensor(models.Model):
         values['last_seq'] = self.last_seq
         values['last_tsf'] = self.last_tsf
 
-        data = json.dumps(values)
+        data = json.dumps(values, check_circular=False, separators=(',', ':'))
 
         cache.set(self._cache_key(), data, time=_METRICS_CACHE_TIMEOUT)
 
