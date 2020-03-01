@@ -160,7 +160,6 @@ INTERRUPT_MAX_BURST = 30
 # is supported. To use a different memcached, set MEMCACHED_HOST and MEMCACHED_PORT
 MEMCACHED_HOST = os.getenv('MEMCACHED_HOST', 'memcached')
 MEMCACHED_PORT = os.getenv('MEMCACHED_PORT', '11211')
-CACHE_KEY_PREFIX = os.getenv('CACHE_KEY_PREFIX', 'tc')
 
 # Receiver endpoint
 RECEIVER_HOST = os.getenv('RECEIVER_HOST', 'receiver')
@@ -195,14 +194,5 @@ del re
 
 # default tastypie.api object
 RESTAPI_CLASS = 'application.restapi.RestApi'
-
-# Setup CACHES
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': '{}:{}'.format(MEMCACHED_HOST, str(MEMCACHED_PORT)),
-        'KEY_PREFIX': CACHE_KEY_PREFIX,
-    }
-}
 
 del tempfile
