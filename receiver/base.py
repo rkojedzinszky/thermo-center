@@ -20,24 +20,24 @@ class Base(aiothread.AIOThread):
 
         self.args = args
         self.radio = radio
-        self._configurator_channel = None
+        self.grpcserver_channel = None
         self.configurator = None
 
     def init(self):
         """ Set up gpio interrupt handler """
         self.gpio = gpio.InterruptHandler(loop=self.loop, gpiopath=self.args.gpio_dir)
 
-        self._configurator_channel = grpc.insecure_channel('{}:{}'.format(self.args.configurator_host, self.args.configurator_port),
+        self.grpcserver_channel = grpc.insecure_channel('{}:{}'.format(self.args.grpcserver_host, self.args.grpcserver_port),
                 (
                     ('grpc.keepalive_time_ms', 10000),
                     ('grpc.keepalive_timeout_ms', 1000),
                 )
             )
-        self.configurator = cfg_grpc.ConfiguratorStub(self._configurator_channel)
+        self.configurator = cfg_grpc.ConfiguratorStub(self.grpcserver_channel)
 
     def deinit(self):
         self.configurator = None
-        self._configurator_channel.close()
+        self.grpcserver_channel.close()
 
     def _read_config(self):
         """ Read configuration from configurator """

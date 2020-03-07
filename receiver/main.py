@@ -130,14 +130,10 @@ if __name__ == '__main__':
     import os
 
     parser = argparse.ArgumentParser(description='Thermo center receiver daemon')
-    parser.add_argument('--aggregator-host', default=os.environ.get('AGGREGATOR_HOST', 'aggregator'),
-            help='Aggregator hostname/address')
-    parser.add_argument('--aggregator-port', type=int, default=int(os.environ.get('AGGREGATOR_PORT', '8079')),
-            help='Aggregator port')
-    parser.add_argument('--configurator-host', default=os.environ.get('CONFIGURATOR_HOST', 'configurator'),
-            help='Configurator hostname/address')
-    parser.add_argument('--configurator-port', type=int, default=int(os.environ.get('CONFIGURATOR_PORT', '8079')),
-            help='Configurator port')
+    parser.add_argument('--grpcserver-host', default=os.environ.get('GRPCSERVER_HOST', 'grpcserver'),
+            help='Grpcserver hostname/address')
+    parser.add_argument('--grpcserver-port', type=int, default=int(os.environ.get('GRPCSERVER_PORT', '8079')),
+            help='Grpcserver port')
     parser.add_argument('--receiver-port', type=int, default=int(os.environ.get('RECEIVER_PORT', '8079')),
             help='Receiver port')
     parser.add_argument('--spi-bus', type=int, default=int(os.environ.get('SPI_BUS_NUM', '0')),

@@ -85,11 +85,6 @@ spec:
       containers:
       - image: rkojedzinszky/thermo-center-receiver
         name: thermo-center-receiver
-        env:
-        - name: AGGREGATOR_HOST
-          value: grpcserver
-        - name: CONFIGURATOR_HOST
-          value: grpcserver
         ports:
         - containerPort: 8079
           protocol: TCP

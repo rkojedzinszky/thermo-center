@@ -18,17 +18,6 @@ logger = logging.getLogger(__name__)
 class Receiver(base.Base):
     name = 'receiver'
 
-    def _create_astub(self):
-        """ Creates stub to aggregator """
-        channel = grpc.insecure_channel('{}:{}'.format(self.args.aggregator_host, self.args.aggregator_port),
-                                        (
-                    ('grpc.keepalive_time_ms', 10000),
-                    ('grpc.keepalive_timeout_ms', 1000),
-                )
-            )
-
-        return agg_grpc.AggregatorStub(channel)
-
     async def _setup_radio(self):
         await self.radio.setup_basic()
         self.radio.xfer2(self.config.radio_config)
@@ -40,7 +29,7 @@ class Receiver(base.Base):
     # 2. Enters receiving loop
     async def arun(self):
         self.config = await self.loop.run_in_executor(None, self._read_config)
-        self.astub = await self.loop.run_in_executor(None, self._create_astub)
+        self.astub = agg_grpc.AggregatorStub(self.grpcserver_channel)
 
         await self._setup_radio()
         self.gpio.resettbf()
