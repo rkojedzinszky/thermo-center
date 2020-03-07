@@ -1,4 +1,4 @@
-FROM golang:1.13-alpine AS go-build
+FROM golang:1.14-alpine AS builder
 
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
@@ -14,7 +14,7 @@ RUN go get -d && \
 
 FROM scratch
 
-COPY --from=go-build /go/src/thermo-center-ws/thermo-center-ws /
+COPY --from=builder /go/src/thermo-center-ws/thermo-center-ws /
 
 USER 65535
 
