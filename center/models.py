@@ -64,29 +64,6 @@ class Sensor(models.Model):
     def __str__(self):
         return '{} ({:02x})'.format(self.name or 'NONAME', self.id)
 
-    def validate_seq(self, timestamp, seq):
-        """ Validate received packet against stored sequence/timestamp """
-        avg = 0
-
-        if self.last_tsf:
-            interval = timestamp - self.last_tsf
-
-            if self.last_seq is None:
-                valid = interval <= 34
-            else:
-                diff = (seq - self.last_seq) & 0x7fffffff
-                avg = interval / diff
-                valid = 26 <= avg <= 34
-
-            if not valid:
-                logger.warning('%s: received invalid update', self)
-                return None
-
-        self.last_seq = seq
-        self.last_tsf = timestamp
-
-        return avg
-
     def _cache_key(self):
         return 'sensor.{:02x}'.format(self.pk)
 
