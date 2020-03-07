@@ -110,10 +110,7 @@ class Sensor(models.Model):
         return {}
 
     def set_cache(self, values):
-        """ Saves values in cache, replacing last_seq and last_tsf from model """
-        values['last_seq'] = self.last_seq
-        values['last_tsf'] = self.last_tsf
-
+        """ Saves values in cache """
         data = json.dumps(values, check_circular=False, separators=(',', ':'))
 
         cache.set(self._cache_key(), data, time=_METRICS_CACHE_TIMEOUT)

@@ -351,13 +351,10 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 
 	}
 
-	// TODO: Keep it for compatibility, later it can be removed
-	// Keep in sync with center/models.py get_cache()
+	// last_tsf is available through the API, so set it in cache
 	if valid {
-		cache["last_seq"] = sensor.LastSeq.Int32
 		cache["last_tsf"] = sensor.LastTsf.Float64
 	} else {
-		cache["last_seq"] = nil
 		cache["last_tsf"] = nil
 	}
 

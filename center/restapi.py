@@ -60,10 +60,6 @@ class SensorResource(resources.ModelResource):
             if bundle.data['valid'] == False:
                 bundle.data['sensor_resync'] = SensorResyncResourceInstance.get_resource_uri(bundle.obj)
 
-        bundle.data['server_time'] = now
-        if bundle.obj.last_tsf:
-            bundle.data['age'] = time.time() - bundle.obj.last_tsf
-
         return bundle
 
 class THSensorResource(SensorResource):
