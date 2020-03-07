@@ -15,8 +15,18 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [api]
-  image: plugins/docker
+- image: plugins/docker
+  name: receiver
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm
+    dockerfile: receiver/Dockerfile
+    password: {from_secret: hub_docker_password}
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -28,16 +38,6 @@ steps:
   volumes:
   - {name: docker, path: /var/lib/docker}
 - image: plugins/docker
-  name: receiver
-  settings:
-    auto_tag: true
-    auto_tag_suffix: arm
-    dockerfile: receiver/Dockerfile
-    password: {from_secret: hub_docker_password}
-    repo: rkojedzinszky/thermo-center-receiver
-    username: rkojedzinszky
-- depends_on: [grpcserver]
-  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -48,8 +48,7 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [ws]
-  image: plugins/docker
+- image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -80,8 +79,18 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [api]
-  image: plugins/docker
+- image: plugins/docker
+  name: receiver
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm64
+    dockerfile: receiver/Dockerfile
+    password: {from_secret: hub_docker_password}
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -93,16 +102,6 @@ steps:
   volumes:
   - {name: docker, path: /var/lib/docker}
 - image: plugins/docker
-  name: receiver
-  settings:
-    auto_tag: true
-    auto_tag_suffix: arm64
-    dockerfile: receiver/Dockerfile
-    password: {from_secret: hub_docker_password}
-    repo: rkojedzinszky/thermo-center-receiver
-    username: rkojedzinszky
-- depends_on: [grpcserver]
-  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -113,8 +112,7 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [ws]
-  image: plugins/docker
+- image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -145,8 +143,18 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [api]
-  image: plugins/docker
+- image: plugins/docker
+  name: receiver
+  settings:
+    auto_tag: true
+    auto_tag_suffix: amd64
+    dockerfile: receiver/Dockerfile
+    password: {from_secret: hub_docker_password}
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+  volumes:
+  - {name: docker, path: /var/lib/docker}
+- image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -158,16 +166,6 @@ steps:
   volumes:
   - {name: docker, path: /var/lib/docker}
 - image: plugins/docker
-  name: receiver
-  settings:
-    auto_tag: true
-    auto_tag_suffix: amd64
-    dockerfile: receiver/Dockerfile
-    password: {from_secret: hub_docker_password}
-    repo: rkojedzinszky/thermo-center-receiver
-    username: rkojedzinszky
-- depends_on: [grpcserver]
-  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -178,8 +176,7 @@ steps:
     username: rkojedzinszky
   volumes:
   - {name: docker, path: /var/lib/docker}
-- depends_on: [ws]
-  image: plugins/docker
+- image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -207,18 +204,18 @@ steps:
     spec: manifests/rkojedzinszky-thermo-center-api.tmpl
     username: rkojedzinszky
 - image: plugins/manifest
-  name: rkojedzinszky/thermo-center-grpcserver
-  settings:
-    auto_tag: true
-    password: {from_secret: hub_docker_password}
-    spec: manifests/rkojedzinszky-thermo-center-grpcserver.tmpl
-    username: rkojedzinszky
-- image: plugins/manifest
   name: rkojedzinszky/thermo-center-receiver
   settings:
     auto_tag: true
     password: {from_secret: hub_docker_password}
     spec: manifests/rkojedzinszky-thermo-center-receiver.tmpl
+    username: rkojedzinszky
+- image: plugins/manifest
+  name: rkojedzinszky/thermo-center-grpcserver
+  settings:
+    auto_tag: true
+    password: {from_secret: hub_docker_password}
+    spec: manifests/rkojedzinszky-thermo-center-grpcserver.tmpl
     username: rkojedzinszky
 - image: plugins/manifest
   name: rkojedzinszky/thermo-center-ws
