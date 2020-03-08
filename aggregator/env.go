@@ -15,8 +15,7 @@ func getenv(key string, def string) string {
 
 func getenvInt(key string, def int) int {
 	if value, found := os.LookupEnv(key); found {
-		value, err := strconv.Atoi(value)
-		if err != nil {
+		if value, err := strconv.Atoi(value); err == nil {
 			return value
 		}
 	}
@@ -26,8 +25,7 @@ func getenvInt(key string, def int) int {
 
 func getenvFloat64(key string, def float64) float64 {
 	if value, found := os.LookupEnv(key); found {
-		value, err := strconv.ParseFloat(value, 64)
-		if err != nil {
+		if value, err := strconv.ParseFloat(value, 64); err == nil {
 			return value
 		}
 	}
