@@ -228,7 +228,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 	var ipe *heatcontrol.Instantprofileentry
 	var err error
 
-	so, err = (&heatcontrol.ScheduledoverrideQS{}).ControlEq(c).StartLe(now).EndGt(now).OrderByIdDesc().First(a.db)
+	so, err = heatcontrol.ScheduledoverrideQS{}.ControlEq(c).StartLe(now).EndGt(now).OrderByIdDesc().First(a.db)
 
 	if err != nil {
 		return nil, err
@@ -238,7 +238,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 		return &so.TargetTemp, nil
 	}
 
-	ipe, err = (&heatcontrol.InstantprofileentryQS{}).ControlEq(c).ActiveEq(true).First(a.db)
+	ipe, err = heatcontrol.InstantprofileentryQS{}.ControlEq(c).ActiveEq(true).First(a.db)
 
 	if err != nil {
 		return nil, err
@@ -309,7 +309,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 			cache[m.Metric()] = m.Value()
 		}
 
-		control, err := (&heatcontrol.ControlQS{}).SensorEq(sensor).First(a.db)
+		control, err := heatcontrol.ControlQS{}.SensorEq(sensor).First(a.db)
 		if err != nil {
 			return &FeedResponse{
 				Processed: false,
