@@ -49,7 +49,12 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	aggregator.RegisterAggregatorServer(grpcServer, aggregator.NewAggregator(db, loc))
+	agg, err := aggregator.NewAggregator(db, loc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	aggregator.RegisterAggregatorServer(grpcServer, agg)
 	configurator.RegisterConfiguratorServer(grpcServer, configurator.NewConfigurator(db, loc))
 
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", *grpcPort))

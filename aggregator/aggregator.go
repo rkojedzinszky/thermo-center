@@ -32,14 +32,20 @@ type aggregator struct {
 }
 
 // NewAggregator instantiates a new aggregator
-func NewAggregator(db *sql.DB, location *time.Location) AggregatorServer {
+func NewAggregator(db *sql.DB, location *time.Location) (AggregatorServer, error) {
 	a := &aggregator{
 		db:       db,
 		location: location,
 	}
 
 	// Init components
-	a.mc = memcache.New(fmt.Sprintf("%s:%s", getenv("MEMCACHED_HOST", "memcached"), getenv("MEMCACHED_PORT", "11211")))
+	mcServerList := new(memcache.ServerList)
+	err := mcServerList.SetServers(fmt.Sprintf("%s:%s", getenv("MEMCACHED_HOST", "memcached"), getenv("MEMCACHED_PORT", "11211")))
+	if err != nil {
+		return nil, err
+	}
+
+	a.mc = memcache.NewFromSelector(mcServerList)
 
 	a.mqtt = NewMqttClient(getenv("MQTT_HOST", "mqtt"), getenvInt("MQTT_PORT", 1883))
 	go a.mqtt.Run()
@@ -56,7 +62,7 @@ func NewAggregator(db *sql.DB, location *time.Location) AggregatorServer {
 
 	a.localLock = make([]time.Time, 128)
 
-	return a
+	return a, nil
 }
 
 type sensorStat struct {
