@@ -24,6 +24,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DBNAME', 'thermo-center'),
         'HOST': os.getenv('DBHOST', 'postgres'),
+        'PORT': os.getenv('DBPORT', '5432'),
         'USER': os.getenv('DBUSER', 'thermo-center'),
         'PASSWORD': os.getenv('DBPASSWORD', 'thermo-center'),
         #'SCHEMA': '',
