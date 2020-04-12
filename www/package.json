@@ -31,7 +31,7 @@
     "can-stache": "^5.1.1",
     "can-stache-bindings": "^5.0.4",
     "can-stache-route-helpers": "^2.0.0",
-    "jquery": "^3.5.0",
+    "jquery": "<3.5",
     "js-cookie": "^2.2.0",
     "popper.js": "^1.15.0",
     "pretty-ms": "^5.0.0",
