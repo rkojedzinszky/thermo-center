@@ -17,7 +17,7 @@ Component.extend({
 	  <ul class="navbar-nav">
 	   {{#for (page of this.pages)}}
 	    <li class="nav-item {{#if(routeCurrent(page=page.link))}}active{{/if}}">
-	     <a class="nav-link" href="{{ routeUrl(page=page.link) }}">{{ page.name }}</a>
+	     <a class="nav-link" href="{{#if(page.external)}}{{ page.external }}{{else}}{{ routeUrl(page=page.link) }}{{/if}}">{{ page.name }}</a>
 	    </li>
 	   {{/for}}
 	  </ul>
@@ -46,6 +46,7 @@ Component.extend({
 					]);
 					if (this.is_admin) {
 						list.push({name: 'Admin', link: 'admin'});
+						list.push({name: 'Django Admin', external: '/admin/'});
 					};
 					list.push({name: 'Logout', link: 'logout'});
 				}
