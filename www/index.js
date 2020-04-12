@@ -7,7 +7,6 @@ import stache from 'can-stache';
 import 'can-stache-bindings';
 import route from 'can-route';
 import {Session} from 'models/Session';
-import $ from 'jquery';
 import './navbar';
 import './common.less!';
 
@@ -116,13 +115,16 @@ const AppState = DefineMap.extend({
 			if (typeof(module.default) === 'function') {
 				module.default(self);
 			} else {
-				element.html(stache('<thermo-p-' + page + ' app:bind="."/>')(self));
+				while (element.firstChild) {
+					element.removeChild(element.firstChild);
+				}
+				element.appendChild(stache('<thermo-p-' + page + ' app:bind="."/>')(self));
 			}
 		});
 	},
 	connectedCallback(element) {
 		var self = this;
-		var element = $(element).find('.content');
+		var element = element.querySelector('.content');
 
 		route.data = this.url;
 		route.register('{page}', {'page': 'overview'});
