@@ -27,35 +27,40 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
-  volumes:
-  - name: docker
-    path: /var/lib/docker
+
+- name: golang-build
+  image: golang:1.14-alpine
+  commands:
+  - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
+  - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
+  - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
+  - mkdir bin
+  - CGO_ENABLED=0 go build -o bin/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -o bin/ws ./ws
 
 - name: grpcserver
   image: plugins/docker
   settings:
-    dockerfile: cmd/grpcserver/Dockerfile
+    dockerfile: Dockerfile.grpcserver
     repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
     auto_tag: true
-  volumes:
-  - name: docker
-    path: /var/lib/docker
+  depends_on:
+  - golang-build
 
 - name: ws
   image: plugins/docker
   settings:
-    dockerfile: ws/Dockerfile
+    dockerfile: Dockerfile.ws
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
     password:
       from_secret: hub_docker_password
     auto_tag: true
-  volumes:
-  - name: docker
-    path: /var/lib/docker
+  depends_on:
+  - golang-build
 
 - name: ui
   image: plugins/docker
@@ -66,6 +71,8 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  depends_on:
+  - api
   volumes:
   - name: docker
     path: /var/lib/docker

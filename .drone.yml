@@ -24,31 +24,34 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- commands: ['mkdir -p ${GOPATH}/src/github.com/rkojedzinszky', 'ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center',
+    'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
+      go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
+      ./ws]
+  image: golang:1.14-alpine
+  name: golang-build
+- depends_on: [golang-build]
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: cmd/grpcserver/Dockerfile
+    dockerfile: Dockerfile.grpcserver
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [golang-build]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: ws/Dockerfile
+    dockerfile: Dockerfile.ws
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -88,31 +91,34 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- commands: ['mkdir -p ${GOPATH}/src/github.com/rkojedzinszky', 'ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center',
+    'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
+      go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
+      ./ws]
+  image: golang:1.14-alpine
+  name: golang-build
+- depends_on: [golang-build]
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: cmd/grpcserver/Dockerfile
+    dockerfile: Dockerfile.grpcserver
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [golang-build]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: ws/Dockerfile
+    dockerfile: Dockerfile.ws
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -152,31 +158,34 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- commands: ['mkdir -p ${GOPATH}/src/github.com/rkojedzinszky', 'ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center',
+    'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
+      go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
+      ./ws]
+  image: golang:1.14-alpine
+  name: golang-build
+- depends_on: [golang-build]
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: cmd/grpcserver/Dockerfile
+    dockerfile: Dockerfile.grpcserver
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [golang-build]
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: ws/Dockerfile
+    dockerfile: Dockerfile.ws
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-  volumes:
-  - {name: docker, path: /var/lib/docker}
-- image: plugins/docker
+- depends_on: [api]
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
