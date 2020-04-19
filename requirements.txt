@@ -7,3 +7,4 @@ pylibmc
 django-dbconn-retry
 grpcio
 protobuf
+retry

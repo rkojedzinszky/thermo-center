@@ -1,6 +1,7 @@
 """ Cache module, which directly interacts with Memcached """
 
 import pylibmc
+import retry
 from django.conf import settings
 
 class _Cache:
@@ -19,16 +20,19 @@ class _Cache:
 
         return self._pool
 
+    @retry.retry(exceptions=pylibmc.ConnectionError, tries=3, jitter=1, logger=None)
     def set(self, key: str, value: str, time: int=0) -> bool:
         """ Set a key in the cache """
         with self.pool().reserve() as mc:
             return mc.set(key, value, time=time)
 
+    @retry.retry(exceptions=pylibmc.ConnectionError, tries=3, jitter=1, logger=None)
     def add(self, key: str, value: str, time: int=0) -> bool:
         """ Add a key in the cache """
         with self.pool().reserve() as mc:
             return mc.add(key, value, time=time)
 
+    @retry.retry(exceptions=pylibmc.ConnectionError, tries=3, jitter=1, logger=None)
     def get(self, key: str, default: str=None) -> str:
         """ Get a key from the cache """
         with self.pool().reserve() as mc:
