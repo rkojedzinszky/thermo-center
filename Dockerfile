@@ -27,11 +27,13 @@ FROM common AS api
 
 ADD uwsgi.api.ini ./
 
-RUN apk add --no-cache uwsgi-python3 uwsgi-cheaper_busyness
+RUN apk add --no-cache uwsgi-python3
 
 EXPOSE 8080
 
 USER $APP_UID
+
+ENV UWSGI_THREADS=4
 
 CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
 
