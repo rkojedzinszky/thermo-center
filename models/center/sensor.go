@@ -357,7 +357,7 @@ func (qs SensorQS) First(db models.DBInterface) (*Sensor, error) {
 
 // insert operation
 func (s *Sensor) insert(db models.DBInterface) error {
-	_, err := db.Exec(`INSERT INTO "center_sensor" ("id", "name", "last_seq", "last_tsf") VALUES ($1, $2, $3, $4)`, s.Id, s.Name, s.LastSeq, s.LastTsf)
+	_, err := db.Exec(`INSERT INTO "center_sensor" ("name", "last_seq", "last_tsf") VALUES ($1, $2, $3)`, s.Name, s.LastSeq, s.LastTsf)
 
 	if err != nil {
 		return err
@@ -370,7 +370,7 @@ func (s *Sensor) insert(db models.DBInterface) error {
 
 // update operation
 func (s *Sensor) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_sensor" SET "id" = $1, "name" = $2, "last_seq" = $3, "last_tsf" = $4 WHERE "id" = $5`, s.Id, s.Name, s.LastSeq, s.LastTsf, s.Id)
+	_, err := db.Exec(`UPDATE "center_sensor" SET "name" = $1, "last_seq" = $2, "last_tsf" = $3 WHERE "id" = $4`, s.Name, s.LastSeq, s.LastTsf, s.Id)
 
 	return err
 }
