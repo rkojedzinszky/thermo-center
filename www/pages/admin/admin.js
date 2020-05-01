@@ -103,7 +103,6 @@ Component.extend({
 				if (task.finished == null) {
 					window.setTimeout(self._pollTask.bind(self), 1000);
 				} else {
-					self.task = null;
 					let timeout = 1000;
 					if (task.error) {
 						timeout = 3000;
@@ -120,7 +119,16 @@ Component.extend({
 			let task = new ConfigureSensorTask(params);
 			task.save().then(function() {
 				self.task = task;
-				self.modal = new Modal(taskView({task: task, fields: taskFields}).querySelector('.taskmodal'));
+				const modalelement = taskView({task: task, fields: taskFields}).querySelector('.taskmodal');
+				self.modal = new Modal(modalelement);
+
+				// Cleanup after hide
+				modalelement.onhidden = function() {
+					self.modal.dispose();
+					modalelement.parentNode.removeChild(modalelement);
+					self.task = null;
+				};
+
 				self.modal.show();
 				self._pollTask();
 				if (params.sensor_id == null) {
@@ -149,19 +157,9 @@ Component.extend({
 			}
 		},
 		reprogram(s) {
-			if (this.task) {
-				alert('A task is already running.');
-				return;
-			}
-
 			this._newTask({sensor_id: s.id});
 		},
 		addSensor() {
-			if (this.task) {
-				alert('A task is already running.');
-				return;
-			}
-
 			let sensor_name = window.prompt("Enter sensor name:");
 			if (sensor_name == null || sensor_name == "") {
 				return;
