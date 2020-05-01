@@ -4,8 +4,7 @@ import {THSensor} from 'models/THSensor';
 import {ConfigureSensorTask} from 'models/ConfigureSensorTask';
 import prettyMilliseconds from 'pretty-ms';
 import stache from 'can-stache';
-import $ from 'jquery';
-import 'bootstrap/js/src/modal';
+import Modal from 'bootstrap/js/src/modal';
 
 const taskFields = [
 	{desc: 'Name', field: 'sensor_name', okclass: 'bg-primary'},
@@ -72,7 +71,6 @@ Component.extend({
 </tbody>
 </table>
 <button class="btn btn-primary m-1" on:click="addSensor()">Add Sensor</button>
-<div class="mmodal"></div>
 	`,
 	ViewModel: {
 		sensors: { default: () => [] },
@@ -81,8 +79,6 @@ Component.extend({
 		modal: {},
 		connectedCallback(element) {
 			let self = this;
-			self.element = element;
-			self.modal = $(this.element.querySelector('.mmodal'));
 
 			THSensor.getList({'order_by': 'id'}).then(function(res) {
 				self.sensors = res;
@@ -114,7 +110,7 @@ Component.extend({
 					}
 
 					window.setTimeout(function() {
-						self.modal.find('.taskmodal').modal('hide');
+						self.modal.hide();
 					}, timeout);
 				}
 			});
@@ -124,8 +120,8 @@ Component.extend({
 			let task = new ConfigureSensorTask(params);
 			task.save().then(function() {
 				self.task = task;
-				self.modal.html(taskView({task: task, fields: taskFields}));
-				self.modal.find('.taskmodal').modal();
+				self.modal = new Modal(taskView({task: task, fields: taskFields}).querySelector('.taskmodal'));
+				self.modal.show();
 				self._pollTask();
 				if (params.sensor_id == null) {
 					THSensor.get({id: task.sensor_id}).then(function(s) {
