@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-const graphiteMetricPathTemplate = "thsensor/%02x/report"
-
 // GraphiteSender handles pushing to Graphite
 type GraphiteSender struct {
 	addr string
