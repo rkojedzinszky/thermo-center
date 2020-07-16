@@ -1,4 +1,4 @@
-FROM rkojedzinszky/alpine-python-grpcio:3.11
+FROM rkojedzinszky/alpine-python-grpcio:3.12
 
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
