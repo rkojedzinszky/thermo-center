@@ -13,8 +13,7 @@ ADD configurator/api_pb2.py configurator/api_pb2_grpc.py configurator/
 ADD aggregator/api_pb2.py aggregator/api_pb2_grpc.py aggregator/
 ADD receiver receiver
 
-RUN apk --no-cache add py3-crypto && \
-    apk add --no-cache -t .build-deps python3-dev gcc make libffi-dev libc-dev && \
+RUN apk add --no-cache -t .build-deps python3-dev gcc make libffi-dev libc-dev && \
     pip install -r receiver/requirements.txt && \
     apk del .build-deps && \
     rm -rf /root/.cache
