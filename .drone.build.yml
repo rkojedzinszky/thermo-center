@@ -31,12 +31,14 @@ steps:
 - name: golang-build
   image: golang:1.15-alpine
   commands:
+  - apk --no-cache add binutils
   - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
   - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
   - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
   - mkdir bin
   - CGO_ENABLED=0 go build -o bin/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -o bin/ws ./ws
+  - strip -s bin/*
 
 - name: grpcserver
   image: plugins/docker

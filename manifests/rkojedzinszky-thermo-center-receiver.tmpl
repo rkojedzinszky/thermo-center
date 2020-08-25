@@ -6,16 +6,16 @@ tags:
 {{/each}}
 {{/if}}
 manifests:
-- image: rkojedzinszky/thermo-center-receiver:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}arm32v7
-  platform:
-    os: linux
-    architecture: arm
-    variant: v7
-- image: rkojedzinszky/thermo-center-receiver:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}arm64v8
+- image: rkojedzinszky/thermo-center-receiver:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}arm64
   platform:
     os: linux
     architecture: arm64
     variant: v8
+- image: rkojedzinszky/thermo-center-receiver:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}arm
+  platform:
+    os: linux
+    architecture: arm
+    variant: v7
 - image: rkojedzinszky/thermo-center-receiver:{{#if build.tag}}{{trimPrefix "v" build.tag}}-{{/if}}amd64
   platform:
     os: linux
