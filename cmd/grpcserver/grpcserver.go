@@ -6,6 +6,8 @@ import (
 	"net"
 	"time"
 
+	_ "time/tzdata"
+
 	"github.com/namsral/flag"
 	"github.com/rkojedzinszky/thermo-center/aggregator"
 	"github.com/rkojedzinszky/thermo-center/configurator"

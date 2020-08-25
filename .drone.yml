@@ -28,7 +28,7 @@ steps:
     'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
       go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
       ./ws]
-  image: golang:1.14-alpine
+  image: golang:1.15-alpine
   name: golang-build
 - depends_on: [golang-build]
   image: plugins/docker
@@ -95,7 +95,7 @@ steps:
     'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
       go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
       ./ws]
-  image: golang:1.14-alpine
+  image: golang:1.15-alpine
   name: golang-build
 - depends_on: [golang-build]
   image: plugins/docker
@@ -162,7 +162,7 @@ steps:
     'cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center', mkdir bin, CGO_ENABLED=0
       go build -o bin/grpcserver ./cmd/grpcserver, CGO_ENABLED=0 go build -o bin/ws
       ./ws]
-  image: golang:1.14-alpine
+  image: golang:1.15-alpine
   name: golang-build
 - depends_on: [golang-build]
   image: plugins/docker

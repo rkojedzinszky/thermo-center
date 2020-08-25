@@ -29,7 +29,7 @@ steps:
     auto_tag: true
 
 - name: golang-build
-  image: golang:1.14-alpine
+  image: golang:1.15-alpine
   commands:
   - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
   - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
