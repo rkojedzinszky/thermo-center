@@ -1,8 +1,21 @@
 {
   "name": "Thermo Center",
+  "short_name": "Thermo Center",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/"
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "icons/thermometer-half-solid.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/thermometer-half-solid-288x288.png",
+      "sizes": "288x288",
+      "type": "image/png"
+    }
+  ]
 }

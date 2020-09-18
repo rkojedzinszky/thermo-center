@@ -58,7 +58,7 @@ FROM nginx:alpine AS ui
 
 RUN mkdir -p /var/www/html/dist/ /var/www/html/icons/ /var/www/html/static/
 
-ADD www/index.html www/manifest.json /var/www/html/
+ADD www/index.html www/manifest.json www/sw.js /var/www/html/
 ADD www/icons /var/www/html/icons/
 COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/static/
 COPY --from=fe-build /work/dist /var/www/html/dist
