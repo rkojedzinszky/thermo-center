@@ -52,23 +52,35 @@ Component.extend({
 
 		connectedCallback(element) {
 			var self = this;
-			Control.getList().then(function(res) {
-				self.sensors = res;
-
-				self.app.onmessage = function(el) {
-					Control.getList({sensor_id: el});
-				};
-			});
 
 			InstantProfile.getList().then(function(res) {
 				self.instantprofiles = res;
 			});
 
+			self.app.onmessage = function(el) {
+				Control.getList({sensor_id: el});
+			};
+
+			let listener = self.visible.bind(self);
+			self.app.listenTo('visible', listener);
+
+			self.visible();
+
 			return function() {
 				self.app.onmessage = null;
+				self.app.stopListening('visible', listener);
 				self.stopListening();
 			};
 		},
+		visible() {
+			var self = this;
+
+			if (self.app.visible) {
+				Control.getList().then(function(res) {
+					self.sensors = res;
+				});
+			}
+		}
 	},
 	helpers: {
 		edit_link(sensor) {

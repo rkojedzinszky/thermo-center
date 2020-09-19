@@ -91,6 +91,7 @@ const WsHandler = DefineMap.extend({
 const AppState = DefineMap.extend({
 	'session': { serialize: false },
 	'element': { serialize: false },
+	'visible': { serialize: false, type: "boolean", default: true },
 	'url': { default: () => new DefineMap() },
 	'ws': { serialize: false, default: null },
 	'onmessage': { serialize: false },
@@ -101,6 +102,11 @@ const AppState = DefineMap.extend({
 			if (this.session != null)
 				return this.url.page;
 			return 'login';
+		}
+	},
+	'need_ws': {
+		get() {
+			return this.session && this.visible;
 		}
 	},
 	'ws_connected': {
@@ -131,7 +137,7 @@ const AppState = DefineMap.extend({
 		route.register('{page}', {'page': 'overview'});
 		route.start();
 
-		this.listenTo('session', this._ws.bind(this));
+		this.listenTo('need_ws', this._ws.bind(this));
 		this.listenTo('displaypage', this.setpage.bind(this));
 
 		Session.getList().then(function(res) {
@@ -142,14 +148,15 @@ const AppState = DefineMap.extend({
 			}
 		});
 
-		window.addEventListener('visibilitychange', self.visibilitychanged.bind(this));
+		window.addEventListener('visibilitychange', self.visibilitychanged.bind(self));
+
+		self.visibilitychanged();
 	},
 
 	visibilitychanged() {
-		if (document.visibilityState == 'visible') {
-			// Reload page
-			this.setpage();
+		this.visible = document.visibilityState == 'visible';
 
+		if (this.visible) {
 			this._startTimer();
 		} else {
 			this._stopTimer();
@@ -157,13 +164,15 @@ const AppState = DefineMap.extend({
 	},
 
 	// Start and stop ws handler based on session
-	_ws() {
+	_ws(event) {
+		const need_ws = event.value;
+
 		if (this.ws) {
 			this.ws.stop();
 			this.ws = null;
 		}
 
-		if (this.session) {
+		if (need_ws) {
 			this.ws = new WsHandler();
 			this.ws.app = this;
 			this.ws.start()

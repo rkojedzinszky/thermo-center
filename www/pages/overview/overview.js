@@ -54,18 +54,30 @@ Component.extend({
 		},
 		connectedCallback(element) {
 			var self = this;
-			THSensor.getList({'order_by': 'id'}).then(function(res) {
-				self.sensors = res;
 
-				self.app.onmessage = function(el) {
-					THSensor.get({id: el});
-				};
-			});
+			self.app.onmessage = function(el) {
+				THSensor.get({id: el});
+			};
+
+			let listener = self.visible.bind(self);
+			self.app.listenTo('visible', listener);
+
+			self.visible();
 
 			return function() {
 				self.app.onmessage = null;
+				self.app.stopListening('visible', listener);
 				self.stopListening();
 			};
+		},
+		visible() {
+			var self = this;
+
+			if (self.app.visible) {
+				THSensor.getList({'order_by': 'id'}).then(function(res) {
+					self.sensors = res;
+				});
+			}
 		}
 	},
 });
