@@ -90,6 +90,7 @@ const WsHandler = DefineMap.extend({
 
 const AppState = DefineMap.extend({
 	'session': { serialize: false },
+	'element': { serialize: false },
 	'url': { default: () => new DefineMap() },
 	'ws': { serialize: false, default: null },
 	'onmessage': { serialize: false },
@@ -107,7 +108,7 @@ const AppState = DefineMap.extend({
 			return this.ws && this.ws.is_connected();
 		}
 	},
-	setpage(element) {
+	setpage() {
 		var self = this;
 		var page = this.displaypage;
 
@@ -115,32 +116,44 @@ const AppState = DefineMap.extend({
 			if (typeof(module.default) === 'function') {
 				module.default(self);
 			} else {
-				while (element.firstChild) {
-					element.removeChild(element.firstChild);
+				while (self.element.firstChild) {
+					self.element.removeChild(self.element.firstChild);
 				}
-				element.appendChild(stache('<thermo-p-' + page + ' app:bind="."/>')(self));
+				self.element.appendChild(stache('<thermo-p-' + page + ' app:bind="."/>')(self));
 			}
 		});
 	},
 	connectedCallback(element) {
 		var self = this;
-		var element = element.querySelector('.content');
+		self.element = element.querySelector('.content');
 
 		route.data = this.url;
 		route.register('{page}', {'page': 'overview'});
 		route.start();
 
 		this.listenTo('session', this._ws.bind(this));
-		this.listenTo('displaypage', this.setpage.bind(this, element));
+		this.listenTo('displaypage', this.setpage.bind(this));
+
 		Session.getList().then(function(res) {
 			if (res.length == 1) {
 				self.session = res[0]; // will call setpage
 			} else {
-				self.setpage(element);
+				self.setpage();
 			}
 		});
 
-		this._startTimer();
+		window.addEventListener('visibilitychange', self.visibilitychanged.bind(this));
+	},
+
+	visibilitychanged() {
+		if (document.visibilityState == 'visible') {
+			// Reload page
+			this.setpage();
+
+			this._startTimer();
+		} else {
+			this._stopTimer();
+		}
 	},
 
 	// Start and stop ws handler based on session
@@ -162,6 +175,10 @@ const AppState = DefineMap.extend({
 		this.current_timer = window.setInterval(function() {
 			self.current_time = new Date();
 		}, 1000);
+	},
+
+	_stopTimer() {
+		window.clearInterval(this.current_timer);
 	},
 });
 
