@@ -64,6 +64,12 @@ steps:
   depends_on:
   - golang-build
 
+- name: ui-prepare
+  image: alpine
+  commands:
+  - apk --no-cache add git
+  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git log -1 --format=format:%h)\\";/" www/sw.js'
+
 - name: ui
   image: plugins/docker
   settings:
@@ -75,6 +81,7 @@ steps:
     auto_tag: true
   depends_on:
   - api
+  - ui-prepare
   volumes:
   - name: docker
     path: /var/lib/docker

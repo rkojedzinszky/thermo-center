@@ -50,7 +50,11 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [api]
+- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
+      log -1 --format=format:%h)\\";/" www/sw.js']
+  image: alpine
+  name: ui-prepare
+- depends_on: [api, ui-prepare]
   image: plugins/docker
   name: ui
   settings:
@@ -117,7 +121,11 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [api]
+- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
+      log -1 --format=format:%h)\\";/" www/sw.js']
+  image: alpine
+  name: ui-prepare
+- depends_on: [api, ui-prepare]
   image: plugins/docker
   name: ui
   settings:
@@ -184,7 +192,11 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- depends_on: [api]
+- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
+      log -1 --format=format:%h)\\";/" www/sw.js']
+  image: alpine
+  name: ui-prepare
+- depends_on: [api, ui-prepare]
   image: plugins/docker
   name: ui
   settings:
