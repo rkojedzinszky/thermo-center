@@ -68,7 +68,8 @@ steps:
   image: alpine
   commands:
   - apk --no-cache add git
-  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git log -1 --format=format:%h)\\";/" www/sw.js'
+  - git fetch --tags
+  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js'
 
 - name: ui
   image: plugins/docker

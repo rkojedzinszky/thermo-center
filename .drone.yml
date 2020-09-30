@@ -50,8 +50,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
-      log -1 --format=format:%h)\\";/" www/sw.js']
+- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
   image: alpine
   name: ui-prepare
 - depends_on: [api, ui-prepare]
@@ -121,8 +121,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
-      log -1 --format=format:%h)\\";/" www/sw.js']
+- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
   image: alpine
   name: ui-prepare
 - depends_on: [api, ui-prepare]
@@ -192,8 +192,8 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git
-      log -1 --format=format:%h)\\";/" www/sw.js']
+- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
   image: alpine
   name: ui-prepare
 - depends_on: [api, ui-prepare]
