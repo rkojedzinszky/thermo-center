@@ -4,7 +4,13 @@ kind: pipeline
 name: build-arm64
 platform: {arch: arm64, os: linux, variant: v8}
 steps:
-- image: plugins/docker
+- commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
+    echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$V\\";/" www/sw.js]
+  image: alpine
+  name: versions
+- depends_on: [versions]
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -50,11 +56,7 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
-      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
-  image: alpine
-  name: ui-prepare
-- depends_on: [api, ui-prepare]
+- depends_on: [api]
   image: plugins/docker
   name: ui
   settings:
@@ -75,7 +77,13 @@ kind: pipeline
 name: build-arm
 platform: {arch: arm, os: linux, variant: v7}
 steps:
-- image: plugins/docker
+- commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
+    echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$V\\";/" www/sw.js]
+  image: alpine
+  name: versions
+- depends_on: [versions]
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -121,11 +129,7 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
-      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
-  image: alpine
-  name: ui-prepare
-- depends_on: [api, ui-prepare]
+- depends_on: [api]
   image: plugins/docker
   name: ui
   settings:
@@ -146,7 +150,13 @@ kind: pipeline
 name: build-amd64
 platform: {arch: amd64, os: linux}
 steps:
-- image: plugins/docker
+- commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
+    echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
+      =.*/ = \\"$V\\";/" www/sw.js]
+  image: alpine
+  name: versions
+- depends_on: [versions]
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -192,11 +202,7 @@ steps:
     password: {from_secret: hub_docker_password}
     repo: rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
-- commands: [apk --no-cache add git, git fetch --tags, sed -i -e "/^const cacheVersion/s/
-      =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js]
-  image: alpine
-  name: ui-prepare
-- depends_on: [api, ui-prepare]
+- depends_on: [api]
   image: plugins/docker
   name: ui
   settings:

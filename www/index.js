@@ -8,7 +8,9 @@ import 'can-stache-bindings';
 import route from 'can-route';
 import {Session} from 'models/Session';
 import './navbar';
+import './footer';
 import './common.less!';
+import Version from './version';
 
 // Register number formatting helpers
 const Precisions = new (DefineMap.extend({
@@ -97,6 +99,7 @@ const AppState = DefineMap.extend({
 	'onmessage': { serialize: false },
 	'current_time': { serialize: false, default: function() { return new Date() } },
 	'current_timer': { serialize: false },
+	'uiVersion': { default: () => Version },
 	'displaypage': {
 		get() {
 			if (this.session != null)
@@ -196,6 +199,7 @@ Component.extend({
 	view: `
 	<thermo-navbar app:bind="." />
 	<div class="content" />
+	<thermo-footer app:bind="." />
 	`,
 	ViewModel: AppState
 });

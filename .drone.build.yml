@@ -5,6 +5,15 @@ platform:
   os: linux
 
 steps:
+- name: versions
+  image: alpine
+  commands:
+  - apk --no-cache add git
+  - git fetch --tags
+  - V=$(git describe --tags HEAD)
+  - 'echo "export default \\"$V\\";" > www/version.js'
+  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js'
+
 - name: api
   image: plugins/docker
   settings:
@@ -14,6 +23,8 @@ steps:
     password:
       from_secret: hub_docker_password
     auto_tag: true
+  depends_on:
+  - versions
   volumes:
   - name: docker
     path: /var/lib/docker
@@ -64,13 +75,6 @@ steps:
   depends_on:
   - golang-build
 
-- name: ui-prepare
-  image: alpine
-  commands:
-  - apk --no-cache add git
-  - git fetch --tags
-  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$(git describe --tags HEAD)\\";/" www/sw.js'
-
 - name: ui
   image: plugins/docker
   settings:
@@ -82,7 +86,6 @@ steps:
     auto_tag: true
   depends_on:
   - api
-  - ui-prepare
   volumes:
   - name: docker
     path: /var/lib/docker
