@@ -3,6 +3,8 @@ import Component from 'can-component';
 import {THSensor} from 'models/THSensor';
 import {SensorResync} from 'models/SensorResync';
 
+let SensorCache = new THSensor.List();
+
 Component.extend({
 	tag: 'thermo-p-overview',
 	view: `
@@ -47,7 +49,7 @@ Component.extend({
 </div>
 	`,
 	ViewModel: {
-		sensors: { default: () => [] },
+		sensors: { default: () => SensorCache },
 		advanced: 'boolean',
 		toggle_advanced() {
 			this.advanced = !this.advanced;
@@ -75,7 +77,7 @@ Component.extend({
 
 			if (self.app.visible) {
 				THSensor.getList({'order_by': 'id'}).then(function(res) {
-					self.sensors = res;
+					SensorCache = self.sensors = res;
 				});
 			}
 		}
