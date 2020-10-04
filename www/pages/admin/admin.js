@@ -6,6 +6,8 @@ import prettyMilliseconds from 'pretty-ms';
 import stache from 'can-stache';
 import Modal from 'bootstrap/js/src/modal';
 
+let SensorCache = new THSensor.List();
+
 const taskFields = [
 	{desc: 'Name', field: 'sensor_name', okclass: 'bg-primary'},
 	{desc: 'Id', field: 'sensor_id', okclass: 'bg-primary'},
@@ -73,7 +75,7 @@ Component.extend({
 <button class="btn btn-primary m-1" on:click="addSensor()">Add Sensor</button>
 	`,
 	ViewModel: {
-		sensors: { default: () => [] },
+		sensors: { default: () => SensorCache },
 		element: {},
 		task: {},
 		modal: {},
@@ -100,7 +102,7 @@ Component.extend({
 
 			if (self.app.visible) {
 				THSensor.getList({'order_by': 'id'}).then(function(res) {
-					self.sensors = res;
+					SensorCache = self.sensors = res;
 				});
 			}
 		},
