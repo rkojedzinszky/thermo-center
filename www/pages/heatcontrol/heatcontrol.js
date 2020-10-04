@@ -4,6 +4,9 @@ import route from 'can-route';
 import {Control} from 'models/Control';
 import {InstantProfile} from 'models/InstantProfile';
 
+let ControlCache = new Control.List();
+let InstantProfileCache = new InstantProfile.List();
+
 Component.extend({
 	tag: 'thermo-p-heatcontrol',
 	view: `
@@ -38,8 +41,8 @@ Component.extend({
 </ul>
 	`,
 	ViewModel: {
-		sensors: { default: () => [] },
-		instantprofiles: { default: () => [] },
+		sensors: { default: () => ControlCache },
+		instantprofiles: { default: () => InstantProfileCache },
 		daytypes: { default: null },
 
 		toggle(i) {
@@ -54,7 +57,7 @@ Component.extend({
 			var self = this;
 
 			InstantProfile.getList().then(function(res) {
-				self.instantprofiles = res;
+				InstantProfileCache = self.instantprofiles = res;
 			});
 
 			self.app.onmessage = function(el) {
@@ -77,7 +80,7 @@ Component.extend({
 
 			if (self.app.visible) {
 				Control.getList().then(function(res) {
-					self.sensors = res;
+					ControlCache = self.sensors = res;
 				});
 			}
 		}
