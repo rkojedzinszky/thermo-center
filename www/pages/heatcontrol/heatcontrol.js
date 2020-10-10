@@ -80,7 +80,7 @@ Component.extend({
 
 			if (self.app.visible) {
 				Control.getList().then(function(res) {
-					ControlCache = self.sensors = res;
+					ControlCache.update(res);
 				});
 			}
 		}
