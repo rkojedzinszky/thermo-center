@@ -1,42 +1,59 @@
 package aggregator
 
 import (
+	"bytes"
 	"fmt"
 	"net"
-	"strings"
+	"text/template"
 	"time"
 )
 
 // GraphiteSender handles pushing to Graphite
 type GraphiteSender struct {
-	addr string
-	push chan []byte
+	addr               string
+	push               chan []byte
+	carbonPathTemplate *template.Template
 }
 
 // NewGraphiteSender creates a new Graphite sender
-func NewGraphiteSender(host string, port int) *GraphiteSender {
-	return &GraphiteSender{
-		addr: fmt.Sprintf("%s:%d", host, port),
-		push: make(chan []byte, 1),
+func NewGraphiteSender(host string, port int, pathTemplate string) *GraphiteSender {
+	template, err := template.New("carbonPathTemplate").Parse(pathTemplate)
+	if err != nil {
+		return nil
 	}
+
+	return &GraphiteSender{
+		addr:               fmt.Sprintf("%s:%d", host, port),
+		push:               make(chan []byte, 1),
+		carbonPathTemplate: template,
+	}
+}
+
+type carbonMetric struct {
+	SensorID int32
+	Metric   string
 }
 
 // Push enqueues a SensorStat to send
 func (g *GraphiteSender) Push(s sensorStat) bool {
 	tstamp := fmt.Sprintf("%d", int(s.Sensor.LastTsf.Float64))
-	prefix := fmt.Sprintf("sensor.%02x", s.Sensor.Id)
-	metrics := make([]string, 0, 10)
+
+	var buffer bytes.Buffer
 
 	for m, v := range s.Stat {
 		if fv, ok := v.(float64); ok {
-			metrics = append(metrics, fmt.Sprintf("%s.%s %f %s\n", prefix, m, fv, tstamp))
+			// Prepare carbon metric path
+			g.carbonPathTemplate.Execute(&buffer, &carbonMetric{
+				SensorID: s.Sensor.Id,
+				Metric:   m,
+			})
+			// append metric value, terminate line with newline
+			fmt.Fprintf(&buffer, " %f %s\n", fv, tstamp)
 		}
 	}
 
-	data := []byte(strings.Join(metrics, ""))
-
 	select {
-	case g.push <- data:
+	case g.push <- buffer.Bytes():
 		return true
 	default:
 		return false

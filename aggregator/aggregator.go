@@ -17,6 +17,8 @@ import (
 	"github.com/rkojedzinszky/thermo-center/models/heatcontrol"
 )
 
+const defaultCarbonMetricPathTemplate = `sensor.{{ printf "%02x" .SensorID }}.{{ .Metric }}`
+
 // aggregator serves the aggregator API
 type aggregator struct {
 	db                *sql.DB
@@ -51,8 +53,14 @@ func NewAggregator(db *sql.DB, location *time.Location) (AggregatorServer, error
 	go a.mqtt.Run()
 
 	if graphiteHost := getenv("CARBON_LINE_RECEIVER_HOST", ""); graphiteHost != "" {
-		a.graphite = NewGraphiteSender(graphiteHost, getenvInt("CARBON_LINE_RECEIVER_PORT", 2003))
-		go a.graphite.Run()
+		a.graphite = NewGraphiteSender(
+			graphiteHost,
+			getenvInt("CARBON_LINE_RECEIVER_PORT", 2003),
+			getenv("CARBON_LINE_RECEIVER_METRIC_PATH_TEMPLATE", defaultCarbonMetricPathTemplate),
+		)
+		if a.graphite != nil {
+			go a.graphite.Run()
+		}
 	}
 
 	a.updateProbability = getenvFloat64("SENSOR_DB_UPDATE_PROBABILITY", 0.01)
