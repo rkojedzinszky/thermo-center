@@ -106,11 +106,11 @@ func (a *aggregator) lockLocal(id uint8) bool {
 	return true
 }
 
-func (a *aggregator) lockSensor(id uint8) error {
+func (a *aggregator) lockSensor(id uint8) (bool, error) {
 	id &= 0x7f
 
 	if a.lockLocal(id) == false {
-		return fmt.Errorf("Locking sensor %02x failed: already locked locally", id)
+		return false, nil
 	}
 
 	key := fmt.Sprintf(sensorLockKey, id)
@@ -122,18 +122,18 @@ func (a *aggregator) lockSensor(id uint8) error {
 	})
 
 	if err == nil {
-		return nil
+		return true, nil
 	}
 
 	if err == memcache.ErrNotStored {
-		if item, err := a.mc.Get(key); err == nil {
-			return fmt.Errorf("Locking sensor %02x failed: %s holds lock", id, string(item.Value))
+		if _, err := a.mc.Get(key); err == nil {
+			return false, nil
 		}
 
-		return err
+		return false, fmt.Errorf("Locking sensor %02x failed, however could not determine owner", id)
 	}
 
-	return err
+	return false, err
 }
 
 func sensorControlKey(s *center.Sensor) string {
@@ -293,8 +293,12 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 // FeedSensorPacket processes a packet received by a receiver
 func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*FeedResponse, error) {
 
-	if err := a.lockSensor(uint8(p.Id)); err != nil {
-		fmt.Println(err)
+	ok, err := a.lockSensor(uint8(p.Id))
+
+	if !ok {
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		return &FeedResponse{
 			Processed: false,
