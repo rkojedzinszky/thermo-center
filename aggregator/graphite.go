@@ -38,17 +38,17 @@ type carbonMetric struct {
 func (g *GraphiteSender) Push(s sensorStat) bool {
 	tstamp := fmt.Sprintf("%d", int(s.Sensor.LastTsf.Float64))
 
-	var buffer bytes.Buffer
+	buffer := bytes.NewBuffer(make([]byte, 0, 512))
 
 	for m, v := range s.Stat {
 		if fv, ok := v.(float64); ok {
 			// Prepare carbon metric path
-			g.carbonPathTemplate.Execute(&buffer, &carbonMetric{
+			g.carbonPathTemplate.Execute(buffer, &carbonMetric{
 				SensorID: s.Sensor.Id,
 				Metric:   m,
 			})
 			// append metric value, terminate line with newline
-			fmt.Fprintf(&buffer, " %f %s\n", fv, tstamp)
+			fmt.Fprintf(buffer, " %f %s\n", fv, tstamp)
 		}
 	}
 
