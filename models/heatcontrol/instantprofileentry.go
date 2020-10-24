@@ -73,6 +73,72 @@ func (qs InstantprofileentryQS) IdGe(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inInstantprofileentryid struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) IdIn(values []int32) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileentryid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileentryid struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) IdNotIn(values []int32) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileentryid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs InstantprofileentryQS) OrderById() InstantprofileentryQS {
 	qs.order = append(qs.order, `"id"`)
@@ -261,6 +327,72 @@ func (qs InstantprofileentryQS) TargetTempGe(v float64) InstantprofileentryQS {
 	return qs.filter(`"target_temp" >=`, v)
 }
 
+type inInstantprofileentryTargetTemp struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) TargetTempIn(values []float64) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileentryTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileentryTargetTemp struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) TargetTempNotIn(values []float64) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileentryTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByTargetTemp sorts result by TargetTemp in ascending order
 func (qs InstantprofileentryQS) OrderByTargetTemp() InstantprofileentryQS {
 	qs.order = append(qs.order, `"target_temp"`)
@@ -303,6 +435,72 @@ func (qs InstantprofileentryQS) ActiveGt(v bool) InstantprofileentryQS {
 // ActiveGe filters for Active being greater than or equal to argument
 func (qs InstantprofileentryQS) ActiveGe(v bool) InstantprofileentryQS {
 	return qs.filter(`"active" >=`, v)
+}
+
+type inInstantprofileentryActive struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"active" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) ActiveIn(values []bool) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileentryActive{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileentryActive struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"active" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileentryQS) ActiveNotIn(values []bool) InstantprofileentryQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileentryActive{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByActive sorts result by Active in ascending order
@@ -402,6 +600,8 @@ func (qs InstantprofileentryQS) All(db models.DBInterface) ([]*Instantprofileent
 // First returns the first row matching queryset filters, others are discarded
 func (qs InstantprofileentryQS) First(db models.DBInterface) (*Instantprofileentry, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

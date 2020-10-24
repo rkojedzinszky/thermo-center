@@ -66,6 +66,72 @@ func (qs SensorQS) IdGe(v int32) SensorQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inSensorId struct {
+	values []interface{}
+}
+
+func (in *inSensorId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) IdIn(values []int32) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorId{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorId struct {
+	values []interface{}
+}
+
+func (in *notinSensorId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) IdNotIn(values []int32) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorId{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs SensorQS) OrderById() SensorQS {
 	qs.order = append(qs.order, `"id"`)
@@ -108,6 +174,72 @@ func (qs SensorQS) NameGt(v string) SensorQS {
 // NameGe filters for Name being greater than or equal to argument
 func (qs SensorQS) NameGe(v string) SensorQS {
 	return qs.filter(`"name" >=`, v)
+}
+
+type inSensorName struct {
+	values []interface{}
+}
+
+func (in *inSensorName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) NameIn(values []string) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorName struct {
+	values []interface{}
+}
+
+func (in *notinSensorName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) NameNotIn(values []string) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorName{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByName sorts result by Name in ascending order
@@ -176,6 +308,72 @@ func (qs SensorQS) LastSeqGe(v int32) SensorQS {
 	return qs.filter(`"last_seq" >=`, v)
 }
 
+type inSensorLastSeq struct {
+	values []interface{}
+}
+
+func (in *inSensorLastSeq) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_seq" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) LastSeqIn(values []int32) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorLastSeq{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorLastSeq struct {
+	values []interface{}
+}
+
+func (in *notinSensorLastSeq) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_seq" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) LastSeqNotIn(values []int32) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorLastSeq{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByLastSeq sorts result by LastSeq in ascending order
 func (qs SensorQS) OrderByLastSeq() SensorQS {
 	qs.order = append(qs.order, `"last_seq"`)
@@ -240,6 +438,72 @@ func (qs SensorQS) LastTsfGt(v float64) SensorQS {
 // LastTsfGe filters for LastTsf being greater than or equal to argument
 func (qs SensorQS) LastTsfGe(v float64) SensorQS {
 	return qs.filter(`"last_tsf" >=`, v)
+}
+
+type inSensorLastTsf struct {
+	values []interface{}
+}
+
+func (in *inSensorLastTsf) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_tsf" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) LastTsfIn(values []float64) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorLastTsf{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorLastTsf struct {
+	values []interface{}
+}
+
+func (in *notinSensorLastTsf) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_tsf" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorQS) LastTsfNotIn(values []float64) SensorQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorLastTsf{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByLastTsf sorts result by LastTsf in ascending order
@@ -339,6 +603,8 @@ func (qs SensorQS) All(db models.DBInterface) ([]*Sensor, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs SensorQS) First(db models.DBInterface) (*Sensor, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

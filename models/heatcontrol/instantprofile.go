@@ -70,6 +70,72 @@ func (qs InstantprofileQS) IdGe(v int32) InstantprofileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inInstantprofileid struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) IdIn(values []int32) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileid struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) IdNotIn(values []int32) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs InstantprofileQS) OrderById() InstantprofileQS {
 	qs.order = append(qs.order, `"id"`)
@@ -114,6 +180,72 @@ func (qs InstantprofileQS) NameGe(v string) InstantprofileQS {
 	return qs.filter(`"name" >=`, v)
 }
 
+type inInstantprofileName struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) NameIn(values []string) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileName struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) NameNotIn(values []string) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByName sorts result by Name in ascending order
 func (qs InstantprofileQS) OrderByName() InstantprofileQS {
 	qs.order = append(qs.order, `"name"`)
@@ -156,6 +288,72 @@ func (qs InstantprofileQS) ActiveGt(v bool) InstantprofileQS {
 // ActiveGe filters for Active being greater than or equal to argument
 func (qs InstantprofileQS) ActiveGe(v bool) InstantprofileQS {
 	return qs.filter(`"active" >=`, v)
+}
+
+type inInstantprofileActive struct {
+	values []interface{}
+}
+
+func (in *inInstantprofileActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"active" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) ActiveIn(values []bool) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inInstantprofileActive{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinInstantprofileActive struct {
+	values []interface{}
+}
+
+func (in *notinInstantprofileActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"active" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs InstantprofileQS) ActiveNotIn(values []bool) InstantprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinInstantprofileActive{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByActive sorts result by Active in ascending order
@@ -255,6 +453,8 @@ func (qs InstantprofileQS) All(db models.DBInterface) ([]*Instantprofile, error)
 // First returns the first row matching queryset filters, others are discarded
 func (qs InstantprofileQS) First(db models.DBInterface) (*Instantprofile, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

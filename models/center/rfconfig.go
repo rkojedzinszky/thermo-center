@@ -73,6 +73,72 @@ func (qs RfconfigQS) IdGe(v int32) RfconfigQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inRfconfigid struct {
+	values []interface{}
+}
+
+func (in *inRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) IdIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfconfigid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfconfigid struct {
+	values []interface{}
+}
+
+func (in *notinRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) IdNotIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfconfigid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs RfconfigQS) OrderById() RfconfigQS {
 	qs.order = append(qs.order, `"id"`)
@@ -115,6 +181,72 @@ func (qs RfconfigQS) RfChannelGt(v int32) RfconfigQS {
 // RfChannelGe filters for RfChannel being greater than or equal to argument
 func (qs RfconfigQS) RfChannelGe(v int32) RfconfigQS {
 	return qs.filter(`"rf_channel" >=`, v)
+}
+
+type inRfconfigRfChannel struct {
+	values []interface{}
+}
+
+func (in *inRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"rf_channel" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) RfChannelIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfconfigRfChannel{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfconfigRfChannel struct {
+	values []interface{}
+}
+
+func (in *notinRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"rf_channel" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) RfChannelNotIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfconfigRfChannel{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByRfChannel sorts result by RfChannel in ascending order
@@ -222,6 +354,72 @@ func (qs RfconfigQS) NetworkIdGe(v int32) RfconfigQS {
 	return qs.filter(`"network_id" >=`, v)
 }
 
+type inRfconfigNetworkId struct {
+	values []interface{}
+}
+
+func (in *inRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"network_id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) NetworkIdIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfconfigNetworkId{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfconfigNetworkId struct {
+	values []interface{}
+}
+
+func (in *notinRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"network_id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) NetworkIdNotIn(values []int32) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfconfigNetworkId{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByNetworkId sorts result by NetworkId in ascending order
 func (qs RfconfigQS) OrderByNetworkId() RfconfigQS {
 	qs.order = append(qs.order, `"network_id"`)
@@ -264,6 +462,72 @@ func (qs RfconfigQS) AesKeyGt(v string) RfconfigQS {
 // AesKeyGe filters for AesKey being greater than or equal to argument
 func (qs RfconfigQS) AesKeyGe(v string) RfconfigQS {
 	return qs.filter(`"aes_key" >=`, v)
+}
+
+type inRfconfigAesKey struct {
+	values []interface{}
+}
+
+func (in *inRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"aes_key" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) AesKeyIn(values []string) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfconfigAesKey{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfconfigAesKey struct {
+	values []interface{}
+}
+
+func (in *notinRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"aes_key" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfconfigQS) AesKeyNotIn(values []string) RfconfigQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfconfigAesKey{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByAesKey sorts result by AesKey in ascending order
@@ -363,6 +627,8 @@ func (qs RfconfigQS) All(db models.DBInterface) ([]*Rfconfig, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs RfconfigQS) First(db models.DBInterface) (*Rfconfig, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

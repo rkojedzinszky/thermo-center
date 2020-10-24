@@ -75,6 +75,72 @@ func (qs ControlQS) IdGe(v int32) ControlQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inControlid struct {
+	values []interface{}
+}
+
+func (in *inControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) IdIn(values []int32) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inControlid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinControlid struct {
+	values []interface{}
+}
+
+func (in *notinControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) IdNotIn(values []int32) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinControlid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs ControlQS) OrderById() ControlQS {
 	qs.order = append(qs.order, `"id"`)
@@ -180,6 +246,72 @@ func (qs ControlQS) KpGe(v float64) ControlQS {
 	return qs.filter(`"kp" >=`, v)
 }
 
+type inControlKp struct {
+	values []interface{}
+}
+
+func (in *inControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"kp" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KpIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inControlKp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinControlKp struct {
+	values []interface{}
+}
+
+func (in *notinControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"kp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KpNotIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinControlKp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByKp sorts result by Kp in ascending order
 func (qs ControlQS) OrderByKp() ControlQS {
 	qs.order = append(qs.order, `"kp"`)
@@ -224,6 +356,72 @@ func (qs ControlQS) KiGe(v float64) ControlQS {
 	return qs.filter(`"ki" >=`, v)
 }
 
+type inControlKi struct {
+	values []interface{}
+}
+
+func (in *inControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"ki" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KiIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inControlKi{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinControlKi struct {
+	values []interface{}
+}
+
+func (in *notinControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"ki" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KiNotIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinControlKi{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByKi sorts result by Ki in ascending order
 func (qs ControlQS) OrderByKi() ControlQS {
 	qs.order = append(qs.order, `"ki"`)
@@ -266,6 +464,72 @@ func (qs ControlQS) KdGt(v float64) ControlQS {
 // KdGe filters for Kd being greater than or equal to argument
 func (qs ControlQS) KdGe(v float64) ControlQS {
 	return qs.filter(`"kd" >=`, v)
+}
+
+type inControlKd struct {
+	values []interface{}
+}
+
+func (in *inControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"kd" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KdIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inControlKd{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinControlKd struct {
+	values []interface{}
+}
+
+func (in *notinControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"kd" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) KdNotIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinControlKd{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByKd sorts result by Kd in ascending order
@@ -332,6 +596,72 @@ func (qs ControlQS) IntabsmaxGt(v float64) ControlQS {
 // IntabsmaxGe filters for Intabsmax being greater than or equal to argument
 func (qs ControlQS) IntabsmaxGe(v float64) ControlQS {
 	return qs.filter(`"intabsmax" >=`, v)
+}
+
+type inControlIntabsmax struct {
+	values []interface{}
+}
+
+func (in *inControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"intabsmax" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) IntabsmaxIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inControlIntabsmax{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinControlIntabsmax struct {
+	values []interface{}
+}
+
+func (in *notinControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"intabsmax" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ControlQS) IntabsmaxNotIn(values []float64) ControlQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinControlIntabsmax{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByIntabsmax sorts result by Intabsmax in ascending order
@@ -431,6 +761,8 @@ func (qs ControlQS) All(db models.DBInterface) ([]*Control, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs ControlQS) First(db models.DBInterface) (*Control, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

@@ -70,6 +70,72 @@ func (qs RfprofileQS) IdGe(v int32) RfprofileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inRfprofileid struct {
+	values []interface{}
+}
+
+func (in *inRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) IdIn(values []int32) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfprofileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfprofileid struct {
+	values []interface{}
+}
+
+func (in *notinRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) IdNotIn(values []int32) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfprofileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs RfprofileQS) OrderById() RfprofileQS {
 	qs.order = append(qs.order, `"id"`)
@@ -114,6 +180,72 @@ func (qs RfprofileQS) NameGe(v string) RfprofileQS {
 	return qs.filter(`"name" >=`, v)
 }
 
+type inRfprofileName struct {
+	values []interface{}
+}
+
+func (in *inRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) NameIn(values []string) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfprofileName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfprofileName struct {
+	values []interface{}
+}
+
+func (in *notinRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) NameNotIn(values []string) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfprofileName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByName sorts result by Name in ascending order
 func (qs RfprofileQS) OrderByName() RfprofileQS {
 	qs.order = append(qs.order, `"name"`)
@@ -156,6 +288,72 @@ func (qs RfprofileQS) ConfregsGt(v string) RfprofileQS {
 // ConfregsGe filters for Confregs being greater than or equal to argument
 func (qs RfprofileQS) ConfregsGe(v string) RfprofileQS {
 	return qs.filter(`"confregs" >=`, v)
+}
+
+type inRfprofileConfregs struct {
+	values []interface{}
+}
+
+func (in *inRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"confregs" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) ConfregsIn(values []string) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inRfprofileConfregs{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinRfprofileConfregs struct {
+	values []interface{}
+}
+
+func (in *notinRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"confregs" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs RfprofileQS) ConfregsNotIn(values []string) RfprofileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinRfprofileConfregs{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByConfregs sorts result by Confregs in ascending order
@@ -255,6 +453,8 @@ func (qs RfprofileQS) All(db models.DBInterface) ([]*Rfprofile, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs RfprofileQS) First(db models.DBInterface) (*Rfprofile, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

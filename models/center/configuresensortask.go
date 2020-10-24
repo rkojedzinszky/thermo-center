@@ -77,6 +77,72 @@ func (qs ConfiguresensortaskQS) IdGe(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inConfiguresensortaskid struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) IdIn(values []int32) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskid struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) IdNotIn(values []int32) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs ConfiguresensortaskQS) OrderById() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"id"`)
@@ -182,6 +248,72 @@ func (qs ConfiguresensortaskQS) CreatedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"created" >=`, v)
 }
 
+type inConfiguresensortaskCreated struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"created" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) CreatedIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskCreated{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskCreated struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"created" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) CreatedNotIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskCreated{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByCreated sorts result by Created in ascending order
 func (qs ConfiguresensortaskQS) OrderByCreated() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"created"`)
@@ -246,6 +378,72 @@ func (qs ConfiguresensortaskQS) StartedGt(v time.Time) ConfiguresensortaskQS {
 // StartedGe filters for Started being greater than or equal to argument
 func (qs ConfiguresensortaskQS) StartedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"started" >=`, v)
+}
+
+type inConfiguresensortaskStarted struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"started" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) StartedIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskStarted{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskStarted struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"started" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) StartedNotIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskStarted{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByStarted sorts result by Started in ascending order
@@ -314,6 +512,72 @@ func (qs ConfiguresensortaskQS) FirstDiscoveryGe(v time.Time) Configuresensortas
 	return qs.filter(`"first_discovery" >=`, v)
 }
 
+type inConfiguresensortaskFirstDiscovery struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"first_discovery" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) FirstDiscoveryIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskFirstDiscovery{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskFirstDiscovery struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"first_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) FirstDiscoveryNotIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskFirstDiscovery{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByFirstDiscovery sorts result by FirstDiscovery in ascending order
 func (qs ConfiguresensortaskQS) OrderByFirstDiscovery() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"first_discovery"`)
@@ -378,6 +642,72 @@ func (qs ConfiguresensortaskQS) LastDiscoveryGt(v time.Time) Configuresensortask
 // LastDiscoveryGe filters for LastDiscovery being greater than or equal to argument
 func (qs ConfiguresensortaskQS) LastDiscoveryGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"last_discovery" >=`, v)
+}
+
+type inConfiguresensortaskLastDiscovery struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_discovery" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) LastDiscoveryIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskLastDiscovery{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskLastDiscovery struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"last_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) LastDiscoveryNotIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskLastDiscovery{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByLastDiscovery sorts result by LastDiscovery in ascending order
@@ -446,6 +776,72 @@ func (qs ConfiguresensortaskQS) FinishedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"finished" >=`, v)
 }
 
+type inConfiguresensortaskFinished struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"finished" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) FinishedIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskFinished{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskFinished struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"finished" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) FinishedNotIn(values []time.Time) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskFinished{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByFinished sorts result by Finished in ascending order
 func (qs ConfiguresensortaskQS) OrderByFinished() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"finished"`)
@@ -510,6 +906,72 @@ func (qs ConfiguresensortaskQS) ErrorGt(v string) ConfiguresensortaskQS {
 // ErrorGe filters for Error being greater than or equal to argument
 func (qs ConfiguresensortaskQS) ErrorGe(v string) ConfiguresensortaskQS {
 	return qs.filter(`"error" >=`, v)
+}
+
+type inConfiguresensortaskError struct {
+	values []interface{}
+}
+
+func (in *inConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"error" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) ErrorIn(values []string) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inConfiguresensortaskError{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinConfiguresensortaskError struct {
+	values []interface{}
+}
+
+func (in *notinConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"error" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ConfiguresensortaskQS) ErrorNotIn(values []string) ConfiguresensortaskQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinConfiguresensortaskError{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByError sorts result by Error in ascending order
@@ -609,6 +1071,8 @@ func (qs ConfiguresensortaskQS) All(db models.DBInterface) ([]*Configuresensorta
 // First returns the first row matching queryset filters, others are discarded
 func (qs ConfiguresensortaskQS) First(db models.DBInterface) (*Configuresensortask, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

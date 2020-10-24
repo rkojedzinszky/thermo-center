@@ -74,6 +74,72 @@ func (qs ScheduledoverrideQS) IdGe(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inScheduledoverrideid struct {
+	values []interface{}
+}
+
+func (in *inScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) IdIn(values []int32) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inScheduledoverrideid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinScheduledoverrideid struct {
+	values []interface{}
+}
+
+func (in *notinScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) IdNotIn(values []int32) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinScheduledoverrideid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs ScheduledoverrideQS) OrderById() ScheduledoverrideQS {
 	qs.order = append(qs.order, `"id"`)
@@ -179,6 +245,72 @@ func (qs ScheduledoverrideQS) StartGe(v time.Time) ScheduledoverrideQS {
 	return qs.filter(`"start" >=`, v)
 }
 
+type inScheduledoverrideStart struct {
+	values []interface{}
+}
+
+func (in *inScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"start" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) StartIn(values []time.Time) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inScheduledoverrideStart{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinScheduledoverrideStart struct {
+	values []interface{}
+}
+
+func (in *notinScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) StartNotIn(values []time.Time) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinScheduledoverrideStart{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByStart sorts result by Start in ascending order
 func (qs ScheduledoverrideQS) OrderByStart() ScheduledoverrideQS {
 	qs.order = append(qs.order, `"start"`)
@@ -223,6 +355,72 @@ func (qs ScheduledoverrideQS) EndGe(v time.Time) ScheduledoverrideQS {
 	return qs.filter(`"end" >=`, v)
 }
 
+type inScheduledoverrideEnd struct {
+	values []interface{}
+}
+
+func (in *inScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"end" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) EndIn(values []time.Time) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inScheduledoverrideEnd{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinScheduledoverrideEnd struct {
+	values []interface{}
+}
+
+func (in *notinScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"end" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) EndNotIn(values []time.Time) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinScheduledoverrideEnd{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByEnd sorts result by End in ascending order
 func (qs ScheduledoverrideQS) OrderByEnd() ScheduledoverrideQS {
 	qs.order = append(qs.order, `"end"`)
@@ -265,6 +463,72 @@ func (qs ScheduledoverrideQS) TargetTempGt(v float64) ScheduledoverrideQS {
 // TargetTempGe filters for TargetTemp being greater than or equal to argument
 func (qs ScheduledoverrideQS) TargetTempGe(v float64) ScheduledoverrideQS {
 	return qs.filter(`"target_temp" >=`, v)
+}
+
+type inScheduledoverrideTargetTemp struct {
+	values []interface{}
+}
+
+func (in *inScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) TargetTempIn(values []float64) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inScheduledoverrideTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinScheduledoverrideTargetTemp struct {
+	values []interface{}
+}
+
+func (in *notinScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ScheduledoverrideQS) TargetTempNotIn(values []float64) ScheduledoverrideQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinScheduledoverrideTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByTargetTemp sorts result by TargetTemp in ascending order
@@ -364,6 +628,8 @@ func (qs ScheduledoverrideQS) All(db models.DBInterface) ([]*Scheduledoverride, 
 // First returns the first row matching queryset filters, others are discarded
 func (qs ScheduledoverrideQS) First(db models.DBInterface) (*Scheduledoverride, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

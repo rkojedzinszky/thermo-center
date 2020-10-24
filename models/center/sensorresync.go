@@ -72,6 +72,72 @@ func (qs SensorresyncQS) IdGe(v int32) SensorresyncQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inSensorresyncid struct {
+	values []interface{}
+}
+
+func (in *inSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorresyncQS) IdIn(values []int32) SensorresyncQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorresyncid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorresyncid struct {
+	values []interface{}
+}
+
+func (in *notinSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorresyncQS) IdNotIn(values []int32) SensorresyncQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorresyncid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs SensorresyncQS) OrderById() SensorresyncQS {
 	qs.order = append(qs.order, `"id"`)
@@ -177,6 +243,72 @@ func (qs SensorresyncQS) TsGe(v time.Time) SensorresyncQS {
 	return qs.filter(`"ts" >=`, v)
 }
 
+type inSensorresyncTs struct {
+	values []interface{}
+}
+
+func (in *inSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"ts" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorresyncQS) TsIn(values []time.Time) SensorresyncQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inSensorresyncTs{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinSensorresyncTs struct {
+	values []interface{}
+}
+
+func (in *notinSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"ts" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs SensorresyncQS) TsNotIn(values []time.Time) SensorresyncQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinSensorresyncTs{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByTs sorts result by Ts in ascending order
 func (qs SensorresyncQS) OrderByTs() SensorresyncQS {
 	qs.order = append(qs.order, `"ts"`)
@@ -274,6 +406,8 @@ func (qs SensorresyncQS) All(db models.DBInterface) ([]*Sensorresync, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs SensorresyncQS) First(db models.DBInterface) (*Sensorresync, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

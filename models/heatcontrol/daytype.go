@@ -69,6 +69,72 @@ func (qs DaytypeQS) IdGe(v int32) DaytypeQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inDaytypeid struct {
+	values []interface{}
+}
+
+func (in *inDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs DaytypeQS) IdIn(values []int32) DaytypeQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inDaytypeid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinDaytypeid struct {
+	values []interface{}
+}
+
+func (in *notinDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs DaytypeQS) IdNotIn(values []int32) DaytypeQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinDaytypeid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs DaytypeQS) OrderById() DaytypeQS {
 	qs.order = append(qs.order, `"id"`)
@@ -111,6 +177,72 @@ func (qs DaytypeQS) NameGt(v string) DaytypeQS {
 // NameGe filters for Name being greater than or equal to argument
 func (qs DaytypeQS) NameGe(v string) DaytypeQS {
 	return qs.filter(`"name" >=`, v)
+}
+
+type inDaytypeName struct {
+	values []interface{}
+}
+
+func (in *inDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs DaytypeQS) NameIn(values []string) DaytypeQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inDaytypeName{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinDaytypeName struct {
+	values []interface{}
+}
+
+func (in *notinDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs DaytypeQS) NameNotIn(values []string) DaytypeQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinDaytypeName{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByName sorts result by Name in ascending order
@@ -210,6 +342,8 @@ func (qs DaytypeQS) All(db models.DBInterface) ([]*Daytype, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs DaytypeQS) First(db models.DBInterface) (*Daytype, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

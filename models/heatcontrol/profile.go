@@ -74,6 +74,72 @@ func (qs ProfileQS) IdGe(v int32) ProfileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inProfileid struct {
+	values []interface{}
+}
+
+func (in *inProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) IdIn(values []int32) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inProfileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinProfileid struct {
+	values []interface{}
+}
+
+func (in *notinProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) IdNotIn(values []int32) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinProfileid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs ProfileQS) OrderById() ProfileQS {
 	qs.order = append(qs.order, `"id"`)
@@ -240,6 +306,72 @@ func (qs ProfileQS) StartGe(v time.Time) ProfileQS {
 	return qs.filter(`"start" >=`, v)
 }
 
+type inProfileStart struct {
+	values []interface{}
+}
+
+func (in *inProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"start" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) StartIn(values []time.Time) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inProfileStart{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinProfileStart struct {
+	values []interface{}
+}
+
+func (in *notinProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) StartNotIn(values []time.Time) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinProfileStart{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderByStart sorts result by Start in ascending order
 func (qs ProfileQS) OrderByStart() ProfileQS {
 	qs.order = append(qs.order, `"start"`)
@@ -304,6 +436,72 @@ func (qs ProfileQS) TargetTempGt(v float64) ProfileQS {
 // TargetTempGe filters for TargetTemp being greater than or equal to argument
 func (qs ProfileQS) TargetTempGe(v float64) ProfileQS {
 	return qs.filter(`"target_temp" >=`, v)
+}
+
+type inProfileTargetTemp struct {
+	values []interface{}
+}
+
+func (in *inProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) TargetTempIn(values []float64) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inProfileTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinProfileTargetTemp struct {
+	values []interface{}
+}
+
+func (in *notinProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs ProfileQS) TargetTempNotIn(values []float64) ProfileQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinProfileTargetTemp{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByTargetTemp sorts result by TargetTemp in ascending order
@@ -403,6 +601,8 @@ func (qs ProfileQS) All(db models.DBInterface) ([]*Profile, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs ProfileQS) First(db models.DBInterface) (*Profile, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 

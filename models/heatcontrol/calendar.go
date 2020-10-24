@@ -72,6 +72,72 @@ func (qs CalendarQS) IdGe(v int32) CalendarQS {
 	return qs.filter(`"id" >=`, v)
 }
 
+type inCalendarid struct {
+	values []interface{}
+}
+
+func (in *inCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs CalendarQS) IdIn(values []int32) CalendarQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inCalendarid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinCalendarid struct {
+	values []interface{}
+}
+
+func (in *notinCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs CalendarQS) IdNotIn(values []int32) CalendarQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinCalendarid{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
 // OrderById sorts result by Id in ascending order
 func (qs CalendarQS) OrderById() CalendarQS {
 	qs.order = append(qs.order, `"id"`)
@@ -114,6 +180,72 @@ func (qs CalendarQS) DayGt(v time.Time) CalendarQS {
 // DayGe filters for Day being greater than or equal to argument
 func (qs CalendarQS) DayGe(v time.Time) CalendarQS {
 	return qs.filter(`"day" >=`, v)
+}
+
+type inCalendarDay struct {
+	values []interface{}
+}
+
+func (in *inCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"day" IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs CalendarQS) DayIn(values []time.Time) CalendarQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&inCalendarDay{
+			values: vals,
+		},
+	)
+
+	return qs
+}
+
+type notinCalendarDay struct {
+	values []interface{}
+}
+
+func (in *notinCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in.values) == 0 {
+		return `false`, nil
+	}
+
+	var params []string
+	for range in.values {
+		params = append(params, c.Get())
+	}
+
+	return `"day" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+}
+
+func (qs CalendarQS) DayNotIn(values []time.Time) CalendarQS {
+	var vals []interface{}
+	for _, v := range values {
+		vals = append(vals, v)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		&notinCalendarDay{
+			values: vals,
+		},
+	)
+
+	return qs
 }
 
 // OrderByDay sorts result by Day in ascending order
@@ -274,6 +406,8 @@ func (qs CalendarQS) All(db models.DBInterface) ([]*Calendar, error) {
 // First returns the first row matching queryset filters, others are discarded
 func (qs CalendarQS) First(db models.DBInterface) (*Calendar, error) {
 	s, p := qs.queryFull()
+
+	s += " LIMIT 1"
 
 	row := db.QueryRow(s, p...)
 
