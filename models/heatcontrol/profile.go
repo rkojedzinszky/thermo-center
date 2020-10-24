@@ -39,38 +39,38 @@ func (qs ProfileQS) filter(c string, p interface{}) ProfileQS {
 	return qs
 }
 
-// GetId returns Profile.Id
-func (p *Profile) GetId() int32 {
+// GetID returns Profile.ID
+func (p *Profile) GetID() int32 {
 	return p.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs ProfileQS) IdEq(v int32) ProfileQS {
+// IDEq filters for id being equal to argument
+func (qs ProfileQS) IDEq(v int32) ProfileQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs ProfileQS) IdNe(v int32) ProfileQS {
+// IDNe filters for id being not equal to argument
+func (qs ProfileQS) IDNe(v int32) ProfileQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs ProfileQS) IdLt(v int32) ProfileQS {
+// IDLt filters for id being less than argument
+func (qs ProfileQS) IDLt(v int32) ProfileQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs ProfileQS) IdLe(v int32) ProfileQS {
+// IDLe filters for id being less than or equal to argument
+func (qs ProfileQS) IDLe(v int32) ProfileQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs ProfileQS) IdGt(v int32) ProfileQS {
+// IDGt filters for id being greater than argument
+func (qs ProfileQS) IDGt(v int32) ProfileQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs ProfileQS) IdGe(v int32) ProfileQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs ProfileQS) IDGe(v int32) ProfileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -91,7 +91,7 @@ func (in *inProfileid) GetConditionFragment(c *models.PositionalCounter) (string
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ProfileQS) IdIn(values []int32) ProfileQS {
+func (qs ProfileQS) IDIn(values []int32) ProfileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -124,7 +124,7 @@ func (in *notinProfileid) GetConditionFragment(c *models.PositionalCounter) (str
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ProfileQS) IdNotIn(values []int32) ProfileQS {
+func (qs ProfileQS) IDNotIn(values []int32) ProfileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -140,15 +140,15 @@ func (qs ProfileQS) IdNotIn(values []int32) ProfileQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs ProfileQS) OrderById() ProfileQS {
+// OrderByID sorts result by ID in ascending order
+func (qs ProfileQS) OrderByID() ProfileQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs ProfileQS) OrderByIdDesc() ProfileQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs ProfileQS) OrderByIDDesc() ProfileQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -156,13 +156,13 @@ func (qs ProfileQS) OrderByIdDesc() ProfileQS {
 
 // GetControl returns Control
 func (p *Profile) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IdEq(p.control).First(db)
+	return ControlQS{}.IDEq(p.control).First(db)
 }
 
 // SetControl sets foreign key pointer to Control
 func (p *Profile) SetControl(ptr *Control) error {
 	if ptr != nil {
-		p.control = ptr.GetId()
+		p.control = ptr.GetID()
 	} else {
 		return fmt.Errorf("Profile.SetControl: non-null field received null value")
 	}
@@ -177,7 +177,7 @@ func (p *Profile) GetControlRaw() int32 {
 
 // ControlEq filters for control being equal to argument
 func (qs ProfileQS) ControlEq(v *Control) ProfileQS {
-	return qs.filter(`"control_id" =`, v.GetId())
+	return qs.filter(`"control_id" =`, v.GetID())
 }
 
 type inProfilecontrolControl struct {
@@ -217,13 +217,13 @@ func (qs ProfileQS) OrderByControlDesc() ProfileQS {
 
 // GetDaytype returns Daytype
 func (p *Profile) GetDaytype(db models.DBInterface) (*Daytype, error) {
-	return DaytypeQS{}.IdEq(p.daytype).First(db)
+	return DaytypeQS{}.IDEq(p.daytype).First(db)
 }
 
 // SetDaytype sets foreign key pointer to Daytype
 func (p *Profile) SetDaytype(ptr *Daytype) error {
 	if ptr != nil {
-		p.daytype = ptr.GetId()
+		p.daytype = ptr.GetID()
 	} else {
 		return fmt.Errorf("Profile.SetDaytype: non-null field received null value")
 	}
@@ -238,7 +238,7 @@ func (p *Profile) GetDaytypeRaw() int32 {
 
 // DaytypeEq filters for daytype being equal to argument
 func (qs ProfileQS) DaytypeEq(v *Daytype) ProfileQS {
-	return qs.filter(`"daytype_id" =`, v.GetId())
+	return qs.filter(`"daytype_id" =`, v.GetID())
 }
 
 type inProfiledaytypeDaytype struct {
@@ -616,7 +616,113 @@ func (qs ProfileQS) First(db models.DBInterface) (*Profile, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs ProfileQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_profile"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs ProfileQS) Update() ProfileUpdateQS {
+	return ProfileUpdateQS{condFragments: qs.condFragments}
+}
+
+// ProfileUpdateQS represents an updated queryset for heatcontrol.Profile
+type ProfileUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs ProfileUpdateQS) update(c string, v interface{}) ProfileUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs ProfileUpdateQS) SetID(v int32) ProfileUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetControl sets foreign key pointer to Control
+func (uqs ProfileUpdateQS) SetControl(ptr *Control) ProfileUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"control_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"control_id"`, nil)
+} // SetDaytype sets foreign key pointer to Daytype
+func (uqs ProfileUpdateQS) SetDaytype(ptr *Daytype) ProfileUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"daytype_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"daytype_id"`, nil)
+} // SetStart sets Start to the given value
+func (uqs ProfileUpdateQS) SetStart(v time.Time) ProfileUpdateQS {
+	return uqs.update(`"start"`, v)
+}
+
+// SetTargetTemp sets TargetTemp to the given value
+func (uqs ProfileUpdateQS) SetTargetTemp(v sql.NullFloat64) ProfileUpdateQS {
+	return uqs.update(`"target_temp"`, v)
+}
+
+// Exec executes the update operation
+func (uqs ProfileUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := ProfileQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_profile" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

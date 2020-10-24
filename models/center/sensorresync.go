@@ -37,38 +37,38 @@ func (qs SensorresyncQS) filter(c string, p interface{}) SensorresyncQS {
 	return qs
 }
 
-// GetId returns Sensorresync.Id
-func (s *Sensorresync) GetId() int32 {
+// GetID returns Sensorresync.ID
+func (s *Sensorresync) GetID() int32 {
 	return s.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs SensorresyncQS) IdEq(v int32) SensorresyncQS {
+// IDEq filters for id being equal to argument
+func (qs SensorresyncQS) IDEq(v int32) SensorresyncQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs SensorresyncQS) IdNe(v int32) SensorresyncQS {
+// IDNe filters for id being not equal to argument
+func (qs SensorresyncQS) IDNe(v int32) SensorresyncQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs SensorresyncQS) IdLt(v int32) SensorresyncQS {
+// IDLt filters for id being less than argument
+func (qs SensorresyncQS) IDLt(v int32) SensorresyncQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs SensorresyncQS) IdLe(v int32) SensorresyncQS {
+// IDLe filters for id being less than or equal to argument
+func (qs SensorresyncQS) IDLe(v int32) SensorresyncQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs SensorresyncQS) IdGt(v int32) SensorresyncQS {
+// IDGt filters for id being greater than argument
+func (qs SensorresyncQS) IDGt(v int32) SensorresyncQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs SensorresyncQS) IdGe(v int32) SensorresyncQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs SensorresyncQS) IDGe(v int32) SensorresyncQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -89,7 +89,7 @@ func (in *inSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (s
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs SensorresyncQS) IdIn(values []int32) SensorresyncQS {
+func (qs SensorresyncQS) IDIn(values []int32) SensorresyncQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -122,7 +122,7 @@ func (in *notinSensorresyncid) GetConditionFragment(c *models.PositionalCounter)
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs SensorresyncQS) IdNotIn(values []int32) SensorresyncQS {
+func (qs SensorresyncQS) IDNotIn(values []int32) SensorresyncQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -138,15 +138,15 @@ func (qs SensorresyncQS) IdNotIn(values []int32) SensorresyncQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs SensorresyncQS) OrderById() SensorresyncQS {
+// OrderByID sorts result by ID in ascending order
+func (qs SensorresyncQS) OrderByID() SensorresyncQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs SensorresyncQS) OrderByIdDesc() SensorresyncQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs SensorresyncQS) OrderByIDDesc() SensorresyncQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -154,13 +154,13 @@ func (qs SensorresyncQS) OrderByIdDesc() SensorresyncQS {
 
 // GetSensor returns Sensor
 func (s *Sensorresync) GetSensor(db models.DBInterface) (*Sensor, error) {
-	return SensorQS{}.IdEq(s.sensor).First(db)
+	return SensorQS{}.IDEq(s.sensor).First(db)
 }
 
 // SetSensor sets foreign key pointer to Sensor
 func (s *Sensorresync) SetSensor(ptr *Sensor) error {
 	if ptr != nil {
-		s.sensor = ptr.Id
+		s.sensor = ptr.ID
 	} else {
 		return fmt.Errorf("Sensorresync.SetSensor: non-null field received null value")
 	}
@@ -175,7 +175,7 @@ func (s *Sensorresync) GetSensorRaw() int32 {
 
 // SensorEq filters for sensor being equal to argument
 func (qs SensorresyncQS) SensorEq(v *Sensor) SensorresyncQS {
-	return qs.filter(`"sensor_id" =`, v.Id)
+	return qs.filter(`"sensor_id" =`, v.ID)
 }
 
 type inSensorresyncsensorSensor struct {
@@ -421,7 +421,101 @@ func (qs SensorresyncQS) First(db models.DBInterface) (*Sensorresync, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs SensorresyncQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "center_sensorresync"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs SensorresyncQS) Update() SensorresyncUpdateQS {
+	return SensorresyncUpdateQS{condFragments: qs.condFragments}
+}
+
+// SensorresyncUpdateQS represents an updated queryset for center.SensorResync
+type SensorresyncUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs SensorresyncUpdateQS) update(c string, v interface{}) SensorresyncUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs SensorresyncUpdateQS) SetID(v int32) SensorresyncUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetSensor sets foreign key pointer to Sensor
+func (uqs SensorresyncUpdateQS) SetSensor(ptr *Sensor) SensorresyncUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"sensor_id"`, ptr.ID)
+	}
+
+	return uqs.update(`"sensor_id"`, nil)
+} // SetTs sets Ts to the given value
+func (uqs SensorresyncUpdateQS) SetTs(v time.Time) SensorresyncUpdateQS {
+	return uqs.update(`"ts"`, v)
+}
+
+// Exec executes the update operation
+func (uqs SensorresyncUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := SensorresyncQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "center_sensorresync" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

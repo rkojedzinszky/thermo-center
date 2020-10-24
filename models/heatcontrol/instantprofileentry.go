@@ -38,38 +38,38 @@ func (qs InstantprofileentryQS) filter(c string, p interface{}) Instantprofileen
 	return qs
 }
 
-// GetId returns Instantprofileentry.Id
-func (i *Instantprofileentry) GetId() int32 {
+// GetID returns Instantprofileentry.ID
+func (i *Instantprofileentry) GetID() int32 {
 	return i.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs InstantprofileentryQS) IdEq(v int32) InstantprofileentryQS {
+// IDEq filters for id being equal to argument
+func (qs InstantprofileentryQS) IDEq(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs InstantprofileentryQS) IdNe(v int32) InstantprofileentryQS {
+// IDNe filters for id being not equal to argument
+func (qs InstantprofileentryQS) IDNe(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs InstantprofileentryQS) IdLt(v int32) InstantprofileentryQS {
+// IDLt filters for id being less than argument
+func (qs InstantprofileentryQS) IDLt(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs InstantprofileentryQS) IdLe(v int32) InstantprofileentryQS {
+// IDLe filters for id being less than or equal to argument
+func (qs InstantprofileentryQS) IDLe(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs InstantprofileentryQS) IdGt(v int32) InstantprofileentryQS {
+// IDGt filters for id being greater than argument
+func (qs InstantprofileentryQS) IDGt(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs InstantprofileentryQS) IdGe(v int32) InstantprofileentryQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs InstantprofileentryQS) IDGe(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -90,7 +90,7 @@ func (in *inInstantprofileentryid) GetConditionFragment(c *models.PositionalCoun
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs InstantprofileentryQS) IdIn(values []int32) InstantprofileentryQS {
+func (qs InstantprofileentryQS) IDIn(values []int32) InstantprofileentryQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -123,7 +123,7 @@ func (in *notinInstantprofileentryid) GetConditionFragment(c *models.PositionalC
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs InstantprofileentryQS) IdNotIn(values []int32) InstantprofileentryQS {
+func (qs InstantprofileentryQS) IDNotIn(values []int32) InstantprofileentryQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -139,15 +139,15 @@ func (qs InstantprofileentryQS) IdNotIn(values []int32) InstantprofileentryQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs InstantprofileentryQS) OrderById() InstantprofileentryQS {
+// OrderByID sorts result by ID in ascending order
+func (qs InstantprofileentryQS) OrderByID() InstantprofileentryQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs InstantprofileentryQS) OrderByIdDesc() InstantprofileentryQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs InstantprofileentryQS) OrderByIDDesc() InstantprofileentryQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -155,13 +155,13 @@ func (qs InstantprofileentryQS) OrderByIdDesc() InstantprofileentryQS {
 
 // GetProfile returns Instantprofile
 func (i *Instantprofileentry) GetProfile(db models.DBInterface) (*Instantprofile, error) {
-	return InstantprofileQS{}.IdEq(i.profile).First(db)
+	return InstantprofileQS{}.IDEq(i.profile).First(db)
 }
 
 // SetProfile sets foreign key pointer to Instantprofile
 func (i *Instantprofileentry) SetProfile(ptr *Instantprofile) error {
 	if ptr != nil {
-		i.profile = ptr.GetId()
+		i.profile = ptr.GetID()
 	} else {
 		return fmt.Errorf("Instantprofileentry.SetProfile: non-null field received null value")
 	}
@@ -176,7 +176,7 @@ func (i *Instantprofileentry) GetProfileRaw() int32 {
 
 // ProfileEq filters for profile being equal to argument
 func (qs InstantprofileentryQS) ProfileEq(v *Instantprofile) InstantprofileentryQS {
-	return qs.filter(`"profile_id" =`, v.GetId())
+	return qs.filter(`"profile_id" =`, v.GetID())
 }
 
 type inInstantprofileentryprofileInstantprofile struct {
@@ -216,13 +216,13 @@ func (qs InstantprofileentryQS) OrderByProfileDesc() InstantprofileentryQS {
 
 // GetControl returns Control
 func (i *Instantprofileentry) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IdEq(i.control).First(db)
+	return ControlQS{}.IDEq(i.control).First(db)
 }
 
 // SetControl sets foreign key pointer to Control
 func (i *Instantprofileentry) SetControl(ptr *Control) error {
 	if ptr != nil {
-		i.control = ptr.GetId()
+		i.control = ptr.GetID()
 	} else {
 		return fmt.Errorf("Instantprofileentry.SetControl: non-null field received null value")
 	}
@@ -237,7 +237,7 @@ func (i *Instantprofileentry) GetControlRaw() int32 {
 
 // ControlEq filters for control being equal to argument
 func (qs InstantprofileentryQS) ControlEq(v *Control) InstantprofileentryQS {
-	return qs.filter(`"control_id" =`, v.GetId())
+	return qs.filter(`"control_id" =`, v.GetID())
 }
 
 type inInstantprofileentrycontrolControl struct {
@@ -615,7 +615,113 @@ func (qs InstantprofileentryQS) First(db models.DBInterface) (*Instantprofileent
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs InstantprofileentryQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_instantprofileentry"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs InstantprofileentryQS) Update() InstantprofileentryUpdateQS {
+	return InstantprofileentryUpdateQS{condFragments: qs.condFragments}
+}
+
+// InstantprofileentryUpdateQS represents an updated queryset for heatcontrol.InstantProfileEntry
+type InstantprofileentryUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs InstantprofileentryUpdateQS) update(c string, v interface{}) InstantprofileentryUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs InstantprofileentryUpdateQS) SetID(v int32) InstantprofileentryUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetProfile sets foreign key pointer to Instantprofile
+func (uqs InstantprofileentryUpdateQS) SetProfile(ptr *Instantprofile) InstantprofileentryUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"profile_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"profile_id"`, nil)
+} // SetControl sets foreign key pointer to Control
+func (uqs InstantprofileentryUpdateQS) SetControl(ptr *Control) InstantprofileentryUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"control_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"control_id"`, nil)
+} // SetTargetTemp sets TargetTemp to the given value
+func (uqs InstantprofileentryUpdateQS) SetTargetTemp(v sql.NullFloat64) InstantprofileentryUpdateQS {
+	return uqs.update(`"target_temp"`, v)
+}
+
+// SetActive sets Active to the given value
+func (uqs InstantprofileentryUpdateQS) SetActive(v bool) InstantprofileentryUpdateQS {
+	return uqs.update(`"active"`, v)
+}
+
+// Exec executes the update operation
+func (uqs InstantprofileentryUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := InstantprofileentryQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_instantprofileentry" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

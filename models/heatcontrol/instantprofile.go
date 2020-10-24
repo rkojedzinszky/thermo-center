@@ -35,38 +35,38 @@ func (qs InstantprofileQS) filter(c string, p interface{}) InstantprofileQS {
 	return qs
 }
 
-// GetId returns Instantprofile.Id
-func (i *Instantprofile) GetId() int32 {
+// GetID returns Instantprofile.ID
+func (i *Instantprofile) GetID() int32 {
 	return i.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs InstantprofileQS) IdEq(v int32) InstantprofileQS {
+// IDEq filters for id being equal to argument
+func (qs InstantprofileQS) IDEq(v int32) InstantprofileQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs InstantprofileQS) IdNe(v int32) InstantprofileQS {
+// IDNe filters for id being not equal to argument
+func (qs InstantprofileQS) IDNe(v int32) InstantprofileQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs InstantprofileQS) IdLt(v int32) InstantprofileQS {
+// IDLt filters for id being less than argument
+func (qs InstantprofileQS) IDLt(v int32) InstantprofileQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs InstantprofileQS) IdLe(v int32) InstantprofileQS {
+// IDLe filters for id being less than or equal to argument
+func (qs InstantprofileQS) IDLe(v int32) InstantprofileQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs InstantprofileQS) IdGt(v int32) InstantprofileQS {
+// IDGt filters for id being greater than argument
+func (qs InstantprofileQS) IDGt(v int32) InstantprofileQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs InstantprofileQS) IdGe(v int32) InstantprofileQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs InstantprofileQS) IDGe(v int32) InstantprofileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -87,7 +87,7 @@ func (in *inInstantprofileid) GetConditionFragment(c *models.PositionalCounter) 
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs InstantprofileQS) IdIn(values []int32) InstantprofileQS {
+func (qs InstantprofileQS) IDIn(values []int32) InstantprofileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -120,7 +120,7 @@ func (in *notinInstantprofileid) GetConditionFragment(c *models.PositionalCounte
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs InstantprofileQS) IdNotIn(values []int32) InstantprofileQS {
+func (qs InstantprofileQS) IDNotIn(values []int32) InstantprofileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -136,15 +136,15 @@ func (qs InstantprofileQS) IdNotIn(values []int32) InstantprofileQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs InstantprofileQS) OrderById() InstantprofileQS {
+// OrderByID sorts result by ID in ascending order
+func (qs InstantprofileQS) OrderByID() InstantprofileQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs InstantprofileQS) OrderByIdDesc() InstantprofileQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs InstantprofileQS) OrderByIDDesc() InstantprofileQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -468,7 +468,99 @@ func (qs InstantprofileQS) First(db models.DBInterface) (*Instantprofile, error)
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs InstantprofileQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_instantprofile"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs InstantprofileQS) Update() InstantprofileUpdateQS {
+	return InstantprofileUpdateQS{condFragments: qs.condFragments}
+}
+
+// InstantprofileUpdateQS represents an updated queryset for heatcontrol.InstantProfile
+type InstantprofileUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs InstantprofileUpdateQS) update(c string, v interface{}) InstantprofileUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs InstantprofileUpdateQS) SetID(v int32) InstantprofileUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetName sets Name to the given value
+func (uqs InstantprofileUpdateQS) SetName(v string) InstantprofileUpdateQS {
+	return uqs.update(`"name"`, v)
+}
+
+// SetActive sets Active to the given value
+func (uqs InstantprofileUpdateQS) SetActive(v bool) InstantprofileUpdateQS {
+	return uqs.update(`"active"`, v)
+}
+
+// Exec executes the update operation
+func (uqs InstantprofileUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := InstantprofileQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_instantprofile" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

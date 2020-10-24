@@ -40,38 +40,38 @@ func (qs ControlQS) filter(c string, p interface{}) ControlQS {
 	return qs
 }
 
-// GetId returns Control.Id
-func (c *Control) GetId() int32 {
+// GetID returns Control.ID
+func (c *Control) GetID() int32 {
 	return c.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs ControlQS) IdEq(v int32) ControlQS {
+// IDEq filters for id being equal to argument
+func (qs ControlQS) IDEq(v int32) ControlQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs ControlQS) IdNe(v int32) ControlQS {
+// IDNe filters for id being not equal to argument
+func (qs ControlQS) IDNe(v int32) ControlQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs ControlQS) IdLt(v int32) ControlQS {
+// IDLt filters for id being less than argument
+func (qs ControlQS) IDLt(v int32) ControlQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs ControlQS) IdLe(v int32) ControlQS {
+// IDLe filters for id being less than or equal to argument
+func (qs ControlQS) IDLe(v int32) ControlQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs ControlQS) IdGt(v int32) ControlQS {
+// IDGt filters for id being greater than argument
+func (qs ControlQS) IDGt(v int32) ControlQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs ControlQS) IdGe(v int32) ControlQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs ControlQS) IDGe(v int32) ControlQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -92,7 +92,7 @@ func (in *inControlid) GetConditionFragment(c *models.PositionalCounter) (string
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ControlQS) IdIn(values []int32) ControlQS {
+func (qs ControlQS) IDIn(values []int32) ControlQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -125,7 +125,7 @@ func (in *notinControlid) GetConditionFragment(c *models.PositionalCounter) (str
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ControlQS) IdNotIn(values []int32) ControlQS {
+func (qs ControlQS) IDNotIn(values []int32) ControlQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -141,15 +141,15 @@ func (qs ControlQS) IdNotIn(values []int32) ControlQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs ControlQS) OrderById() ControlQS {
+// OrderByID sorts result by ID in ascending order
+func (qs ControlQS) OrderByID() ControlQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs ControlQS) OrderByIdDesc() ControlQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs ControlQS) OrderByIDDesc() ControlQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -157,13 +157,13 @@ func (qs ControlQS) OrderByIdDesc() ControlQS {
 
 // GetSensor returns center.Sensor
 func (c *Control) GetSensor(db models.DBInterface) (*center.Sensor, error) {
-	return center.SensorQS{}.IdEq(c.sensor).First(db)
+	return center.SensorQS{}.IDEq(c.sensor).First(db)
 }
 
 // SetSensor sets foreign key pointer to center.Sensor
 func (c *Control) SetSensor(ptr *center.Sensor) error {
 	if ptr != nil {
-		c.sensor = ptr.Id
+		c.sensor = ptr.ID
 	} else {
 		return fmt.Errorf("Control.SetSensor: non-null field received null value")
 	}
@@ -178,7 +178,7 @@ func (c *Control) GetSensorRaw() int32 {
 
 // SensorEq filters for sensor being equal to argument
 func (qs ControlQS) SensorEq(v *center.Sensor) ControlQS {
-	return qs.filter(`"sensor_id" =`, v.Id)
+	return qs.filter(`"sensor_id" =`, v.ID)
 }
 
 type inControlsensorSensor struct {
@@ -776,7 +776,116 @@ func (qs ControlQS) First(db models.DBInterface) (*Control, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs ControlQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_control"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs ControlQS) Update() ControlUpdateQS {
+	return ControlUpdateQS{condFragments: qs.condFragments}
+}
+
+// ControlUpdateQS represents an updated queryset for heatcontrol.Control
+type ControlUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs ControlUpdateQS) update(c string, v interface{}) ControlUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs ControlUpdateQS) SetID(v int32) ControlUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetSensor sets foreign key pointer to center.Sensor
+func (uqs ControlUpdateQS) SetSensor(ptr *center.Sensor) ControlUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"sensor_id"`, ptr.ID)
+	}
+
+	return uqs.update(`"sensor_id"`, nil)
+} // SetKp sets Kp to the given value
+func (uqs ControlUpdateQS) SetKp(v float64) ControlUpdateQS {
+	return uqs.update(`"kp"`, v)
+}
+
+// SetKi sets Ki to the given value
+func (uqs ControlUpdateQS) SetKi(v float64) ControlUpdateQS {
+	return uqs.update(`"ki"`, v)
+}
+
+// SetKd sets Kd to the given value
+func (uqs ControlUpdateQS) SetKd(v float64) ControlUpdateQS {
+	return uqs.update(`"kd"`, v)
+}
+
+// SetIntabsmax sets Intabsmax to the given value
+func (uqs ControlUpdateQS) SetIntabsmax(v sql.NullFloat64) ControlUpdateQS {
+	return uqs.update(`"intabsmax"`, v)
+}
+
+// Exec executes the update operation
+func (uqs ControlUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := ControlQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_control" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

@@ -38,38 +38,38 @@ func (qs RfconfigQS) filter(c string, p interface{}) RfconfigQS {
 	return qs
 }
 
-// GetId returns Rfconfig.Id
-func (r *Rfconfig) GetId() int32 {
+// GetID returns Rfconfig.ID
+func (r *Rfconfig) GetID() int32 {
 	return r.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs RfconfigQS) IdEq(v int32) RfconfigQS {
+// IDEq filters for id being equal to argument
+func (qs RfconfigQS) IDEq(v int32) RfconfigQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs RfconfigQS) IdNe(v int32) RfconfigQS {
+// IDNe filters for id being not equal to argument
+func (qs RfconfigQS) IDNe(v int32) RfconfigQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs RfconfigQS) IdLt(v int32) RfconfigQS {
+// IDLt filters for id being less than argument
+func (qs RfconfigQS) IDLt(v int32) RfconfigQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs RfconfigQS) IdLe(v int32) RfconfigQS {
+// IDLe filters for id being less than or equal to argument
+func (qs RfconfigQS) IDLe(v int32) RfconfigQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs RfconfigQS) IdGt(v int32) RfconfigQS {
+// IDGt filters for id being greater than argument
+func (qs RfconfigQS) IDGt(v int32) RfconfigQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs RfconfigQS) IdGe(v int32) RfconfigQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs RfconfigQS) IDGe(v int32) RfconfigQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -90,7 +90,7 @@ func (in *inRfconfigid) GetConditionFragment(c *models.PositionalCounter) (strin
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs RfconfigQS) IdIn(values []int32) RfconfigQS {
+func (qs RfconfigQS) IDIn(values []int32) RfconfigQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -123,7 +123,7 @@ func (in *notinRfconfigid) GetConditionFragment(c *models.PositionalCounter) (st
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs RfconfigQS) IdNotIn(values []int32) RfconfigQS {
+func (qs RfconfigQS) IDNotIn(values []int32) RfconfigQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -139,15 +139,15 @@ func (qs RfconfigQS) IdNotIn(values []int32) RfconfigQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs RfconfigQS) OrderById() RfconfigQS {
+// OrderByID sorts result by ID in ascending order
+func (qs RfconfigQS) OrderByID() RfconfigQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs RfconfigQS) OrderByIdDesc() RfconfigQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs RfconfigQS) OrderByIDDesc() RfconfigQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -265,13 +265,13 @@ func (qs RfconfigQS) OrderByRfChannelDesc() RfconfigQS {
 
 // GetRfProfile returns Rfprofile
 func (r *Rfconfig) GetRfProfile(db models.DBInterface) (*Rfprofile, error) {
-	return RfprofileQS{}.IdEq(r.rfProfile).First(db)
+	return RfprofileQS{}.IDEq(r.rfProfile).First(db)
 }
 
 // SetRfProfile sets foreign key pointer to Rfprofile
 func (r *Rfconfig) SetRfProfile(ptr *Rfprofile) error {
 	if ptr != nil {
-		r.rfProfile = ptr.GetId()
+		r.rfProfile = ptr.GetID()
 	} else {
 		return fmt.Errorf("Rfconfig.SetRfProfile: non-null field received null value")
 	}
@@ -286,7 +286,7 @@ func (r *Rfconfig) GetRfProfileRaw() int32 {
 
 // RfProfileEq filters for rfProfile being equal to argument
 func (qs RfconfigQS) RfProfileEq(v *Rfprofile) RfconfigQS {
-	return qs.filter(`"rf_profile_id" =`, v.GetId())
+	return qs.filter(`"rf_profile_id" =`, v.GetID())
 }
 
 type inRfconfigrfProfileRfprofile struct {
@@ -642,7 +642,111 @@ func (qs RfconfigQS) First(db models.DBInterface) (*Rfconfig, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs RfconfigQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "center_rfconfig"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs RfconfigQS) Update() RfconfigUpdateQS {
+	return RfconfigUpdateQS{condFragments: qs.condFragments}
+}
+
+// RfconfigUpdateQS represents an updated queryset for center.RFConfig
+type RfconfigUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs RfconfigUpdateQS) update(c string, v interface{}) RfconfigUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs RfconfigUpdateQS) SetID(v int32) RfconfigUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetRfChannel sets RfChannel to the given value
+func (uqs RfconfigUpdateQS) SetRfChannel(v int32) RfconfigUpdateQS {
+	return uqs.update(`"rf_channel"`, v)
+}
+
+// SetRfProfile sets foreign key pointer to Rfprofile
+func (uqs RfconfigUpdateQS) SetRfProfile(ptr *Rfprofile) RfconfigUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"rf_profile_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"rf_profile_id"`, nil)
+} // SetNetworkId sets NetworkId to the given value
+func (uqs RfconfigUpdateQS) SetNetworkId(v int32) RfconfigUpdateQS {
+	return uqs.update(`"network_id"`, v)
+}
+
+// SetAesKey sets AesKey to the given value
+func (uqs RfconfigUpdateQS) SetAesKey(v string) RfconfigUpdateQS {
+	return uqs.update(`"aes_key"`, v)
+}
+
+// Exec executes the update operation
+func (uqs RfconfigUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := RfconfigQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "center_rfconfig" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

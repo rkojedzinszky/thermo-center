@@ -37,38 +37,38 @@ func (qs CalendarQS) filter(c string, p interface{}) CalendarQS {
 	return qs
 }
 
-// GetId returns Calendar.Id
-func (c *Calendar) GetId() int32 {
+// GetID returns Calendar.ID
+func (c *Calendar) GetID() int32 {
 	return c.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs CalendarQS) IdEq(v int32) CalendarQS {
+// IDEq filters for id being equal to argument
+func (qs CalendarQS) IDEq(v int32) CalendarQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs CalendarQS) IdNe(v int32) CalendarQS {
+// IDNe filters for id being not equal to argument
+func (qs CalendarQS) IDNe(v int32) CalendarQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs CalendarQS) IdLt(v int32) CalendarQS {
+// IDLt filters for id being less than argument
+func (qs CalendarQS) IDLt(v int32) CalendarQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs CalendarQS) IdLe(v int32) CalendarQS {
+// IDLe filters for id being less than or equal to argument
+func (qs CalendarQS) IDLe(v int32) CalendarQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs CalendarQS) IdGt(v int32) CalendarQS {
+// IDGt filters for id being greater than argument
+func (qs CalendarQS) IDGt(v int32) CalendarQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs CalendarQS) IdGe(v int32) CalendarQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs CalendarQS) IDGe(v int32) CalendarQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -89,7 +89,7 @@ func (in *inCalendarid) GetConditionFragment(c *models.PositionalCounter) (strin
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs CalendarQS) IdIn(values []int32) CalendarQS {
+func (qs CalendarQS) IDIn(values []int32) CalendarQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -122,7 +122,7 @@ func (in *notinCalendarid) GetConditionFragment(c *models.PositionalCounter) (st
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs CalendarQS) IdNotIn(values []int32) CalendarQS {
+func (qs CalendarQS) IDNotIn(values []int32) CalendarQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -138,15 +138,15 @@ func (qs CalendarQS) IdNotIn(values []int32) CalendarQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs CalendarQS) OrderById() CalendarQS {
+// OrderByID sorts result by ID in ascending order
+func (qs CalendarQS) OrderByID() CalendarQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs CalendarQS) OrderByIdDesc() CalendarQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs CalendarQS) OrderByIDDesc() CalendarQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -264,13 +264,13 @@ func (qs CalendarQS) OrderByDayDesc() CalendarQS {
 
 // GetDaytype returns Daytype
 func (c *Calendar) GetDaytype(db models.DBInterface) (*Daytype, error) {
-	return DaytypeQS{}.IdEq(c.daytype).First(db)
+	return DaytypeQS{}.IDEq(c.daytype).First(db)
 }
 
 // SetDaytype sets foreign key pointer to Daytype
 func (c *Calendar) SetDaytype(ptr *Daytype) error {
 	if ptr != nil {
-		c.daytype = ptr.GetId()
+		c.daytype = ptr.GetID()
 	} else {
 		return fmt.Errorf("Calendar.SetDaytype: non-null field received null value")
 	}
@@ -285,7 +285,7 @@ func (c *Calendar) GetDaytypeRaw() int32 {
 
 // DaytypeEq filters for daytype being equal to argument
 func (qs CalendarQS) DaytypeEq(v *Daytype) CalendarQS {
-	return qs.filter(`"daytype_id" =`, v.GetId())
+	return qs.filter(`"daytype_id" =`, v.GetID())
 }
 
 type inCalendardaytypeDaytype struct {
@@ -421,7 +421,101 @@ func (qs CalendarQS) First(db models.DBInterface) (*Calendar, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs CalendarQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_calendar"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs CalendarQS) Update() CalendarUpdateQS {
+	return CalendarUpdateQS{condFragments: qs.condFragments}
+}
+
+// CalendarUpdateQS represents an updated queryset for heatcontrol.Calendar
+type CalendarUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs CalendarUpdateQS) update(c string, v interface{}) CalendarUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs CalendarUpdateQS) SetID(v int32) CalendarUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetDay sets Day to the given value
+func (uqs CalendarUpdateQS) SetDay(v time.Time) CalendarUpdateQS {
+	return uqs.update(`"day"`, v)
+}
+
+// SetDaytype sets foreign key pointer to Daytype
+func (uqs CalendarUpdateQS) SetDaytype(ptr *Daytype) CalendarUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"daytype_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"daytype_id"`, nil)
+} // Exec executes the update operation
+func (uqs CalendarUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := CalendarQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_calendar" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

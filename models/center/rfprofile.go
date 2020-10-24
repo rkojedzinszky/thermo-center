@@ -35,38 +35,38 @@ func (qs RfprofileQS) filter(c string, p interface{}) RfprofileQS {
 	return qs
 }
 
-// GetId returns Rfprofile.Id
-func (r *Rfprofile) GetId() int32 {
+// GetID returns Rfprofile.ID
+func (r *Rfprofile) GetID() int32 {
 	return r.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs RfprofileQS) IdEq(v int32) RfprofileQS {
+// IDEq filters for id being equal to argument
+func (qs RfprofileQS) IDEq(v int32) RfprofileQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs RfprofileQS) IdNe(v int32) RfprofileQS {
+// IDNe filters for id being not equal to argument
+func (qs RfprofileQS) IDNe(v int32) RfprofileQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs RfprofileQS) IdLt(v int32) RfprofileQS {
+// IDLt filters for id being less than argument
+func (qs RfprofileQS) IDLt(v int32) RfprofileQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs RfprofileQS) IdLe(v int32) RfprofileQS {
+// IDLe filters for id being less than or equal to argument
+func (qs RfprofileQS) IDLe(v int32) RfprofileQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs RfprofileQS) IdGt(v int32) RfprofileQS {
+// IDGt filters for id being greater than argument
+func (qs RfprofileQS) IDGt(v int32) RfprofileQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs RfprofileQS) IdGe(v int32) RfprofileQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs RfprofileQS) IDGe(v int32) RfprofileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -87,7 +87,7 @@ func (in *inRfprofileid) GetConditionFragment(c *models.PositionalCounter) (stri
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs RfprofileQS) IdIn(values []int32) RfprofileQS {
+func (qs RfprofileQS) IDIn(values []int32) RfprofileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -120,7 +120,7 @@ func (in *notinRfprofileid) GetConditionFragment(c *models.PositionalCounter) (s
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs RfprofileQS) IdNotIn(values []int32) RfprofileQS {
+func (qs RfprofileQS) IDNotIn(values []int32) RfprofileQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -136,15 +136,15 @@ func (qs RfprofileQS) IdNotIn(values []int32) RfprofileQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs RfprofileQS) OrderById() RfprofileQS {
+// OrderByID sorts result by ID in ascending order
+func (qs RfprofileQS) OrderByID() RfprofileQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs RfprofileQS) OrderByIdDesc() RfprofileQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs RfprofileQS) OrderByIDDesc() RfprofileQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -468,7 +468,99 @@ func (qs RfprofileQS) First(db models.DBInterface) (*Rfprofile, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs RfprofileQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "center_rfprofile"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs RfprofileQS) Update() RfprofileUpdateQS {
+	return RfprofileUpdateQS{condFragments: qs.condFragments}
+}
+
+// RfprofileUpdateQS represents an updated queryset for center.RFProfile
+type RfprofileUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs RfprofileUpdateQS) update(c string, v interface{}) RfprofileUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs RfprofileUpdateQS) SetID(v int32) RfprofileUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetName sets Name to the given value
+func (uqs RfprofileUpdateQS) SetName(v string) RfprofileUpdateQS {
+	return uqs.update(`"name"`, v)
+}
+
+// SetConfregs sets Confregs to the given value
+func (uqs RfprofileUpdateQS) SetConfregs(v string) RfprofileUpdateQS {
+	return uqs.update(`"confregs"`, v)
+}
+
+// Exec executes the update operation
+func (uqs RfprofileUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := RfprofileQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "center_rfprofile" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

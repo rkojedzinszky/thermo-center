@@ -42,38 +42,38 @@ func (qs ConfiguresensortaskQS) filter(c string, p interface{}) Configuresensort
 	return qs
 }
 
-// GetId returns Configuresensortask.Id
-func (c *Configuresensortask) GetId() int32 {
+// GetID returns Configuresensortask.ID
+func (c *Configuresensortask) GetID() int32 {
 	return c.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs ConfiguresensortaskQS) IdEq(v int32) ConfiguresensortaskQS {
+// IDEq filters for id being equal to argument
+func (qs ConfiguresensortaskQS) IDEq(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs ConfiguresensortaskQS) IdNe(v int32) ConfiguresensortaskQS {
+// IDNe filters for id being not equal to argument
+func (qs ConfiguresensortaskQS) IDNe(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs ConfiguresensortaskQS) IdLt(v int32) ConfiguresensortaskQS {
+// IDLt filters for id being less than argument
+func (qs ConfiguresensortaskQS) IDLt(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs ConfiguresensortaskQS) IdLe(v int32) ConfiguresensortaskQS {
+// IDLe filters for id being less than or equal to argument
+func (qs ConfiguresensortaskQS) IDLe(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs ConfiguresensortaskQS) IdGt(v int32) ConfiguresensortaskQS {
+// IDGt filters for id being greater than argument
+func (qs ConfiguresensortaskQS) IDGt(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs ConfiguresensortaskQS) IdGe(v int32) ConfiguresensortaskQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs ConfiguresensortaskQS) IDGe(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -94,7 +94,7 @@ func (in *inConfiguresensortaskid) GetConditionFragment(c *models.PositionalCoun
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ConfiguresensortaskQS) IdIn(values []int32) ConfiguresensortaskQS {
+func (qs ConfiguresensortaskQS) IDIn(values []int32) ConfiguresensortaskQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -127,7 +127,7 @@ func (in *notinConfiguresensortaskid) GetConditionFragment(c *models.PositionalC
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ConfiguresensortaskQS) IdNotIn(values []int32) ConfiguresensortaskQS {
+func (qs ConfiguresensortaskQS) IDNotIn(values []int32) ConfiguresensortaskQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -143,15 +143,15 @@ func (qs ConfiguresensortaskQS) IdNotIn(values []int32) ConfiguresensortaskQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs ConfiguresensortaskQS) OrderById() ConfiguresensortaskQS {
+// OrderByID sorts result by ID in ascending order
+func (qs ConfiguresensortaskQS) OrderByID() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs ConfiguresensortaskQS) OrderByIdDesc() ConfiguresensortaskQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs ConfiguresensortaskQS) OrderByIDDesc() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -159,13 +159,13 @@ func (qs ConfiguresensortaskQS) OrderByIdDesc() ConfiguresensortaskQS {
 
 // GetSensor returns Sensor
 func (c *Configuresensortask) GetSensor(db models.DBInterface) (*Sensor, error) {
-	return SensorQS{}.IdEq(c.sensor).First(db)
+	return SensorQS{}.IDEq(c.sensor).First(db)
 }
 
 // SetSensor sets foreign key pointer to Sensor
 func (c *Configuresensortask) SetSensor(ptr *Sensor) error {
 	if ptr != nil {
-		c.sensor = ptr.Id
+		c.sensor = ptr.ID
 	} else {
 		return fmt.Errorf("Configuresensortask.SetSensor: non-null field received null value")
 	}
@@ -180,7 +180,7 @@ func (c *Configuresensortask) GetSensorRaw() int32 {
 
 // SensorEq filters for sensor being equal to argument
 func (qs ConfiguresensortaskQS) SensorEq(v *Sensor) ConfiguresensortaskQS {
-	return qs.filter(`"sensor_id" =`, v.Id)
+	return qs.filter(`"sensor_id" =`, v.ID)
 }
 
 type inConfiguresensortasksensorSensor struct {
@@ -1086,7 +1086,126 @@ func (qs ConfiguresensortaskQS) First(db models.DBInterface) (*Configuresensorta
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs ConfiguresensortaskQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "center_configuresensortask"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs ConfiguresensortaskQS) Update() ConfiguresensortaskUpdateQS {
+	return ConfiguresensortaskUpdateQS{condFragments: qs.condFragments}
+}
+
+// ConfiguresensortaskUpdateQS represents an updated queryset for center.ConfigureSensorTask
+type ConfiguresensortaskUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs ConfiguresensortaskUpdateQS) update(c string, v interface{}) ConfiguresensortaskUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetID(v int32) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetSensor sets foreign key pointer to Sensor
+func (uqs ConfiguresensortaskUpdateQS) SetSensor(ptr *Sensor) ConfiguresensortaskUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"sensor_id"`, ptr.ID)
+	}
+
+	return uqs.update(`"sensor_id"`, nil)
+} // SetCreated sets Created to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetCreated(v time.Time) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"created"`, v)
+}
+
+// SetStarted sets Started to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetStarted(v sql.NullTime) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"started"`, v)
+}
+
+// SetFirstDiscovery sets FirstDiscovery to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetFirstDiscovery(v sql.NullTime) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"first_discovery"`, v)
+}
+
+// SetLastDiscovery sets LastDiscovery to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetLastDiscovery(v sql.NullTime) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"last_discovery"`, v)
+}
+
+// SetFinished sets Finished to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetFinished(v sql.NullTime) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"finished"`, v)
+}
+
+// SetError sets Error to the given value
+func (uqs ConfiguresensortaskUpdateQS) SetError(v sql.NullString) ConfiguresensortaskUpdateQS {
+	return uqs.update(`"error"`, v)
+}
+
+// Exec executes the update operation
+func (uqs ConfiguresensortaskUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := ConfiguresensortaskQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "center_configuresensortask" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation

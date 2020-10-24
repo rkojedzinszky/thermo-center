@@ -12,7 +12,7 @@ import (
 type Sensor struct {
 	existsInDB bool
 
-	Id      int32
+	ID      int32
 	Name    string
 	LastSeq sql.NullInt32
 	LastTsf sql.NullFloat64
@@ -36,41 +36,41 @@ func (qs SensorQS) filter(c string, p interface{}) SensorQS {
 	return qs
 }
 
-// IdEq filters for Id being equal to argument
-func (qs SensorQS) IdEq(v int32) SensorQS {
+// IDEq filters for ID being equal to argument
+func (qs SensorQS) IDEq(v int32) SensorQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for Id being not equal to argument
-func (qs SensorQS) IdNe(v int32) SensorQS {
+// IDNe filters for ID being not equal to argument
+func (qs SensorQS) IDNe(v int32) SensorQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for Id being less than argument
-func (qs SensorQS) IdLt(v int32) SensorQS {
+// IDLt filters for ID being less than argument
+func (qs SensorQS) IDLt(v int32) SensorQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for Id being less than or equal to argument
-func (qs SensorQS) IdLe(v int32) SensorQS {
+// IDLe filters for ID being less than or equal to argument
+func (qs SensorQS) IDLe(v int32) SensorQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for Id being greater than argument
-func (qs SensorQS) IdGt(v int32) SensorQS {
+// IDGt filters for ID being greater than argument
+func (qs SensorQS) IDGt(v int32) SensorQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for Id being greater than or equal to argument
-func (qs SensorQS) IdGe(v int32) SensorQS {
+// IDGe filters for ID being greater than or equal to argument
+func (qs SensorQS) IDGe(v int32) SensorQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inSensorId struct {
+type inSensorID struct {
 	values []interface{}
 }
 
-func (in *inSensorId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+func (in *inSensorID) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
 	if len(in.values) == 0 {
 		return `false`, nil
 	}
@@ -83,7 +83,7 @@ func (in *inSensorId) GetConditionFragment(c *models.PositionalCounter) (string,
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs SensorQS) IdIn(values []int32) SensorQS {
+func (qs SensorQS) IDIn(values []int32) SensorQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -91,7 +91,7 @@ func (qs SensorQS) IdIn(values []int32) SensorQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inSensorId{
+		&inSensorID{
 			values: vals,
 		},
 	)
@@ -99,11 +99,11 @@ func (qs SensorQS) IdIn(values []int32) SensorQS {
 	return qs
 }
 
-type notinSensorId struct {
+type notinSensorID struct {
 	values []interface{}
 }
 
-func (in *notinSensorId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+func (in *notinSensorID) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
 	if len(in.values) == 0 {
 		return `false`, nil
 	}
@@ -116,7 +116,7 @@ func (in *notinSensorId) GetConditionFragment(c *models.PositionalCounter) (stri
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs SensorQS) IdNotIn(values []int32) SensorQS {
+func (qs SensorQS) IDNotIn(values []int32) SensorQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -124,7 +124,7 @@ func (qs SensorQS) IdNotIn(values []int32) SensorQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinSensorId{
+		&notinSensorID{
 			values: vals,
 		},
 	)
@@ -132,15 +132,15 @@ func (qs SensorQS) IdNotIn(values []int32) SensorQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs SensorQS) OrderById() SensorQS {
+// OrderByID sorts result by ID in ascending order
+func (qs SensorQS) OrderByID() SensorQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs SensorQS) OrderByIdDesc() SensorQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs SensorQS) OrderByIDDesc() SensorQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -591,7 +591,7 @@ func (qs SensorQS) All(db models.DBInterface) ([]*Sensor, error) {
 	var ret []*Sensor
 	for rows.Next() {
 		obj := Sensor{existsInDB: true}
-		if err = rows.Scan(&obj.Id, &obj.Name, &obj.LastSeq, &obj.LastTsf); err != nil {
+		if err = rows.Scan(&obj.ID, &obj.Name, &obj.LastSeq, &obj.LastTsf); err != nil {
 			return nil, err
 		}
 		ret = append(ret, &obj)
@@ -609,7 +609,7 @@ func (qs SensorQS) First(db models.DBInterface) (*Sensor, error) {
 	row := db.QueryRow(s, p...)
 
 	obj := Sensor{existsInDB: true}
-	err := row.Scan(&obj.Id, &obj.Name, &obj.LastSeq, &obj.LastTsf)
+	err := row.Scan(&obj.ID, &obj.Name, &obj.LastSeq, &obj.LastTsf)
 	switch err {
 	case nil:
 		return &obj, nil
@@ -618,7 +618,104 @@ func (qs SensorQS) First(db models.DBInterface) (*Sensor, error) {
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs SensorQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "center_sensor"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs SensorQS) Update() SensorUpdateQS {
+	return SensorUpdateQS{condFragments: qs.condFragments}
+}
+
+// SensorUpdateQS represents an updated queryset for center.Sensor
+type SensorUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs SensorUpdateQS) update(c string, v interface{}) SensorUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs SensorUpdateQS) SetID(v int32) SensorUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetName sets Name to the given value
+func (uqs SensorUpdateQS) SetName(v string) SensorUpdateQS {
+	return uqs.update(`"name"`, v)
+}
+
+// SetLastSeq sets LastSeq to the given value
+func (uqs SensorUpdateQS) SetLastSeq(v sql.NullInt32) SensorUpdateQS {
+	return uqs.update(`"last_seq"`, v)
+}
+
+// SetLastTsf sets LastTsf to the given value
+func (uqs SensorUpdateQS) SetLastTsf(v sql.NullFloat64) SensorUpdateQS {
+	return uqs.update(`"last_tsf"`, v)
+}
+
+// Exec executes the update operation
+func (uqs SensorUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := SensorQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "center_sensor" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation
@@ -636,7 +733,7 @@ func (s *Sensor) insert(db models.DBInterface) error {
 
 // update operation
 func (s *Sensor) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_sensor" SET "name" = $1, "last_seq" = $2, "last_tsf" = $3 WHERE "id" = $4`, s.Name, s.LastSeq, s.LastTsf, s.Id)
+	_, err := db.Exec(`UPDATE "center_sensor" SET "name" = $1, "last_seq" = $2, "last_tsf" = $3 WHERE "id" = $4`, s.Name, s.LastSeq, s.LastTsf, s.ID)
 
 	return err
 }
@@ -652,7 +749,7 @@ func (s *Sensor) Save(db models.DBInterface) error {
 
 // Delete removes row from database
 func (s *Sensor) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "center_sensor" WHERE "id" = $1`, s.Id)
+	_, err := db.Exec(`DELETE FROM "center_sensor" WHERE "id" = $1`, s.ID)
 
 	s.existsInDB = false
 

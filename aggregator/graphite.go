@@ -44,7 +44,7 @@ func (g *GraphiteSender) Push(s sensorStat) bool {
 		if fv, ok := v.(float64); ok {
 			// Prepare carbon metric path
 			g.carbonPathTemplate.Execute(buffer, &carbonMetric{
-				SensorID: s.Sensor.Id,
+				SensorID: s.Sensor.ID,
 				Metric:   m,
 			})
 			// append metric value, terminate line with newline

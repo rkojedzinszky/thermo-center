@@ -36,7 +36,7 @@ func NewMqttClient(mqttHost string, mqttPort int) *MqttClient {
 
 // Push enqueues a SensorStat to send
 func (cl *MqttClient) Push(s sensorStat) bool {
-	topic := fmt.Sprintf(mqttTopicTemplate, s.Sensor.Id)
+	topic := fmt.Sprintf(mqttTopicTemplate, s.Sensor.ID)
 	data, _ := json.Marshal(s.Stat)
 
 	select {

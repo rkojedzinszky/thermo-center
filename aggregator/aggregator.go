@@ -137,7 +137,7 @@ func (a *aggregator) lockSensor(id uint8) (bool, error) {
 }
 
 func sensorControlKey(s *center.Sensor) string {
-	return fmt.Sprintf(sensorControlKeyTemplate, s.Id)
+	return fmt.Sprintf(sensorControlKeyTemplate, s.ID)
 }
 
 // update sequence values from cache
@@ -175,7 +175,7 @@ func (a *aggregator) validateSensorPacket(s *center.Sensor, p *SensorPacket) (fl
 		s.LastTsf.Valid = true
 
 		if save || rand.Float64() < a.updateProbability {
-			s.Save(a.db)
+			center.SensorQS{}.IDEq(s.ID).Update().SetLastSeq(s.LastSeq).SetLastTsf(s.LastTsf).Exec(a.db)
 		}
 	}
 
@@ -213,7 +213,7 @@ func (a *aggregator) savePidControl(s *center.Sensor, pid *pidController) error 
 }
 
 func sensorCacheKey(s *center.Sensor) string {
-	return fmt.Sprintf(sensorCacheKeyTemplate, s.Id)
+	return fmt.Sprintf(sensorCacheKeyTemplate, s.ID)
 }
 
 // save metric values in cache
@@ -242,7 +242,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 	var ipe *heatcontrol.Instantprofileentry
 	var err error
 
-	so, err = heatcontrol.ScheduledoverrideQS{}.ControlEq(c).StartLe(now).EndGt(now).OrderByIdDesc().First(a.db)
+	so, err = heatcontrol.ScheduledoverrideQS{}.ControlEq(c).StartLe(now).EndGt(now).OrderByIDDesc().First(a.db)
 
 	if err != nil {
 		return nil, err
@@ -273,7 +273,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 		where "control_id" = $1 and daytype_id =
 			(select "daytype_id" from heatcontrol_calendar where day = $2::date)
 		and start <= $3::time order by "heatcontrol_profile"."start" desc`,
-		c.GetId(), now, now,
+		c.GetID(), now, now,
 	)
 
 	err = row.Scan(&targetTemp)
@@ -305,7 +305,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 		}, nil
 	}
 
-	sensor, err := center.SensorQS{}.IdEq(int32(p.Id)).First(a.db)
+	sensor, err := center.SensorQS{}.IDEq(int32(p.Id)).First(a.db)
 	if err != nil || sensor == nil {
 		return &FeedResponse{
 			Processed: false,

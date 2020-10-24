@@ -28,7 +28,7 @@ func (c *configurator) GetRadioCfg(ctx context.Context, r *RadioCfgRequest) (*Ra
 		return nil, fmt.Errorf("Invalid cluster ID received")
 	}
 
-	config, err := center.RfconfigQS{}.IdEq(int32(r.Cluster)).First(c.db)
+	config, err := center.RfconfigQS{}.IDEq(int32(r.Cluster)).First(c.db)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *configurator) TaskAcquire(ctx context.Context, t *Task) (*TaskDetails, 
 	}
 	defer tx.Rollback()
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IdEq(int32(t.TaskId)).StartedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNull().First(tx)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *configurator) TaskAcquire(ctx context.Context, t *Task) (*TaskDetails, 
 	}
 
 	return &TaskDetails{
-		TaskId:   uint32(task.GetId()),
+		TaskId:   uint32(task.GetID()),
 		SensorId: uint32(task.GetSensorRaw()),
 		Config:   cfg,
 	}, nil
@@ -95,7 +95,7 @@ func (c *configurator) TaskDiscoveryReceived(ctx context.Context, t *Task) (*Tas
 	}
 	defer tx.Rollback()
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IdEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (c *configurator) TaskFinished(ctx context.Context, t *TaskFinishedRequest)
 	}
 	defer tx.Rollback()
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IdEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
 	if err != nil {
 		return nil, err
 	}

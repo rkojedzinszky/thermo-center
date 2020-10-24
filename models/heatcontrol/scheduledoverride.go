@@ -39,38 +39,38 @@ func (qs ScheduledoverrideQS) filter(c string, p interface{}) ScheduledoverrideQ
 	return qs
 }
 
-// GetId returns Scheduledoverride.Id
-func (s *Scheduledoverride) GetId() int32 {
+// GetID returns Scheduledoverride.ID
+func (s *Scheduledoverride) GetID() int32 {
 	return s.id
 }
 
-// IdEq filters for id being equal to argument
-func (qs ScheduledoverrideQS) IdEq(v int32) ScheduledoverrideQS {
+// IDEq filters for id being equal to argument
+func (qs ScheduledoverrideQS) IDEq(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" =`, v)
 }
 
-// IdNe filters for id being not equal to argument
-func (qs ScheduledoverrideQS) IdNe(v int32) ScheduledoverrideQS {
+// IDNe filters for id being not equal to argument
+func (qs ScheduledoverrideQS) IDNe(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" <>`, v)
 }
 
-// IdLt filters for id being less than argument
-func (qs ScheduledoverrideQS) IdLt(v int32) ScheduledoverrideQS {
+// IDLt filters for id being less than argument
+func (qs ScheduledoverrideQS) IDLt(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" <`, v)
 }
 
-// IdLe filters for id being less than or equal to argument
-func (qs ScheduledoverrideQS) IdLe(v int32) ScheduledoverrideQS {
+// IDLe filters for id being less than or equal to argument
+func (qs ScheduledoverrideQS) IDLe(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" <=`, v)
 }
 
-// IdGt filters for id being greater than argument
-func (qs ScheduledoverrideQS) IdGt(v int32) ScheduledoverrideQS {
+// IDGt filters for id being greater than argument
+func (qs ScheduledoverrideQS) IDGt(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" >`, v)
 }
 
-// IdGe filters for id being greater than or equal to argument
-func (qs ScheduledoverrideQS) IdGe(v int32) ScheduledoverrideQS {
+// IDGe filters for id being greater than or equal to argument
+func (qs ScheduledoverrideQS) IDGe(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" >=`, v)
 }
 
@@ -91,7 +91,7 @@ func (in *inScheduledoverrideid) GetConditionFragment(c *models.PositionalCounte
 	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ScheduledoverrideQS) IdIn(values []int32) ScheduledoverrideQS {
+func (qs ScheduledoverrideQS) IDIn(values []int32) ScheduledoverrideQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -124,7 +124,7 @@ func (in *notinScheduledoverrideid) GetConditionFragment(c *models.PositionalCou
 	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
 }
 
-func (qs ScheduledoverrideQS) IdNotIn(values []int32) ScheduledoverrideQS {
+func (qs ScheduledoverrideQS) IDNotIn(values []int32) ScheduledoverrideQS {
 	var vals []interface{}
 	for _, v := range values {
 		vals = append(vals, v)
@@ -140,15 +140,15 @@ func (qs ScheduledoverrideQS) IdNotIn(values []int32) ScheduledoverrideQS {
 	return qs
 }
 
-// OrderById sorts result by Id in ascending order
-func (qs ScheduledoverrideQS) OrderById() ScheduledoverrideQS {
+// OrderByID sorts result by ID in ascending order
+func (qs ScheduledoverrideQS) OrderByID() ScheduledoverrideQS {
 	qs.order = append(qs.order, `"id"`)
 
 	return qs
 }
 
-// OrderByIdDesc sorts result by Id in descending order
-func (qs ScheduledoverrideQS) OrderByIdDesc() ScheduledoverrideQS {
+// OrderByIDDesc sorts result by ID in descending order
+func (qs ScheduledoverrideQS) OrderByIDDesc() ScheduledoverrideQS {
 	qs.order = append(qs.order, `"id" DESC`)
 
 	return qs
@@ -156,13 +156,13 @@ func (qs ScheduledoverrideQS) OrderByIdDesc() ScheduledoverrideQS {
 
 // GetControl returns Control
 func (s *Scheduledoverride) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IdEq(s.control).First(db)
+	return ControlQS{}.IDEq(s.control).First(db)
 }
 
 // SetControl sets foreign key pointer to Control
 func (s *Scheduledoverride) SetControl(ptr *Control) error {
 	if ptr != nil {
-		s.control = ptr.GetId()
+		s.control = ptr.GetID()
 	} else {
 		return fmt.Errorf("Scheduledoverride.SetControl: non-null field received null value")
 	}
@@ -177,7 +177,7 @@ func (s *Scheduledoverride) GetControlRaw() int32 {
 
 // ControlEq filters for control being equal to argument
 func (qs ScheduledoverrideQS) ControlEq(v *Control) ScheduledoverrideQS {
-	return qs.filter(`"control_id" =`, v.GetId())
+	return qs.filter(`"control_id" =`, v.GetID())
 }
 
 type inScheduledoverridecontrolControl struct {
@@ -643,7 +643,111 @@ func (qs ScheduledoverrideQS) First(db models.DBInterface) (*Scheduledoverride, 
 	default:
 		return nil, err
 	}
+}
 
+// Delete deletes rows matching queryset filters
+func (qs ScheduledoverrideQS) Delete(db models.DBInterface) (int64, error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+	s = `DELETE FROM "heatcontrol_scheduledoverride"` + s
+
+	result, err := db.Exec(s, p...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
+// Update returns an Update queryset inheriting all the filter conditions, which then can be
+// used to specify columns to be updated. At the end, .Exec() must be called to do the real operation.
+func (qs ScheduledoverrideQS) Update() ScheduledoverrideUpdateQS {
+	return ScheduledoverrideUpdateQS{condFragments: qs.condFragments}
+}
+
+// ScheduledoverrideUpdateQS represents an updated queryset for heatcontrol.ScheduledOverride
+type ScheduledoverrideUpdateQS struct {
+	updates       []models.ConditionFragment
+	condFragments []models.ConditionFragment
+}
+
+func (uqs ScheduledoverrideUpdateQS) update(c string, v interface{}) ScheduledoverrideUpdateQS {
+	var frag models.ConditionFragment
+
+	if v == nil {
+		frag = &models.ConstantFragment{
+			Constant: c + " = NULL",
+		}
+	} else {
+		frag = &models.UnaryFragment{
+			Frag:  c + " =",
+			Param: v,
+		}
+	}
+
+	uqs.updates = append(uqs.updates, frag)
+
+	return uqs
+}
+
+// SetID sets ID to the given value
+func (uqs ScheduledoverrideUpdateQS) SetID(v int32) ScheduledoverrideUpdateQS {
+	return uqs.update(`"id"`, v)
+}
+
+// SetControl sets foreign key pointer to Control
+func (uqs ScheduledoverrideUpdateQS) SetControl(ptr *Control) ScheduledoverrideUpdateQS {
+	if ptr != nil {
+		return uqs.update(`"control_id"`, ptr.GetID())
+	}
+
+	return uqs.update(`"control_id"`, nil)
+} // SetStart sets Start to the given value
+func (uqs ScheduledoverrideUpdateQS) SetStart(v time.Time) ScheduledoverrideUpdateQS {
+	return uqs.update(`"start"`, v)
+}
+
+// SetEnd sets End to the given value
+func (uqs ScheduledoverrideUpdateQS) SetEnd(v time.Time) ScheduledoverrideUpdateQS {
+	return uqs.update(`"end"`, v)
+}
+
+// SetTargetTemp sets TargetTemp to the given value
+func (uqs ScheduledoverrideUpdateQS) SetTargetTemp(v float64) ScheduledoverrideUpdateQS {
+	return uqs.update(`"target_temp"`, v)
+}
+
+// Exec executes the update operation
+func (uqs ScheduledoverrideUpdateQS) Exec(db models.DBInterface) (int64, error) {
+	if len(uqs.updates) == 0 {
+		return 0, nil
+	}
+
+	c := &models.PositionalCounter{}
+
+	var params []interface{}
+
+	var sets []string
+	for _, set := range uqs.updates {
+		s, p := set.GetConditionFragment(c)
+
+		sets = append(sets, s)
+		params = append(params, p...)
+	}
+
+	ws, wp := ScheduledoverrideQS{condFragments: uqs.condFragments}.whereClause(c)
+
+	st := `UPDATE "heatcontrol_scheduledoverride" SET ` + strings.Join(sets, ", ") + ws
+
+	params = append(params, wp...)
+
+	result, err := db.Exec(st, params...)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // insert operation
