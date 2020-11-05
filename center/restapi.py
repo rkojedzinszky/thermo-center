@@ -3,6 +3,8 @@
 import datetime
 import time
 import grpc
+import functools
+from django.db import connection
 from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -145,7 +147,10 @@ restapi.RestApi.register(ConfigureSensorTaskResourceInstance)
 @receiver(post_save, sender=ConfigureSensorTask)
 def _receiver_handletask(sender, instance, created, **kwargs):
     if created:
-        channel = grpc.insecure_channel('{}:{}'.format(settings.RECEIVER_HOST, settings.RECEIVER_PORT))
-        receiver = api_pb2_grpc.ReceiverStub(channel)
-        receiver.HandleTask(cfg_pb2.Task(task_id=instance.id))
-        channel.close()
+        connection.on_commit(functools.partial(_receiver_handletask_real, instance))
+
+def _receiver_handletask_real(instance):
+    channel = grpc.insecure_channel('{}:{}'.format(settings.RECEIVER_HOST, settings.RECEIVER_PORT))
+    receiver = api_pb2_grpc.ReceiverStub(channel)
+    receiver.HandleTask(cfg_pb2.Task(task_id=instance.id))
+    channel.close()
