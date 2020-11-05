@@ -49,22 +49,22 @@ func (r *Runner) Run(ctx context.Context) {
 		close(r.task)
 	}()
 
-	task := <-r.task
+	t := <-r.task
 
 	for {
 		// Run current task in loop
 		tctx, tcancel := context.WithCancel(ctx)
 		wg := &sync.WaitGroup{}
 		wg.Add(1)
-		go func(ctx context.Context) {
+		go func(ctx context.Context, t task) {
 			defer wg.Done()
 
 			for {
-				log.Printf("%s: starting\n", task.name())
-				if err := task.run(ctx); err != nil {
-					log.Printf("%s exited with: %+v\n", task.name(), err)
+				log.Printf("%s: starting\n", t.name())
+				if err := t.run(ctx); err != nil {
+					log.Printf("%s exited with: %+v\n", t.name(), err)
 				}
-				log.Printf("%s: finished\n", task.name())
+				log.Printf("%s: finished\n", t.name())
 
 				// Repeat until context closed
 				select {
@@ -75,11 +75,11 @@ func (r *Runner) Run(ctx context.Context) {
 
 				time.Sleep(1 * time.Second)
 			}
-		}(tctx)
+		}(tctx, t)
 
 		// Wait for new task
 		var ok bool
-		task, ok = <-r.task
+		t, ok = <-r.task
 		// Stop previous task
 		tcancel()
 		wg.Wait()

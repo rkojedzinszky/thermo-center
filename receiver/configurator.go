@@ -37,6 +37,9 @@ func (c *configTask) run(ctx context.Context) error {
 		case <-ctx.Done():
 		case c.r.task <- c.r.receiverTask():
 		}
+
+		// Wait to be cancelled
+		<-ctx.Done()
 	}()
 
 	task, err := c.r.configurator.TaskAcquire(ctx, c.task)
