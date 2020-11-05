@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model center.Sensor
+/*
+  AUTO-GENERATED file for Django model center.Sensor
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package center
 
@@ -754,4 +762,14 @@ func (s *Sensor) Delete(db models.DBInterface) error {
 	s.existsInDB = false
 
 	return err
+}
+
+// Sensorresync returns the set of Sensorresync referencing this Sensor instance
+func (s *Sensor) Sensorresync() SensorresyncQS {
+	return SensorresyncQS{}.SensorEq(s)
+}
+
+// Configuresensortask returns the set of Configuresensortask referencing this Sensor instance
+func (s *Sensor) Configuresensortask() ConfiguresensortaskQS {
+	return ConfiguresensortaskQS{}.SensorEq(s)
 }
