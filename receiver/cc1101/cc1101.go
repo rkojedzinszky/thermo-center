@@ -184,6 +184,17 @@ func (cc *CC1101) ReadRXFifo(len int) ([]byte, error) {
 	return rx[1:], nil
 }
 
+// WriteTXFifo reads len bytes from rxfifo
+func (cc *CC1101) WriteTXFifo(tx []byte) error {
+	rtx := make([]byte, len(tx)+1)
+	copy(rtx[1:], tx)
+	rtx[0] = 0x7f
+
+	rx := make([]byte, len(rtx))
+
+	return cc.spi.Tx(rtx, rx)
+}
+
 // Reset resets the CC1101
 func (cc *CC1101) Reset() error {
 	cmd := make([]byte, 1)

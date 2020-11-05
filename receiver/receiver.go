@@ -12,14 +12,14 @@ import (
 	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
 )
 
-func newReceiver(r *runner) *receiver {
+func (r *Runner) receiverTask() *receiver {
 	return &receiver{
 		runner: r,
 	}
 }
 
 type receiver struct {
-	runner *runner
+	runner *Runner
 	cfg    *configurator.RadioCfgResponse
 	aes    cipher.Block
 }

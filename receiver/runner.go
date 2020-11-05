@@ -1,6 +1,7 @@
 package receiver
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -14,23 +15,8 @@ import (
 	"github.com/rkojedzinszky/thermo-center/receiver/gpiointerrupt"
 )
 
-// Run the receiver code
-func Run(ctx context.Context, grpcClient *grpc.ClientConn, cc1101 *cc1101.CC1101, gpioInt *gpiointerrupt.Interrupt) {
-	r := &runner{
-		configurator: configurator.NewConfiguratorClient(grpcClient),
-		aggregator:   aggregator.NewAggregatorClient(grpcClient),
-		radio:        radio{cc1101: cc1101},
-		interrupt:    gpioInt,
-		task:         make(chan task, 1),
-	}
-
-	// Initial task
-	r.task <- newReceiver(r)
-
-	r.run(ctx)
-}
-
-type runner struct {
+// Runner handles configuration and receiver tasks
+type Runner struct {
 	configurator configurator.ConfiguratorClient
 	aggregator   aggregator.AggregatorClient
 	radio        radio
@@ -39,7 +25,24 @@ type runner struct {
 	task chan task
 }
 
-func (r *runner) run(ctx context.Context) {
+// NewRunner creates a Runner instance
+func NewRunner(grpcClient *grpc.ClientConn, cc1101 *cc1101.CC1101, gpioInt *gpiointerrupt.Interrupt) *Runner {
+	r := &Runner{
+		configurator: configurator.NewConfiguratorClient(grpcClient),
+		aggregator:   aggregator.NewAggregatorClient(grpcClient),
+		radio:        radio{cc1101: cc1101},
+		interrupt:    gpioInt,
+		task:         make(chan task, 1),
+	}
+
+	// Initial task
+	r.task <- r.receiverTask()
+
+	return r
+}
+
+// Run runs the Runner main loop
+func (r *Runner) Run(ctx context.Context) {
 	// Handle context cancellation
 	go func() {
 		<-ctx.Done()
@@ -56,20 +59,22 @@ func (r *runner) run(ctx context.Context) {
 		go func(ctx context.Context) {
 			defer wg.Done()
 
-			log.Printf("%s: starting\n", task.name())
-			if err := task.run(ctx); err != nil {
-				log.Printf("%s exited with: %+v\n", task.name(), err)
-			}
-			log.Printf("%s: finished\n", task.name())
+			for {
+				log.Printf("%s: starting\n", task.name())
+				if err := task.run(ctx); err != nil {
+					log.Printf("%s exited with: %+v\n", task.name(), err)
+				}
+				log.Printf("%s: finished\n", task.name())
 
-			// Repeat until context closed
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
+				// Repeat until context closed
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
 
-			time.Sleep(1 * time.Second)
+				time.Sleep(1 * time.Second)
+			}
 		}(tctx)
 
 		// Wait for new task
@@ -83,6 +88,17 @@ func (r *runner) run(ctx context.Context) {
 			break
 		}
 	}
+}
+
+// HandleTask starts handling a configuration task
+func (r *Runner) HandleTask(ctx context.Context, task *configurator.Task) (*HandleResponse, error) {
+	select {
+	case r.task <- r.configTask(task):
+	default:
+		return &HandleResponse{Success: false}, fmt.Errorf("failed to write to channel")
+	}
+
+	return &HandleResponse{Success: true}, nil
 }
 
 type task interface {

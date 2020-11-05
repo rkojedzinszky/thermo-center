@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,6 +29,7 @@ func main() {
 	gpioDir := flag.String("gpio-dir", "/gpio", "GPIO dir for interrupt")
 	grpcHost := flag.String("grpcserver-host", "grpcserver", "Grpcserver hostname/address")
 	grpcPort := flag.Int("grpcserver-port", 8079, "Grpcserver port")
+	receiverPort := flag.Int("receiver-port", 8079, "Receiver port")
 
 	flag.Parse()
 
@@ -55,6 +57,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", *receiverPort))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	grpcServer := grpc.NewServer()
+
+	runner := receiver.NewRunner(grpcClient, cc1101.New(spiConn), ih)
+
+	receiver.RegisterReceiverServer(grpcServer, runner)
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go func() {
@@ -66,5 +79,11 @@ func main() {
 		cancel()
 	}()
 
-	receiver.Run(ctx, grpcClient, cc1101.New(spiConn), ih)
+	go grpcServer.Serve(listen)
+	go func() {
+		<-ctx.Done()
+		grpcServer.Stop()
+	}()
+
+	runner.Run(ctx)
 }
