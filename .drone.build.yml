@@ -29,16 +29,6 @@ steps:
   - name: docker
     path: /var/lib/docker
 
-- name: receiver
-  image: plugins/docker
-  settings:
-    dockerfile: receiver/Dockerfile
-    repo: rkojedzinszky/thermo-center-receiver
-    username: rkojedzinszky
-    password:
-      from_secret: hub_docker_password
-    auto_tag: true
-
 - name: golang-build
   image: golang:1.15-alpine
   commands:
@@ -49,7 +39,20 @@ steps:
   - mkdir bin
   - CGO_ENABLED=0 go build -o bin/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -o bin/ws ./ws
+  - CGO_ENABLED=0 go build -o bin/receiver ./cmd/receiver
   - strip -s bin/*
+
+- name: receiver
+  image: plugins/docker
+  settings:
+    dockerfile: Dockerfile.receiver
+    repo: rkojedzinszky/thermo-center-receiver
+    username: rkojedzinszky
+    password:
+      from_secret: hub_docker_password
+    auto_tag: true
+  depends_on:
+  - golang-build
 
 - name: grpcserver
   image: plugins/docker
