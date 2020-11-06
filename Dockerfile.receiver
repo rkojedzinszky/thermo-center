@@ -6,6 +6,4 @@ EXPOSE 8079
 
 USER 8079
 
-ENV GOGC=50
-
 CMD ["/receiver"]
