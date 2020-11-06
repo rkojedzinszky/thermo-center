@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model heatcontrol.Control
+/*
+  AUTO-GENERATED file for Django model heatcontrol.Control
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package heatcontrol
 
@@ -924,4 +932,19 @@ func (c *Control) Delete(db models.DBInterface) error {
 	c.existsInDB = false
 
 	return err
+}
+
+// Profile returns the set of Profile referencing this Control instance
+func (c *Control) Profile() ProfileQS {
+	return ProfileQS{}.ControlEq(c)
+}
+
+// Scheduledoverride returns the set of Scheduledoverride referencing this Control instance
+func (c *Control) Scheduledoverride() ScheduledoverrideQS {
+	return ScheduledoverrideQS{}.ControlEq(c)
+}
+
+// Instantprofileentry returns the set of Instantprofileentry referencing this Control instance
+func (c *Control) Instantprofileentry() InstantprofileentryQS {
+	return InstantprofileentryQS{}.ControlEq(c)
 }

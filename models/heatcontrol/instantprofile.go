@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model heatcontrol.InstantProfile
+/*
+  AUTO-GENERATED file for Django model heatcontrol.InstantProfile
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package heatcontrol
 
@@ -599,4 +607,9 @@ func (i *Instantprofile) Delete(db models.DBInterface) error {
 	i.existsInDB = false
 
 	return err
+}
+
+// Instantprofileentry returns the set of Instantprofileentry referencing this Instantprofile instance
+func (i *Instantprofile) Instantprofileentry() InstantprofileentryQS {
+	return InstantprofileentryQS{}.ProfileEq(i)
 }

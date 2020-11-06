@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model center.SensorResync
+/*
+  AUTO-GENERATED file for Django model center.SensorResync
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package center
 

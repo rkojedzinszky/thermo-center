@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model heatcontrol.DayType
+/*
+  AUTO-GENERATED file for Django model heatcontrol.DayType
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package heatcontrol
 
@@ -483,4 +491,14 @@ func (d *Daytype) Delete(db models.DBInterface) error {
 	d.existsInDB = false
 
 	return err
+}
+
+// Calendar returns the set of Calendar referencing this Daytype instance
+func (d *Daytype) Calendar() CalendarQS {
+	return CalendarQS{}.DaytypeEq(d)
+}
+
+// Profile returns the set of Profile referencing this Daytype instance
+func (d *Daytype) Profile() ProfileQS {
+	return ProfileQS{}.DaytypeEq(d)
 }

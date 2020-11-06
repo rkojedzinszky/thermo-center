@@ -1,4 +1,12 @@
-// AUTO-GENERATED file for Django model center.RFProfile
+/*
+  AUTO-GENERATED file for Django model center.RFProfile
+
+  Command used to generate:
+
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+
+  https://github.com/rkojedzinszky/djan-go-rm
+*/
 
 package center
 
@@ -599,4 +607,9 @@ func (r *Rfprofile) Delete(db models.DBInterface) error {
 	r.existsInDB = false
 
 	return err
+}
+
+// Rfconfig returns the set of Rfconfig referencing this Rfprofile instance
+func (r *Rfprofile) Rfconfig() RfconfigQS {
+	return RfconfigQS{}.RfProfileEq(r)
 }
