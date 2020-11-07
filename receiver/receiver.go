@@ -81,7 +81,6 @@ func (r *receiver) loop(ctx context.Context) (err error) {
 	r.runner.interrupt.SetContext(watchdogctx)
 
 	for {
-		// TODO: interrupt storm
 		if err = r.runner.interrupt.Wait(); err != nil {
 			return
 		}

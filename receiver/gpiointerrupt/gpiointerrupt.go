@@ -7,6 +7,13 @@ import (
 	"path"
 	"strconv"
 	"syscall"
+
+	"github.com/rkojedzinszky/thermo-center/receiver/tbf"
+)
+
+const (
+	interruptMaxRate = 5
+	interruptBurst   = 60
 )
 
 // Interrupt provides an interrupt source received from an exportd
@@ -18,6 +25,9 @@ type Interrupt struct {
 	// Context handling
 	ctxRfd   int
 	ctxClose chan struct{}
+
+	// Storm handling
+	tbf *tbf.TokenBucket
 }
 
 // New allocates a new GPI
@@ -25,6 +35,7 @@ func New(dir string) (i *Interrupt, err error) {
 	i = &Interrupt{
 		epollFd: -1,
 		ctxRfd:  -1,
+		tbf:     tbf.New(interruptMaxRate, interruptBurst),
 	}
 
 	defer func() {
@@ -142,6 +153,10 @@ func (i *Interrupt) Wait() error {
 				return fmt.Errorf("Interrupt.Wait() cancelled")
 			}
 		}
+	}
+
+	if i.tbf.Get(1) == false {
+		return fmt.Errorf("Interrupt storm detected")
 	}
 
 	return nil
