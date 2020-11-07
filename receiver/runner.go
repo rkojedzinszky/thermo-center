@@ -60,11 +60,11 @@ func (r *Runner) Run(ctx context.Context) {
 			defer wg.Done()
 
 			for {
-				log.Printf("%s: starting\n", t.name())
+				log.Printf("%s: starting", t.name())
 				if err := t.run(ctx); err != nil {
-					log.Printf("%s exited with: %+v\n", t.name(), err)
+					log.Printf("%s exited with: %+v", t.name(), err)
 				}
-				log.Printf("%s: finished\n", t.name())
+				log.Printf("%s: finished", t.name())
 
 				// Repeat until context closed
 				select {

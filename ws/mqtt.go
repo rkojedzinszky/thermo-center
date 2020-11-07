@@ -71,7 +71,7 @@ func (m *mqttClient) onMessage(cl mqtt.Client, msg mqtt.Message) {
 	var id uint64
 	var err error
 	if id, err = strconv.ParseUint(idstr[1], 16, 8); err != nil {
-		log.Printf("Received invalid topic: %s\n", msg.Topic())
+		log.Printf("Received invalid topic: %s", msg.Topic())
 		return
 	}
 

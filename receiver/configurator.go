@@ -91,9 +91,9 @@ LOOP:
 		}
 
 		if (sensorID & 0x80) == 0x80 {
-			log.Printf("Received discovery packet from %d\n", sensorID)
+			log.Printf("Received discovery packet from %d", sensorID)
 		} else {
-			log.Printf("Received reconfiguration request from %d\n", sensorID)
+			log.Printf("Received reconfiguration request from %d", sensorID)
 		}
 
 		if (sensorID&0x80) == 0 && sensorID != uint8(task.SensorId) {
@@ -111,7 +111,7 @@ LOOP:
 
 		c.sendReplyPacket(replPacket)
 
-		log.Printf("Replied to %d\n", replPacket[1])
+		log.Printf("Replied to %d", replPacket[1])
 
 		if _, err := c.runner.configurator.TaskDiscoveryReceived(ctx, c.task); err != nil {
 			return err
