@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"github.com/namsral/flag"
@@ -72,20 +73,31 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	wg := &sync.WaitGroup{}
+
+	wg.Add(1)
 	go func() {
-		sigChan := make(chan os.Signal, 1)
-		signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
+		defer wg.Done()
 
-		<-sigChan
-
-		cancel()
-	}()
-
-	go grpcServer.Serve(listen)
-	go func() {
+		go grpcServer.Serve(listen)
 		<-ctx.Done()
 		grpcServer.Stop()
 	}()
 
-	runner.Run(ctx)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		runner.Run(ctx)
+	}()
+
+	// Watch for signals
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
+
+	<-sigChan
+
+	cancel()
+
+	wg.Wait()
 }
