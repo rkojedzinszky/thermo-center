@@ -18,7 +18,7 @@ type TokenBucket struct {
 // New creates a new TokenBucket rate limiter
 func New(rate, burst float64) *TokenBucket {
 	return &TokenBucket{
-		rate:     rate,
+		rate:     rate / float64(time.Second),
 		burst:    burst,
 		capacity: burst,
 		lastts:   time.Now(),
@@ -40,7 +40,7 @@ func (t *TokenBucket) Get(amount float64) bool {
 
 func (t *TokenBucket) replenish() {
 	now := time.Now()
-	t.capacity += t.rate * float64(now.Sub(t.lastts)) / float64(time.Second)
+	t.capacity += t.rate * float64(now.Sub(t.lastts))
 	if t.capacity > t.burst {
 		t.capacity = t.burst
 	}
