@@ -149,6 +149,8 @@ func (i *Interrupt) Wait() error {
 
 // Close closes all file descriptors
 func (i *Interrupt) Close() {
+	i.SetContext(nil)
+
 	syscall.Close(i.epollFd)
 	i.valueFh.Close()
 }

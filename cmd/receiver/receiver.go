@@ -41,6 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer port.Close()
 
 	spiConn, err := port.Connect(physic.Frequency(*spiFreq)*physic.Hertz, spi.Mode(*spiMode), 8)
 	if err != nil {
@@ -51,6 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer ih.Close()
 
 	grpcClient, err := grpc.Dial(fmt.Sprintf("%s:%d", *grpcHost, *grpcPort), grpc.WithInsecure())
 	if err != nil {
