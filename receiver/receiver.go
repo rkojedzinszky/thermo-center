@@ -45,21 +45,13 @@ func (r *receiver) run(ctx context.Context) (err error) {
 	r.runner.radio.cc1101.Xfer(r.cfg.RadioConfig)
 	r.runner.radio.setupForRX()
 
-	for {
-		packets, err := r.readPackets()
-		if err != nil {
-			return err
-		}
-
-		for _, p := range packets {
-			go r.receive(ctx, p)
-		}
-	}
+	return r.loop(ctx)
 }
 
-func (r *receiver) readPackets() (packets [][]byte, err error) {
+func (r *receiver) loop(ctx context.Context) (err error) {
 	for {
 		// TODO: watchdog timeout
+		// TODO: interrupt storm
 		if err = r.runner.interrupt.Wait(); err != nil {
 			return
 		}
@@ -70,7 +62,9 @@ func (r *receiver) readPackets() (packets [][]byte, err error) {
 			return
 		}
 
-		// log.Printf("Received %d bytes\n", dataLen)
+		if dataLen < 18 { // should not get here
+			continue
+		}
 
 		if dataLen&0x80 == 0x80 {
 			r.runner.radio.cc1101.Cmd(cc1101.SFRX)
@@ -93,19 +87,17 @@ func (r *receiver) readPackets() (packets [][]byte, err error) {
 			continue
 		}
 
-		for dataLen >= 18 {
-			var p []byte
-			p, err = r.runner.radio.cc1101.ReadRXFifo(18)
-			if err != nil {
-				return
-			}
-
-			packets = append(packets, p)
-
-			dataLen -= 18
+		var p []byte
+		p, err = r.runner.radio.cc1101.ReadRXFifo(int(dataLen/18) * 18)
+		if err != nil {
+			return
 		}
 
-		return
+		for len(p) >= 18 {
+			go r.receive(ctx, p[:18])
+
+			p = p[18:]
+		}
 	}
 }
 
