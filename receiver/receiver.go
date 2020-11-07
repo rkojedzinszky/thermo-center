@@ -6,10 +6,15 @@ import (
 	"crypto/cipher"
 	"encoding/binary"
 	"log"
+	"time"
 
 	"github.com/rkojedzinszky/thermo-center/aggregator"
 	"github.com/rkojedzinszky/thermo-center/configurator"
 	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
+)
+
+const (
+	watchdogTimeout = 300 * time.Second
 )
 
 func (r *Runner) receiverTask() *receiver {
@@ -29,8 +34,6 @@ func (r *receiver) name() string {
 }
 
 func (r *receiver) run(ctx context.Context) (err error) {
-	r.runner.interrupt.SetContext(ctx)
-
 	r.cfg, err = r.runner.configurator.GetRadioCfg(ctx, &configurator.RadioCfgRequest{Cluster: 1})
 	if err != nil {
 		return
@@ -49,8 +52,35 @@ func (r *receiver) run(ctx context.Context) (err error) {
 }
 
 func (r *receiver) loop(ctx context.Context) (err error) {
+	watchdogctx, wcancel := context.WithCancel(ctx)
+
+	watchdogPing := make(chan struct{})
+
+	// watchdog routine
+	go func() {
+		defer wcancel()
+
+		timer := time.NewTimer(watchdogTimeout)
+
+		for {
+			select {
+			case <-timer.C:
+				log.Printf("Watchdog timeout (no packet received for %+v)", watchdogTimeout)
+				return
+			case <-ctx.Done():
+				return
+			case <-watchdogPing:
+				if !timer.Stop() {
+					<-timer.C
+				}
+				timer.Reset(watchdogTimeout)
+			}
+		}
+	}()
+
+	r.runner.interrupt.SetContext(watchdogctx)
+
 	for {
-		// TODO: watchdog timeout
 		// TODO: interrupt storm
 		if err = r.runner.interrupt.Wait(); err != nil {
 			return
@@ -98,6 +128,8 @@ func (r *receiver) loop(ctx context.Context) (err error) {
 
 			p = p[18:]
 		}
+
+		watchdogPing <- struct{}{}
 	}
 }
 
