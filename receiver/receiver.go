@@ -29,6 +29,8 @@ func (r *receiver) name() string {
 }
 
 func (r *receiver) run(ctx context.Context) (err error) {
+	r.runner.interrupt.SetContext(ctx)
+
 	r.cfg, err = r.runner.configurator.GetRadioCfg(ctx, &configurator.RadioCfgRequest{Cluster: 1})
 	if err != nil {
 		return
@@ -44,7 +46,7 @@ func (r *receiver) run(ctx context.Context) (err error) {
 	r.runner.radio.setupForRX()
 
 	for {
-		packets, err := r.readPackets(ctx)
+		packets, err := r.readPackets()
 		if err != nil {
 			return err
 		}
@@ -55,10 +57,10 @@ func (r *receiver) run(ctx context.Context) (err error) {
 	}
 }
 
-func (r *receiver) readPackets(ctx context.Context) (packets [][]byte, err error) {
+func (r *receiver) readPackets() (packets [][]byte, err error) {
 	for {
 		// TODO: watchdog timeout
-		if err = r.runner.interrupt.Wait(ctx); err != nil {
+		if err = r.runner.interrupt.Wait(); err != nil {
 			return
 		}
 

@@ -153,12 +153,14 @@ func prepareReplyPacket(t *configurator.TaskDetails) []byte {
 }
 
 func (c *configTask) waitDiscoveryPacket(ctx context.Context) (uint8, error) {
+	c.r.interrupt.SetContext(ctx)
+
 	for {
 		if err := c.r.radio.cc1101.Cmd(cc1101.SRX); err != nil {
 			return 0, err
 		}
 
-		if err := c.r.interrupt.Wait(ctx); err != nil {
+		if err := c.r.interrupt.Wait(); err != nil {
 			return 0, err
 		}
 

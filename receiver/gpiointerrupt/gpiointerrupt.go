@@ -14,12 +14,17 @@ import (
 type Interrupt struct {
 	epollFd int
 	valueFh *os.File
+
+	// Context handling
+	ctxRfd   int
+	ctxClose chan struct{}
 }
 
 // New allocates a new GPI
 func New(dir string) (i *Interrupt, err error) {
 	i = &Interrupt{
 		epollFd: -1,
+		ctxRfd:  -1,
 	}
 
 	defer func() {
@@ -70,43 +75,70 @@ func New(dir string) (i *Interrupt, err error) {
 	return
 }
 
-// Wait waits for one interrupt to arrive
-func (i *Interrupt) Wait(ctx context.Context) error {
-	wchan := make(chan struct{})
-	defer close(wchan)
+// SetContext sets a context used during Wait().
+// If the context gets cancelled, Wait() will return immediately return.
+// To clear existing context, pass nil.
+func (i *Interrupt) SetContext(ctx context.Context) error {
+	var event syscall.EpollEvent
 
-	fds := make([]int, 2)
-	if err := syscall.Pipe(fds); err != nil {
+	if i.ctxRfd >= 0 {
+		// Clear old fd
+		close(i.ctxClose)
+
+		event.Fd = int32(i.ctxRfd)
+		event.Events = syscall.EPOLLIN
+
+		syscall.EpollCtl(i.epollFd, syscall.EPOLL_CTL_DEL, int(event.Fd), &event)
+
+		syscall.Close(i.ctxRfd)
+	}
+
+	if ctx == nil {
+		i.ctxRfd = -1
+		return nil
+	}
+
+	pipeFD := make([]int, 2)
+	if err := syscall.Pipe(pipeFD); err != nil {
 		return err
 	}
 
-	defer syscall.Close(fds[0])
+	event.Fd = int32(pipeFD[0])
+	event.Events = syscall.EPOLLIN
 
+	if err := syscall.EpollCtl(i.epollFd, syscall.EPOLL_CTL_ADD, int(event.Fd), &event); err != nil {
+		syscall.Close(pipeFD[0])
+		syscall.Close(pipeFD[1])
+
+		return err
+	}
+
+	i.ctxRfd = pipeFD[0]
+
+	// create new close channel
+	i.ctxClose = make(chan struct{})
+
+	// Start watching context
 	go func() {
-		defer syscall.Close(fds[1])
+		defer syscall.Close(pipeFD[1])
 
 		select {
-		case <-wchan:
 		case <-ctx.Done():
+		case <-i.ctxClose:
 		}
 	}()
 
-	event := syscall.EpollEvent{
-		Fd:     int32(fds[0]),
-		Events: syscall.EPOLLIN,
-	}
+	return nil
+}
 
-	if err := syscall.EpollCtl(i.epollFd, syscall.EPOLL_CTL_ADD, int(event.Fd), &event); err != nil {
-		return err
-	}
-	defer syscall.EpollCtl(i.epollFd, syscall.EPOLL_CTL_DEL, int(event.Fd), &event)
-
+// Wait waits for one interrupt to arrive
+func (i *Interrupt) Wait() error {
 	for i.value() != 1 {
 		events := make([]syscall.EpollEvent, 2)
 
 		nevents, _ := syscall.EpollWait(i.epollFd, events, -1)
 		for e := 0; e < nevents; e++ {
-			if events[e].Fd == int32(fds[0]) {
+			if events[e].Fd == int32(i.ctxRfd) {
 				return fmt.Errorf("Interrupt.Wait() cancelled")
 			}
 		}
