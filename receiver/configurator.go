@@ -16,14 +16,14 @@ const (
 
 func (r *Runner) configTask(task *configurator.Task) task {
 	return &configTask{
-		r:    r,
-		task: task,
+		runner: r,
+		task:   task,
 	}
 }
 
 type configTask struct {
-	r    *Runner
-	task *configurator.Task
+	runner *Runner
+	task   *configurator.Task
 }
 
 func (c *configTask) name() string {
@@ -35,14 +35,14 @@ func (c *configTask) run(ctx context.Context) error {
 	defer func() {
 		select {
 		case <-ctx.Done():
-		case c.r.task <- c.r.receiverTask():
+		case c.runner.task <- c.runner.receiverTask(): // This will trigger cancellation of ctx
 		}
 
 		// Wait to be cancelled
 		<-ctx.Done()
 	}()
 
-	task, err := c.r.configurator.TaskAcquire(ctx, c.task)
+	task, err := c.runner.configurator.TaskAcquire(ctx, c.task)
 	if err != nil {
 		return err
 	}
@@ -54,19 +54,19 @@ func (c *configTask) run(ctx context.Context) error {
 	finishRequest := configurator.TaskFinishedRequest{
 		TaskId: task.TaskId,
 	}
-	defer c.r.configurator.TaskFinished(ctx, &finishRequest)
+	defer c.runner.configurator.TaskFinished(ctx, &finishRequest)
 
 	replPacket := prepareReplyPacket(task)
 
-	if err = c.r.radio.cc1101.Reset(); err != nil {
+	if err = c.runner.radio.cc1101.Reset(); err != nil {
 		return err
 	}
 
-	if err = c.r.radio.setupBasic(); err != nil {
+	if err = c.runner.radio.setupBasic(); err != nil {
 		return err
 	}
 
-	if err = c.r.radio.setupForConf(); err != nil {
+	if err = c.runner.radio.setupForConf(); err != nil {
 		return err
 	}
 
@@ -113,7 +113,7 @@ LOOP:
 
 		log.Printf("Replied to %d\n", replPacket[1])
 
-		if _, err := c.r.configurator.TaskDiscoveryReceived(ctx, c.task); err != nil {
+		if _, err := c.runner.configurator.TaskDiscoveryReceived(ctx, c.task); err != nil {
 			return err
 		}
 
@@ -153,23 +153,23 @@ func prepareReplyPacket(t *configurator.TaskDetails) []byte {
 }
 
 func (c *configTask) waitDiscoveryPacket(ctx context.Context) (uint8, error) {
-	c.r.interrupt.SetContext(ctx)
+	c.runner.interrupt.SetContext(ctx)
 
 	for {
-		if err := c.r.radio.cc1101.Cmd(cc1101.SRX); err != nil {
+		if err := c.runner.radio.cc1101.Cmd(cc1101.SRX); err != nil {
 			return 0, err
 		}
 
-		if err := c.r.interrupt.Wait(); err != nil {
+		if err := c.runner.interrupt.Wait(); err != nil {
 			return 0, err
 		}
 
-		dataLen, err := c.r.radio.cc1101.GetStatus(cc1101.RXBYTES)
+		dataLen, err := c.runner.radio.cc1101.GetStatus(cc1101.RXBYTES)
 		if err != nil {
 			return 0, err
 		}
 
-		data, err := c.r.radio.cc1101.ReadRXFifo(int(dataLen))
+		data, err := c.runner.radio.cc1101.ReadRXFifo(int(dataLen))
 		if err != nil {
 			return 0, err
 		}
@@ -178,16 +178,16 @@ func (c *configTask) waitDiscoveryPacket(ctx context.Context) (uint8, error) {
 			return data[2], nil
 		}
 
-		if err = c.r.radio.cc1101.Cmd(cc1101.SFRX); err != nil {
+		if err = c.runner.radio.cc1101.Cmd(cc1101.SFRX); err != nil {
 			return 0, err
 		}
 	}
 }
 
 func (c *configTask) sendReplyPacket(packet []byte) error {
-	if err := c.r.radio.cc1101.WriteTXFifo(packet); err != nil {
+	if err := c.runner.radio.cc1101.WriteTXFifo(packet); err != nil {
 		return err
 	}
 
-	return c.r.radio.cc1101.Waitstate(1)
+	return c.runner.radio.cc1101.Waitstate(1)
 }
