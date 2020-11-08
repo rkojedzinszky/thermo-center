@@ -242,7 +242,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 	var ipe *heatcontrol.Instantprofileentry
 	var err error
 
-	so, err = heatcontrol.ScheduledoverrideQS{}.ControlEq(c).StartLe(now).EndGt(now).OrderByIDDesc().First(a.db)
+	so, err = c.Scheduledoverride().StartLe(now).EndGt(now).OrderByIDDesc().First(a.db)
 
 	if err != nil {
 		return nil, err
@@ -252,7 +252,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 		return &so.TargetTemp, nil
 	}
 
-	ipe, err = heatcontrol.InstantprofileentryQS{}.ControlEq(c).ActiveEq(true).First(a.db)
+	ipe, err = c.Instantprofileentry().ActiveEq(true).First(a.db)
 
 	if err != nil {
 		return nil, err
