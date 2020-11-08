@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer grpcClient.Close()
 
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", *receiverPort))
 	if err != nil {
