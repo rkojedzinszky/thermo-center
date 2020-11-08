@@ -7,18 +7,18 @@ import (
 // TokenBucket rate limiter
 type TokenBucket struct {
 	// parameters of tbf
-	rate  float64
-	burst float64
+	rate  float32
+	burst float32
 
 	// state
-	capacity float64
+	capacity float32
 	lastts   time.Time
 }
 
 // New creates a new TokenBucket rate limiter
-func New(rate, burst float64) *TokenBucket {
+func New(rate, burst float32) *TokenBucket {
 	return &TokenBucket{
-		rate:     rate / float64(time.Second),
+		rate:     rate / float32(time.Second),
 		burst:    burst,
 		capacity: burst,
 		lastts:   time.Now(),
@@ -27,7 +27,7 @@ func New(rate, burst float64) *TokenBucket {
 
 // Get gets amount tokens from the bucket, non-blocking.
 // Returns true if tokens were available, and false otherwise
-func (t *TokenBucket) Get(amount float64) bool {
+func (t *TokenBucket) Get(amount float32) bool {
 	t.replenish()
 
 	if t.capacity >= amount {
@@ -40,7 +40,7 @@ func (t *TokenBucket) Get(amount float64) bool {
 
 func (t *TokenBucket) replenish() {
 	now := time.Now()
-	t.capacity += t.rate * float64(now.Sub(t.lastts))
+	t.capacity += t.rate * float32(now.Sub(t.lastts))
 	if t.capacity > t.burst {
 		t.capacity = t.burst
 	}
