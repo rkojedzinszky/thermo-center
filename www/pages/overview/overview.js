@@ -78,6 +78,7 @@ Component.extend({
 			if (self.app.visible) {
 				THSensor.getList({'order_by': 'id'}).then(function(res) {
 					SensorCache.update(res);
+					self.app.active = true;
 				});
 			}
 		}

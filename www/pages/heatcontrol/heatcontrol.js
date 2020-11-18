@@ -81,6 +81,7 @@ Component.extend({
 			if (self.app.visible) {
 				Control.getList().then(function(res) {
 					ControlCache.update(res);
+					self.app.active = true;
 				});
 			}
 		}
