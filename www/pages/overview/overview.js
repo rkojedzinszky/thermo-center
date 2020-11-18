@@ -45,7 +45,7 @@ Component.extend({
 </tbody>
 </table>
 <div class="checkbox">
-	<button class="btn btn-primary m-1 {{#if advanced}}active{{//if}}" {{#if active}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
+	<button class="btn btn-primary m-1 {{#if advanced}}active{{//if}}" {{#if advanced}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
 </div>
 	`,
 	ViewModel: {
