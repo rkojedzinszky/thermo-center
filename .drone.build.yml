@@ -18,10 +18,11 @@ steps:
   image: plugins/docker
   settings:
     target: api
-    repo: rkojedzinszky/thermo-center-api
+    repo: ghcr.io/rkojedzinszky/thermo-center-api
+    registry: ghcr.io
     username: rkojedzinszky
     password:
-      from_secret: hub_docker_password
+      from_secret: ghcr.io.password
     auto_tag: true
   depends_on:
   - versions
@@ -46,10 +47,11 @@ steps:
   image: plugins/docker
   settings:
     dockerfile: Dockerfile.receiver
-    repo: rkojedzinszky/thermo-center-receiver
+    repo: ghcr.io/rkojedzinszky/thermo-center-receiver
+    registry: ghcr.io
     username: rkojedzinszky
     password:
-      from_secret: hub_docker_password
+      from_secret: ghcr.io.password
     auto_tag: true
   depends_on:
   - golang-build
@@ -58,10 +60,11 @@ steps:
   image: plugins/docker
   settings:
     dockerfile: Dockerfile.grpcserver
-    repo: rkojedzinszky/thermo-center-grpcserver
+    repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
+    registry: ghcr.io
     username: rkojedzinszky
     password:
-      from_secret: hub_docker_password
+      from_secret: ghcr.io.password
     auto_tag: true
   depends_on:
   - golang-build
@@ -70,10 +73,11 @@ steps:
   image: plugins/docker
   settings:
     dockerfile: Dockerfile.ws
-    repo: rkojedzinszky/thermo-center-ws
+    repo: ghcr.io/rkojedzinszky/thermo-center-ws
+    registry: ghcr.io
     username: rkojedzinszky
     password:
-      from_secret: hub_docker_password
+      from_secret: ghcr.io.password
     auto_tag: true
   depends_on:
   - golang-build
@@ -82,10 +86,11 @@ steps:
   image: plugins/docker
   settings:
     target: ui
-    repo: rkojedzinszky/thermo-center-ui
+    repo: ghcr.io/rkojedzinszky/thermo-center-ui
+    registry: ghcr.io
     username: rkojedzinszky
     password:
-      from_secret: hub_docker_password
+      from_secret: ghcr.io.password
     auto_tag: true
   depends_on:
   - api

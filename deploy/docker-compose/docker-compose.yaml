@@ -8,13 +8,13 @@ services:
   mqtt:
     image: eclipse-mosquitto:1.5
   receiver:
-    image: rkojedzinszky/thermo-center-receiver
+    image: ghcr.io/rkojedzinszky/thermo-center-receiver
     volumes:
     - "/sys/class/gpio/gpio200:/gpio"
     devices:
     - "/dev/spidev0.0:/dev/spidev0.0"
   grpcserver:
-    image: rkojedzinszky/thermo-center-grpcserver
+    image: ghcr.io/rkojedzinszky/thermo-center-grpcserver
     environment:
       DBNAME: ${DBNAME}
       DBHOST: ${DBHOST}
@@ -22,7 +22,7 @@ services:
       DBUSER: ${DBUSER}
       DBPASSWORD: ${DBPASSWORD}
   api:
-    image: rkojedzinszky/thermo-center-api
+    image: ghcr.io/rkojedzinszky/thermo-center-api
     ports:
     - "8080:8080"
     environment:
@@ -34,13 +34,13 @@ services:
       DBPASSWORD: ${DBPASSWORD}
       DBCONNMAXAGE: ""
   ws:
-    image: rkojedzinszky/thermo-center-ws
+    image: ghcr.io/rkojedzinszky/thermo-center-ws
     ports:
     - "8081:8081"
     environment:
       THERMO_CENTER_API_HOST: api
   ui:
-    image: rkojedzinszky/thermo-center-ui
+    image: ghcr.io/rkojedzinszky/thermo-center-ui
     ports:
     - "8082:8080"
 

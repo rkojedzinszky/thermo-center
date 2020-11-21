@@ -83,7 +83,7 @@ spec:
     spec:
       enableServiceLinks: false
       containers:
-      - image: rkojedzinszky/thermo-center-receiver
+      - image: ghcr.io/rkojedzinszky/thermo-center-receiver
         name: thermo-center-receiver
         ports:
         - containerPort: 8079
@@ -121,7 +121,7 @@ spec:
             name: thermo-center-secret
         - configMapRef:
             name: thermo-center-environment
-        image: rkojedzinszky/thermo-center-grpcserver
+        image: ghcr.io/rkojedzinszky/thermo-center-grpcserver
         name: thermo-center-grpcserver
         ports:
         - containerPort: 8079
@@ -164,7 +164,7 @@ spec:
             name: thermo-center-secret
         - configMapRef:
             name: thermo-center-environment
-        image: rkojedzinszky/thermo-center-api
+        image: ghcr.io/rkojedzinszky/thermo-center-api
         name: thermo-center-api
         ports:
         - containerPort: 8080
@@ -183,7 +183,7 @@ spec:
         envFrom:
         - secretRef:
             name: thermo-center-secret
-        image: rkojedzinszky/thermo-center-api
+        image: ghcr.io/rkojedzinszky/thermo-center-api
         name: migrate
         resources:
           limits:
@@ -212,7 +212,7 @@ spec:
     spec:
       enableServiceLinks: false
       containers:
-      - image: rkojedzinszky/thermo-center-ws
+      - image: ghcr.io/rkojedzinszky/thermo-center-ws
         name: thermo-center-ws
         ports:
         - containerPort: 8081
@@ -245,7 +245,7 @@ spec:
     spec:
       enableServiceLinks: false
       containers:
-      - image: rkojedzinszky/thermo-center-ui
+      - image: ghcr.io/rkojedzinszky/thermo-center-ui
         livenessProbe:
           initialDelaySeconds: 5
           httpGet:
