@@ -1,4 +1,5 @@
-FROM rkojedzinszky/alpine-python-grpcio:3.12 AS common
+FROM alpine:3.12 AS common
+
 MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center APP_UID=10101
@@ -15,7 +16,8 @@ ADD heatcontrol heatcontrol
 ADD receiver/api_pb2.py receiver/api_pb2_grpc.py receiver/
 ADD configurator/api_pb2.py configurator/
 
-RUN apk add --no-cache tzdata py3-psycopg2 libmemcached && \
+RUN apk add --no-cache py3-pip py3-grpcio py3-protobuf tzdata py3-psycopg2 libmemcached && \
+    ln -sf python3 /usr/bin/python && ln -sf pip3 /usr/bin/pip && \
     apk --no-cache add -t .build-deps gcc libc-dev python3-dev zlib-dev libmemcached-dev && \
     pip install -r requirements.txt && \
     apk del .build-deps && \
