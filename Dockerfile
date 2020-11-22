@@ -1,6 +1,7 @@
 FROM alpine:3.12 AS common
 
-MAINTAINER Richard Kojedzinszky <richard@kojedz.in>
+LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
+LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
 
 ENV APP_USER=thermo APP_HOME=/opt/thermo-center APP_UID=10101
 
@@ -56,6 +57,9 @@ COPY --from=fe-prepare /opt/thermo-center/www/models/g/ /work/models/g/
 RUN yarn && sh build.sh && rm -rf node_modules
 
 FROM nginx:alpine AS ui
+
+LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
+LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
 
 RUN mkdir -p /var/www/html/dist/ /var/www/html/icons/ /var/www/html/static/
 
