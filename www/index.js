@@ -94,7 +94,6 @@ const AppState = DefineMap.extend({
 	'session': { serialize: false },
 	'element': { serialize: false },
 	'visible': { serialize: false, type: "boolean", default: true },
-	'active': { serialize: false, type: "boolean", default: false },
 	'url': { default: () => new DefineMap() },
 	'ws': { serialize: false, default: null },
 	'onmessage': { serialize: false },
@@ -164,7 +163,6 @@ const AppState = DefineMap.extend({
 			this._startTimer();
 		} else {
 			this._stopTimer();
-			this.active = false;
 		}
 	},
 
@@ -200,7 +198,7 @@ Component.extend({
 	tag: 'thermo-main',
 	view: `
 	<thermo-navbar app:bind="." />
-	<div class="content {{#not(active)}}inactive{{/not}}" />
+	<div class="content" />
 	<thermo-footer app:bind="." />
 	`,
 	ViewModel: AppState
