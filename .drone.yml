@@ -15,6 +15,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -36,6 +37,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm64
     dockerfile: Dockerfile.receiver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
@@ -47,6 +49,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm64
     dockerfile: Dockerfile.grpcserver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
@@ -58,6 +61,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm64
     dockerfile: Dockerfile.ws
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
@@ -68,6 +72,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ui
@@ -95,6 +100,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -116,6 +122,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm
     dockerfile: Dockerfile.receiver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
@@ -127,6 +134,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm
     dockerfile: Dockerfile.grpcserver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
@@ -138,6 +146,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: arm
     dockerfile: Dockerfile.ws
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
@@ -148,6 +157,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ui
@@ -175,6 +185,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -196,6 +207,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: amd64
     dockerfile: Dockerfile.receiver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
@@ -207,6 +219,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: amd64
     dockerfile: Dockerfile.grpcserver
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
@@ -218,6 +231,7 @@ steps:
     auto_tag: true
     auto_tag_suffix: amd64
     dockerfile: Dockerfile.ws
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
@@ -228,6 +242,7 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
+    mirror: {from_secret: hub_docker_mirror}
     password: {from_secret: ghcr.io.password}
     registry: ghcr.io
     repo: ghcr.io/rkojedzinszky/thermo-center-ui

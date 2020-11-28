@@ -24,6 +24,8 @@ steps:
     password:
       from_secret: ghcr.io.password
     auto_tag: true
+    mirror:
+      from_secret: hub_docker_mirror
   depends_on:
   - versions
   volumes:
@@ -53,6 +55,8 @@ steps:
     password:
       from_secret: ghcr.io.password
     auto_tag: true
+    mirror:
+      from_secret: hub_docker_mirror
   depends_on:
   - golang-build
 
@@ -66,6 +70,8 @@ steps:
     password:
       from_secret: ghcr.io.password
     auto_tag: true
+    mirror:
+      from_secret: hub_docker_mirror
   depends_on:
   - golang-build
 
@@ -79,6 +85,8 @@ steps:
     password:
       from_secret: ghcr.io.password
     auto_tag: true
+    mirror:
+      from_secret: hub_docker_mirror
   depends_on:
   - golang-build
 
@@ -92,6 +100,8 @@ steps:
     password:
       from_secret: ghcr.io.password
     auto_tag: true
+    mirror:
+      from_secret: hub_docker_mirror
   depends_on:
   - api
   volumes:
