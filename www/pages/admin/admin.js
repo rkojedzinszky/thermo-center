@@ -5,6 +5,7 @@ import {ConfigureSensorTask} from 'models/ConfigureSensorTask';
 import prettyMilliseconds from 'pretty-ms';
 import stache from 'can-stache';
 import Modal from 'bootstrap/js/src/modal';
+import {View} from '~/common';
 
 let SensorCache = new THSensor.List();
 
@@ -74,37 +75,18 @@ Component.extend({
 </table>
 <button class="btn btn-primary m-1" on:click="addSensor()">Add Sensor</button>
 	`,
-	ViewModel: {
+	ViewModel: View.extend({
 		sensors: { default: () => SensorCache },
 		element: {},
 		task: {},
 		modal: {},
-		connectedCallback(element) {
-			let self = this;
-
-			self.app.onmessage = function(el) {
-				THSensor.get({id: el});
-			};
-
-			let listener = self.visible.bind(self);
-			self.app.listenTo('visible', listener);
-
-			self.visible();
-
-			return function() {
-				self.app.onmessage = null;
-				self.app.stopListening('visible', listener);
-				self.stopListening();
-			};
+		onmessage(el) {
+			THSensor.get({id: el});
 		},
 		visible() {
-			var self = this;
-
-			if (self.app.visible) {
-				THSensor.getList({'order_by': 'id'}).then(function(res) {
-					SensorCache.update(res);
-				});
-			}
+			THSensor.getList({'order_by': 'id'}).then(function(res) {
+				SensorCache.update(res);
+			});
 		},
 		_pollTask() {
 			let self = this;
@@ -151,7 +133,7 @@ Component.extend({
 				}
 			});
 		},
-	},
+	}),
 	helpers: {
 		calculate_age(s) {
 			if (s.last_tsf != null) {

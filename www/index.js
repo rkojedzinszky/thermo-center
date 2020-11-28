@@ -10,6 +10,7 @@ import {Session} from 'models/Session';
 import './navbar';
 import './footer';
 import './common.less!';
+import '~/common';
 import Version from './version';
 
 // Register number formatting helpers

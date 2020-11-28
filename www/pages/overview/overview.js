@@ -2,6 +2,7 @@
 import Component from 'can-component';
 import {THSensor} from 'models/THSensor';
 import {SensorResync} from 'models/SensorResync';
+import {View} from '~/common';
 
 let SensorCache = new THSensor.List();
 
@@ -48,40 +49,21 @@ Component.extend({
 	<button class="btn btn-primary m-1 {{#if advanced}}active{{//if}}" {{#if advanced}}aria-pressed="true"{{/if}} on:click="toggle_advanced()">Advanced</button>
 </div>
 	`,
-	ViewModel: {
+	ViewModel: View.extend({
 		sensors: { default: () => SensorCache },
 		advanced: 'boolean',
 		toggle_advanced() {
 			this.advanced = !this.advanced;
 		},
-		connectedCallback(element) {
-			var self = this;
-
-			self.app.onmessage = function(el) {
-				THSensor.get({id: el});
-			};
-
-			let listener = self.visible.bind(self);
-			self.app.listenTo('visible', listener);
-
-			self.visible();
-
-			return function() {
-				self.app.onmessage = null;
-				self.app.stopListening('visible', listener);
-				self.stopListening();
-			};
+		onmessage(el) {
+			THSensor.get({id: el});
 		},
 		visible() {
-			var self = this;
-
-			if (self.app.visible) {
-				THSensor.getList({'order_by': 'id'}).then(function(res) {
-					SensorCache.update(res);
-				});
-			}
+			THSensor.getList({'order_by': 'id'}).then(function(res) {
+				SensorCache.update(res);
+			});
 		}
-	},
+	}),
 });
 
 Component.extend({

@@ -3,6 +3,7 @@ import Component from 'can-component';
 import route from 'can-route';
 import {Control} from 'models/Control';
 import {InstantProfile} from 'models/InstantProfile';
+import {View} from '~/common';
 
 let ControlCache = new Control.List();
 let InstantProfileCache = new InstantProfile.List();
@@ -40,11 +41,10 @@ Component.extend({
 {{/for}}
 </ul>
 	`,
-	ViewModel: {
+	ViewModel: View.extend({
 		sensors: { default: () => ControlCache },
 		instantprofiles: { default: () => InstantProfileCache },
 		daytypes: { default: null },
-
 		toggle(i) {
 			const saved = i.active;
 			i.active = !saved;
@@ -52,39 +52,24 @@ Component.extend({
 				i.active = saved;
 			});
 		},
-
 		connectedCallback(element) {
+			View.prototype.connectedCallback.call(this, element);
+
 			var self = this;
 
 			InstantProfile.getList().then(function(res) {
 				InstantProfileCache = self.instantprofiles = res;
 			});
-
-			self.app.onmessage = function(el) {
-				Control.getList({sensor_id: el});
-			};
-
-			let listener = self.visible.bind(self);
-			self.app.listenTo('visible', listener);
-
-			self.visible();
-
-			return function() {
-				self.app.onmessage = null;
-				self.app.stopListening('visible', listener);
-				self.stopListening();
-			};
+		},
+		onmessage(el) {
+			Control.getList({sensor_id: el});
 		},
 		visible() {
-			var self = this;
-
-			if (self.app.visible) {
-				Control.getList().then(function(res) {
-					ControlCache.update(res);
-				});
-			}
+			Control.getList().then(function(res) {
+				ControlCache.update(res);
+			});
 		}
-	},
+	}),
 	helpers: {
 		edit_link(sensor) {
 			return route.url({'page': 'edit', 'id': sensor.id});
