@@ -1,6 +1,7 @@
 'use strict';
 import Component from 'can-component';
 import Control from 'models/Control';
+import {View} from '~/common';
 import './overrides';
 import './pidsettings';
 import './profiles';
@@ -33,14 +34,14 @@ Component.extend({
 	{{/if}}
 </div>
 	`,
-	ViewModel: {
+	ViewModel: View.extend({
 		control: { default: null },
-		connectedCallback(element) {
+		visible() {
 			var self = this;
 
-			Control.findOne({id: this.app.url.id}).then(function(hc) {
+			return Control.findOne({id: this.app.url.id}).then(function(hc) {
 				self.control = hc;
 			});
 		}
-	}
+	})
 });
