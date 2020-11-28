@@ -1,6 +1,7 @@
 'use strict';
 import Component from 'can-component';
 import {Session} from 'models/Session';
+import {View} from '~/common';
 import './login.less!';
 
 Component.extend({
@@ -24,7 +25,7 @@ Component.extend({
 	{{/loginerror}}
 </form>
 	`,
-	ViewModel: {
+	ViewModel: View.extend({
 		username: 'string',
 		password: 'string',
 		loginerror: 'boolean',
@@ -38,5 +39,5 @@ Component.extend({
 				self.loginerror = true;
 			});
 		}
-	}
+	})
 });

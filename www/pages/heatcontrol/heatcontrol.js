@@ -65,7 +65,7 @@ Component.extend({
 			Control.getList({sensor_id: el});
 		},
 		visible() {
-			Control.getList().then(function(res) {
+			return Control.getList().then(function(res) {
 				ControlCache.update(res);
 			});
 		}

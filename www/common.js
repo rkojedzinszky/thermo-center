@@ -10,14 +10,19 @@ const View = DefineMap.extend({
 
         let listener = function() {
             if (self.app.visible) {
-                self.visible();
+                self.app.loaded = false;
+                self.visible().then(() => {
+                    self.app.loaded = true;
+                });
             } else {
-                self.hidden();
+                self.hidden().then(() => {
+                    self.app.loaded = false;
+                });
             }
         };
         self.app.listenTo('visible', listener);
 
-        self.visible();
+        listener();
 
         return function() {
             self.app.onmessage = null;
@@ -28,8 +33,10 @@ const View = DefineMap.extend({
     onmessage(el) {
     },
     visible() {
+        return Promise.resolve();
     },
     hidden() {
+        return Promise.resolve();
     },
 });
 

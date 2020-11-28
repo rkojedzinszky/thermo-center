@@ -84,7 +84,7 @@ Component.extend({
 			THSensor.get({id: el});
 		},
 		visible() {
-			THSensor.getList({'order_by': 'id'}).then(function(res) {
+			return THSensor.getList({'order_by': 'id'}).then(function(res) {
 				SensorCache.update(res);
 			});
 		},
