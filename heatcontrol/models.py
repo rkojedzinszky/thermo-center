@@ -11,7 +11,7 @@ class DayType(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return 'DayType %s' % self.name
+        return '%s' % self.name
 
 class Calendar(models.Model):
     """ A calendar, map each day to a daytype """
@@ -114,7 +114,7 @@ class InstantProfileEntry(models.Model):
     active = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'InstantProfileEntry<{},{},{}>'.format(self.profile, self.control, self.target_temp)
+        return '<{},{},{}>'.format(self.profile, self.control, self.target_temp)
 
     class Meta:
         unique_together = (

@@ -25,7 +25,7 @@ class RFProfile(models.Model):
         ordering = ['pk']
 
     def __str__(self):
-        return 'RFProfile %s' % self.name
+        return '%s' % self.name
 
 
 class RFConfig(models.Model):
