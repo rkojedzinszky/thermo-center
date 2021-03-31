@@ -35,15 +35,13 @@ steps:
 - name: golang-build
   image: golang:1.16-alpine
   commands:
-  - apk --no-cache add binutils
   - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
   - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
   - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
   - mkdir bin
-  - CGO_ENABLED=0 go build -o bin/grpcserver ./cmd/grpcserver
-  - CGO_ENABLED=0 go build -o bin/ws ./ws
-  - CGO_ENABLED=0 go build -o bin/receiver ./cmd/receiver
-  - strip -s bin/*
+  - CGO_ENABLED=0 go build -ldflags -s -o bin/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -ldflags -s -o bin/ws ./ws
+  - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
 
 - name: receiver
   image: plugins/docker:19
