@@ -33,7 +33,7 @@ steps:
     path: /var/lib/docker
 
 - name: golang-build
-  image: golang:1.15-alpine
+  image: golang:1.16-alpine
   commands:
   - apk --no-cache add binutils
   - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
