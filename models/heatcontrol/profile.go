@@ -31,7 +31,7 @@ type Profile struct {
 
 // ProfileQS represents a queryset for heatcontrol.Profile
 type ProfileQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -44,6 +44,22 @@ func (qs ProfileQS) filter(c string, p interface{}) ProfileQS {
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs ProfileQS) Or(exprs ...ProfileQS) ProfileQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -188,6 +204,11 @@ func (qs ProfileQS) ControlEq(v *Control) ProfileQS {
 	return qs.filter(`"control_id" =`, v.GetID())
 }
 
+// ControlRawEq filters for control being equal to raw argument
+func (qs ProfileQS) ControlRawEq(v int32) ProfileQS {
+	return qs.filter(`"control_id" =`, v)
+}
+
 type inProfilecontrolControl struct {
 	qs ControlQS
 }
@@ -247,6 +268,11 @@ func (p *Profile) GetDaytypeRaw() int32 {
 // DaytypeEq filters for daytype being equal to argument
 func (qs ProfileQS) DaytypeEq(v *Daytype) ProfileQS {
 	return qs.filter(`"daytype_id" =`, v.GetID())
+}
+
+// DaytypeRawEq filters for daytype being equal to raw argument
+func (qs ProfileQS) DaytypeRawEq(v int32) ProfileQS {
+	return qs.filter(`"daytype_id" =`, v)
 }
 
 type inProfiledaytypeDaytype struct {
@@ -526,20 +552,6 @@ func (qs ProfileQS) OrderByTargetTempDesc() ProfileQS {
 	return qs
 }
 
-func (qs ProfileQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ProfileQS) ForUpdate() ProfileQS {
 	qs.forUpdate = true
@@ -552,7 +564,7 @@ func (qs ProfileQS) whereClause(c *models.PositionalCounter) (string, []interfac
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

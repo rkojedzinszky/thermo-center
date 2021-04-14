@@ -27,6 +27,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 )
 
 // DBInterface holds common operations for sql.DB and sql.Tx
@@ -73,4 +74,44 @@ type UnaryFragment struct {
 // GetConditionFragment returns fragment with its parameter
 func (u *UnaryFragment) GetConditionFragment(p *PositionalCounter) (string, []interface{}) {
 	return u.Frag + " " + p.Get(), []interface{}{u.Param}
+}
+
+// AndFragment combines sub-fragments with AND operator
+type AndFragment []ConditionFragment
+
+// GetConditionFragment returns fragment with its parameter
+func (a AndFragment) GetConditionFragment(c *PositionalCounter) (string, []interface{}) {
+	var conds []string
+	var condp []interface{}
+
+	for _, cond := range a {
+		s, p := cond.GetConditionFragment(c)
+
+		conds = append(conds, s)
+		condp = append(condp, p...)
+	}
+
+	return strings.Join(conds, " AND "), condp
+}
+
+// OrFragment combines sub-fragments with OR operator
+type OrFragment []ConditionFragment
+
+// GetConditionFragment returns fragment with its parameter
+func (o OrFragment) GetConditionFragment(c *PositionalCounter) (string, []interface{}) {
+	var conds []string
+	var condp []interface{}
+
+	if len(o) == 0 {
+		return "false", nil
+	}
+
+	for _, cond := range o {
+		s, p := cond.GetConditionFragment(c)
+
+		conds = append(conds, s)
+		condp = append(condp, p...)
+	}
+
+	return "(" + strings.Join(conds, " OR ") + ")", condp
 }

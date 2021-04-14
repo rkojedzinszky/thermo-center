@@ -29,7 +29,7 @@ type Sensorresync struct {
 
 // SensorresyncQS represents a queryset for center.SensorResync
 type SensorresyncQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -42,6 +42,22 @@ func (qs SensorresyncQS) filter(c string, p interface{}) SensorresyncQS {
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs SensorresyncQS) Or(exprs ...SensorresyncQS) SensorresyncQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -184,6 +200,11 @@ func (s *Sensorresync) GetSensorRaw() int32 {
 // SensorEq filters for sensor being equal to argument
 func (qs SensorresyncQS) SensorEq(v *Sensor) SensorresyncQS {
 	return qs.filter(`"sensor_id" =`, v.ID)
+}
+
+// SensorRawEq filters for sensor being equal to raw argument
+func (qs SensorresyncQS) SensorRawEq(v int32) SensorresyncQS {
+	return qs.filter(`"sensor_id" =`, v)
 }
 
 type inSensorresyncsensorSensor struct {
@@ -331,20 +352,6 @@ func (qs SensorresyncQS) OrderByTsDesc() SensorresyncQS {
 	return qs
 }
 
-func (qs SensorresyncQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs SensorresyncQS) ForUpdate() SensorresyncQS {
 	qs.forUpdate = true
@@ -357,7 +364,7 @@ func (qs SensorresyncQS) whereClause(c *models.PositionalCounter) (string, []int
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

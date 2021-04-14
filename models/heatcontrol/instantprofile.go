@@ -27,7 +27,7 @@ type Instantprofile struct {
 
 // InstantprofileQS represents a queryset for heatcontrol.InstantProfile
 type InstantprofileQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -40,6 +40,22 @@ func (qs InstantprofileQS) filter(c string, p interface{}) InstantprofileQS {
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs InstantprofileQS) Or(exprs ...InstantprofileQS) InstantprofileQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -378,20 +394,6 @@ func (qs InstantprofileQS) OrderByActiveDesc() InstantprofileQS {
 	return qs
 }
 
-func (qs InstantprofileQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs InstantprofileQS) ForUpdate() InstantprofileQS {
 	qs.forUpdate = true
@@ -404,7 +406,7 @@ func (qs InstantprofileQS) whereClause(c *models.PositionalCounter) (string, []i
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

@@ -10,7 +10,6 @@ require (
 	github.com/lib/pq v1.3.0
 	github.com/namsral/flag v1.7.4-pre
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
-	golang.org/x/tools v0.0.0-20201028182000-5bbba6644ef5 // indirect
 	google.golang.org/grpc v1.28.1
 	periph.io/x/periph v3.6.4+incompatible
 )

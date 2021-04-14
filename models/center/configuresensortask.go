@@ -34,7 +34,7 @@ type Configuresensortask struct {
 
 // ConfiguresensortaskQS represents a queryset for center.ConfigureSensorTask
 type ConfiguresensortaskQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -47,6 +47,22 @@ func (qs ConfiguresensortaskQS) filter(c string, p interface{}) Configuresensort
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs ConfiguresensortaskQS) Or(exprs ...ConfiguresensortaskQS) ConfiguresensortaskQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -189,6 +205,11 @@ func (c *Configuresensortask) GetSensorRaw() int32 {
 // SensorEq filters for sensor being equal to argument
 func (qs ConfiguresensortaskQS) SensorEq(v *Sensor) ConfiguresensortaskQS {
 	return qs.filter(`"sensor_id" =`, v.ID)
+}
+
+// SensorRawEq filters for sensor being equal to raw argument
+func (qs ConfiguresensortaskQS) SensorRawEq(v int32) ConfiguresensortaskQS {
+	return qs.filter(`"sensor_id" =`, v)
 }
 
 type inConfiguresensortasksensorSensor struct {
@@ -996,20 +1017,6 @@ func (qs ConfiguresensortaskQS) OrderByErrorDesc() ConfiguresensortaskQS {
 	return qs
 }
 
-func (qs ConfiguresensortaskQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ConfiguresensortaskQS) ForUpdate() ConfiguresensortaskQS {
 	qs.forUpdate = true
@@ -1022,7 +1029,7 @@ func (qs ConfiguresensortaskQS) whereClause(c *models.PositionalCounter) (string
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

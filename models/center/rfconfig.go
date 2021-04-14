@@ -30,7 +30,7 @@ type Rfconfig struct {
 
 // RfconfigQS represents a queryset for center.RFConfig
 type RfconfigQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -43,6 +43,22 @@ func (qs RfconfigQS) filter(c string, p interface{}) RfconfigQS {
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs RfconfigQS) Or(exprs ...RfconfigQS) RfconfigQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -295,6 +311,11 @@ func (r *Rfconfig) GetRfProfileRaw() int32 {
 // RfProfileEq filters for rfProfile being equal to argument
 func (qs RfconfigQS) RfProfileEq(v *Rfprofile) RfconfigQS {
 	return qs.filter(`"rf_profile_id" =`, v.GetID())
+}
+
+// RfProfileRawEq filters for rfProfile being equal to raw argument
+func (qs RfconfigQS) RfProfileRawEq(v int32) RfconfigQS {
+	return qs.filter(`"rf_profile_id" =`, v)
 }
 
 type inRfconfigrfProfileRfprofile struct {
@@ -552,20 +573,6 @@ func (qs RfconfigQS) OrderByAesKeyDesc() RfconfigQS {
 	return qs
 }
 
-func (qs RfconfigQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs RfconfigQS) ForUpdate() RfconfigQS {
 	qs.forUpdate = true
@@ -578,7 +585,7 @@ func (qs RfconfigQS) whereClause(c *models.PositionalCounter) (string, []interfa
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

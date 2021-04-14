@@ -29,7 +29,7 @@ type Calendar struct {
 
 // CalendarQS represents a queryset for heatcontrol.Calendar
 type CalendarQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -42,6 +42,22 @@ func (qs CalendarQS) filter(c string, p interface{}) CalendarQS {
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs CalendarQS) Or(exprs ...CalendarQS) CalendarQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -296,6 +312,11 @@ func (qs CalendarQS) DaytypeEq(v *Daytype) CalendarQS {
 	return qs.filter(`"daytype_id" =`, v.GetID())
 }
 
+// DaytypeRawEq filters for daytype being equal to raw argument
+func (qs CalendarQS) DaytypeRawEq(v int32) CalendarQS {
+	return qs.filter(`"daytype_id" =`, v)
+}
+
 type inCalendardaytypeDaytype struct {
 	qs DaytypeQS
 }
@@ -331,20 +352,6 @@ func (qs CalendarQS) OrderByDaytypeDesc() CalendarQS {
 	return qs
 }
 
-func (qs CalendarQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs CalendarQS) ForUpdate() CalendarQS {
 	qs.forUpdate = true
@@ -357,7 +364,7 @@ func (qs CalendarQS) whereClause(c *models.PositionalCounter) (string, []interfa
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }

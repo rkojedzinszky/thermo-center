@@ -31,7 +31,7 @@ type Scheduledoverride struct {
 
 // ScheduledoverrideQS represents a queryset for heatcontrol.ScheduledOverride
 type ScheduledoverrideQS struct {
-	condFragments []models.ConditionFragment
+	condFragments models.AndFragment
 	order         []string
 	forUpdate     bool
 }
@@ -44,6 +44,22 @@ func (qs ScheduledoverrideQS) filter(c string, p interface{}) ScheduledoverrideQ
 			Param: p,
 		},
 	)
+	return qs
+}
+
+// Or combines given expressions with OR operator
+func (qs ScheduledoverrideQS) Or(exprs ...ScheduledoverrideQS) ScheduledoverrideQS {
+	var o models.OrFragment
+
+	for _, expr := range exprs {
+		o = append(o, expr.condFragments)
+	}
+
+	qs.condFragments = append(
+		qs.condFragments,
+		o,
+	)
+
 	return qs
 }
 
@@ -186,6 +202,11 @@ func (s *Scheduledoverride) GetControlRaw() int32 {
 // ControlEq filters for control being equal to argument
 func (qs ScheduledoverrideQS) ControlEq(v *Control) ScheduledoverrideQS {
 	return qs.filter(`"control_id" =`, v.GetID())
+}
+
+// ControlRawEq filters for control being equal to raw argument
+func (qs ScheduledoverrideQS) ControlRawEq(v int32) ScheduledoverrideQS {
+	return qs.filter(`"control_id" =`, v)
 }
 
 type inScheduledoverridecontrolControl struct {
@@ -553,20 +574,6 @@ func (qs ScheduledoverrideQS) OrderByTargetTempDesc() ScheduledoverrideQS {
 	return qs
 }
 
-func (qs ScheduledoverrideQS) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	var conds []string
-	var condp []interface{}
-
-	for _, cond := range qs.condFragments {
-		s, p := cond.GetConditionFragment(c)
-
-		conds = append(conds, s)
-		condp = append(condp, p...)
-	}
-
-	return strings.Join(conds, " AND "), condp
-}
-
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ScheduledoverrideQS) ForUpdate() ScheduledoverrideQS {
 	qs.forUpdate = true
@@ -579,7 +586,7 @@ func (qs ScheduledoverrideQS) whereClause(c *models.PositionalCounter) (string, 
 		return "", nil
 	}
 
-	cond, params := qs.GetConditionFragment(c)
+	cond, params := qs.condFragments.GetConditionFragment(c)
 
 	return " WHERE " + cond, params
 }
