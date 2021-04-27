@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand
 from django.utils.module_loading import autodiscover_modules
 from django.conf import settings
 
-apiUrl = 'api/v1/'
 modelsdir = os.path.join(settings.BASE_DIR, 'www', 'models')
 metadir = os.path.join(modelsdir, 'g')
 
