@@ -27,17 +27,16 @@ RUN apk add --no-cache py3-pip py3-grpcio py3-protobuf tzdata py3-psycopg2 libme
 ### API
 FROM common AS api
 
-ADD uwsgi.api.ini ./
-
-RUN apk add --no-cache uwsgi-python3
+RUN apk --no-cache add -t .build-deps make gcc libc-dev python3-dev && \
+    pip install hypercorn[uvloop] && \
+    apk del .build-deps && \
+    rm -rf /root/.cache
 
 EXPOSE 8080
 
 USER $APP_UID
 
-ENV UWSGI_THREADS=8
-
-CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
+CMD ["hypercorn", "--bind", "0.0.0.0:8080", "--worker-class", "uvloop", "application.asgi:application"]
 
 ### UI
 FROM common AS fe-prepare
