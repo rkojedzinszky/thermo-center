@@ -1,5 +1,5 @@
 # requirements for DIY wireless Temp/Humidity sensor solution
-django<2.3
+django<3.3
 django-atomic-migrations
 django-tastypie
 psycopg2
