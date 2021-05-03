@@ -7,10 +7,10 @@ steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
       =.*/ = \\"$V\\";/" www/sw.js]
-  image: alpine:3.12
+  image: alpine:3.13
   name: versions
 - depends_on: [versions]
-  image: plugins/docker:19
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -31,7 +31,7 @@ steps:
   image: golang:1.16-alpine
   name: golang-build
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: receiver
   settings:
     auto_tag: true
@@ -43,7 +43,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -55,7 +55,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -67,7 +67,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
 - depends_on: [api]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -92,10 +92,10 @@ steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
       =.*/ = \\"$V\\";/" www/sw.js]
-  image: alpine:3.12
+  image: alpine:3.13
   name: versions
 - depends_on: [versions]
-  image: plugins/docker:19
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -116,7 +116,7 @@ steps:
   image: golang:1.16-alpine
   name: golang-build
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: receiver
   settings:
     auto_tag: true
@@ -128,7 +128,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -140,7 +140,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -152,7 +152,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
 - depends_on: [api]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true
@@ -177,10 +177,10 @@ steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
       =.*/ = \\"$V\\";/" www/sw.js]
-  image: alpine:3.12
+  image: alpine:3.13
   name: versions
 - depends_on: [versions]
-  image: plugins/docker:19
+  image: plugins/docker
   name: api
   settings:
     auto_tag: true
@@ -201,7 +201,7 @@ steps:
   image: golang:1.16-alpine
   name: golang-build
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: receiver
   settings:
     auto_tag: true
@@ -213,7 +213,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: grpcserver
   settings:
     auto_tag: true
@@ -225,7 +225,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
     username: rkojedzinszky
 - depends_on: [golang-build]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ws
   settings:
     auto_tag: true
@@ -237,7 +237,7 @@ steps:
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
     username: rkojedzinszky
 - depends_on: [api]
-  image: plugins/docker:19
+  image: plugins/docker
   name: ui
   settings:
     auto_tag: true

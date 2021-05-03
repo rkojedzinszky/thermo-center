@@ -6,7 +6,7 @@ platform:
 
 steps:
 - name: versions
-  image: alpine:3.12
+  image: alpine:3.13
   commands:
   - apk --no-cache add git
   - git fetch --tags
@@ -15,7 +15,7 @@ steps:
   - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js'
 
 - name: api
-  image: plugins/docker:19
+  image: plugins/docker
   settings:
     target: api
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -44,7 +44,7 @@ steps:
   - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
 
 - name: receiver
-  image: plugins/docker:19
+  image: plugins/docker
   settings:
     dockerfile: Dockerfile.receiver
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
@@ -59,7 +59,7 @@ steps:
   - golang-build
 
 - name: grpcserver
-  image: plugins/docker:19
+  image: plugins/docker
   settings:
     dockerfile: Dockerfile.grpcserver
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
@@ -74,7 +74,7 @@ steps:
   - golang-build
 
 - name: ws
-  image: plugins/docker:19
+  image: plugins/docker
   settings:
     dockerfile: Dockerfile.ws
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
@@ -89,7 +89,7 @@ steps:
   - golang-build
 
 - name: ui
-  image: plugins/docker:19
+  image: plugins/docker
   settings:
     target: ui
     repo: ghcr.io/rkojedzinszky/thermo-center-ui
