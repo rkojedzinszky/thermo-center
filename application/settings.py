@@ -184,9 +184,6 @@ except ImportError:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-DATABASES['default']['ATOMIC_REQUESTS'] = True
-
-
 # fixup for SCHEMA
 if re.search(r'backends\.(postgresql|postgresql_psycopg2|postgis)$', DATABASES['default']['ENGINE']) and DATABASES['default'].get('SCHEMA', None) is not None:
     opts = DATABASES['default'].setdefault('OPTIONS', {})
