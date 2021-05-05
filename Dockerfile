@@ -35,7 +35,7 @@ EXPOSE 8080
 
 USER $APP_UID
 
-ENV UWSGI_THREADS=4
+ENV UWSGI_THREADS=8
 
 CMD ["uwsgi", "--ini", "uwsgi.api.ini"]
 
