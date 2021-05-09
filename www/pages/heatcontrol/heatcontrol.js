@@ -53,13 +53,13 @@ Component.extend({
 			});
 		},
 		connectedCallback(element) {
-			View.prototype.connectedCallback.call(this, element);
-
 			var self = this;
 
 			InstantProfile.getList().then(function(res) {
 				InstantProfileCache = self.instantprofiles = res;
 			});
+
+			return View.prototype.connectedCallback.call(this, element);
 		},
 		onmessage(el) {
 			Control.getList({sensor_id: el});
