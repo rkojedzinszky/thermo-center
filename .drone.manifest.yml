@@ -1,8 +1,6 @@
 kind: pipeline
 name: manifest
-
-platform:
-  os: linux
+type: kubernetes
 
 steps:
 - image: plugins/manifest

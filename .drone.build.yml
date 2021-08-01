@@ -1,8 +1,6 @@
 kind: pipeline
 name: build
-
-platform:
-  os: linux
+type: kubernetes
 
 steps:
 - name: versions
@@ -16,6 +14,7 @@ steps:
 
 - name: api
   image: plugins/docker
+  pull: always
   settings:
     target: api
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -26,14 +25,15 @@ steps:
     auto_tag: true
     mirror:
       from_secret: hub_docker_mirror
-  depends_on:
-  - versions
+
+  privileged: true
   volumes:
   - name: docker
     path: /var/lib/docker
 
 - name: golang-build
   image: golang:1.16-alpine
+  pull: always
   commands:
   - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
   - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
@@ -45,6 +45,7 @@ steps:
 
 - name: receiver
   image: plugins/docker
+  pull: always
   settings:
     dockerfile: Dockerfile.receiver
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
@@ -55,11 +56,15 @@ steps:
     auto_tag: true
     mirror:
       from_secret: hub_docker_mirror
-  depends_on:
-  - golang-build
+
+  privileged: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: grpcserver
   image: plugins/docker
+  pull: always
   settings:
     dockerfile: Dockerfile.grpcserver
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
@@ -70,11 +75,15 @@ steps:
     auto_tag: true
     mirror:
       from_secret: hub_docker_mirror
-  depends_on:
-  - golang-build
+
+  privileged: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: ws
   image: plugins/docker
+  pull: always
   settings:
     dockerfile: Dockerfile.ws
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
@@ -85,11 +94,15 @@ steps:
     auto_tag: true
     mirror:
       from_secret: hub_docker_mirror
-  depends_on:
-  - golang-build
+
+  privileged: true
+  volumes:
+  - name: docker
+    path: /var/lib/docker
 
 - name: ui
   image: plugins/docker
+  pull: always
   settings:
     target: ui
     repo: ghcr.io/rkojedzinszky/thermo-center-ui
@@ -100,8 +113,8 @@ steps:
     auto_tag: true
     mirror:
       from_secret: hub_docker_mirror
-  depends_on:
-  - api
+
+  privileged: true
   volumes:
   - name: docker
     path: /var/lib/docker
