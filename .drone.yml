@@ -4,6 +4,8 @@ kind: pipeline
 name: build-arm64
 node_selector: {kubernetes.io/arch: arm64}
 platform: {arch: arm64, os: linux, variant: v8}
+resources:
+  requests: {memory: 384Mi}
 steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
@@ -103,6 +105,8 @@ kind: pipeline
 name: build-arm
 node_selector: {kubernetes.io/arch: arm}
 platform: {arch: arm, os: linux, variant: v7}
+resources:
+  requests: {memory: 384Mi}
 steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/
@@ -202,6 +206,8 @@ kind: pipeline
 name: build-amd64
 node_selector: {kubernetes.io/arch: amd64}
 platform: {arch: amd64, os: linux}
+resources:
+  requests: {memory: 384Mi}
 steps:
 - commands: [apk --no-cache add git, git fetch --tags, V=$(git describe --tags HEAD),
     echo "export default \\"$V\\";" > www/version.js, sed -i -e "/^const cacheVersion/s/

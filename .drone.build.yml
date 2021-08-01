@@ -2,6 +2,10 @@ kind: pipeline
 name: build
 type: kubernetes
 
+resources:
+  requests:
+    memory: 384Mi
+
 steps:
 - name: versions
   image: alpine:3.13
