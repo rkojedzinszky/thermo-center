@@ -43,10 +43,22 @@ func (r *receiver) run(ctx context.Context) (err error) {
 		return
 	}
 
-	r.runner.radio.cc1101.Reset()
-	r.runner.radio.setupBasic()
-	r.runner.radio.cc1101.Xfer(r.cfg.RadioConfig)
-	r.runner.radio.setupForRX()
+	if err = r.runner.radio.cc1101.Reset(); err != nil {
+		return
+	}
+
+	if err = r.runner.radio.setupBasic(); err != nil {
+		return
+	}
+
+	_, err = r.runner.radio.cc1101.Xfer(r.cfg.RadioConfig)
+	if err != nil {
+		return
+	}
+
+	if err = r.runner.radio.setupForRX(); err != nil {
+		return
+	}
 
 	return r.loop(ctx)
 }
