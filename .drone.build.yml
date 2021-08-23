@@ -8,7 +8,7 @@ resources:
 
 steps:
 - name: versions
-  image: alpine:3.13
+  image: alpine:3.14
   commands:
   - apk --no-cache add git
   - git fetch --tags
