@@ -61,6 +61,7 @@ func (r *receiver) loop(ctx context.Context) (err error) {
 		defer wcancel()
 
 		timer := time.NewTimer(watchdogTimeout)
+		defer timer.Stop()
 
 		for {
 			select {
