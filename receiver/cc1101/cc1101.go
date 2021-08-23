@@ -164,11 +164,6 @@ func (cc *CC1101) GetStatus(sreg StatusReg) (uint8, error) {
 	return rx[1], nil
 }
 
-// Release releases the CS line
-func (cc *CC1101) Release() error {
-	return cc.spi.Tx([]byte{byte(SNOP)}, []byte{0})
-}
-
 // ReadRXFifo reads len bytes from rxfifo
 func (cc *CC1101) ReadRXFifo(len int) ([]byte, error) {
 	tx := make([]byte, len+1)
