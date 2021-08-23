@@ -119,9 +119,8 @@ func New(spi spi.Conn) *CC1101 {
 func (cc *CC1101) Xfer(tx []uint8) (rx []uint8, err error) {
 	rx = make([]byte, len(tx))
 	packet := spi.Packet{
-		R:      rx,
-		W:      tx,
-		KeepCS: true,
+		R: rx,
+		W: tx,
 	}
 
 	err = cc.spi.TxPackets([]spi.Packet{packet})
