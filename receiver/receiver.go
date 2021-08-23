@@ -53,6 +53,7 @@ func (r *receiver) run(ctx context.Context) (err error) {
 
 func (r *receiver) loop(ctx context.Context) (err error) {
 	watchdogctx, wcancel := context.WithCancel(ctx)
+	defer wcancel()
 
 	watchdogPing := make(chan struct{})
 
@@ -68,7 +69,7 @@ func (r *receiver) loop(ctx context.Context) (err error) {
 			case <-timer.C:
 				log.Printf("Watchdog timeout (no packet received for %+v)", watchdogTimeout)
 				return
-			case <-ctx.Done():
+			case <-watchdogctx.Done():
 				return
 			case <-watchdogPing:
 				if !timer.Stop() {
