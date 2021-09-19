@@ -29,7 +29,7 @@ DATABASES = {
         'PASSWORD': os.getenv('DBPASSWORD', 'thermo-center'),
         #'SCHEMA': '',
 
-	'CONN_MAX_AGE': None if os.getenv('DBCONNMAXAGE') is None else int(os.getenv('DBCONNMAXAGE', '0')),
+        'CONN_MAX_AGE': None if os.getenv('DBCONNMAXAGE') == '' else int(os.getenv('DBCONNMAXAGE', '0')),
     }
 }
 
@@ -55,7 +55,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.messages',
     'django_atomic_migrations.AtomicMigrations',
-    'django_dbconn_retry',
     'tastypie',
     'center',
     'heatcontrol',

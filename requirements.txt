@@ -4,7 +4,6 @@ django-atomic-migrations
 django-tastypie
 psycopg2
 pylibmc
-django-dbconn-retry
 grpcio
 protobuf
 retry
