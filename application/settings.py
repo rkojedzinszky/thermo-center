@@ -11,9 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import re
 import os
-import tempfile
 import logging
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -184,15 +182,5 @@ except ImportError:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# fixup for SCHEMA
-if re.search(r'backends\.(postgresql|postgresql_psycopg2|postgis)$', DATABASES['default']['ENGINE']) and DATABASES['default'].get('SCHEMA', None) is not None:
-    opts = DATABASES['default'].setdefault('OPTIONS', {})
-    opts['options'] = opts.get(
-        'options', '') + ' -c search_path=%s' % DATABASES['default']['SCHEMA']
-
-del re
-
 # default tastypie.api object
 RESTAPI_CLASS = 'application.restapi.RestApi'
-
-del tempfile
