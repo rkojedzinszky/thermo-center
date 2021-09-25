@@ -1,6 +1,9 @@
 # requirements for DIY wireless Temp/Humidity sensor solution
 django<3.3
 django-atomic-migrations
+# Until https://github.com/altairbow/django-db-connection-pool/pull/22 is accepted
+# install from PR source
+django-db-connection-pool[postgresql] @ https://github.com/rkojedzinszky/django-db-connection-pool/archive/refs/heads/master.zip
 django-tastypie
 psycopg2
 pylibmc

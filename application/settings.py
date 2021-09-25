@@ -21,15 +21,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {
     'default': {
         # postgresql db with schema support
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'dj_db_conn_pool.backends.postgresql',
         'NAME': os.getenv('DBNAME', 'thermo-center'),
         'HOST': os.getenv('DBHOST', 'postgres'),
         'PORT': os.getenv('DBPORT', '5432'),
         'USER': os.getenv('DBUSER', 'thermo-center'),
         'PASSWORD': os.getenv('DBPASSWORD', 'thermo-center'),
-        #'SCHEMA': '',
-
-        'CONN_MAX_AGE': None if os.getenv('DBCONNMAXAGE') == '' else int(os.getenv('DBCONNMAXAGE', '0')),
+        'POOL_OPTIONS': {
+            'POOL_SIZE': int(os.getenv('DATABASE_POOL_OPTIONS_POOL_SIZE', '2')),
+            'MAX_OVERFLOW': int(os.getenv('DATABASE_POOL_OPTIONS_MAX_OVERFLOW', '2')),
+        },
     }
 }
 

@@ -19,7 +19,7 @@ ADD configurator/api_pb2.py configurator/
 
 RUN apk add --no-cache py3-pip py3-grpcio py3-protobuf tzdata py3-psycopg2 libmemcached && \
     ln -sf python3 /usr/bin/python && ln -sf pip3 /usr/bin/pip && \
-    apk --no-cache add -t .build-deps gcc libc-dev python3-dev zlib-dev libmemcached-dev && \
+    apk --no-cache add -t .build-deps g++ libc-dev python3-dev zlib-dev libmemcached-dev && \
     pip install -r requirements.txt && \
     apk del .build-deps && \
     rm -rf /root/.cache
