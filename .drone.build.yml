@@ -39,19 +39,16 @@ steps:
   image: golang:1.17-alpine
   pull: always
   commands:
-  - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
-  - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - mkdir bin
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/grpcserver ./cmd/grpcserver
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/ws ./ws
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
 
 - name: receiver
   image: plugins/docker
   pull: always
   settings:
-    dockerfile: Dockerfile.receiver
+    dockerfile: cmd/receiver/Dockerfile
+    context: cmd/receiver
     repo: ghcr.io/rkojedzinszky/thermo-center-receiver
     registry: ghcr.io
     username: rkojedzinszky
@@ -70,7 +67,8 @@ steps:
   image: plugins/docker
   pull: always
   settings:
-    dockerfile: Dockerfile.grpcserver
+    dockerfile: cmd/grpcserver/Dockerfile
+    context: cmd/grpcserver
     repo: ghcr.io/rkojedzinszky/thermo-center-grpcserver
     registry: ghcr.io
     username: rkojedzinszky
@@ -89,7 +87,8 @@ steps:
   image: plugins/docker
   pull: always
   settings:
-    dockerfile: Dockerfile.ws
+    dockerfile: cmd/ws/Dockerfile
+    context: cmd/ws
     repo: ghcr.io/rkojedzinszky/thermo-center-ws
     registry: ghcr.io
     username: rkojedzinszky

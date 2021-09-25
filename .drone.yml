@@ -39,13 +39,9 @@ steps:
   - name: docker
     path: /var/lib/docker
 - commands:
-  - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
-  - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - mkdir bin
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/grpcserver ./cmd/grpcserver
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/ws ./ws
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
   image: golang:1.17-alpine
   name: golang-build
   pull: always
@@ -56,7 +52,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: Dockerfile.receiver
+    context: cmd/receiver
+    dockerfile: cmd/receiver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -74,7 +71,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: Dockerfile.grpcserver
+    context: cmd/grpcserver
+    dockerfile: cmd/grpcserver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -92,7 +90,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: Dockerfile.ws
+    context: cmd/ws
+    dockerfile: cmd/ws/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -166,13 +165,9 @@ steps:
   - name: docker
     path: /var/lib/docker
 - commands:
-  - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
-  - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - mkdir bin
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/grpcserver ./cmd/grpcserver
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/ws ./ws
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
   image: golang:1.17-alpine
   name: golang-build
   pull: always
@@ -183,7 +178,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: Dockerfile.receiver
+    context: cmd/receiver
+    dockerfile: cmd/receiver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -201,7 +197,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: Dockerfile.grpcserver
+    context: cmd/grpcserver
+    dockerfile: cmd/grpcserver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -219,7 +216,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: Dockerfile.ws
+    context: cmd/ws
+    dockerfile: cmd/ws/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -292,13 +290,9 @@ steps:
   - name: docker
     path: /var/lib/docker
 - commands:
-  - mkdir -p ${GOPATH}/src/github.com/rkojedzinszky
-  - ln -sf $(pwd) ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - cd ${GOPATH}/src/github.com/rkojedzinszky/thermo-center
-  - mkdir bin
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/grpcserver ./cmd/grpcserver
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/ws ./ws
-  - CGO_ENABLED=0 go build -ldflags -s -o bin/receiver ./cmd/receiver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
+  - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
   image: golang:1.17-alpine
   name: golang-build
   pull: always
@@ -309,7 +303,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: Dockerfile.receiver
+    context: cmd/receiver
+    dockerfile: cmd/receiver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -327,7 +322,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: Dockerfile.grpcserver
+    context: cmd/grpcserver
+    dockerfile: cmd/grpcserver/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:
@@ -345,7 +341,8 @@ steps:
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: Dockerfile.ws
+    context: cmd/ws
+    dockerfile: cmd/ws/Dockerfile
     mirror:
       from_secret: hub_docker_mirror
     password:

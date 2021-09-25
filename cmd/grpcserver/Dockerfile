@@ -3,10 +3,10 @@ FROM scratch
 LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
 LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
 
-ADD bin/ws /
+COPY grpcserver /
 
-EXPOSE 8081
+EXPOSE 8079
 
-USER 65535
+USER 8079
 
-CMD ["/ws"]
+CMD ["/grpcserver"]
