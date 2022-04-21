@@ -13,8 +13,9 @@ from application import http
 from tastypie.api import Api
 RestApi = Api(api_name='v1')
 
+
 class SessionResource(Resource):
-    id = fields.CharField()
+    id = fields.IntegerField(readonly=True)
     is_admin = fields.BooleanField(readonly=True)
 
     class Meta(ResourceMetaCommon):
@@ -24,7 +25,7 @@ class SessionResource(Resource):
 
     def detail_uri_kwargs(self, bundle_or_obj):
         if isinstance(bundle_or_obj, Bundle):
-            return {'pk': bundle_or_obj.request.session.session_key}
+            return {'pk': 1}
 
         return None
 
@@ -33,12 +34,6 @@ class SessionResource(Resource):
             return [bundle.request.user]
 
         return []
-
-    def obj_get(self, bundle, **kwargs):
-        if bundle.request.user.is_authenticated and kwargs['pk'] == bundle.request.session.session_key:
-            return bundle.request.user
-
-        raise http.ImmediateHttpResponse(http.HttpUnauthorized())
 
     def obj_create(self, bundle, **kwargs):
         user = authenticate(request=bundle.request, username=bundle.data['username'], password=bundle.data.pop('password', None))
@@ -52,14 +47,23 @@ class SessionResource(Resource):
 
         return bundle
 
+    def obj_get(self, bundle, **kwargs):
+        if kwargs.get('pk', None) == '1' and bundle.request.user.is_authenticated:
+            return bundle.request.user
+
+        raise http.ImmediateHttpResponse(http.HttpNotFound())
+
     def obj_delete(self, bundle, **kwargs):
+        self.obj_get(bundle, **kwargs)
+
         logout(bundle.request)
 
     def dehydrate(self, bundle):
-        bundle.data['id'] = bundle.request.session.session_key
+        bundle.data['id'] = 1
         bundle.data['is_admin'] = bundle.obj.is_superuser
 
         return bundle
+
 
 SessionInstance = SessionResource()
 RestApi.register(SessionInstance)
