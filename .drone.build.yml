@@ -36,7 +36,7 @@ steps:
     path: /var/lib/docker
 
 - name: golang-build
-  image: golang:1.17-alpine
+  image: golang:1.18-alpine
   pull: always
   commands:
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
