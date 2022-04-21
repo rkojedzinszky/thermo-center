@@ -18,7 +18,7 @@ steps:
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.14
+  image: alpine:3.15
   name: versions
 - image: plugins/docker
   name: api
@@ -144,7 +144,7 @@ steps:
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.14
+  image: alpine:3.15
   name: versions
 - image: plugins/docker
   name: api
@@ -269,7 +269,7 @@ steps:
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.14
+  image: alpine:3.15
   name: versions
 - image: plugins/docker
   name: api

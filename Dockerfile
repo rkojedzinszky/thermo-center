@@ -1,4 +1,4 @@
-FROM alpine:3.14 AS common
+FROM alpine:3.15 AS common
 
 LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
 LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
