@@ -39,6 +39,8 @@ steps:
   image: golang:1.18-alpine
   pull: always
   commands:
+  - apk --no-cache add git
+  - git fetch --tags
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
