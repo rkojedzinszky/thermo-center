@@ -2,7 +2,7 @@
 django<3.3
 django-atomic-migrations
 # install from source
-django-db-connection-pool[postgresql] @ https://github.com/altairbow/django-db-connection-pool/archive/refs/heads/master.zip
+django-db-connection-pool[postgresql]
 django-tastypie
 psycopg2
 pylibmc
