@@ -102,17 +102,9 @@ func (h *Hub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	go client.readPump()
 }
 
-// The name of the cookie used for sessions
-const sessionIDCookie = "sessionid"
-
 func (h *Hub) authenticateClient(r *http.Request) bool {
-	sessionID, err := r.Cookie(sessionIDCookie)
-	if err != nil {
-		return false
-	}
-
 	// Only http is supported for now
-	newReq, err := http.NewRequestWithContext(r.Context(), "GET", fmt.Sprintf("http://%s%s%s/", h.sessionResourceHost, sessionResourceURI, sessionID.Value), nil)
+	newReq, err := http.NewRequestWithContext(r.Context(), "GET", fmt.Sprintf("http://%s%s/1/", h.sessionResourceHost, sessionResourceURI), nil)
 	if err != nil {
 		return false
 	}
