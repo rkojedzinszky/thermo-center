@@ -9,9 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"database/sql"
-
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rkojedzinszky/thermo-center/aggregator/sensorvalue"
 	"github.com/rkojedzinszky/thermo-center/models/center"
@@ -286,7 +285,7 @@ func (a *aggregator) getTargetTemp(ctx context.Context, c *heatcontrol.Control) 
 		}
 	}
 
-	if err != sql.ErrNoRows {
+	if err != pgx.ErrNoRows {
 		return nil, err
 	}
 
