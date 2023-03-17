@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-const sessionResourceURI = "/api/v1/session/"
+const sessionResourceURI = "/api/v1/session/1/"
 
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
@@ -104,7 +104,7 @@ func (h *Hub) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *Hub) authenticateClient(r *http.Request) bool {
 	// Only http is supported for now
-	newReq, err := http.NewRequestWithContext(r.Context(), "GET", fmt.Sprintf("http://%s%s/1/", h.sessionResourceHost, sessionResourceURI), nil)
+	newReq, err := http.NewRequestWithContext(r.Context(), "GET", fmt.Sprintf("http://%s%s", h.sessionResourceHost, sessionResourceURI), nil)
 	if err != nil {
 		return false
 	}
