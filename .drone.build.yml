@@ -36,7 +36,7 @@ steps:
     path: /var/lib/docker
 
 - name: golang-build
-  image: golang:1.18-alpine
+  image: golang:1.20-alpine
   pull: always
   commands:
   - apk --no-cache add git
