@@ -1,0 +1,4 @@
+models/**/*.go linguist-generated
+*_pb2.py linguist-generated
+*_pb2_grpc.py linguist-generated
+*.pb.go linguist-generated
