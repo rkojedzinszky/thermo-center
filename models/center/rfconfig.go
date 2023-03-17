@@ -12,8 +12,8 @@ package center
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
 )
@@ -663,7 +663,7 @@ func (qs RfconfigQS) First(ctx context.Context, db models.DBInterface) (*Rfconfi
 	switch err {
 	case nil:
 		return &obj, nil
-	case sql.ErrNoRows:
+	case pgx.ErrNoRows:
 		return nil, nil
 	default:
 		return nil, err
