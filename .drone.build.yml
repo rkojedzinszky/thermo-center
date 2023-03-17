@@ -8,17 +8,17 @@ resources:
 
 steps:
 - name: versions
-  image: alpine:3.15
+  image: alpine:3.17
   commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - V=$(git describe --tags HEAD)
   - 'echo "export default \\"$V\\";" > www/version.js'
   - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js'
 
 - name: api
-  image: plugins/docker
-  pull: always
+  image: plugins/docker:20.10
   settings:
     target: api
     repo: ghcr.io/rkojedzinszky/thermo-center-api
@@ -40,14 +40,14 @@ steps:
   pull: always
   commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/receiver/receiver ./cmd/receiver
 
 - name: receiver
-  image: plugins/docker
-  pull: always
+  image: plugins/docker:20.10
   settings:
     dockerfile: cmd/receiver/Dockerfile
     context: cmd/receiver
@@ -66,7 +66,7 @@ steps:
     path: /var/lib/docker
 
 - name: grpcserver
-  image: plugins/docker
+  image: plugins/docker:20.10
   pull: always
   settings:
     dockerfile: cmd/grpcserver/Dockerfile
@@ -86,8 +86,7 @@ steps:
     path: /var/lib/docker
 
 - name: ws
-  image: plugins/docker
-  pull: always
+  image: plugins/docker:20.10
   settings:
     dockerfile: cmd/ws/Dockerfile
     context: cmd/ws
@@ -106,8 +105,7 @@ steps:
     path: /var/lib/docker
 
 - name: ui
-  image: plugins/docker
-  pull: always
+  image: plugins/docker:20.10
   settings:
     target: ui
     repo: ghcr.io/rkojedzinszky/thermo-center-ui

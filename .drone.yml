@@ -14,16 +14,16 @@ resources:
 steps:
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.15
+  image: alpine:3.17
   name: versions
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: api
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
@@ -40,6 +40,7 @@ steps:
     path: /var/lib/docker
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
@@ -47,10 +48,9 @@ steps:
   image: golang:1.18-alpine
   name: golang-build
   pull: always
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: receiver
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
@@ -66,7 +66,7 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: grpcserver
   privileged: true
   pull: always
@@ -85,10 +85,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ws
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
@@ -104,10 +103,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ui
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
@@ -142,16 +140,16 @@ resources:
 steps:
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.15
+  image: alpine:3.17
   name: versions
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: api
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm
@@ -168,6 +166,7 @@ steps:
     path: /var/lib/docker
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
@@ -175,10 +174,9 @@ steps:
   image: golang:1.18-alpine
   name: golang-build
   pull: always
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: receiver
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm
@@ -194,7 +192,7 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: grpcserver
   privileged: true
   pull: always
@@ -213,10 +211,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ws
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm
@@ -232,10 +229,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ui
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: arm
@@ -269,16 +265,16 @@ resources:
 steps:
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - V=$(git describe --tags HEAD)
   - echo "export default \\"$V\\";" > www/version.js
   - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
-  image: alpine:3.15
+  image: alpine:3.17
   name: versions
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: api
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
@@ -295,6 +291,7 @@ steps:
     path: /var/lib/docker
 - commands:
   - apk --no-cache add git
+  - git config --global --add safe.directory /drone/src
   - git fetch --tags
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/grpcserver/grpcserver ./cmd/grpcserver
   - CGO_ENABLED=0 go build -ldflags -s -o cmd/ws/ws ./cmd/ws
@@ -302,10 +299,9 @@ steps:
   image: golang:1.18-alpine
   name: golang-build
   pull: always
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: receiver
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
@@ -321,7 +317,7 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: grpcserver
   privileged: true
   pull: always
@@ -340,10 +336,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ws
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
@@ -359,10 +354,9 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
-- image: plugins/docker
+- image: plugins/docker:20.10
   name: ui
   privileged: true
-  pull: always
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
