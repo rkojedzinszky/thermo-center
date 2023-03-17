@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.Calendar
+// Code generated for Django model heatcontrol.Calendar. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -27,11 +28,14 @@ type Calendar struct {
 	daytype int32
 }
 
+// CalendarList is a list of Calendar
+type CalendarList []*Calendar
+
 // CalendarQS represents a queryset for heatcontrol.Calendar
 type CalendarQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs CalendarQS) filter(c string, p interface{}) CalendarQS {
@@ -96,21 +100,19 @@ func (qs CalendarQS) IDGe(v int32) CalendarQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inCalendarid struct {
-	values []interface{}
-}
+type inCalendarid []interface{}
 
-func (in *inCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs CalendarQS) IDIn(values []int32) CalendarQS {
@@ -121,29 +123,25 @@ func (qs CalendarQS) IDIn(values []int32) CalendarQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inCalendarid{
-			values: vals,
-		},
+		inCalendarid(vals),
 	)
 
 	return qs
 }
 
-type notinCalendarid struct {
-	values []interface{}
-}
+type notinCalendarid []interface{}
 
-func (in *notinCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinCalendarid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs CalendarQS) IDNotIn(values []int32) CalendarQS {
@@ -154,9 +152,7 @@ func (qs CalendarQS) IDNotIn(values []int32) CalendarQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinCalendarid{
-			values: vals,
-		},
+		notinCalendarid(vals),
 	)
 
 	return qs
@@ -206,21 +202,19 @@ func (qs CalendarQS) DayGe(v time.Time) CalendarQS {
 	return qs.filter(`"day" >=`, v)
 }
 
-type inCalendarDay struct {
-	values []interface{}
-}
+type inCalendarDay []interface{}
 
-func (in *inCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"day" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"day" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs CalendarQS) DayIn(values []time.Time) CalendarQS {
@@ -231,29 +225,25 @@ func (qs CalendarQS) DayIn(values []time.Time) CalendarQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inCalendarDay{
-			values: vals,
-		},
+		inCalendarDay(vals),
 	)
 
 	return qs
 }
 
-type notinCalendarDay struct {
-	values []interface{}
-}
+type notinCalendarDay []interface{}
 
-func (in *notinCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinCalendarDay) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"day" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"day" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs CalendarQS) DayNotIn(values []time.Time) CalendarQS {
@@ -264,9 +254,7 @@ func (qs CalendarQS) DayNotIn(values []time.Time) CalendarQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinCalendarDay{
-			values: vals,
-		},
+		notinCalendarDay(vals),
 	)
 
 	return qs
@@ -287,8 +275,8 @@ func (qs CalendarQS) OrderByDayDesc() CalendarQS {
 }
 
 // GetDaytype returns Daytype
-func (c *Calendar) GetDaytype(db models.DBInterface) (*Daytype, error) {
-	return DaytypeQS{}.IDEq(c.daytype).First(db)
+func (c *Calendar) GetDaytype(ctx context.Context, db models.DBInterface) (*Daytype, error) {
+	return DaytypeQS{}.IDEq(c.daytype).First(ctx, db)
 }
 
 // SetDaytype sets foreign key pointer to Daytype
@@ -352,9 +340,37 @@ func (qs CalendarQS) OrderByDaytypeDesc() CalendarQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs CalendarQS) OrderByRandom() CalendarQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs CalendarQS) ForUpdate() CalendarQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs CalendarQS) ForUpdateNowait() CalendarQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs CalendarQS) ForUpdateSkipLocked() CalendarQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs CalendarQS) ClearForUpdate() CalendarQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -382,9 +398,7 @@ func (qs CalendarQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "day", "daytype_id" FROM "heatcontrol_calendar"` + s, p
 }
@@ -396,17 +410,30 @@ func (qs CalendarQS) QueryId(c *models.PositionalCounter) (string, []interface{}
 	return `SELECT "id" FROM "heatcontrol_calendar"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs CalendarQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_calendar"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs CalendarQS) All(db models.DBInterface) ([]*Calendar, error) {
+func (qs CalendarQS) All(ctx context.Context, db models.DBInterface) (CalendarList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Calendar
+	var ret CalendarList
 	for rows.Next() {
 		obj := Calendar{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.Day, &obj.daytype); err != nil {
@@ -419,12 +446,12 @@ func (qs CalendarQS) All(db models.DBInterface) ([]*Calendar, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs CalendarQS) First(db models.DBInterface) (*Calendar, error) {
+func (qs CalendarQS) First(ctx context.Context, db models.DBInterface) (*Calendar, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Calendar{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.Day, &obj.daytype)
@@ -439,18 +466,18 @@ func (qs CalendarQS) First(db models.DBInterface) (*Calendar, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs CalendarQS) Delete(db models.DBInterface) (int64, error) {
+func (qs CalendarQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_calendar"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -502,7 +529,7 @@ func (uqs CalendarUpdateQS) SetDaytype(ptr *Daytype) CalendarUpdateQS {
 
 	return uqs.update(`"daytype_id"`, nil)
 } // Exec executes the update operation
-func (uqs CalendarUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs CalendarUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -525,17 +552,17 @@ func (uqs CalendarUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (c *Calendar) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_calendar" ("day", "daytype_id") VALUES ($1, $2) RETURNING "id"`, c.Day, c.daytype)
+func (c *Calendar) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_calendar" ("day", "daytype_id") VALUES ($1, $2) RETURNING "id"`, c.Day, c.daytype)
 
 	if err := row.Scan(&c.id); err != nil {
 		return err
@@ -547,26 +574,76 @@ func (c *Calendar) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (c *Calendar) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_calendar" SET "day" = $1, "daytype_id" = $2 WHERE "id" = $3`, c.Day, c.daytype, c.id)
+func (c *Calendar) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_calendar" SET "day" = $1, "daytype_id" = $2 WHERE "id" = $3`, c.Day, c.daytype, c.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (c *Calendar) Save(db models.DBInterface) error {
+func (c *Calendar) Save(ctx context.Context, db models.DBInterface) error {
 	if c.existsInDB {
-		return c.update(db)
+		return c.update(ctx, db)
 	}
 
-	return c.insert(db)
+	return c.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (c *Calendar) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_calendar" WHERE "id" = $1`, c.id)
+func (c *Calendar) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_calendar" WHERE "id" = $1`, c.id)
 
 	c.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (cl CalendarList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts CalendarList
+
+	for _, c := range cl {
+		if c.existsInDB {
+			if err := c.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, c)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 2*len(inserts))
+	offs := 1
+	for _, c := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d)", offs+0, offs+1))
+		vaa = append(vaa, c.Day, c.daytype)
+		offs += 2
+	}
+
+	qs := `INSERT INTO "heatcontrol_calendar" ("day", "daytype_id") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, c := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&c.id); err != nil {
+			return err
+		}
+
+		c.existsInDB = true
+	}
+
+	return nil
 }

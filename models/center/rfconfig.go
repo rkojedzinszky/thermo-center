@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model center.RFConfig
+// Code generated for Django model center.RFConfig. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package center
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -28,11 +29,14 @@ type Rfconfig struct {
 	AesKey    string
 }
 
+// RfconfigList is a list of Rfconfig
+type RfconfigList []*Rfconfig
+
 // RfconfigQS represents a queryset for center.RFConfig
 type RfconfigQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs RfconfigQS) filter(c string, p interface{}) RfconfigQS {
@@ -97,21 +101,19 @@ func (qs RfconfigQS) IDGe(v int32) RfconfigQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inRfconfigid struct {
-	values []interface{}
-}
+type inRfconfigid []interface{}
 
-func (in *inRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) IDIn(values []int32) RfconfigQS {
@@ -122,29 +124,25 @@ func (qs RfconfigQS) IDIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfconfigid{
-			values: vals,
-		},
+		inRfconfigid(vals),
 	)
 
 	return qs
 }
 
-type notinRfconfigid struct {
-	values []interface{}
-}
+type notinRfconfigid []interface{}
 
-func (in *notinRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfconfigid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) IDNotIn(values []int32) RfconfigQS {
@@ -155,9 +153,7 @@ func (qs RfconfigQS) IDNotIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfconfigid{
-			values: vals,
-		},
+		notinRfconfigid(vals),
 	)
 
 	return qs
@@ -207,21 +203,19 @@ func (qs RfconfigQS) RfChannelGe(v int32) RfconfigQS {
 	return qs.filter(`"rf_channel" >=`, v)
 }
 
-type inRfconfigRfChannel struct {
-	values []interface{}
-}
+type inRfconfigRfChannel []interface{}
 
-func (in *inRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"rf_channel" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"rf_channel" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) RfChannelIn(values []int32) RfconfigQS {
@@ -232,29 +226,25 @@ func (qs RfconfigQS) RfChannelIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfconfigRfChannel{
-			values: vals,
-		},
+		inRfconfigRfChannel(vals),
 	)
 
 	return qs
 }
 
-type notinRfconfigRfChannel struct {
-	values []interface{}
-}
+type notinRfconfigRfChannel []interface{}
 
-func (in *notinRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfconfigRfChannel) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"rf_channel" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"rf_channel" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) RfChannelNotIn(values []int32) RfconfigQS {
@@ -265,9 +255,7 @@ func (qs RfconfigQS) RfChannelNotIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfconfigRfChannel{
-			values: vals,
-		},
+		notinRfconfigRfChannel(vals),
 	)
 
 	return qs
@@ -288,8 +276,8 @@ func (qs RfconfigQS) OrderByRfChannelDesc() RfconfigQS {
 }
 
 // GetRfProfile returns Rfprofile
-func (r *Rfconfig) GetRfProfile(db models.DBInterface) (*Rfprofile, error) {
-	return RfprofileQS{}.IDEq(r.rfProfile).First(db)
+func (r *Rfconfig) GetRfProfile(ctx context.Context, db models.DBInterface) (*Rfprofile, error) {
+	return RfprofileQS{}.IDEq(r.rfProfile).First(ctx, db)
 }
 
 // SetRfProfile sets foreign key pointer to Rfprofile
@@ -383,21 +371,19 @@ func (qs RfconfigQS) NetworkIdGe(v int32) RfconfigQS {
 	return qs.filter(`"network_id" >=`, v)
 }
 
-type inRfconfigNetworkId struct {
-	values []interface{}
-}
+type inRfconfigNetworkId []interface{}
 
-func (in *inRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"network_id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"network_id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) NetworkIdIn(values []int32) RfconfigQS {
@@ -408,29 +394,25 @@ func (qs RfconfigQS) NetworkIdIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfconfigNetworkId{
-			values: vals,
-		},
+		inRfconfigNetworkId(vals),
 	)
 
 	return qs
 }
 
-type notinRfconfigNetworkId struct {
-	values []interface{}
-}
+type notinRfconfigNetworkId []interface{}
 
-func (in *notinRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfconfigNetworkId) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"network_id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"network_id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) NetworkIdNotIn(values []int32) RfconfigQS {
@@ -441,9 +423,7 @@ func (qs RfconfigQS) NetworkIdNotIn(values []int32) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfconfigNetworkId{
-			values: vals,
-		},
+		notinRfconfigNetworkId(vals),
 	)
 
 	return qs
@@ -493,21 +473,19 @@ func (qs RfconfigQS) AesKeyGe(v string) RfconfigQS {
 	return qs.filter(`"aes_key" >=`, v)
 }
 
-type inRfconfigAesKey struct {
-	values []interface{}
-}
+type inRfconfigAesKey []interface{}
 
-func (in *inRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"aes_key" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"aes_key" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) AesKeyIn(values []string) RfconfigQS {
@@ -518,29 +496,25 @@ func (qs RfconfigQS) AesKeyIn(values []string) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfconfigAesKey{
-			values: vals,
-		},
+		inRfconfigAesKey(vals),
 	)
 
 	return qs
 }
 
-type notinRfconfigAesKey struct {
-	values []interface{}
-}
+type notinRfconfigAesKey []interface{}
 
-func (in *notinRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfconfigAesKey) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"aes_key" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"aes_key" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfconfigQS) AesKeyNotIn(values []string) RfconfigQS {
@@ -551,9 +525,7 @@ func (qs RfconfigQS) AesKeyNotIn(values []string) RfconfigQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfconfigAesKey{
-			values: vals,
-		},
+		notinRfconfigAesKey(vals),
 	)
 
 	return qs
@@ -573,9 +545,37 @@ func (qs RfconfigQS) OrderByAesKeyDesc() RfconfigQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs RfconfigQS) OrderByRandom() RfconfigQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs RfconfigQS) ForUpdate() RfconfigQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs RfconfigQS) ForUpdateNowait() RfconfigQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs RfconfigQS) ForUpdateSkipLocked() RfconfigQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs RfconfigQS) ClearForUpdate() RfconfigQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -603,9 +603,7 @@ func (qs RfconfigQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "rf_channel", "rf_profile_id", "network_id", "aes_key" FROM "center_rfconfig"` + s, p
 }
@@ -617,17 +615,30 @@ func (qs RfconfigQS) QueryId(c *models.PositionalCounter) (string, []interface{}
 	return `SELECT "id" FROM "center_rfconfig"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs RfconfigQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_rfconfig"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs RfconfigQS) All(db models.DBInterface) ([]*Rfconfig, error) {
+func (qs RfconfigQS) All(ctx context.Context, db models.DBInterface) (RfconfigList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Rfconfig
+	var ret RfconfigList
 	for rows.Next() {
 		obj := Rfconfig{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.RfChannel, &obj.rfProfile, &obj.NetworkId, &obj.AesKey); err != nil {
@@ -640,12 +651,12 @@ func (qs RfconfigQS) All(db models.DBInterface) ([]*Rfconfig, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs RfconfigQS) First(db models.DBInterface) (*Rfconfig, error) {
+func (qs RfconfigQS) First(ctx context.Context, db models.DBInterface) (*Rfconfig, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Rfconfig{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.RfChannel, &obj.rfProfile, &obj.NetworkId, &obj.AesKey)
@@ -660,18 +671,18 @@ func (qs RfconfigQS) First(db models.DBInterface) (*Rfconfig, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs RfconfigQS) Delete(db models.DBInterface) (int64, error) {
+func (qs RfconfigQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "center_rfconfig"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -733,7 +744,7 @@ func (uqs RfconfigUpdateQS) SetAesKey(v string) RfconfigUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs RfconfigUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs RfconfigUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -756,17 +767,17 @@ func (uqs RfconfigUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (r *Rfconfig) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "center_rfconfig" ("rf_channel", "rf_profile_id", "network_id", "aes_key") VALUES ($1, $2, $3, $4) RETURNING "id"`, r.RfChannel, r.rfProfile, r.NetworkId, r.AesKey)
+func (r *Rfconfig) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "center_rfconfig" ("rf_channel", "rf_profile_id", "network_id", "aes_key") VALUES ($1, $2, $3, $4) RETURNING "id"`, r.RfChannel, r.rfProfile, r.NetworkId, r.AesKey)
 
 	if err := row.Scan(&r.id); err != nil {
 		return err
@@ -778,26 +789,76 @@ func (r *Rfconfig) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (r *Rfconfig) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_rfconfig" SET "rf_channel" = $1, "rf_profile_id" = $2, "network_id" = $3, "aes_key" = $4 WHERE "id" = $5`, r.RfChannel, r.rfProfile, r.NetworkId, r.AesKey, r.id)
+func (r *Rfconfig) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "center_rfconfig" SET "rf_channel" = $1, "rf_profile_id" = $2, "network_id" = $3, "aes_key" = $4 WHERE "id" = $5`, r.RfChannel, r.rfProfile, r.NetworkId, r.AesKey, r.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (r *Rfconfig) Save(db models.DBInterface) error {
+func (r *Rfconfig) Save(ctx context.Context, db models.DBInterface) error {
 	if r.existsInDB {
-		return r.update(db)
+		return r.update(ctx, db)
 	}
 
-	return r.insert(db)
+	return r.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (r *Rfconfig) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "center_rfconfig" WHERE "id" = $1`, r.id)
+func (r *Rfconfig) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "center_rfconfig" WHERE "id" = $1`, r.id)
 
 	r.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (rl RfconfigList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts RfconfigList
+
+	for _, r := range rl {
+		if r.existsInDB {
+			if err := r.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, r)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 4*len(inserts))
+	offs := 1
+	for _, r := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3))
+		vaa = append(vaa, r.RfChannel, r.rfProfile, r.NetworkId, r.AesKey)
+		offs += 4
+	}
+
+	qs := `INSERT INTO "center_rfconfig" ("rf_channel", "rf_profile_id", "network_id", "aes_key") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, r := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&r.id); err != nil {
+			return err
+		}
+
+		r.existsInDB = true
+	}
+
+	return nil
 }

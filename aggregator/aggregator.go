@@ -12,6 +12,7 @@ import (
 	"database/sql"
 
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rkojedzinszky/thermo-center/aggregator/sensorvalue"
 	"github.com/rkojedzinszky/thermo-center/models/center"
 	"github.com/rkojedzinszky/thermo-center/models/heatcontrol"
@@ -21,7 +22,7 @@ const defaultCarbonMetricPathTemplate = `sensor.{{ printf "%02x" .SensorID }}.{{
 
 // aggregator serves the aggregator API
 type aggregator struct {
-	db                *sql.DB
+	db                *pgxpool.Pool
 	location          *time.Location
 	mc                *memcache.Client
 	mqtt              *MqttClient
@@ -34,7 +35,7 @@ type aggregator struct {
 }
 
 // NewAggregator instantiates a new aggregator
-func NewAggregator(db *sql.DB, location *time.Location) (AggregatorServer, error) {
+func NewAggregator(db *pgxpool.Pool, location *time.Location) (AggregatorServer, error) {
 	a := &aggregator{
 		db:       db,
 		location: location,
@@ -141,7 +142,7 @@ func sensorControlKey(s *center.Sensor) string {
 }
 
 // update sequence values from cache
-func (a *aggregator) validateSensorPacket(s *center.Sensor, p *SensorPacket) (float64, bool) {
+func (a *aggregator) validateSensorPacket(ctx context.Context, s *center.Sensor, p *SensorPacket) (float64, bool) {
 	now := float64(time.Now().UnixNano()) / 1e9
 
 	var avg float64
@@ -175,7 +176,7 @@ func (a *aggregator) validateSensorPacket(s *center.Sensor, p *SensorPacket) (fl
 		s.LastTsf.Valid = true
 
 		if save || rand.Float64() < a.updateProbability {
-			center.SensorQS{}.IDEq(s.ID).Update().SetLastSeq(s.LastSeq).SetLastTsf(s.LastTsf).Exec(a.db)
+			center.SensorQS{}.IDEq(s.ID).Update().SetLastSeq(s.LastSeq).SetLastTsf(s.LastTsf).Exec(ctx, a.db)
 		}
 	}
 
@@ -235,14 +236,14 @@ func (a *aggregator) saveCache(s *center.Sensor, cache map[string]interface{}) e
 	return nil
 }
 
-func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
+func (a *aggregator) getTargetTemp(ctx context.Context, c *heatcontrol.Control) (*float64, error) {
 	now := a.now()
 
 	var so *heatcontrol.Scheduledoverride
 	var ipe *heatcontrol.Instantprofileentry
 	var err error
 
-	so, err = c.Scheduledoverride().StartLe(now).EndGt(now).OrderByIDDesc().First(a.db)
+	so, err = c.Scheduledoverride().StartLe(now).EndGt(now).OrderByIDDesc().First(ctx, a.db)
 
 	if err != nil {
 		return nil, err
@@ -252,7 +253,7 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 		return &so.TargetTemp, nil
 	}
 
-	ipe, err = c.Instantprofileentry().ActiveEq(true).First(a.db)
+	ipe, err = c.Instantprofileentry().ActiveEq(true).First(ctx, a.db)
 
 	if err != nil {
 		return nil, err
@@ -267,8 +268,8 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 	}
 
 	// Reading profile is hardcoded here
-	var targetTemp sql.NullFloat64
-	row := a.db.QueryRow(`
+	var targetTemp *float64
+	row := a.db.QueryRow(ctx, `
 		select "heatcontrol_profile"."target_temp" from "heatcontrol_profile"
 		where "control_id" = $1 and daytype_id =
 			(select "daytype_id" from heatcontrol_calendar where day = $2::date)
@@ -278,8 +279,8 @@ func (a *aggregator) getTargetTemp(c *heatcontrol.Control) (*float64, error) {
 
 	err = row.Scan(&targetTemp)
 	if err == nil {
-		if targetTemp.Valid {
-			return &targetTemp.Float64, nil
+		if targetTemp != nil {
+			return targetTemp, nil
 		}
 	}
 
@@ -305,7 +306,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 		}, nil
 	}
 
-	sensor, err := center.SensorQS{}.IDEq(int32(p.Id)).First(a.db)
+	sensor, err := center.SensorQS{}.IDEq(int32(p.Id)).First(ctx, a.db)
 	if err != nil || sensor == nil {
 		return &FeedResponse{
 			Processed: false,
@@ -314,7 +315,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 
 	cache := make(map[string]interface{})
 
-	intvl, valid := a.validateSensorPacket(sensor, p)
+	intvl, valid := a.validateSensorPacket(ctx, sensor, p)
 
 	cache["valid"] = valid
 	if valid {
@@ -327,7 +328,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 			cache[m.Metric()] = m.Value()
 		}
 
-		control, err := heatcontrol.ControlQS{}.SensorEq(sensor).First(a.db)
+		control, err := heatcontrol.ControlQS{}.SensorEq(sensor).First(ctx, a.db)
 		if err != nil {
 			return &FeedResponse{
 				Processed: false,
@@ -343,7 +344,7 @@ func (a *aggregator) FeedSensorPacket(ctx context.Context, p *SensorPacket) (*Fe
 				}, err
 			}
 
-			targetTemp, err := a.getTargetTemp(control)
+			targetTemp, err := a.getTargetTemp(ctx, control)
 			if err != nil {
 				return &FeedResponse{
 					Processed: false,

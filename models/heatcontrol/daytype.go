@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.DayType
+// Code generated for Django model heatcontrol.DayType. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,7 +11,9 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
 )
@@ -24,11 +26,14 @@ type Daytype struct {
 	Name string
 }
 
+// DaytypeList is a list of Daytype
+type DaytypeList []*Daytype
+
 // DaytypeQS represents a queryset for heatcontrol.DayType
 type DaytypeQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs DaytypeQS) filter(c string, p interface{}) DaytypeQS {
@@ -93,21 +98,19 @@ func (qs DaytypeQS) IDGe(v int32) DaytypeQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inDaytypeid struct {
-	values []interface{}
-}
+type inDaytypeid []interface{}
 
-func (in *inDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs DaytypeQS) IDIn(values []int32) DaytypeQS {
@@ -118,29 +121,25 @@ func (qs DaytypeQS) IDIn(values []int32) DaytypeQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inDaytypeid{
-			values: vals,
-		},
+		inDaytypeid(vals),
 	)
 
 	return qs
 }
 
-type notinDaytypeid struct {
-	values []interface{}
-}
+type notinDaytypeid []interface{}
 
-func (in *notinDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinDaytypeid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs DaytypeQS) IDNotIn(values []int32) DaytypeQS {
@@ -151,9 +150,7 @@ func (qs DaytypeQS) IDNotIn(values []int32) DaytypeQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinDaytypeid{
-			values: vals,
-		},
+		notinDaytypeid(vals),
 	)
 
 	return qs
@@ -203,21 +200,19 @@ func (qs DaytypeQS) NameGe(v string) DaytypeQS {
 	return qs.filter(`"name" >=`, v)
 }
 
-type inDaytypeName struct {
-	values []interface{}
-}
+type inDaytypeName []interface{}
 
-func (in *inDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs DaytypeQS) NameIn(values []string) DaytypeQS {
@@ -228,29 +223,25 @@ func (qs DaytypeQS) NameIn(values []string) DaytypeQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inDaytypeName{
-			values: vals,
-		},
+		inDaytypeName(vals),
 	)
 
 	return qs
 }
 
-type notinDaytypeName struct {
-	values []interface{}
-}
+type notinDaytypeName []interface{}
 
-func (in *notinDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinDaytypeName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs DaytypeQS) NameNotIn(values []string) DaytypeQS {
@@ -261,9 +252,7 @@ func (qs DaytypeQS) NameNotIn(values []string) DaytypeQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinDaytypeName{
-			values: vals,
-		},
+		notinDaytypeName(vals),
 	)
 
 	return qs
@@ -283,9 +272,37 @@ func (qs DaytypeQS) OrderByNameDesc() DaytypeQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs DaytypeQS) OrderByRandom() DaytypeQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs DaytypeQS) ForUpdate() DaytypeQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs DaytypeQS) ForUpdateNowait() DaytypeQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs DaytypeQS) ForUpdateSkipLocked() DaytypeQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs DaytypeQS) ClearForUpdate() DaytypeQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -313,9 +330,7 @@ func (qs DaytypeQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "name" FROM "heatcontrol_daytype"` + s, p
 }
@@ -327,17 +342,30 @@ func (qs DaytypeQS) QueryId(c *models.PositionalCounter) (string, []interface{})
 	return `SELECT "id" FROM "heatcontrol_daytype"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs DaytypeQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_daytype"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs DaytypeQS) All(db models.DBInterface) ([]*Daytype, error) {
+func (qs DaytypeQS) All(ctx context.Context, db models.DBInterface) (DaytypeList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Daytype
+	var ret DaytypeList
 	for rows.Next() {
 		obj := Daytype{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.Name); err != nil {
@@ -350,12 +378,12 @@ func (qs DaytypeQS) All(db models.DBInterface) ([]*Daytype, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs DaytypeQS) First(db models.DBInterface) (*Daytype, error) {
+func (qs DaytypeQS) First(ctx context.Context, db models.DBInterface) (*Daytype, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Daytype{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.Name)
@@ -370,18 +398,18 @@ func (qs DaytypeQS) First(db models.DBInterface) (*Daytype, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs DaytypeQS) Delete(db models.DBInterface) (int64, error) {
+func (qs DaytypeQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_daytype"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -426,7 +454,7 @@ func (uqs DaytypeUpdateQS) SetName(v string) DaytypeUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs DaytypeUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs DaytypeUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -449,17 +477,17 @@ func (uqs DaytypeUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (d *Daytype) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_daytype" ("name") VALUES ($1) RETURNING "id"`, d.Name)
+func (d *Daytype) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_daytype" ("name") VALUES ($1) RETURNING "id"`, d.Name)
 
 	if err := row.Scan(&d.id); err != nil {
 		return err
@@ -471,28 +499,78 @@ func (d *Daytype) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (d *Daytype) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_daytype" SET "name" = $1 WHERE "id" = $2`, d.Name, d.id)
+func (d *Daytype) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_daytype" SET "name" = $1 WHERE "id" = $2`, d.Name, d.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (d *Daytype) Save(db models.DBInterface) error {
+func (d *Daytype) Save(ctx context.Context, db models.DBInterface) error {
 	if d.existsInDB {
-		return d.update(db)
+		return d.update(ctx, db)
 	}
 
-	return d.insert(db)
+	return d.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (d *Daytype) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_daytype" WHERE "id" = $1`, d.id)
+func (d *Daytype) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_daytype" WHERE "id" = $1`, d.id)
 
 	d.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (dl DaytypeList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts DaytypeList
+
+	for _, d := range dl {
+		if d.existsInDB {
+			if err := d.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, d)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 1*len(inserts))
+	offs := 1
+	for _, d := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d)", offs+0))
+		vaa = append(vaa, d.Name)
+		offs += 1
+	}
+
+	qs := `INSERT INTO "heatcontrol_daytype" ("name") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, d := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&d.id); err != nil {
+			return err
+		}
+
+		d.existsInDB = true
+	}
+
+	return nil
 }
 
 // Calendar returns the set of Calendar referencing this Daytype instance

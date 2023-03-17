@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model center.ConfigureSensorTask
+// Code generated for Django model center.ConfigureSensorTask. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package center
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -32,11 +33,14 @@ type Configuresensortask struct {
 	Error          sql.NullString
 }
 
+// ConfiguresensortaskList is a list of Configuresensortask
+type ConfiguresensortaskList []*Configuresensortask
+
 // ConfiguresensortaskQS represents a queryset for center.ConfigureSensorTask
 type ConfiguresensortaskQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs ConfiguresensortaskQS) filter(c string, p interface{}) ConfiguresensortaskQS {
@@ -101,21 +105,19 @@ func (qs ConfiguresensortaskQS) IDGe(v int32) ConfiguresensortaskQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inConfiguresensortaskid struct {
-	values []interface{}
-}
+type inConfiguresensortaskid []interface{}
 
-func (in *inConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) IDIn(values []int32) ConfiguresensortaskQS {
@@ -126,29 +128,25 @@ func (qs ConfiguresensortaskQS) IDIn(values []int32) ConfiguresensortaskQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskid{
-			values: vals,
-		},
+		inConfiguresensortaskid(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskid struct {
-	values []interface{}
-}
+type notinConfiguresensortaskid []interface{}
 
-func (in *notinConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) IDNotIn(values []int32) ConfiguresensortaskQS {
@@ -159,9 +157,7 @@ func (qs ConfiguresensortaskQS) IDNotIn(values []int32) ConfiguresensortaskQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskid{
-			values: vals,
-		},
+		notinConfiguresensortaskid(vals),
 	)
 
 	return qs
@@ -182,8 +178,8 @@ func (qs ConfiguresensortaskQS) OrderByIDDesc() ConfiguresensortaskQS {
 }
 
 // GetSensor returns Sensor
-func (c *Configuresensortask) GetSensor(db models.DBInterface) (*Sensor, error) {
-	return SensorQS{}.IDEq(c.sensor).First(db)
+func (c *Configuresensortask) GetSensor(ctx context.Context, db models.DBInterface) (*Sensor, error) {
+	return SensorQS{}.IDEq(c.sensor).First(ctx, db)
 }
 
 // SetSensor sets foreign key pointer to Sensor
@@ -277,21 +273,19 @@ func (qs ConfiguresensortaskQS) CreatedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"created" >=`, v)
 }
 
-type inConfiguresensortaskCreated struct {
-	values []interface{}
-}
+type inConfiguresensortaskCreated []interface{}
 
-func (in *inConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"created" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"created" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) CreatedIn(values []time.Time) ConfiguresensortaskQS {
@@ -302,29 +296,25 @@ func (qs ConfiguresensortaskQS) CreatedIn(values []time.Time) Configuresensortas
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskCreated{
-			values: vals,
-		},
+		inConfiguresensortaskCreated(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskCreated struct {
-	values []interface{}
-}
+type notinConfiguresensortaskCreated []interface{}
 
-func (in *notinConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskCreated) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"created" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"created" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) CreatedNotIn(values []time.Time) ConfiguresensortaskQS {
@@ -335,9 +325,7 @@ func (qs ConfiguresensortaskQS) CreatedNotIn(values []time.Time) Configuresensor
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskCreated{
-			values: vals,
-		},
+		notinConfiguresensortaskCreated(vals),
 	)
 
 	return qs
@@ -409,21 +397,19 @@ func (qs ConfiguresensortaskQS) StartedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"started" >=`, v)
 }
 
-type inConfiguresensortaskStarted struct {
-	values []interface{}
-}
+type inConfiguresensortaskStarted []interface{}
 
-func (in *inConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"started" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"started" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) StartedIn(values []time.Time) ConfiguresensortaskQS {
@@ -434,29 +420,25 @@ func (qs ConfiguresensortaskQS) StartedIn(values []time.Time) Configuresensortas
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskStarted{
-			values: vals,
-		},
+		inConfiguresensortaskStarted(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskStarted struct {
-	values []interface{}
-}
+type notinConfiguresensortaskStarted []interface{}
 
-func (in *notinConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskStarted) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"started" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"started" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) StartedNotIn(values []time.Time) ConfiguresensortaskQS {
@@ -467,9 +449,7 @@ func (qs ConfiguresensortaskQS) StartedNotIn(values []time.Time) Configuresensor
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskStarted{
-			values: vals,
-		},
+		notinConfiguresensortaskStarted(vals),
 	)
 
 	return qs
@@ -541,21 +521,19 @@ func (qs ConfiguresensortaskQS) FirstDiscoveryGe(v time.Time) Configuresensortas
 	return qs.filter(`"first_discovery" >=`, v)
 }
 
-type inConfiguresensortaskFirstDiscovery struct {
-	values []interface{}
-}
+type inConfiguresensortaskFirstDiscovery []interface{}
 
-func (in *inConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"first_discovery" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"first_discovery" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) FirstDiscoveryIn(values []time.Time) ConfiguresensortaskQS {
@@ -566,29 +544,25 @@ func (qs ConfiguresensortaskQS) FirstDiscoveryIn(values []time.Time) Configurese
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskFirstDiscovery{
-			values: vals,
-		},
+		inConfiguresensortaskFirstDiscovery(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskFirstDiscovery struct {
-	values []interface{}
-}
+type notinConfiguresensortaskFirstDiscovery []interface{}
 
-func (in *notinConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskFirstDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"first_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"first_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) FirstDiscoveryNotIn(values []time.Time) ConfiguresensortaskQS {
@@ -599,9 +573,7 @@ func (qs ConfiguresensortaskQS) FirstDiscoveryNotIn(values []time.Time) Configur
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskFirstDiscovery{
-			values: vals,
-		},
+		notinConfiguresensortaskFirstDiscovery(vals),
 	)
 
 	return qs
@@ -673,21 +645,19 @@ func (qs ConfiguresensortaskQS) LastDiscoveryGe(v time.Time) Configuresensortask
 	return qs.filter(`"last_discovery" >=`, v)
 }
 
-type inConfiguresensortaskLastDiscovery struct {
-	values []interface{}
-}
+type inConfiguresensortaskLastDiscovery []interface{}
 
-func (in *inConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"last_discovery" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"last_discovery" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) LastDiscoveryIn(values []time.Time) ConfiguresensortaskQS {
@@ -698,29 +668,25 @@ func (qs ConfiguresensortaskQS) LastDiscoveryIn(values []time.Time) Configuresen
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskLastDiscovery{
-			values: vals,
-		},
+		inConfiguresensortaskLastDiscovery(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskLastDiscovery struct {
-	values []interface{}
-}
+type notinConfiguresensortaskLastDiscovery []interface{}
 
-func (in *notinConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskLastDiscovery) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"last_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"last_discovery" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) LastDiscoveryNotIn(values []time.Time) ConfiguresensortaskQS {
@@ -731,9 +697,7 @@ func (qs ConfiguresensortaskQS) LastDiscoveryNotIn(values []time.Time) Configure
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskLastDiscovery{
-			values: vals,
-		},
+		notinConfiguresensortaskLastDiscovery(vals),
 	)
 
 	return qs
@@ -805,21 +769,19 @@ func (qs ConfiguresensortaskQS) FinishedGe(v time.Time) ConfiguresensortaskQS {
 	return qs.filter(`"finished" >=`, v)
 }
 
-type inConfiguresensortaskFinished struct {
-	values []interface{}
-}
+type inConfiguresensortaskFinished []interface{}
 
-func (in *inConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"finished" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"finished" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) FinishedIn(values []time.Time) ConfiguresensortaskQS {
@@ -830,29 +792,25 @@ func (qs ConfiguresensortaskQS) FinishedIn(values []time.Time) Configuresensorta
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskFinished{
-			values: vals,
-		},
+		inConfiguresensortaskFinished(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskFinished struct {
-	values []interface{}
-}
+type notinConfiguresensortaskFinished []interface{}
 
-func (in *notinConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskFinished) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"finished" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"finished" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) FinishedNotIn(values []time.Time) ConfiguresensortaskQS {
@@ -863,9 +821,7 @@ func (qs ConfiguresensortaskQS) FinishedNotIn(values []time.Time) Configuresenso
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskFinished{
-			values: vals,
-		},
+		notinConfiguresensortaskFinished(vals),
 	)
 
 	return qs
@@ -937,21 +893,19 @@ func (qs ConfiguresensortaskQS) ErrorGe(v string) ConfiguresensortaskQS {
 	return qs.filter(`"error" >=`, v)
 }
 
-type inConfiguresensortaskError struct {
-	values []interface{}
-}
+type inConfiguresensortaskError []interface{}
 
-func (in *inConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"error" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"error" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) ErrorIn(values []string) ConfiguresensortaskQS {
@@ -962,29 +916,25 @@ func (qs ConfiguresensortaskQS) ErrorIn(values []string) ConfiguresensortaskQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inConfiguresensortaskError{
-			values: vals,
-		},
+		inConfiguresensortaskError(vals),
 	)
 
 	return qs
 }
 
-type notinConfiguresensortaskError struct {
-	values []interface{}
-}
+type notinConfiguresensortaskError []interface{}
 
-func (in *notinConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinConfiguresensortaskError) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"error" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"error" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ConfiguresensortaskQS) ErrorNotIn(values []string) ConfiguresensortaskQS {
@@ -995,9 +945,7 @@ func (qs ConfiguresensortaskQS) ErrorNotIn(values []string) ConfiguresensortaskQ
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinConfiguresensortaskError{
-			values: vals,
-		},
+		notinConfiguresensortaskError(vals),
 	)
 
 	return qs
@@ -1017,9 +965,37 @@ func (qs ConfiguresensortaskQS) OrderByErrorDesc() ConfiguresensortaskQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs ConfiguresensortaskQS) OrderByRandom() ConfiguresensortaskQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ConfiguresensortaskQS) ForUpdate() ConfiguresensortaskQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs ConfiguresensortaskQS) ForUpdateNowait() ConfiguresensortaskQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs ConfiguresensortaskQS) ForUpdateSkipLocked() ConfiguresensortaskQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs ConfiguresensortaskQS) ClearForUpdate() ConfiguresensortaskQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -1047,9 +1023,7 @@ func (qs ConfiguresensortaskQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error" FROM "center_configuresensortask"` + s, p
 }
@@ -1061,17 +1035,30 @@ func (qs ConfiguresensortaskQS) QueryId(c *models.PositionalCounter) (string, []
 	return `SELECT "id" FROM "center_configuresensortask"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs ConfiguresensortaskQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_configuresensortask"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs ConfiguresensortaskQS) All(db models.DBInterface) ([]*Configuresensortask, error) {
+func (qs ConfiguresensortaskQS) All(ctx context.Context, db models.DBInterface) (ConfiguresensortaskList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Configuresensortask
+	var ret ConfiguresensortaskList
 	for rows.Next() {
 		obj := Configuresensortask{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.sensor, &obj.Created, &obj.Started, &obj.FirstDiscovery, &obj.LastDiscovery, &obj.Finished, &obj.Error); err != nil {
@@ -1084,12 +1071,12 @@ func (qs ConfiguresensortaskQS) All(db models.DBInterface) ([]*Configuresensorta
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs ConfiguresensortaskQS) First(db models.DBInterface) (*Configuresensortask, error) {
+func (qs ConfiguresensortaskQS) First(ctx context.Context, db models.DBInterface) (*Configuresensortask, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Configuresensortask{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.sensor, &obj.Created, &obj.Started, &obj.FirstDiscovery, &obj.LastDiscovery, &obj.Finished, &obj.Error)
@@ -1104,18 +1091,18 @@ func (qs ConfiguresensortaskQS) First(db models.DBInterface) (*Configuresensorta
 }
 
 // Delete deletes rows matching queryset filters
-func (qs ConfiguresensortaskQS) Delete(db models.DBInterface) (int64, error) {
+func (qs ConfiguresensortaskQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "center_configuresensortask"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -1192,7 +1179,7 @@ func (uqs ConfiguresensortaskUpdateQS) SetError(v sql.NullString) Configuresenso
 }
 
 // Exec executes the update operation
-func (uqs ConfiguresensortaskUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs ConfiguresensortaskUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -1215,17 +1202,17 @@ func (uqs ConfiguresensortaskUpdateQS) Exec(db models.DBInterface) (int64, error
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (c *Configuresensortask) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "center_configuresensortask" ("sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id"`, c.sensor, c.Created, c.Started, c.FirstDiscovery, c.LastDiscovery, c.Finished, c.Error)
+func (c *Configuresensortask) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "center_configuresensortask" ("sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id"`, c.sensor, c.Created, c.Started, c.FirstDiscovery, c.LastDiscovery, c.Finished, c.Error)
 
 	if err := row.Scan(&c.id); err != nil {
 		return err
@@ -1237,26 +1224,76 @@ func (c *Configuresensortask) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (c *Configuresensortask) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_configuresensortask" SET "sensor_id" = $1, "created" = $2, "started" = $3, "first_discovery" = $4, "last_discovery" = $5, "finished" = $6, "error" = $7 WHERE "id" = $8`, c.sensor, c.Created, c.Started, c.FirstDiscovery, c.LastDiscovery, c.Finished, c.Error, c.id)
+func (c *Configuresensortask) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "center_configuresensortask" SET "sensor_id" = $1, "created" = $2, "started" = $3, "first_discovery" = $4, "last_discovery" = $5, "finished" = $6, "error" = $7 WHERE "id" = $8`, c.sensor, c.Created, c.Started, c.FirstDiscovery, c.LastDiscovery, c.Finished, c.Error, c.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (c *Configuresensortask) Save(db models.DBInterface) error {
+func (c *Configuresensortask) Save(ctx context.Context, db models.DBInterface) error {
 	if c.existsInDB {
-		return c.update(db)
+		return c.update(ctx, db)
 	}
 
-	return c.insert(db)
+	return c.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (c *Configuresensortask) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "center_configuresensortask" WHERE "id" = $1`, c.id)
+func (c *Configuresensortask) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "center_configuresensortask" WHERE "id" = $1`, c.id)
 
 	c.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (cl ConfiguresensortaskList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts ConfiguresensortaskList
+
+	for _, c := range cl {
+		if c.existsInDB {
+			if err := c.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, c)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 7*len(inserts))
+	offs := 1
+	for _, c := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3, offs+4, offs+5, offs+6))
+		vaa = append(vaa, c.sensor, c.Created, c.Started, c.FirstDiscovery, c.LastDiscovery, c.Finished, c.Error)
+		offs += 7
+	}
+
+	qs := `INSERT INTO "center_configuresensortask" ("sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, c := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&c.id); err != nil {
+			return err
+		}
+
+		c.existsInDB = true
+	}
+
+	return nil
 }

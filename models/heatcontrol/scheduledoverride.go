@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.ScheduledOverride
+// Code generated for Django model heatcontrol.ScheduledOverride. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -29,11 +30,14 @@ type Scheduledoverride struct {
 	TargetTemp float64
 }
 
+// ScheduledoverrideList is a list of Scheduledoverride
+type ScheduledoverrideList []*Scheduledoverride
+
 // ScheduledoverrideQS represents a queryset for heatcontrol.ScheduledOverride
 type ScheduledoverrideQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs ScheduledoverrideQS) filter(c string, p interface{}) ScheduledoverrideQS {
@@ -98,21 +102,19 @@ func (qs ScheduledoverrideQS) IDGe(v int32) ScheduledoverrideQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inScheduledoverrideid struct {
-	values []interface{}
-}
+type inScheduledoverrideid []interface{}
 
-func (in *inScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) IDIn(values []int32) ScheduledoverrideQS {
@@ -123,29 +125,25 @@ func (qs ScheduledoverrideQS) IDIn(values []int32) ScheduledoverrideQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inScheduledoverrideid{
-			values: vals,
-		},
+		inScheduledoverrideid(vals),
 	)
 
 	return qs
 }
 
-type notinScheduledoverrideid struct {
-	values []interface{}
-}
+type notinScheduledoverrideid []interface{}
 
-func (in *notinScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinScheduledoverrideid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) IDNotIn(values []int32) ScheduledoverrideQS {
@@ -156,9 +154,7 @@ func (qs ScheduledoverrideQS) IDNotIn(values []int32) ScheduledoverrideQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinScheduledoverrideid{
-			values: vals,
-		},
+		notinScheduledoverrideid(vals),
 	)
 
 	return qs
@@ -179,8 +175,8 @@ func (qs ScheduledoverrideQS) OrderByIDDesc() ScheduledoverrideQS {
 }
 
 // GetControl returns Control
-func (s *Scheduledoverride) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IDEq(s.control).First(db)
+func (s *Scheduledoverride) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
+	return ControlQS{}.IDEq(s.control).First(ctx, db)
 }
 
 // SetControl sets foreign key pointer to Control
@@ -274,21 +270,19 @@ func (qs ScheduledoverrideQS) StartGe(v time.Time) ScheduledoverrideQS {
 	return qs.filter(`"start" >=`, v)
 }
 
-type inScheduledoverrideStart struct {
-	values []interface{}
-}
+type inScheduledoverrideStart []interface{}
 
-func (in *inScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"start" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"start" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) StartIn(values []time.Time) ScheduledoverrideQS {
@@ -299,29 +293,25 @@ func (qs ScheduledoverrideQS) StartIn(values []time.Time) ScheduledoverrideQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inScheduledoverrideStart{
-			values: vals,
-		},
+		inScheduledoverrideStart(vals),
 	)
 
 	return qs
 }
 
-type notinScheduledoverrideStart struct {
-	values []interface{}
-}
+type notinScheduledoverrideStart []interface{}
 
-func (in *notinScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinScheduledoverrideStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) StartNotIn(values []time.Time) ScheduledoverrideQS {
@@ -332,9 +322,7 @@ func (qs ScheduledoverrideQS) StartNotIn(values []time.Time) ScheduledoverrideQS
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinScheduledoverrideStart{
-			values: vals,
-		},
+		notinScheduledoverrideStart(vals),
 	)
 
 	return qs
@@ -384,21 +372,19 @@ func (qs ScheduledoverrideQS) EndGe(v time.Time) ScheduledoverrideQS {
 	return qs.filter(`"end" >=`, v)
 }
 
-type inScheduledoverrideEnd struct {
-	values []interface{}
-}
+type inScheduledoverrideEnd []interface{}
 
-func (in *inScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"end" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"end" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) EndIn(values []time.Time) ScheduledoverrideQS {
@@ -409,29 +395,25 @@ func (qs ScheduledoverrideQS) EndIn(values []time.Time) ScheduledoverrideQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inScheduledoverrideEnd{
-			values: vals,
-		},
+		inScheduledoverrideEnd(vals),
 	)
 
 	return qs
 }
 
-type notinScheduledoverrideEnd struct {
-	values []interface{}
-}
+type notinScheduledoverrideEnd []interface{}
 
-func (in *notinScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinScheduledoverrideEnd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"end" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"end" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) EndNotIn(values []time.Time) ScheduledoverrideQS {
@@ -442,9 +424,7 @@ func (qs ScheduledoverrideQS) EndNotIn(values []time.Time) ScheduledoverrideQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinScheduledoverrideEnd{
-			values: vals,
-		},
+		notinScheduledoverrideEnd(vals),
 	)
 
 	return qs
@@ -494,21 +474,19 @@ func (qs ScheduledoverrideQS) TargetTempGe(v float64) ScheduledoverrideQS {
 	return qs.filter(`"target_temp" >=`, v)
 }
 
-type inScheduledoverrideTargetTemp struct {
-	values []interface{}
-}
+type inScheduledoverrideTargetTemp []interface{}
 
-func (in *inScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) TargetTempIn(values []float64) ScheduledoverrideQS {
@@ -519,29 +497,25 @@ func (qs ScheduledoverrideQS) TargetTempIn(values []float64) ScheduledoverrideQS
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inScheduledoverrideTargetTemp{
-			values: vals,
-		},
+		inScheduledoverrideTargetTemp(vals),
 	)
 
 	return qs
 }
 
-type notinScheduledoverrideTargetTemp struct {
-	values []interface{}
-}
+type notinScheduledoverrideTargetTemp []interface{}
 
-func (in *notinScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinScheduledoverrideTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ScheduledoverrideQS) TargetTempNotIn(values []float64) ScheduledoverrideQS {
@@ -552,9 +526,7 @@ func (qs ScheduledoverrideQS) TargetTempNotIn(values []float64) Scheduledoverrid
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinScheduledoverrideTargetTemp{
-			values: vals,
-		},
+		notinScheduledoverrideTargetTemp(vals),
 	)
 
 	return qs
@@ -574,9 +546,37 @@ func (qs ScheduledoverrideQS) OrderByTargetTempDesc() ScheduledoverrideQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs ScheduledoverrideQS) OrderByRandom() ScheduledoverrideQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ScheduledoverrideQS) ForUpdate() ScheduledoverrideQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs ScheduledoverrideQS) ForUpdateNowait() ScheduledoverrideQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs ScheduledoverrideQS) ForUpdateSkipLocked() ScheduledoverrideQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs ScheduledoverrideQS) ClearForUpdate() ScheduledoverrideQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -604,9 +604,7 @@ func (qs ScheduledoverrideQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "control_id", "start", "end", "target_temp" FROM "heatcontrol_scheduledoverride"` + s, p
 }
@@ -618,17 +616,30 @@ func (qs ScheduledoverrideQS) QueryId(c *models.PositionalCounter) (string, []in
 	return `SELECT "id" FROM "heatcontrol_scheduledoverride"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs ScheduledoverrideQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_scheduledoverride"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs ScheduledoverrideQS) All(db models.DBInterface) ([]*Scheduledoverride, error) {
+func (qs ScheduledoverrideQS) All(ctx context.Context, db models.DBInterface) (ScheduledoverrideList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Scheduledoverride
+	var ret ScheduledoverrideList
 	for rows.Next() {
 		obj := Scheduledoverride{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.control, &obj.Start, &obj.End, &obj.TargetTemp); err != nil {
@@ -641,12 +652,12 @@ func (qs ScheduledoverrideQS) All(db models.DBInterface) ([]*Scheduledoverride, 
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs ScheduledoverrideQS) First(db models.DBInterface) (*Scheduledoverride, error) {
+func (qs ScheduledoverrideQS) First(ctx context.Context, db models.DBInterface) (*Scheduledoverride, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Scheduledoverride{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.control, &obj.Start, &obj.End, &obj.TargetTemp)
@@ -661,18 +672,18 @@ func (qs ScheduledoverrideQS) First(db models.DBInterface) (*Scheduledoverride, 
 }
 
 // Delete deletes rows matching queryset filters
-func (qs ScheduledoverrideQS) Delete(db models.DBInterface) (int64, error) {
+func (qs ScheduledoverrideQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_scheduledoverride"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -734,7 +745,7 @@ func (uqs ScheduledoverrideUpdateQS) SetTargetTemp(v float64) ScheduledoverrideU
 }
 
 // Exec executes the update operation
-func (uqs ScheduledoverrideUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs ScheduledoverrideUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -757,17 +768,17 @@ func (uqs ScheduledoverrideUpdateQS) Exec(db models.DBInterface) (int64, error) 
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (s *Scheduledoverride) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_scheduledoverride" ("control_id", "start", "end", "target_temp") VALUES ($1, $2, $3, $4) RETURNING "id"`, s.control, s.Start, s.End, s.TargetTemp)
+func (s *Scheduledoverride) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_scheduledoverride" ("control_id", "start", "end", "target_temp") VALUES ($1, $2, $3, $4) RETURNING "id"`, s.control, s.Start, s.End, s.TargetTemp)
 
 	if err := row.Scan(&s.id); err != nil {
 		return err
@@ -779,26 +790,76 @@ func (s *Scheduledoverride) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (s *Scheduledoverride) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_scheduledoverride" SET "control_id" = $1, "start" = $2, "end" = $3, "target_temp" = $4 WHERE "id" = $5`, s.control, s.Start, s.End, s.TargetTemp, s.id)
+func (s *Scheduledoverride) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_scheduledoverride" SET "control_id" = $1, "start" = $2, "end" = $3, "target_temp" = $4 WHERE "id" = $5`, s.control, s.Start, s.End, s.TargetTemp, s.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (s *Scheduledoverride) Save(db models.DBInterface) error {
+func (s *Scheduledoverride) Save(ctx context.Context, db models.DBInterface) error {
 	if s.existsInDB {
-		return s.update(db)
+		return s.update(ctx, db)
 	}
 
-	return s.insert(db)
+	return s.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (s *Scheduledoverride) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_scheduledoverride" WHERE "id" = $1`, s.id)
+func (s *Scheduledoverride) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_scheduledoverride" WHERE "id" = $1`, s.id)
 
 	s.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (sl ScheduledoverrideList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts ScheduledoverrideList
+
+	for _, s := range sl {
+		if s.existsInDB {
+			if err := s.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, s)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 4*len(inserts))
+	offs := 1
+	for _, s := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3))
+		vaa = append(vaa, s.control, s.Start, s.End, s.TargetTemp)
+		offs += 4
+	}
+
+	qs := `INSERT INTO "heatcontrol_scheduledoverride" ("control_id", "start", "end", "target_temp") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, s := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&s.id); err != nil {
+			return err
+		}
+
+		s.existsInDB = true
+	}
+
+	return nil
 }

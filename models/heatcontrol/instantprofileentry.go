@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.InstantProfileEntry
+// Code generated for Django model heatcontrol.InstantProfileEntry. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -28,11 +29,14 @@ type Instantprofileentry struct {
 	Active     bool
 }
 
+// InstantprofileentryList is a list of Instantprofileentry
+type InstantprofileentryList []*Instantprofileentry
+
 // InstantprofileentryQS represents a queryset for heatcontrol.InstantProfileEntry
 type InstantprofileentryQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs InstantprofileentryQS) filter(c string, p interface{}) InstantprofileentryQS {
@@ -97,21 +101,19 @@ func (qs InstantprofileentryQS) IDGe(v int32) InstantprofileentryQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inInstantprofileentryid struct {
-	values []interface{}
-}
+type inInstantprofileentryid []interface{}
 
-func (in *inInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) IDIn(values []int32) InstantprofileentryQS {
@@ -122,29 +124,25 @@ func (qs InstantprofileentryQS) IDIn(values []int32) InstantprofileentryQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inInstantprofileentryid{
-			values: vals,
-		},
+		inInstantprofileentryid(vals),
 	)
 
 	return qs
 }
 
-type notinInstantprofileentryid struct {
-	values []interface{}
-}
+type notinInstantprofileentryid []interface{}
 
-func (in *notinInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinInstantprofileentryid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) IDNotIn(values []int32) InstantprofileentryQS {
@@ -155,9 +153,7 @@ func (qs InstantprofileentryQS) IDNotIn(values []int32) InstantprofileentryQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinInstantprofileentryid{
-			values: vals,
-		},
+		notinInstantprofileentryid(vals),
 	)
 
 	return qs
@@ -178,8 +174,8 @@ func (qs InstantprofileentryQS) OrderByIDDesc() InstantprofileentryQS {
 }
 
 // GetProfile returns Instantprofile
-func (i *Instantprofileentry) GetProfile(db models.DBInterface) (*Instantprofile, error) {
-	return InstantprofileQS{}.IDEq(i.profile).First(db)
+func (i *Instantprofileentry) GetProfile(ctx context.Context, db models.DBInterface) (*Instantprofile, error) {
+	return InstantprofileQS{}.IDEq(i.profile).First(ctx, db)
 }
 
 // SetProfile sets foreign key pointer to Instantprofile
@@ -244,8 +240,8 @@ func (qs InstantprofileentryQS) OrderByProfileDesc() InstantprofileentryQS {
 }
 
 // GetControl returns Control
-func (i *Instantprofileentry) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IDEq(i.control).First(db)
+func (i *Instantprofileentry) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
+	return ControlQS{}.IDEq(i.control).First(ctx, db)
 }
 
 // SetControl sets foreign key pointer to Control
@@ -361,21 +357,19 @@ func (qs InstantprofileentryQS) TargetTempGe(v float64) InstantprofileentryQS {
 	return qs.filter(`"target_temp" >=`, v)
 }
 
-type inInstantprofileentryTargetTemp struct {
-	values []interface{}
-}
+type inInstantprofileentryTargetTemp []interface{}
 
-func (in *inInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) TargetTempIn(values []float64) InstantprofileentryQS {
@@ -386,29 +380,25 @@ func (qs InstantprofileentryQS) TargetTempIn(values []float64) Instantprofileent
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inInstantprofileentryTargetTemp{
-			values: vals,
-		},
+		inInstantprofileentryTargetTemp(vals),
 	)
 
 	return qs
 }
 
-type notinInstantprofileentryTargetTemp struct {
-	values []interface{}
-}
+type notinInstantprofileentryTargetTemp []interface{}
 
-func (in *notinInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinInstantprofileentryTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) TargetTempNotIn(values []float64) InstantprofileentryQS {
@@ -419,9 +409,7 @@ func (qs InstantprofileentryQS) TargetTempNotIn(values []float64) Instantprofile
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinInstantprofileentryTargetTemp{
-			values: vals,
-		},
+		notinInstantprofileentryTargetTemp(vals),
 	)
 
 	return qs
@@ -451,41 +439,19 @@ func (qs InstantprofileentryQS) ActiveNe(v bool) InstantprofileentryQS {
 	return qs.filter(`"active" <>`, v)
 }
 
-// ActiveLt filters for Active being less than argument
-func (qs InstantprofileentryQS) ActiveLt(v bool) InstantprofileentryQS {
-	return qs.filter(`"active" <`, v)
-}
+type inInstantprofileentryActive []interface{}
 
-// ActiveLe filters for Active being less than or equal to argument
-func (qs InstantprofileentryQS) ActiveLe(v bool) InstantprofileentryQS {
-	return qs.filter(`"active" <=`, v)
-}
-
-// ActiveGt filters for Active being greater than argument
-func (qs InstantprofileentryQS) ActiveGt(v bool) InstantprofileentryQS {
-	return qs.filter(`"active" >`, v)
-}
-
-// ActiveGe filters for Active being greater than or equal to argument
-func (qs InstantprofileentryQS) ActiveGe(v bool) InstantprofileentryQS {
-	return qs.filter(`"active" >=`, v)
-}
-
-type inInstantprofileentryActive struct {
-	values []interface{}
-}
-
-func (in *inInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"active" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"active" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) ActiveIn(values []bool) InstantprofileentryQS {
@@ -496,29 +462,25 @@ func (qs InstantprofileentryQS) ActiveIn(values []bool) InstantprofileentryQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inInstantprofileentryActive{
-			values: vals,
-		},
+		inInstantprofileentryActive(vals),
 	)
 
 	return qs
 }
 
-type notinInstantprofileentryActive struct {
-	values []interface{}
-}
+type notinInstantprofileentryActive []interface{}
 
-func (in *notinInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinInstantprofileentryActive) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"active" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"active" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs InstantprofileentryQS) ActiveNotIn(values []bool) InstantprofileentryQS {
@@ -529,9 +491,7 @@ func (qs InstantprofileentryQS) ActiveNotIn(values []bool) InstantprofileentryQS
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinInstantprofileentryActive{
-			values: vals,
-		},
+		notinInstantprofileentryActive(vals),
 	)
 
 	return qs
@@ -551,9 +511,37 @@ func (qs InstantprofileentryQS) OrderByActiveDesc() InstantprofileentryQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs InstantprofileentryQS) OrderByRandom() InstantprofileentryQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs InstantprofileentryQS) ForUpdate() InstantprofileentryQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs InstantprofileentryQS) ForUpdateNowait() InstantprofileentryQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs InstantprofileentryQS) ForUpdateSkipLocked() InstantprofileentryQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs InstantprofileentryQS) ClearForUpdate() InstantprofileentryQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -581,9 +569,7 @@ func (qs InstantprofileentryQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "profile_id", "control_id", "target_temp", "active" FROM "heatcontrol_instantprofileentry"` + s, p
 }
@@ -595,17 +581,30 @@ func (qs InstantprofileentryQS) QueryId(c *models.PositionalCounter) (string, []
 	return `SELECT "id" FROM "heatcontrol_instantprofileentry"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs InstantprofileentryQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_instantprofileentry"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs InstantprofileentryQS) All(db models.DBInterface) ([]*Instantprofileentry, error) {
+func (qs InstantprofileentryQS) All(ctx context.Context, db models.DBInterface) (InstantprofileentryList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Instantprofileentry
+	var ret InstantprofileentryList
 	for rows.Next() {
 		obj := Instantprofileentry{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.profile, &obj.control, &obj.TargetTemp, &obj.Active); err != nil {
@@ -618,12 +617,12 @@ func (qs InstantprofileentryQS) All(db models.DBInterface) ([]*Instantprofileent
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs InstantprofileentryQS) First(db models.DBInterface) (*Instantprofileentry, error) {
+func (qs InstantprofileentryQS) First(ctx context.Context, db models.DBInterface) (*Instantprofileentry, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Instantprofileentry{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.profile, &obj.control, &obj.TargetTemp, &obj.Active)
@@ -638,18 +637,18 @@ func (qs InstantprofileentryQS) First(db models.DBInterface) (*Instantprofileent
 }
 
 // Delete deletes rows matching queryset filters
-func (qs InstantprofileentryQS) Delete(db models.DBInterface) (int64, error) {
+func (qs InstantprofileentryQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_instantprofileentry"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -713,7 +712,7 @@ func (uqs InstantprofileentryUpdateQS) SetActive(v bool) InstantprofileentryUpda
 }
 
 // Exec executes the update operation
-func (uqs InstantprofileentryUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs InstantprofileentryUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -736,17 +735,17 @@ func (uqs InstantprofileentryUpdateQS) Exec(db models.DBInterface) (int64, error
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (i *Instantprofileentry) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_instantprofileentry" ("profile_id", "control_id", "target_temp", "active") VALUES ($1, $2, $3, $4) RETURNING "id"`, i.profile, i.control, i.TargetTemp, i.Active)
+func (i *Instantprofileentry) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_instantprofileentry" ("profile_id", "control_id", "target_temp", "active") VALUES ($1, $2, $3, $4) RETURNING "id"`, i.profile, i.control, i.TargetTemp, i.Active)
 
 	if err := row.Scan(&i.id); err != nil {
 		return err
@@ -758,26 +757,76 @@ func (i *Instantprofileentry) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (i *Instantprofileentry) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_instantprofileentry" SET "profile_id" = $1, "control_id" = $2, "target_temp" = $3, "active" = $4 WHERE "id" = $5`, i.profile, i.control, i.TargetTemp, i.Active, i.id)
+func (i *Instantprofileentry) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_instantprofileentry" SET "profile_id" = $1, "control_id" = $2, "target_temp" = $3, "active" = $4 WHERE "id" = $5`, i.profile, i.control, i.TargetTemp, i.Active, i.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (i *Instantprofileentry) Save(db models.DBInterface) error {
+func (i *Instantprofileentry) Save(ctx context.Context, db models.DBInterface) error {
 	if i.existsInDB {
-		return i.update(db)
+		return i.update(ctx, db)
 	}
 
-	return i.insert(db)
+	return i.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (i *Instantprofileentry) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_instantprofileentry" WHERE "id" = $1`, i.id)
+func (i *Instantprofileentry) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_instantprofileentry" WHERE "id" = $1`, i.id)
 
 	i.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (il InstantprofileentryList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts InstantprofileentryList
+
+	for _, i := range il {
+		if i.existsInDB {
+			if err := i.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, i)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 4*len(inserts))
+	offs := 1
+	for _, i := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3))
+		vaa = append(vaa, i.profile, i.control, i.TargetTemp, i.Active)
+		offs += 4
+	}
+
+	qs := `INSERT INTO "heatcontrol_instantprofileentry" ("profile_id", "control_id", "target_temp", "active") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, i := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&i.id); err != nil {
+			return err
+		}
+
+		i.existsInDB = true
+	}
+
+	return nil
 }

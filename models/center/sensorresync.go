@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model center.SensorResync
+// Code generated for Django model center.SensorResync. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package center
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -27,11 +28,14 @@ type Sensorresync struct {
 	Ts     time.Time
 }
 
+// SensorresyncList is a list of Sensorresync
+type SensorresyncList []*Sensorresync
+
 // SensorresyncQS represents a queryset for center.SensorResync
 type SensorresyncQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs SensorresyncQS) filter(c string, p interface{}) SensorresyncQS {
@@ -96,21 +100,19 @@ func (qs SensorresyncQS) IDGe(v int32) SensorresyncQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inSensorresyncid struct {
-	values []interface{}
-}
+type inSensorresyncid []interface{}
 
-func (in *inSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs SensorresyncQS) IDIn(values []int32) SensorresyncQS {
@@ -121,29 +123,25 @@ func (qs SensorresyncQS) IDIn(values []int32) SensorresyncQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inSensorresyncid{
-			values: vals,
-		},
+		inSensorresyncid(vals),
 	)
 
 	return qs
 }
 
-type notinSensorresyncid struct {
-	values []interface{}
-}
+type notinSensorresyncid []interface{}
 
-func (in *notinSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinSensorresyncid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs SensorresyncQS) IDNotIn(values []int32) SensorresyncQS {
@@ -154,9 +152,7 @@ func (qs SensorresyncQS) IDNotIn(values []int32) SensorresyncQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinSensorresyncid{
-			values: vals,
-		},
+		notinSensorresyncid(vals),
 	)
 
 	return qs
@@ -177,8 +173,8 @@ func (qs SensorresyncQS) OrderByIDDesc() SensorresyncQS {
 }
 
 // GetSensor returns Sensor
-func (s *Sensorresync) GetSensor(db models.DBInterface) (*Sensor, error) {
-	return SensorQS{}.IDEq(s.sensor).First(db)
+func (s *Sensorresync) GetSensor(ctx context.Context, db models.DBInterface) (*Sensor, error) {
+	return SensorQS{}.IDEq(s.sensor).First(ctx, db)
 }
 
 // SetSensor sets foreign key pointer to Sensor
@@ -272,21 +268,19 @@ func (qs SensorresyncQS) TsGe(v time.Time) SensorresyncQS {
 	return qs.filter(`"ts" >=`, v)
 }
 
-type inSensorresyncTs struct {
-	values []interface{}
-}
+type inSensorresyncTs []interface{}
 
-func (in *inSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"ts" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"ts" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs SensorresyncQS) TsIn(values []time.Time) SensorresyncQS {
@@ -297,29 +291,25 @@ func (qs SensorresyncQS) TsIn(values []time.Time) SensorresyncQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inSensorresyncTs{
-			values: vals,
-		},
+		inSensorresyncTs(vals),
 	)
 
 	return qs
 }
 
-type notinSensorresyncTs struct {
-	values []interface{}
-}
+type notinSensorresyncTs []interface{}
 
-func (in *notinSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinSensorresyncTs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"ts" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"ts" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs SensorresyncQS) TsNotIn(values []time.Time) SensorresyncQS {
@@ -330,9 +320,7 @@ func (qs SensorresyncQS) TsNotIn(values []time.Time) SensorresyncQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinSensorresyncTs{
-			values: vals,
-		},
+		notinSensorresyncTs(vals),
 	)
 
 	return qs
@@ -352,9 +340,37 @@ func (qs SensorresyncQS) OrderByTsDesc() SensorresyncQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs SensorresyncQS) OrderByRandom() SensorresyncQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs SensorresyncQS) ForUpdate() SensorresyncQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs SensorresyncQS) ForUpdateNowait() SensorresyncQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs SensorresyncQS) ForUpdateSkipLocked() SensorresyncQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs SensorresyncQS) ClearForUpdate() SensorresyncQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -382,9 +398,7 @@ func (qs SensorresyncQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "sensor_id", "ts" FROM "center_sensorresync"` + s, p
 }
@@ -396,17 +410,30 @@ func (qs SensorresyncQS) QueryId(c *models.PositionalCounter) (string, []interfa
 	return `SELECT "id" FROM "center_sensorresync"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs SensorresyncQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_sensorresync"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs SensorresyncQS) All(db models.DBInterface) ([]*Sensorresync, error) {
+func (qs SensorresyncQS) All(ctx context.Context, db models.DBInterface) (SensorresyncList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Sensorresync
+	var ret SensorresyncList
 	for rows.Next() {
 		obj := Sensorresync{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.sensor, &obj.Ts); err != nil {
@@ -419,12 +446,12 @@ func (qs SensorresyncQS) All(db models.DBInterface) ([]*Sensorresync, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs SensorresyncQS) First(db models.DBInterface) (*Sensorresync, error) {
+func (qs SensorresyncQS) First(ctx context.Context, db models.DBInterface) (*Sensorresync, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Sensorresync{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.sensor, &obj.Ts)
@@ -439,18 +466,18 @@ func (qs SensorresyncQS) First(db models.DBInterface) (*Sensorresync, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs SensorresyncQS) Delete(db models.DBInterface) (int64, error) {
+func (qs SensorresyncQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "center_sensorresync"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -502,7 +529,7 @@ func (uqs SensorresyncUpdateQS) SetTs(v time.Time) SensorresyncUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs SensorresyncUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs SensorresyncUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -525,17 +552,17 @@ func (uqs SensorresyncUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (s *Sensorresync) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "center_sensorresync" ("sensor_id", "ts") VALUES ($1, $2) RETURNING "id"`, s.sensor, s.Ts)
+func (s *Sensorresync) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "center_sensorresync" ("sensor_id", "ts") VALUES ($1, $2) RETURNING "id"`, s.sensor, s.Ts)
 
 	if err := row.Scan(&s.id); err != nil {
 		return err
@@ -547,26 +574,76 @@ func (s *Sensorresync) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (s *Sensorresync) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_sensorresync" SET "sensor_id" = $1, "ts" = $2 WHERE "id" = $3`, s.sensor, s.Ts, s.id)
+func (s *Sensorresync) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "center_sensorresync" SET "sensor_id" = $1, "ts" = $2 WHERE "id" = $3`, s.sensor, s.Ts, s.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (s *Sensorresync) Save(db models.DBInterface) error {
+func (s *Sensorresync) Save(ctx context.Context, db models.DBInterface) error {
 	if s.existsInDB {
-		return s.update(db)
+		return s.update(ctx, db)
 	}
 
-	return s.insert(db)
+	return s.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (s *Sensorresync) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "center_sensorresync" WHERE "id" = $1`, s.id)
+func (s *Sensorresync) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "center_sensorresync" WHERE "id" = $1`, s.id)
 
 	s.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (sl SensorresyncList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts SensorresyncList
+
+	for _, s := range sl {
+		if s.existsInDB {
+			if err := s.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, s)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 2*len(inserts))
+	offs := 1
+	for _, s := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d)", offs+0, offs+1))
+		vaa = append(vaa, s.sensor, s.Ts)
+		offs += 2
+	}
+
+	qs := `INSERT INTO "center_sensorresync" ("sensor_id", "ts") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, s := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&s.id); err != nil {
+			return err
+		}
+
+		s.existsInDB = true
+	}
+
+	return nil
 }

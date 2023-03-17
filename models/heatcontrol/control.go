@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.Control
+// Code generated for Django model heatcontrol.Control. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -30,11 +31,14 @@ type Control struct {
 	Intabsmax sql.NullFloat64
 }
 
+// ControlList is a list of Control
+type ControlList []*Control
+
 // ControlQS represents a queryset for heatcontrol.Control
 type ControlQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs ControlQS) filter(c string, p interface{}) ControlQS {
@@ -99,21 +103,19 @@ func (qs ControlQS) IDGe(v int32) ControlQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inControlid struct {
-	values []interface{}
-}
+type inControlid []interface{}
 
-func (in *inControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) IDIn(values []int32) ControlQS {
@@ -124,29 +126,25 @@ func (qs ControlQS) IDIn(values []int32) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inControlid{
-			values: vals,
-		},
+		inControlid(vals),
 	)
 
 	return qs
 }
 
-type notinControlid struct {
-	values []interface{}
-}
+type notinControlid []interface{}
 
-func (in *notinControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinControlid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) IDNotIn(values []int32) ControlQS {
@@ -157,9 +155,7 @@ func (qs ControlQS) IDNotIn(values []int32) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinControlid{
-			values: vals,
-		},
+		notinControlid(vals),
 	)
 
 	return qs
@@ -180,8 +176,8 @@ func (qs ControlQS) OrderByIDDesc() ControlQS {
 }
 
 // GetSensor returns center.Sensor
-func (c *Control) GetSensor(db models.DBInterface) (*center.Sensor, error) {
-	return center.SensorQS{}.IDEq(c.sensor).First(db)
+func (c *Control) GetSensor(ctx context.Context, db models.DBInterface) (*center.Sensor, error) {
+	return center.SensorQS{}.IDEq(c.sensor).First(ctx, db)
 }
 
 // SetSensor sets foreign key pointer to center.Sensor
@@ -275,21 +271,19 @@ func (qs ControlQS) KpGe(v float64) ControlQS {
 	return qs.filter(`"kp" >=`, v)
 }
 
-type inControlKp struct {
-	values []interface{}
-}
+type inControlKp []interface{}
 
-func (in *inControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"kp" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"kp" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KpIn(values []float64) ControlQS {
@@ -300,29 +294,25 @@ func (qs ControlQS) KpIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inControlKp{
-			values: vals,
-		},
+		inControlKp(vals),
 	)
 
 	return qs
 }
 
-type notinControlKp struct {
-	values []interface{}
-}
+type notinControlKp []interface{}
 
-func (in *notinControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinControlKp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"kp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"kp" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KpNotIn(values []float64) ControlQS {
@@ -333,9 +323,7 @@ func (qs ControlQS) KpNotIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinControlKp{
-			values: vals,
-		},
+		notinControlKp(vals),
 	)
 
 	return qs
@@ -385,21 +373,19 @@ func (qs ControlQS) KiGe(v float64) ControlQS {
 	return qs.filter(`"ki" >=`, v)
 }
 
-type inControlKi struct {
-	values []interface{}
-}
+type inControlKi []interface{}
 
-func (in *inControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"ki" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"ki" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KiIn(values []float64) ControlQS {
@@ -410,29 +396,25 @@ func (qs ControlQS) KiIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inControlKi{
-			values: vals,
-		},
+		inControlKi(vals),
 	)
 
 	return qs
 }
 
-type notinControlKi struct {
-	values []interface{}
-}
+type notinControlKi []interface{}
 
-func (in *notinControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinControlKi) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"ki" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"ki" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KiNotIn(values []float64) ControlQS {
@@ -443,9 +425,7 @@ func (qs ControlQS) KiNotIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinControlKi{
-			values: vals,
-		},
+		notinControlKi(vals),
 	)
 
 	return qs
@@ -495,21 +475,19 @@ func (qs ControlQS) KdGe(v float64) ControlQS {
 	return qs.filter(`"kd" >=`, v)
 }
 
-type inControlKd struct {
-	values []interface{}
-}
+type inControlKd []interface{}
 
-func (in *inControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"kd" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"kd" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KdIn(values []float64) ControlQS {
@@ -520,29 +498,25 @@ func (qs ControlQS) KdIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inControlKd{
-			values: vals,
-		},
+		inControlKd(vals),
 	)
 
 	return qs
 }
 
-type notinControlKd struct {
-	values []interface{}
-}
+type notinControlKd []interface{}
 
-func (in *notinControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinControlKd) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"kd" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"kd" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) KdNotIn(values []float64) ControlQS {
@@ -553,9 +527,7 @@ func (qs ControlQS) KdNotIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinControlKd{
-			values: vals,
-		},
+		notinControlKd(vals),
 	)
 
 	return qs
@@ -627,21 +599,19 @@ func (qs ControlQS) IntabsmaxGe(v float64) ControlQS {
 	return qs.filter(`"intabsmax" >=`, v)
 }
 
-type inControlIntabsmax struct {
-	values []interface{}
-}
+type inControlIntabsmax []interface{}
 
-func (in *inControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"intabsmax" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"intabsmax" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) IntabsmaxIn(values []float64) ControlQS {
@@ -652,29 +622,25 @@ func (qs ControlQS) IntabsmaxIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inControlIntabsmax{
-			values: vals,
-		},
+		inControlIntabsmax(vals),
 	)
 
 	return qs
 }
 
-type notinControlIntabsmax struct {
-	values []interface{}
-}
+type notinControlIntabsmax []interface{}
 
-func (in *notinControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinControlIntabsmax) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"intabsmax" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"intabsmax" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ControlQS) IntabsmaxNotIn(values []float64) ControlQS {
@@ -685,9 +651,7 @@ func (qs ControlQS) IntabsmaxNotIn(values []float64) ControlQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinControlIntabsmax{
-			values: vals,
-		},
+		notinControlIntabsmax(vals),
 	)
 
 	return qs
@@ -707,9 +671,37 @@ func (qs ControlQS) OrderByIntabsmaxDesc() ControlQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs ControlQS) OrderByRandom() ControlQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ControlQS) ForUpdate() ControlQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs ControlQS) ForUpdateNowait() ControlQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs ControlQS) ForUpdateSkipLocked() ControlQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs ControlQS) ClearForUpdate() ControlQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -737,9 +729,7 @@ func (qs ControlQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "sensor_id", "kp", "ki", "kd", "intabsmax" FROM "heatcontrol_control"` + s, p
 }
@@ -751,17 +741,30 @@ func (qs ControlQS) QueryId(c *models.PositionalCounter) (string, []interface{})
 	return `SELECT "id" FROM "heatcontrol_control"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs ControlQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_control"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs ControlQS) All(db models.DBInterface) ([]*Control, error) {
+func (qs ControlQS) All(ctx context.Context, db models.DBInterface) (ControlList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Control
+	var ret ControlList
 	for rows.Next() {
 		obj := Control{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.sensor, &obj.Kp, &obj.Ki, &obj.Kd, &obj.Intabsmax); err != nil {
@@ -774,12 +777,12 @@ func (qs ControlQS) All(db models.DBInterface) ([]*Control, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs ControlQS) First(db models.DBInterface) (*Control, error) {
+func (qs ControlQS) First(ctx context.Context, db models.DBInterface) (*Control, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Control{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.sensor, &obj.Kp, &obj.Ki, &obj.Kd, &obj.Intabsmax)
@@ -794,18 +797,18 @@ func (qs ControlQS) First(db models.DBInterface) (*Control, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs ControlQS) Delete(db models.DBInterface) (int64, error) {
+func (qs ControlQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_control"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -872,7 +875,7 @@ func (uqs ControlUpdateQS) SetIntabsmax(v sql.NullFloat64) ControlUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs ControlUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs ControlUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -895,17 +898,17 @@ func (uqs ControlUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (c *Control) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_control" ("sensor_id", "kp", "ki", "kd", "intabsmax") VALUES ($1, $2, $3, $4, $5) RETURNING "id"`, c.sensor, c.Kp, c.Ki, c.Kd, c.Intabsmax)
+func (c *Control) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_control" ("sensor_id", "kp", "ki", "kd", "intabsmax") VALUES ($1, $2, $3, $4, $5) RETURNING "id"`, c.sensor, c.Kp, c.Ki, c.Kd, c.Intabsmax)
 
 	if err := row.Scan(&c.id); err != nil {
 		return err
@@ -917,28 +920,78 @@ func (c *Control) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (c *Control) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_control" SET "sensor_id" = $1, "kp" = $2, "ki" = $3, "kd" = $4, "intabsmax" = $5 WHERE "id" = $6`, c.sensor, c.Kp, c.Ki, c.Kd, c.Intabsmax, c.id)
+func (c *Control) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_control" SET "sensor_id" = $1, "kp" = $2, "ki" = $3, "kd" = $4, "intabsmax" = $5 WHERE "id" = $6`, c.sensor, c.Kp, c.Ki, c.Kd, c.Intabsmax, c.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (c *Control) Save(db models.DBInterface) error {
+func (c *Control) Save(ctx context.Context, db models.DBInterface) error {
 	if c.existsInDB {
-		return c.update(db)
+		return c.update(ctx, db)
 	}
 
-	return c.insert(db)
+	return c.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (c *Control) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_control" WHERE "id" = $1`, c.id)
+func (c *Control) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_control" WHERE "id" = $1`, c.id)
 
 	c.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (cl ControlList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts ControlList
+
+	for _, c := range cl {
+		if c.existsInDB {
+			if err := c.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, c)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 5*len(inserts))
+	offs := 1
+	for _, c := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3, offs+4))
+		vaa = append(vaa, c.sensor, c.Kp, c.Ki, c.Kd, c.Intabsmax)
+		offs += 5
+	}
+
+	qs := `INSERT INTO "heatcontrol_control" ("sensor_id", "kp", "ki", "kd", "intabsmax") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, c := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&c.id); err != nil {
+			return err
+		}
+
+		c.existsInDB = true
+	}
+
+	return nil
 }
 
 // Profile returns the set of Profile referencing this Control instance

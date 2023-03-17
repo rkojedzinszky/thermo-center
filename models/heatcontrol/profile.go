@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model heatcontrol.Profile
+// Code generated for Django model heatcontrol.Profile. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,6 +11,7 @@
 package heatcontrol
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
@@ -29,11 +30,14 @@ type Profile struct {
 	TargetTemp sql.NullFloat64
 }
 
+// ProfileList is a list of Profile
+type ProfileList []*Profile
+
 // ProfileQS represents a queryset for heatcontrol.Profile
 type ProfileQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs ProfileQS) filter(c string, p interface{}) ProfileQS {
@@ -98,21 +102,19 @@ func (qs ProfileQS) IDGe(v int32) ProfileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inProfileid struct {
-	values []interface{}
-}
+type inProfileid []interface{}
 
-func (in *inProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) IDIn(values []int32) ProfileQS {
@@ -123,29 +125,25 @@ func (qs ProfileQS) IDIn(values []int32) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inProfileid{
-			values: vals,
-		},
+		inProfileid(vals),
 	)
 
 	return qs
 }
 
-type notinProfileid struct {
-	values []interface{}
-}
+type notinProfileid []interface{}
 
-func (in *notinProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinProfileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) IDNotIn(values []int32) ProfileQS {
@@ -156,9 +154,7 @@ func (qs ProfileQS) IDNotIn(values []int32) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinProfileid{
-			values: vals,
-		},
+		notinProfileid(vals),
 	)
 
 	return qs
@@ -179,8 +175,8 @@ func (qs ProfileQS) OrderByIDDesc() ProfileQS {
 }
 
 // GetControl returns Control
-func (p *Profile) GetControl(db models.DBInterface) (*Control, error) {
-	return ControlQS{}.IDEq(p.control).First(db)
+func (p *Profile) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
+	return ControlQS{}.IDEq(p.control).First(ctx, db)
 }
 
 // SetControl sets foreign key pointer to Control
@@ -245,8 +241,8 @@ func (qs ProfileQS) OrderByControlDesc() ProfileQS {
 }
 
 // GetDaytype returns Daytype
-func (p *Profile) GetDaytype(db models.DBInterface) (*Daytype, error) {
-	return DaytypeQS{}.IDEq(p.daytype).First(db)
+func (p *Profile) GetDaytype(ctx context.Context, db models.DBInterface) (*Daytype, error) {
+	return DaytypeQS{}.IDEq(p.daytype).First(ctx, db)
 }
 
 // SetDaytype sets foreign key pointer to Daytype
@@ -340,21 +336,19 @@ func (qs ProfileQS) StartGe(v time.Time) ProfileQS {
 	return qs.filter(`"start" >=`, v)
 }
 
-type inProfileStart struct {
-	values []interface{}
-}
+type inProfileStart []interface{}
 
-func (in *inProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"start" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"start" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) StartIn(values []time.Time) ProfileQS {
@@ -365,29 +359,25 @@ func (qs ProfileQS) StartIn(values []time.Time) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inProfileStart{
-			values: vals,
-		},
+		inProfileStart(vals),
 	)
 
 	return qs
 }
 
-type notinProfileStart struct {
-	values []interface{}
-}
+type notinProfileStart []interface{}
 
-func (in *notinProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinProfileStart) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"start" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) StartNotIn(values []time.Time) ProfileQS {
@@ -398,9 +388,7 @@ func (qs ProfileQS) StartNotIn(values []time.Time) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinProfileStart{
-			values: vals,
-		},
+		notinProfileStart(vals),
 	)
 
 	return qs
@@ -472,21 +460,19 @@ func (qs ProfileQS) TargetTempGe(v float64) ProfileQS {
 	return qs.filter(`"target_temp" >=`, v)
 }
 
-type inProfileTargetTemp struct {
-	values []interface{}
-}
+type inProfileTargetTemp []interface{}
 
-func (in *inProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) TargetTempIn(values []float64) ProfileQS {
@@ -497,29 +483,25 @@ func (qs ProfileQS) TargetTempIn(values []float64) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inProfileTargetTemp{
-			values: vals,
-		},
+		inProfileTargetTemp(vals),
 	)
 
 	return qs
 }
 
-type notinProfileTargetTemp struct {
-	values []interface{}
-}
+type notinProfileTargetTemp []interface{}
 
-func (in *notinProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinProfileTargetTemp) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"target_temp" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs ProfileQS) TargetTempNotIn(values []float64) ProfileQS {
@@ -530,9 +512,7 @@ func (qs ProfileQS) TargetTempNotIn(values []float64) ProfileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinProfileTargetTemp{
-			values: vals,
-		},
+		notinProfileTargetTemp(vals),
 	)
 
 	return qs
@@ -552,9 +532,37 @@ func (qs ProfileQS) OrderByTargetTempDesc() ProfileQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs ProfileQS) OrderByRandom() ProfileQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs ProfileQS) ForUpdate() ProfileQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs ProfileQS) ForUpdateNowait() ProfileQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs ProfileQS) ForUpdateSkipLocked() ProfileQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs ProfileQS) ClearForUpdate() ProfileQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -582,9 +590,7 @@ func (qs ProfileQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "control_id", "daytype_id", "start", "target_temp" FROM "heatcontrol_profile"` + s, p
 }
@@ -596,17 +602,30 @@ func (qs ProfileQS) QueryId(c *models.PositionalCounter) (string, []interface{})
 	return `SELECT "id" FROM "heatcontrol_profile"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs ProfileQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_profile"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs ProfileQS) All(db models.DBInterface) ([]*Profile, error) {
+func (qs ProfileQS) All(ctx context.Context, db models.DBInterface) (ProfileList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Profile
+	var ret ProfileList
 	for rows.Next() {
 		obj := Profile{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.control, &obj.daytype, &obj.Start, &obj.TargetTemp); err != nil {
@@ -619,12 +638,12 @@ func (qs ProfileQS) All(db models.DBInterface) ([]*Profile, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs ProfileQS) First(db models.DBInterface) (*Profile, error) {
+func (qs ProfileQS) First(ctx context.Context, db models.DBInterface) (*Profile, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Profile{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.control, &obj.daytype, &obj.Start, &obj.TargetTemp)
@@ -639,18 +658,18 @@ func (qs ProfileQS) First(db models.DBInterface) (*Profile, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs ProfileQS) Delete(db models.DBInterface) (int64, error) {
+func (qs ProfileQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "heatcontrol_profile"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -714,7 +733,7 @@ func (uqs ProfileUpdateQS) SetTargetTemp(v sql.NullFloat64) ProfileUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs ProfileUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs ProfileUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -737,17 +756,17 @@ func (uqs ProfileUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (p *Profile) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "heatcontrol_profile" ("control_id", "daytype_id", "start", "target_temp") VALUES ($1, $2, $3, $4) RETURNING "id"`, p.control, p.daytype, p.Start, p.TargetTemp)
+func (p *Profile) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "heatcontrol_profile" ("control_id", "daytype_id", "start", "target_temp") VALUES ($1, $2, $3, $4) RETURNING "id"`, p.control, p.daytype, p.Start, p.TargetTemp)
 
 	if err := row.Scan(&p.id); err != nil {
 		return err
@@ -759,26 +778,76 @@ func (p *Profile) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (p *Profile) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "heatcontrol_profile" SET "control_id" = $1, "daytype_id" = $2, "start" = $3, "target_temp" = $4 WHERE "id" = $5`, p.control, p.daytype, p.Start, p.TargetTemp, p.id)
+func (p *Profile) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "heatcontrol_profile" SET "control_id" = $1, "daytype_id" = $2, "start" = $3, "target_temp" = $4 WHERE "id" = $5`, p.control, p.daytype, p.Start, p.TargetTemp, p.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (p *Profile) Save(db models.DBInterface) error {
+func (p *Profile) Save(ctx context.Context, db models.DBInterface) error {
 	if p.existsInDB {
-		return p.update(db)
+		return p.update(ctx, db)
 	}
 
-	return p.insert(db)
+	return p.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (p *Profile) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "heatcontrol_profile" WHERE "id" = $1`, p.id)
+func (p *Profile) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "heatcontrol_profile" WHERE "id" = $1`, p.id)
 
 	p.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (pl ProfileList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts ProfileList
+
+	for _, p := range pl {
+		if p.existsInDB {
+			if err := p.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, p)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 4*len(inserts))
+	offs := 1
+	for _, p := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d, $%d, $%d)", offs+0, offs+1, offs+2, offs+3))
+		vaa = append(vaa, p.control, p.daytype, p.Start, p.TargetTemp)
+		offs += 4
+	}
+
+	qs := `INSERT INTO "heatcontrol_profile" ("control_id", "daytype_id", "start", "target_temp") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, p := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&p.id); err != nil {
+			return err
+		}
+
+		p.existsInDB = true
+	}
+
+	return nil
 }

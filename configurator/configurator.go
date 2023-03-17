@@ -2,21 +2,22 @@ package configurator
 
 import (
 	"context"
-	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rkojedzinszky/thermo-center/models/center"
 )
 
 type configurator struct {
-	db       *sql.DB
+	db       *pgxpool.Pool
 	location *time.Location
 }
 
 // NewConfigurator returns a new configurator
-func NewConfigurator(db *sql.DB, location *time.Location) ConfiguratorServer {
+func NewConfigurator(db *pgxpool.Pool, location *time.Location) ConfiguratorServer {
 	return &configurator{
 		db:       db,
 		location: location,
@@ -28,12 +29,12 @@ func (c *configurator) GetRadioCfg(ctx context.Context, r *RadioCfgRequest) (*Ra
 		return nil, fmt.Errorf("Invalid cluster ID received")
 	}
 
-	config, err := center.RfconfigQS{}.IDEq(int32(r.Cluster)).First(c.db)
+	config, err := center.RfconfigQS{}.IDEq(int32(r.Cluster)).First(ctx, c.db)
 	if err != nil {
 		return nil, err
 	}
 
-	profile, err := config.GetRfProfile(c.db)
+	profile, err := config.GetRfProfile(ctx, c.db)
 	if err != nil {
 		return nil, err
 	}
@@ -50,13 +51,13 @@ func (c *configurator) GetRadioCfg(ctx context.Context, r *RadioCfgRequest) (*Ra
 }
 
 func (c *configurator) TaskAcquire(ctx context.Context, t *Task) (*TaskDetails, error) {
-	tx, err := c.db.BeginTx(ctx, nil)
+	tx, err := c.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer tx.Rollback(ctx)
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNull().First(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -67,12 +68,12 @@ func (c *configurator) TaskAcquire(ctx context.Context, t *Task) (*TaskDetails, 
 	task.Started.Time = time.Now().In(c.location)
 	task.Started.Valid = true
 
-	err = task.Save(tx)
+	err = task.Save(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = tx.Commit(); err != nil {
+	if err = tx.Commit(ctx); err != nil {
 		return nil, err
 	}
 
@@ -89,13 +90,13 @@ func (c *configurator) TaskAcquire(ctx context.Context, t *Task) (*TaskDetails, 
 }
 
 func (c *configurator) TaskDiscoveryReceived(ctx context.Context, t *Task) (*TaskUpdateResponse, error) {
-	tx, err := c.db.BeginTx(ctx, nil)
+	tx, err := c.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer tx.Rollback(ctx)
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -110,12 +111,12 @@ func (c *configurator) TaskDiscoveryReceived(ctx context.Context, t *Task) (*Tas
 		task.FirstDiscovery = task.LastDiscovery
 	}
 
-	err = task.Save(tx)
+	err = task.Save(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = tx.Commit(); err != nil {
+	if err = tx.Commit(ctx); err != nil {
 		return nil, err
 	}
 
@@ -125,13 +126,13 @@ func (c *configurator) TaskDiscoveryReceived(ctx context.Context, t *Task) (*Tas
 }
 
 func (c *configurator) TaskFinished(ctx context.Context, t *TaskFinishedRequest) (*TaskUpdateResponse, error) {
-	tx, err := c.db.BeginTx(ctx, nil)
+	tx, err := c.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback()
+	defer tx.Rollback(ctx)
 
-	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(tx)
+	task, err := center.ConfiguresensortaskQS{}.ForUpdate().IDEq(int32(t.TaskId)).StartedIsNotNull().FinishedIsNull().First(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -147,13 +148,13 @@ func (c *configurator) TaskFinished(ctx context.Context, t *TaskFinishedRequest)
 	task.Error.String = t.Error
 	task.Error.Valid = true
 
-	err = task.Save(tx)
+	err = task.Save(ctx, tx)
 	if err != nil {
 		return nil, err
 	}
 
 	if t.Error == "" {
-		sensor, err := task.GetSensor(tx)
+		sensor, err := task.GetSensor(ctx, tx)
 		if err != nil {
 			return nil, err
 		}
@@ -163,12 +164,12 @@ func (c *configurator) TaskFinished(ctx context.Context, t *TaskFinishedRequest)
 		sensor.LastTsf.Float64 = float64(now.Unix())
 		sensor.LastTsf.Valid = true
 
-		if err = sensor.Save(tx); err != nil {
+		if err = sensor.Save(ctx, tx); err != nil {
 			return nil, err
 		}
 	}
 
-	if err = tx.Commit(); err != nil {
+	if err = tx.Commit(ctx); err != nil {
 		return nil, err
 	}
 

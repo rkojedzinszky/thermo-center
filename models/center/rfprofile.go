@@ -1,6 +1,6 @@
-/*
-  AUTO-GENERATED file for Django model center.RFProfile
+// Code generated for Django model center.RFProfile. DO NOT EDIT.
 
+/*
   Command used to generate:
 
   DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
@@ -11,7 +11,9 @@
 package center
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
 )
@@ -25,11 +27,14 @@ type Rfprofile struct {
 	Confregs string
 }
 
+// RfprofileList is a list of Rfprofile
+type RfprofileList []*Rfprofile
+
 // RfprofileQS represents a queryset for center.RFProfile
 type RfprofileQS struct {
 	condFragments models.AndFragment
 	order         []string
-	forUpdate     bool
+	forClause     string
 }
 
 func (qs RfprofileQS) filter(c string, p interface{}) RfprofileQS {
@@ -94,21 +99,19 @@ func (qs RfprofileQS) IDGe(v int32) RfprofileQS {
 	return qs.filter(`"id" >=`, v)
 }
 
-type inRfprofileid struct {
-	values []interface{}
-}
+type inRfprofileid []interface{}
 
-func (in *inRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) IDIn(values []int32) RfprofileQS {
@@ -119,29 +122,25 @@ func (qs RfprofileQS) IDIn(values []int32) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfprofileid{
-			values: vals,
-		},
+		inRfprofileid(vals),
 	)
 
 	return qs
 }
 
-type notinRfprofileid struct {
-	values []interface{}
-}
+type notinRfprofileid []interface{}
 
-func (in *notinRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfprofileid) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"id" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) IDNotIn(values []int32) RfprofileQS {
@@ -152,9 +151,7 @@ func (qs RfprofileQS) IDNotIn(values []int32) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfprofileid{
-			values: vals,
-		},
+		notinRfprofileid(vals),
 	)
 
 	return qs
@@ -204,21 +201,19 @@ func (qs RfprofileQS) NameGe(v string) RfprofileQS {
 	return qs.filter(`"name" >=`, v)
 }
 
-type inRfprofileName struct {
-	values []interface{}
-}
+type inRfprofileName []interface{}
 
-func (in *inRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"name" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"name" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) NameIn(values []string) RfprofileQS {
@@ -229,29 +224,25 @@ func (qs RfprofileQS) NameIn(values []string) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfprofileName{
-			values: vals,
-		},
+		inRfprofileName(vals),
 	)
 
 	return qs
 }
 
-type notinRfprofileName struct {
-	values []interface{}
-}
+type notinRfprofileName []interface{}
 
-func (in *notinRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfprofileName) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"name" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) NameNotIn(values []string) RfprofileQS {
@@ -262,9 +253,7 @@ func (qs RfprofileQS) NameNotIn(values []string) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfprofileName{
-			values: vals,
-		},
+		notinRfprofileName(vals),
 	)
 
 	return qs
@@ -314,21 +303,19 @@ func (qs RfprofileQS) ConfregsGe(v string) RfprofileQS {
 	return qs.filter(`"confregs" >=`, v)
 }
 
-type inRfprofileConfregs struct {
-	values []interface{}
-}
+type inRfprofileConfregs []interface{}
 
-func (in *inRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in inRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"confregs" IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"confregs" IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) ConfregsIn(values []string) RfprofileQS {
@@ -339,29 +326,25 @@ func (qs RfprofileQS) ConfregsIn(values []string) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&inRfprofileConfregs{
-			values: vals,
-		},
+		inRfprofileConfregs(vals),
 	)
 
 	return qs
 }
 
-type notinRfprofileConfregs struct {
-	values []interface{}
-}
+type notinRfprofileConfregs []interface{}
 
-func (in *notinRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
-	if len(in.values) == 0 {
+func (in notinRfprofileConfregs) GetConditionFragment(c *models.PositionalCounter) (string, []interface{}) {
+	if len(in) == 0 {
 		return `false`, nil
 	}
 
 	var params []string
-	for range in.values {
+	for range in {
 		params = append(params, c.Get())
 	}
 
-	return `"confregs" NOT IN (` + strings.Join(params, ", ") + `)`, in.values
+	return `"confregs" NOT IN (` + strings.Join(params, ", ") + `)`, in
 }
 
 func (qs RfprofileQS) ConfregsNotIn(values []string) RfprofileQS {
@@ -372,9 +355,7 @@ func (qs RfprofileQS) ConfregsNotIn(values []string) RfprofileQS {
 
 	qs.condFragments = append(
 		qs.condFragments,
-		&notinRfprofileConfregs{
-			values: vals,
-		},
+		notinRfprofileConfregs(vals),
 	)
 
 	return qs
@@ -394,9 +375,37 @@ func (qs RfprofileQS) OrderByConfregsDesc() RfprofileQS {
 	return qs
 }
 
+// OrderByRandom randomizes result
+func (qs RfprofileQS) OrderByRandom() RfprofileQS {
+	qs.order = append(qs.order, `random()`)
+
+	return qs
+}
+
 // ForUpdate marks the queryset to use FOR UPDATE clause
 func (qs RfprofileQS) ForUpdate() RfprofileQS {
-	qs.forUpdate = true
+	qs.forClause = " FOR UPDATE"
+
+	return qs
+}
+
+// ForUpdateNowait marks the queryset to use FOR UPDATE NOWAIT clause
+func (qs RfprofileQS) ForUpdateNowait() RfprofileQS {
+	qs.forClause = " FOR UPDATE NOWAIT"
+
+	return qs
+}
+
+// ForUpdateSkipLocked marks the queryset to use FOR UPDATE SKIP LOCKED clause
+func (qs RfprofileQS) ForUpdateSkipLocked() RfprofileQS {
+	qs.forClause = " FOR UPDATE SKIP LOCKED"
+
+	return qs
+}
+
+// ClearForUpdate clears FOR UPDATE clause set on queryset
+func (qs RfprofileQS) ClearForUpdate() RfprofileQS {
+	qs.forClause = ""
 
 	return qs
 }
@@ -424,9 +433,7 @@ func (qs RfprofileQS) queryFull() (string, []interface{}) {
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
-	if qs.forUpdate {
-		s += " FOR UPDATE"
-	}
+	s += qs.forClause
 
 	return `SELECT "id", "name", "confregs" FROM "center_rfprofile"` + s, p
 }
@@ -438,17 +445,30 @@ func (qs RfprofileQS) QueryId(c *models.PositionalCounter) (string, []interface{
 	return `SELECT "id" FROM "center_rfprofile"` + s, p
 }
 
+// Count returns the number of rows matching queryset filters
+func (qs RfprofileQS) Count(ctx context.Context, db models.DBInterface) (count int, err error) {
+	c := &models.PositionalCounter{}
+
+	s, p := qs.whereClause(c)
+
+	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_rfprofile"`+s, p...)
+
+	err = row.Scan(&count)
+
+	return
+}
+
 // All returns all rows matching queryset filters
-func (qs RfprofileQS) All(db models.DBInterface) ([]*Rfprofile, error) {
+func (qs RfprofileQS) All(ctx context.Context, db models.DBInterface) (RfprofileList, error) {
 	s, p := qs.queryFull()
 
-	rows, err := db.Query(s, p...)
+	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var ret []*Rfprofile
+	var ret RfprofileList
 	for rows.Next() {
 		obj := Rfprofile{existsInDB: true}
 		if err = rows.Scan(&obj.id, &obj.Name, &obj.Confregs); err != nil {
@@ -461,12 +481,12 @@ func (qs RfprofileQS) All(db models.DBInterface) ([]*Rfprofile, error) {
 }
 
 // First returns the first row matching queryset filters, others are discarded
-func (qs RfprofileQS) First(db models.DBInterface) (*Rfprofile, error) {
+func (qs RfprofileQS) First(ctx context.Context, db models.DBInterface) (*Rfprofile, error) {
 	s, p := qs.queryFull()
 
 	s += " LIMIT 1"
 
-	row := db.QueryRow(s, p...)
+	row := db.QueryRow(ctx, s, p...)
 
 	obj := Rfprofile{existsInDB: true}
 	err := row.Scan(&obj.id, &obj.Name, &obj.Confregs)
@@ -481,18 +501,18 @@ func (qs RfprofileQS) First(db models.DBInterface) (*Rfprofile, error) {
 }
 
 // Delete deletes rows matching queryset filters
-func (qs RfprofileQS) Delete(db models.DBInterface) (int64, error) {
+func (qs RfprofileQS) Delete(ctx context.Context, db models.DBInterface) (int64, error) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s = `DELETE FROM "center_rfprofile"` + s
 
-	result, err := db.Exec(s, p...)
+	result, err := db.Exec(ctx, s, p...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // Update returns an Update queryset inheriting all the filter conditions, which then can be
@@ -542,7 +562,7 @@ func (uqs RfprofileUpdateQS) SetConfregs(v string) RfprofileUpdateQS {
 }
 
 // Exec executes the update operation
-func (uqs RfprofileUpdateQS) Exec(db models.DBInterface) (int64, error) {
+func (uqs RfprofileUpdateQS) Exec(ctx context.Context, db models.DBInterface) (int64, error) {
 	if len(uqs.updates) == 0 {
 		return 0, nil
 	}
@@ -565,17 +585,17 @@ func (uqs RfprofileUpdateQS) Exec(db models.DBInterface) (int64, error) {
 
 	params = append(params, wp...)
 
-	result, err := db.Exec(st, params...)
+	result, err := db.Exec(ctx, st, params...)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	return result.RowsAffected(), nil
 }
 
 // insert operation
-func (r *Rfprofile) insert(db models.DBInterface) error {
-	row := db.QueryRow(`INSERT INTO "center_rfprofile" ("name", "confregs") VALUES ($1, $2) RETURNING "id"`, r.Name, r.Confregs)
+func (r *Rfprofile) insert(ctx context.Context, db models.DBInterface) error {
+	row := db.QueryRow(ctx, `INSERT INTO "center_rfprofile" ("name", "confregs") VALUES ($1, $2) RETURNING "id"`, r.Name, r.Confregs)
 
 	if err := row.Scan(&r.id); err != nil {
 		return err
@@ -587,28 +607,78 @@ func (r *Rfprofile) insert(db models.DBInterface) error {
 }
 
 // update operation
-func (r *Rfprofile) update(db models.DBInterface) error {
-	_, err := db.Exec(`UPDATE "center_rfprofile" SET "name" = $1, "confregs" = $2 WHERE "id" = $3`, r.Name, r.Confregs, r.id)
+func (r *Rfprofile) update(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `UPDATE "center_rfprofile" SET "name" = $1, "confregs" = $2 WHERE "id" = $3`, r.Name, r.Confregs, r.id)
 
 	return err
 }
 
 // Save inserts or updates record
-func (r *Rfprofile) Save(db models.DBInterface) error {
+func (r *Rfprofile) Save(ctx context.Context, db models.DBInterface) error {
 	if r.existsInDB {
-		return r.update(db)
+		return r.update(ctx, db)
 	}
 
-	return r.insert(db)
+	return r.insert(ctx, db)
 }
 
 // Delete removes row from database
-func (r *Rfprofile) Delete(db models.DBInterface) error {
-	_, err := db.Exec(`DELETE FROM "center_rfprofile" WHERE "id" = $1`, r.id)
+func (r *Rfprofile) Delete(ctx context.Context, db models.DBInterface) error {
+	_, err := db.Exec(ctx, `DELETE FROM "center_rfprofile" WHERE "id" = $1`, r.id)
 
 	r.existsInDB = false
 
 	return err
+}
+
+// Save saves all elements, optimizing inserts in a batch
+func (rl RfprofileList) Save(ctx context.Context, db models.DBInterface) error {
+	var inserts RfprofileList
+
+	for _, r := range rl {
+		if r.existsInDB {
+			if err := r.update(ctx, db); err != nil {
+				return err
+			}
+		} else {
+			inserts = append(inserts, r)
+		}
+	}
+
+	if len(inserts) == 0 {
+		return nil
+	}
+
+	vva := make([]string, 0, len(inserts))
+	vaa := make([]any, 0, 2*len(inserts))
+	offs := 1
+	for _, r := range inserts {
+		vva = append(vva, fmt.Sprintf("($%d, $%d)", offs+0, offs+1))
+		vaa = append(vaa, r.Name, r.Confregs)
+		offs += 2
+	}
+
+	qs := `INSERT INTO "center_rfprofile" ("name", "confregs") VALUES ` + strings.Join(vva, ", ") + ` RETURNING "id"`
+	rows, err := db.Query(ctx, qs, vaa...)
+
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for _, r := range inserts {
+		if !rows.Next() {
+			return rows.Err()
+		}
+
+		if err := rows.Scan(&r.id); err != nil {
+			return err
+		}
+
+		r.existsInDB = true
+	}
+
+	return nil
 }
 
 // Rfconfig returns the set of Rfconfig referencing this Rfprofile instance

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -8,14 +9,11 @@ import (
 
 	_ "time/tzdata"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/namsral/flag"
 	"github.com/rkojedzinszky/thermo-center/aggregator"
 	"github.com/rkojedzinszky/thermo-center/configurator"
 	"google.golang.org/grpc"
-
-	"database/sql"
-
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -28,10 +26,9 @@ func main() {
 
 	flag.Parse()
 
-	db, err := sql.Open(
-		"postgres",
+	db, err := pgxpool.New(context.TODO(),
 		fmt.Sprintf(
-			"database=%s host=%s user=%s password=%s sslmode=disable",
+			"database=%s host=%s user=%s password=%s sslmode=disable pool_max_conns=2",
 			*dbName, *dbHost, *dbUser, *dbPassword,
 		),
 	)
@@ -40,8 +37,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
-
-	db.SetMaxOpenConns(2)
 
 	loc, err := time.LoadLocation(*timeZone)
 	if err != nil {

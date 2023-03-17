@@ -25,16 +25,19 @@ SOFTWARE.
 package models
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"strings"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // DBInterface holds common operations for sql.DB and sql.Tx
 type DBInterface interface {
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	Query(query string, args ...interface{}) (*sql.Rows, error)
-	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(ctx context.Context, query string, args ...any) (pgconn.CommandTag, error)
+	Query(ctx context.Context, query string, args ...any) (pgx.Rows, error)
+	QueryRow(ctx context.Context, query string, args ...any) pgx.Row
 }
 
 // PositionalCounter generates positional parameter markers
