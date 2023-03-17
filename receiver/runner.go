@@ -23,6 +23,8 @@ type Runner struct {
 	interrupt    *gpiointerrupt.Interrupt
 
 	task chan task
+
+	UnimplementedReceiverServer
 }
 
 // NewRunner creates a Runner instance

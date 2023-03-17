@@ -32,6 +32,8 @@ type aggregator struct {
 
 	localLock    []time.Time
 	localLockMtx sync.Mutex
+
+	UnimplementedAggregatorServer
 }
 
 // NewAggregator instantiates a new aggregator

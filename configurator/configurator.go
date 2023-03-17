@@ -14,6 +14,8 @@ import (
 type configurator struct {
 	db       *pgxpool.Pool
 	location *time.Location
+
+	UnimplementedConfiguratorServer
 }
 
 // NewConfigurator returns a new configurator
