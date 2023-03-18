@@ -13,10 +13,12 @@ package heatcontrol
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5"
+
+	"github.com/rkojedzinszky/thermo-center/models"
 )
 
 // Scheduledoverride mirrors model heatcontrol.ScheduledOverride

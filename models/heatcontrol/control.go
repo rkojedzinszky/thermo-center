@@ -14,10 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/jackc/pgx/v5"
+
 	"github.com/rkojedzinszky/thermo-center/models"
 	"github.com/rkojedzinszky/thermo-center/models/center"
-	"strings"
 )
 
 // Control mirrors model heatcontrol.Control

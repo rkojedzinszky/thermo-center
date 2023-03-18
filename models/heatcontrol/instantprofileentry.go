@@ -14,9 +14,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
+
+	"github.com/jackc/pgx/v5"
+
+	"github.com/rkojedzinszky/thermo-center/models"
 )
 
 // Instantprofileentry mirrors model heatcontrol.InstantProfileEntry

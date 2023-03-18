@@ -14,10 +14,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5"
+
+	"github.com/rkojedzinszky/thermo-center/models"
 )
 
 // Configuresensortask mirrors model center.ConfigureSensorTask

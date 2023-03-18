@@ -13,9 +13,11 @@ package center
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/rkojedzinszky/thermo-center/models"
 	"strings"
+
+	"github.com/jackc/pgx/v5"
+
+	"github.com/rkojedzinszky/thermo-center/models"
 )
 
 // Rfprofile mirrors model center.RFProfile
