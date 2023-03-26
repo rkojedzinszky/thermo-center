@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -17,7 +17,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Daytype mirrors model heatcontrol.DayType
@@ -33,9 +33,10 @@ type DaytypeList []*Daytype
 
 // DaytypeQS represents a queryset for heatcontrol.DayType
 type DaytypeQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs DaytypeQS) filter(c string, p interface{}) DaytypeQS {
@@ -64,6 +65,8 @@ func (qs DaytypeQS) Or(exprs ...DaytypeQS) DaytypeQS {
 
 	return qs
 }
+
+// BEGIN - heatcontrol.DayType.id
 
 // GetID returns Daytype.ID
 func (d *Daytype) GetID() int32 {
@@ -172,6 +175,17 @@ func (qs DaytypeQS) OrderByIDDesc() DaytypeQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs DaytypeQS) DistinctOnID() DaytypeQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.DayType.id
+
+// BEGIN - heatcontrol.DayType.name
+
 // NameEq filters for Name being equal to argument
 func (qs DaytypeQS) NameEq(v string) DaytypeQS {
 	return qs.filter(`"name" =`, v)
@@ -274,6 +288,15 @@ func (qs DaytypeQS) OrderByNameDesc() DaytypeQS {
 	return qs
 }
 
+// DistinctOnName marks field in queries to add to DISTINCT ON clause
+func (qs DaytypeQS) DistinctOnName() DaytypeQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"name"`)
+
+	return qs
+}
+
+// END - heatcontrol.DayType.name
+
 // OrderByRandom randomizes result
 func (qs DaytypeQS) OrderByRandom() DaytypeQS {
 	qs.order = append(qs.order, `random()`)
@@ -327,14 +350,19 @@ func (qs DaytypeQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs DaytypeQS) queryFull() (string, []interface{}) {
+func (qs DaytypeQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "name" FROM "heatcontrol_daytype"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "name" FROM "heatcontrol_daytype"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -350,7 +378,14 @@ func (qs DaytypeQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_daytype"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_daytype"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -359,7 +394,7 @@ func (qs DaytypeQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 // All returns all rows matching queryset filters
 func (qs DaytypeQS) All(ctx context.Context, db models.DBInterface) (DaytypeList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -376,12 +411,16 @@ func (qs DaytypeQS) All(ctx context.Context, db models.DBInterface) (DaytypeList
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs DaytypeQS) First(ctx context.Context, db models.DBInterface) (*Daytype, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

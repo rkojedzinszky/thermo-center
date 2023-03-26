@@ -12,9 +12,9 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rkojedzinszky/thermo-center/aggregator/sensorvalue"
-	"github.com/rkojedzinszky/thermo-center/models/center"
-	"github.com/rkojedzinszky/thermo-center/models/heatcontrol"
+	"github.com/rkojedzinszky/thermo-center/v5/aggregator/sensorvalue"
+	"github.com/rkojedzinszky/thermo-center/v5/models/center"
+	"github.com/rkojedzinszky/thermo-center/v5/models/heatcontrol"
 )
 
 const defaultCarbonMetricPathTemplate = `sensor.{{ printf "%02x" .SensorID }}.{{ .Metric }}`

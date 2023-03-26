@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,7 +18,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Sensor mirrors model center.Sensor
@@ -36,9 +36,10 @@ type SensorList []*Sensor
 
 // SensorQS represents a queryset for center.Sensor
 type SensorQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs SensorQS) filter(c string, p interface{}) SensorQS {
@@ -67,6 +68,8 @@ func (qs SensorQS) Or(exprs ...SensorQS) SensorQS {
 
 	return qs
 }
+
+// BEGIN - center.Sensor.id
 
 // IDEq filters for ID being equal to argument
 func (qs SensorQS) IDEq(v int32) SensorQS {
@@ -170,6 +173,17 @@ func (qs SensorQS) OrderByIDDesc() SensorQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs SensorQS) DistinctOnID() SensorQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - center.Sensor.id
+
+// BEGIN - center.Sensor.name
+
 // NameEq filters for Name being equal to argument
 func (qs SensorQS) NameEq(v string) SensorQS {
 	return qs.filter(`"name" =`, v)
@@ -271,6 +285,17 @@ func (qs SensorQS) OrderByNameDesc() SensorQS {
 
 	return qs
 }
+
+// DistinctOnName marks field in queries to add to DISTINCT ON clause
+func (qs SensorQS) DistinctOnName() SensorQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"name"`)
+
+	return qs
+}
+
+// END - center.Sensor.name
+
+// BEGIN - center.Sensor.last_seq
 
 // LastSeqIsNull filters for LastSeq being null
 func (qs SensorQS) LastSeqIsNull() SensorQS {
@@ -396,6 +421,17 @@ func (qs SensorQS) OrderByLastSeqDesc() SensorQS {
 	return qs
 }
 
+// DistinctOnLastSeq marks field in queries to add to DISTINCT ON clause
+func (qs SensorQS) DistinctOnLastSeq() SensorQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"last_seq"`)
+
+	return qs
+}
+
+// END - center.Sensor.last_seq
+
+// BEGIN - center.Sensor.last_tsf
+
 // LastTsfIsNull filters for LastTsf being null
 func (qs SensorQS) LastTsfIsNull() SensorQS {
 	qs.condFragments = append(
@@ -520,6 +556,15 @@ func (qs SensorQS) OrderByLastTsfDesc() SensorQS {
 	return qs
 }
 
+// DistinctOnLastTsf marks field in queries to add to DISTINCT ON clause
+func (qs SensorQS) DistinctOnLastTsf() SensorQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"last_tsf"`)
+
+	return qs
+}
+
+// END - center.Sensor.last_tsf
+
 // OrderByRandom randomizes result
 func (qs SensorQS) OrderByRandom() SensorQS {
 	qs.order = append(qs.order, `random()`)
@@ -573,14 +618,19 @@ func (qs SensorQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs SensorQS) queryFull() (string, []interface{}) {
+func (qs SensorQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "name", "last_seq", "last_tsf" FROM "center_sensor"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "name", "last_seq", "last_tsf" FROM "center_sensor"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -596,7 +646,14 @@ func (qs SensorQS) Count(ctx context.Context, db models.DBInterface) (count int,
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_sensor"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "center_sensor"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -605,7 +662,7 @@ func (qs SensorQS) Count(ctx context.Context, db models.DBInterface) (count int,
 
 // All returns all rows matching queryset filters
 func (qs SensorQS) All(ctx context.Context, db models.DBInterface) (SensorList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -622,12 +679,16 @@ func (qs SensorQS) All(ctx context.Context, db models.DBInterface) (SensorList, 
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs SensorQS) First(ctx context.Context, db models.DBInterface) (*Sensor, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

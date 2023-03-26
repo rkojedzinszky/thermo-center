@@ -8,9 +8,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/rkojedzinszky/thermo-center/aggregator"
-	"github.com/rkojedzinszky/thermo-center/configurator"
-	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
+	"github.com/rkojedzinszky/thermo-center/v5/aggregator"
+	"github.com/rkojedzinszky/thermo-center/v5/configurator"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/cc1101"
 )
 
 const (

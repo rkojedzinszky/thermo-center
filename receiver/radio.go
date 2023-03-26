@@ -1,7 +1,7 @@
 package receiver
 
 import (
-	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/cc1101"
 )
 
 type radio struct {

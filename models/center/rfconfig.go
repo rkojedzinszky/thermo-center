@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -17,7 +17,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Rfconfig mirrors model center.RFConfig
@@ -36,9 +36,10 @@ type RfconfigList []*Rfconfig
 
 // RfconfigQS represents a queryset for center.RFConfig
 type RfconfigQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs RfconfigQS) filter(c string, p interface{}) RfconfigQS {
@@ -67,6 +68,8 @@ func (qs RfconfigQS) Or(exprs ...RfconfigQS) RfconfigQS {
 
 	return qs
 }
+
+// BEGIN - center.RFConfig.id
 
 // GetID returns Rfconfig.ID
 func (r *Rfconfig) GetID() int32 {
@@ -175,6 +178,17 @@ func (qs RfconfigQS) OrderByIDDesc() RfconfigQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs RfconfigQS) DistinctOnID() RfconfigQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - center.RFConfig.id
+
+// BEGIN - center.RFConfig.rf_channel
+
 // RfChannelEq filters for RfChannel being equal to argument
 func (qs RfconfigQS) RfChannelEq(v int32) RfconfigQS {
 	return qs.filter(`"rf_channel" =`, v)
@@ -277,6 +291,17 @@ func (qs RfconfigQS) OrderByRfChannelDesc() RfconfigQS {
 	return qs
 }
 
+// DistinctOnRfChannel marks field in queries to add to DISTINCT ON clause
+func (qs RfconfigQS) DistinctOnRfChannel() RfconfigQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"rf_channel"`)
+
+	return qs
+}
+
+// END - center.RFConfig.rf_channel
+
+// BEGIN - center.RFConfig.rf_profile
+
 // GetRfProfile returns Rfprofile
 func (r *Rfconfig) GetRfProfile(ctx context.Context, db models.DBInterface) (*Rfprofile, error) {
 	return RfprofileQS{}.IDEq(r.rfProfile).First(ctx, db)
@@ -342,6 +367,17 @@ func (qs RfconfigQS) OrderByRfProfileDesc() RfconfigQS {
 
 	return qs
 }
+
+// DistinctOnRfProfile marks field in queries to add to DISTINCT ON clause
+func (qs RfconfigQS) DistinctOnRfProfile() RfconfigQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"rf_profile_id"`)
+
+	return qs
+}
+
+// END - center.RFConfig.rf_profile
+
+// BEGIN - center.RFConfig.network_id
 
 // NetworkIdEq filters for NetworkId being equal to argument
 func (qs RfconfigQS) NetworkIdEq(v int32) RfconfigQS {
@@ -445,6 +481,17 @@ func (qs RfconfigQS) OrderByNetworkIdDesc() RfconfigQS {
 	return qs
 }
 
+// DistinctOnNetworkId marks field in queries to add to DISTINCT ON clause
+func (qs RfconfigQS) DistinctOnNetworkId() RfconfigQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"network_id"`)
+
+	return qs
+}
+
+// END - center.RFConfig.network_id
+
+// BEGIN - center.RFConfig.aes_key
+
 // AesKeyEq filters for AesKey being equal to argument
 func (qs RfconfigQS) AesKeyEq(v string) RfconfigQS {
 	return qs.filter(`"aes_key" =`, v)
@@ -547,6 +594,15 @@ func (qs RfconfigQS) OrderByAesKeyDesc() RfconfigQS {
 	return qs
 }
 
+// DistinctOnAesKey marks field in queries to add to DISTINCT ON clause
+func (qs RfconfigQS) DistinctOnAesKey() RfconfigQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"aes_key"`)
+
+	return qs
+}
+
+// END - center.RFConfig.aes_key
+
 // OrderByRandom randomizes result
 func (qs RfconfigQS) OrderByRandom() RfconfigQS {
 	qs.order = append(qs.order, `random()`)
@@ -600,14 +656,19 @@ func (qs RfconfigQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs RfconfigQS) queryFull() (string, []interface{}) {
+func (qs RfconfigQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "rf_channel", "rf_profile_id", "network_id", "aes_key" FROM "center_rfconfig"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "rf_channel", "rf_profile_id", "network_id", "aes_key" FROM "center_rfconfig"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -623,7 +684,14 @@ func (qs RfconfigQS) Count(ctx context.Context, db models.DBInterface) (count in
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_rfconfig"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "center_rfconfig"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -632,7 +700,7 @@ func (qs RfconfigQS) Count(ctx context.Context, db models.DBInterface) (count in
 
 // All returns all rows matching queryset filters
 func (qs RfconfigQS) All(ctx context.Context, db models.DBInterface) (RfconfigList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -649,12 +717,16 @@ func (qs RfconfigQS) All(ctx context.Context, db models.DBInterface) (RfconfigLi
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs RfconfigQS) First(ctx context.Context, db models.DBInterface) (*Rfconfig, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

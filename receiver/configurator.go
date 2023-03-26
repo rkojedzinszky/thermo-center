@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	configurator "github.com/rkojedzinszky/thermo-center/configurator"
-	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
+	configurator "github.com/rkojedzinszky/thermo-center/v5/configurator"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/cc1101"
 )
 
 const (

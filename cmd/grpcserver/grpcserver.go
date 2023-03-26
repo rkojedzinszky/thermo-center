@@ -11,8 +11,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/namsral/flag"
-	"github.com/rkojedzinszky/thermo-center/aggregator"
-	"github.com/rkojedzinszky/thermo-center/configurator"
+	"github.com/rkojedzinszky/thermo-center/v5/aggregator"
+	"github.com/rkojedzinszky/thermo-center/v5/configurator"
 	"google.golang.org/grpc"
 )
 

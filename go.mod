@@ -1,4 +1,4 @@
-module github.com/rkojedzinszky/thermo-center
+module github.com/rkojedzinszky/thermo-center/v5
 
 go 1.20
 

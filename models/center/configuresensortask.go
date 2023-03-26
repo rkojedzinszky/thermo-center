@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -19,7 +19,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Configuresensortask mirrors model center.ConfigureSensorTask
@@ -41,9 +41,10 @@ type ConfiguresensortaskList []*Configuresensortask
 
 // ConfiguresensortaskQS represents a queryset for center.ConfigureSensorTask
 type ConfiguresensortaskQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs ConfiguresensortaskQS) filter(c string, p interface{}) ConfiguresensortaskQS {
@@ -72,6 +73,8 @@ func (qs ConfiguresensortaskQS) Or(exprs ...ConfiguresensortaskQS) Configuresens
 
 	return qs
 }
+
+// BEGIN - center.ConfigureSensorTask.id
 
 // GetID returns Configuresensortask.ID
 func (c *Configuresensortask) GetID() int32 {
@@ -180,6 +183,17 @@ func (qs ConfiguresensortaskQS) OrderByIDDesc() ConfiguresensortaskQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnID() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.id
+
+// BEGIN - center.ConfigureSensorTask.sensor
+
 // GetSensor returns Sensor
 func (c *Configuresensortask) GetSensor(ctx context.Context, db models.DBInterface) (*Sensor, error) {
 	return SensorQS{}.IDEq(c.sensor).First(ctx, db)
@@ -245,6 +259,17 @@ func (qs ConfiguresensortaskQS) OrderBySensorDesc() ConfiguresensortaskQS {
 
 	return qs
 }
+
+// DistinctOnSensor marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnSensor() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"sensor_id"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.sensor
+
+// BEGIN - center.ConfigureSensorTask.created
 
 // CreatedEq filters for Created being equal to argument
 func (qs ConfiguresensortaskQS) CreatedEq(v time.Time) ConfiguresensortaskQS {
@@ -347,6 +372,17 @@ func (qs ConfiguresensortaskQS) OrderByCreatedDesc() ConfiguresensortaskQS {
 
 	return qs
 }
+
+// DistinctOnCreated marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnCreated() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"created"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.created
+
+// BEGIN - center.ConfigureSensorTask.started
 
 // StartedIsNull filters for Started being null
 func (qs ConfiguresensortaskQS) StartedIsNull() ConfiguresensortaskQS {
@@ -472,6 +508,17 @@ func (qs ConfiguresensortaskQS) OrderByStartedDesc() ConfiguresensortaskQS {
 	return qs
 }
 
+// DistinctOnStarted marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnStarted() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"started"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.started
+
+// BEGIN - center.ConfigureSensorTask.first_discovery
+
 // FirstDiscoveryIsNull filters for FirstDiscovery being null
 func (qs ConfiguresensortaskQS) FirstDiscoveryIsNull() ConfiguresensortaskQS {
 	qs.condFragments = append(
@@ -595,6 +642,17 @@ func (qs ConfiguresensortaskQS) OrderByFirstDiscoveryDesc() ConfiguresensortaskQ
 
 	return qs
 }
+
+// DistinctOnFirstDiscovery marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnFirstDiscovery() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"first_discovery"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.first_discovery
+
+// BEGIN - center.ConfigureSensorTask.last_discovery
 
 // LastDiscoveryIsNull filters for LastDiscovery being null
 func (qs ConfiguresensortaskQS) LastDiscoveryIsNull() ConfiguresensortaskQS {
@@ -720,6 +778,17 @@ func (qs ConfiguresensortaskQS) OrderByLastDiscoveryDesc() ConfiguresensortaskQS
 	return qs
 }
 
+// DistinctOnLastDiscovery marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnLastDiscovery() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"last_discovery"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.last_discovery
+
+// BEGIN - center.ConfigureSensorTask.finished
+
 // FinishedIsNull filters for Finished being null
 func (qs ConfiguresensortaskQS) FinishedIsNull() ConfiguresensortaskQS {
 	qs.condFragments = append(
@@ -843,6 +912,17 @@ func (qs ConfiguresensortaskQS) OrderByFinishedDesc() ConfiguresensortaskQS {
 
 	return qs
 }
+
+// DistinctOnFinished marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnFinished() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"finished"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.finished
+
+// BEGIN - center.ConfigureSensorTask.error
 
 // ErrorIsNull filters for Error being null
 func (qs ConfiguresensortaskQS) ErrorIsNull() ConfiguresensortaskQS {
@@ -968,6 +1048,15 @@ func (qs ConfiguresensortaskQS) OrderByErrorDesc() ConfiguresensortaskQS {
 	return qs
 }
 
+// DistinctOnError marks field in queries to add to DISTINCT ON clause
+func (qs ConfiguresensortaskQS) DistinctOnError() ConfiguresensortaskQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"error"`)
+
+	return qs
+}
+
+// END - center.ConfigureSensorTask.error
+
 // OrderByRandom randomizes result
 func (qs ConfiguresensortaskQS) OrderByRandom() ConfiguresensortaskQS {
 	qs.order = append(qs.order, `random()`)
@@ -1021,14 +1110,19 @@ func (qs ConfiguresensortaskQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs ConfiguresensortaskQS) queryFull() (string, []interface{}) {
+func (qs ConfiguresensortaskQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error" FROM "center_configuresensortask"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "sensor_id", "created", "started", "first_discovery", "last_discovery", "finished", "error" FROM "center_configuresensortask"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -1044,7 +1138,14 @@ func (qs ConfiguresensortaskQS) Count(ctx context.Context, db models.DBInterface
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_configuresensortask"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "center_configuresensortask"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -1053,7 +1154,7 @@ func (qs ConfiguresensortaskQS) Count(ctx context.Context, db models.DBInterface
 
 // All returns all rows matching queryset filters
 func (qs ConfiguresensortaskQS) All(ctx context.Context, db models.DBInterface) (ConfiguresensortaskList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -1070,12 +1171,16 @@ func (qs ConfiguresensortaskQS) All(ctx context.Context, db models.DBInterface) 
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs ConfiguresensortaskQS) First(ctx context.Context, db models.DBInterface) (*Configuresensortask, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

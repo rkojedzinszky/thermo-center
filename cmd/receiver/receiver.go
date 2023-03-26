@@ -17,9 +17,9 @@ import (
 	"periph.io/x/periph/conn/spi/spireg"
 	"periph.io/x/periph/host"
 
-	"github.com/rkojedzinszky/thermo-center/receiver"
-	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
-	"github.com/rkojedzinszky/thermo-center/receiver/gpiointerrupt"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/cc1101"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/gpiointerrupt"
 )
 
 func main() {

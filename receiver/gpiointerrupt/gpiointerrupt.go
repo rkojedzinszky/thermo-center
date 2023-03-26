@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/rkojedzinszky/thermo-center/receiver/tbf"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/tbf"
 )
 
 const (

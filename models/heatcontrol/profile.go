@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -19,7 +19,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Profile mirrors model heatcontrol.Profile
@@ -38,9 +38,10 @@ type ProfileList []*Profile
 
 // ProfileQS represents a queryset for heatcontrol.Profile
 type ProfileQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs ProfileQS) filter(c string, p interface{}) ProfileQS {
@@ -69,6 +70,8 @@ func (qs ProfileQS) Or(exprs ...ProfileQS) ProfileQS {
 
 	return qs
 }
+
+// BEGIN - heatcontrol.Profile.id
 
 // GetID returns Profile.ID
 func (p *Profile) GetID() int32 {
@@ -177,6 +180,17 @@ func (qs ProfileQS) OrderByIDDesc() ProfileQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs ProfileQS) DistinctOnID() ProfileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Profile.id
+
+// BEGIN - heatcontrol.Profile.control
+
 // GetControl returns Control
 func (p *Profile) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
 	return ControlQS{}.IDEq(p.control).First(ctx, db)
@@ -243,6 +257,17 @@ func (qs ProfileQS) OrderByControlDesc() ProfileQS {
 	return qs
 }
 
+// DistinctOnControl marks field in queries to add to DISTINCT ON clause
+func (qs ProfileQS) DistinctOnControl() ProfileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"control_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Profile.control
+
+// BEGIN - heatcontrol.Profile.daytype
+
 // GetDaytype returns Daytype
 func (p *Profile) GetDaytype(ctx context.Context, db models.DBInterface) (*Daytype, error) {
 	return DaytypeQS{}.IDEq(p.daytype).First(ctx, db)
@@ -308,6 +333,17 @@ func (qs ProfileQS) OrderByDaytypeDesc() ProfileQS {
 
 	return qs
 }
+
+// DistinctOnDaytype marks field in queries to add to DISTINCT ON clause
+func (qs ProfileQS) DistinctOnDaytype() ProfileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"daytype_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Profile.daytype
+
+// BEGIN - heatcontrol.Profile.start
 
 // StartEq filters for Start being equal to argument
 func (qs ProfileQS) StartEq(v time.Time) ProfileQS {
@@ -410,6 +446,17 @@ func (qs ProfileQS) OrderByStartDesc() ProfileQS {
 
 	return qs
 }
+
+// DistinctOnStart marks field in queries to add to DISTINCT ON clause
+func (qs ProfileQS) DistinctOnStart() ProfileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"start"`)
+
+	return qs
+}
+
+// END - heatcontrol.Profile.start
+
+// BEGIN - heatcontrol.Profile.target_temp
 
 // TargetTempIsNull filters for TargetTemp being null
 func (qs ProfileQS) TargetTempIsNull() ProfileQS {
@@ -535,6 +582,15 @@ func (qs ProfileQS) OrderByTargetTempDesc() ProfileQS {
 	return qs
 }
 
+// DistinctOnTargetTemp marks field in queries to add to DISTINCT ON clause
+func (qs ProfileQS) DistinctOnTargetTemp() ProfileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"target_temp"`)
+
+	return qs
+}
+
+// END - heatcontrol.Profile.target_temp
+
 // OrderByRandom randomizes result
 func (qs ProfileQS) OrderByRandom() ProfileQS {
 	qs.order = append(qs.order, `random()`)
@@ -588,14 +644,19 @@ func (qs ProfileQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs ProfileQS) queryFull() (string, []interface{}) {
+func (qs ProfileQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "control_id", "daytype_id", "start", "target_temp" FROM "heatcontrol_profile"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "control_id", "daytype_id", "start", "target_temp" FROM "heatcontrol_profile"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -611,7 +672,14 @@ func (qs ProfileQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_profile"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_profile"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -620,7 +688,7 @@ func (qs ProfileQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 // All returns all rows matching queryset filters
 func (qs ProfileQS) All(ctx context.Context, db models.DBInterface) (ProfileList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -637,12 +705,16 @@ func (qs ProfileQS) All(ctx context.Context, db models.DBInterface) (ProfileList
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs ProfileQS) First(ctx context.Context, db models.DBInterface) (*Profile, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

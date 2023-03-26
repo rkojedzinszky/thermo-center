@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,7 +18,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Calendar mirrors model heatcontrol.Calendar
@@ -35,9 +35,10 @@ type CalendarList []*Calendar
 
 // CalendarQS represents a queryset for heatcontrol.Calendar
 type CalendarQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs CalendarQS) filter(c string, p interface{}) CalendarQS {
@@ -66,6 +67,8 @@ func (qs CalendarQS) Or(exprs ...CalendarQS) CalendarQS {
 
 	return qs
 }
+
+// BEGIN - heatcontrol.Calendar.id
 
 // GetID returns Calendar.ID
 func (c *Calendar) GetID() int32 {
@@ -174,6 +177,17 @@ func (qs CalendarQS) OrderByIDDesc() CalendarQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs CalendarQS) DistinctOnID() CalendarQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Calendar.id
+
+// BEGIN - heatcontrol.Calendar.day
+
 // DayEq filters for Day being equal to argument
 func (qs CalendarQS) DayEq(v time.Time) CalendarQS {
 	return qs.filter(`"day" =`, v)
@@ -276,6 +290,17 @@ func (qs CalendarQS) OrderByDayDesc() CalendarQS {
 	return qs
 }
 
+// DistinctOnDay marks field in queries to add to DISTINCT ON clause
+func (qs CalendarQS) DistinctOnDay() CalendarQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"day"`)
+
+	return qs
+}
+
+// END - heatcontrol.Calendar.day
+
+// BEGIN - heatcontrol.Calendar.daytype
+
 // GetDaytype returns Daytype
 func (c *Calendar) GetDaytype(ctx context.Context, db models.DBInterface) (*Daytype, error) {
 	return DaytypeQS{}.IDEq(c.daytype).First(ctx, db)
@@ -342,6 +367,15 @@ func (qs CalendarQS) OrderByDaytypeDesc() CalendarQS {
 	return qs
 }
 
+// DistinctOnDaytype marks field in queries to add to DISTINCT ON clause
+func (qs CalendarQS) DistinctOnDaytype() CalendarQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"daytype_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Calendar.daytype
+
 // OrderByRandom randomizes result
 func (qs CalendarQS) OrderByRandom() CalendarQS {
 	qs.order = append(qs.order, `random()`)
@@ -395,14 +429,19 @@ func (qs CalendarQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs CalendarQS) queryFull() (string, []interface{}) {
+func (qs CalendarQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "day", "daytype_id" FROM "heatcontrol_calendar"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "day", "daytype_id" FROM "heatcontrol_calendar"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -418,7 +457,14 @@ func (qs CalendarQS) Count(ctx context.Context, db models.DBInterface) (count in
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_calendar"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_calendar"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -427,7 +473,7 @@ func (qs CalendarQS) Count(ctx context.Context, db models.DBInterface) (count in
 
 // All returns all rows matching queryset filters
 func (qs CalendarQS) All(ctx context.Context, db models.DBInterface) (CalendarList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -444,12 +490,16 @@ func (qs CalendarQS) All(ctx context.Context, db models.DBInterface) (CalendarLi
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs CalendarQS) First(ctx context.Context, db models.DBInterface) (*Calendar, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

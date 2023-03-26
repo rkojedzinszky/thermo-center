@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -17,7 +17,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Rfprofile mirrors model center.RFProfile
@@ -34,9 +34,10 @@ type RfprofileList []*Rfprofile
 
 // RfprofileQS represents a queryset for center.RFProfile
 type RfprofileQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs RfprofileQS) filter(c string, p interface{}) RfprofileQS {
@@ -65,6 +66,8 @@ func (qs RfprofileQS) Or(exprs ...RfprofileQS) RfprofileQS {
 
 	return qs
 }
+
+// BEGIN - center.RFProfile.id
 
 // GetID returns Rfprofile.ID
 func (r *Rfprofile) GetID() int32 {
@@ -173,6 +176,17 @@ func (qs RfprofileQS) OrderByIDDesc() RfprofileQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs RfprofileQS) DistinctOnID() RfprofileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - center.RFProfile.id
+
+// BEGIN - center.RFProfile.name
+
 // NameEq filters for Name being equal to argument
 func (qs RfprofileQS) NameEq(v string) RfprofileQS {
 	return qs.filter(`"name" =`, v)
@@ -274,6 +288,17 @@ func (qs RfprofileQS) OrderByNameDesc() RfprofileQS {
 
 	return qs
 }
+
+// DistinctOnName marks field in queries to add to DISTINCT ON clause
+func (qs RfprofileQS) DistinctOnName() RfprofileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"name"`)
+
+	return qs
+}
+
+// END - center.RFProfile.name
+
+// BEGIN - center.RFProfile.confregs
 
 // ConfregsEq filters for Confregs being equal to argument
 func (qs RfprofileQS) ConfregsEq(v string) RfprofileQS {
@@ -377,6 +402,15 @@ func (qs RfprofileQS) OrderByConfregsDesc() RfprofileQS {
 	return qs
 }
 
+// DistinctOnConfregs marks field in queries to add to DISTINCT ON clause
+func (qs RfprofileQS) DistinctOnConfregs() RfprofileQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"confregs"`)
+
+	return qs
+}
+
+// END - center.RFProfile.confregs
+
 // OrderByRandom randomizes result
 func (qs RfprofileQS) OrderByRandom() RfprofileQS {
 	qs.order = append(qs.order, `random()`)
@@ -430,14 +464,19 @@ func (qs RfprofileQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs RfprofileQS) queryFull() (string, []interface{}) {
+func (qs RfprofileQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "name", "confregs" FROM "center_rfprofile"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "name", "confregs" FROM "center_rfprofile"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -453,7 +492,14 @@ func (qs RfprofileQS) Count(ctx context.Context, db models.DBInterface) (count i
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_rfprofile"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "center_rfprofile"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -462,7 +508,7 @@ func (qs RfprofileQS) Count(ctx context.Context, db models.DBInterface) (count i
 
 // All returns all rows matching queryset filters
 func (qs RfprofileQS) All(ctx context.Context, db models.DBInterface) (RfprofileList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -479,12 +525,16 @@ func (qs RfprofileQS) All(ctx context.Context, db models.DBInterface) (Rfprofile
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs RfprofileQS) First(ctx context.Context, db models.DBInterface) (*Rfprofile, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

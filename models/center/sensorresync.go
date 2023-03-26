@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,7 +18,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Sensorresync mirrors model center.SensorResync
@@ -35,9 +35,10 @@ type SensorresyncList []*Sensorresync
 
 // SensorresyncQS represents a queryset for center.SensorResync
 type SensorresyncQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs SensorresyncQS) filter(c string, p interface{}) SensorresyncQS {
@@ -66,6 +67,8 @@ func (qs SensorresyncQS) Or(exprs ...SensorresyncQS) SensorresyncQS {
 
 	return qs
 }
+
+// BEGIN - center.SensorResync.id
 
 // GetID returns Sensorresync.ID
 func (s *Sensorresync) GetID() int32 {
@@ -174,6 +177,17 @@ func (qs SensorresyncQS) OrderByIDDesc() SensorresyncQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs SensorresyncQS) DistinctOnID() SensorresyncQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - center.SensorResync.id
+
+// BEGIN - center.SensorResync.sensor
+
 // GetSensor returns Sensor
 func (s *Sensorresync) GetSensor(ctx context.Context, db models.DBInterface) (*Sensor, error) {
 	return SensorQS{}.IDEq(s.sensor).First(ctx, db)
@@ -239,6 +253,17 @@ func (qs SensorresyncQS) OrderBySensorDesc() SensorresyncQS {
 
 	return qs
 }
+
+// DistinctOnSensor marks field in queries to add to DISTINCT ON clause
+func (qs SensorresyncQS) DistinctOnSensor() SensorresyncQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"sensor_id"`)
+
+	return qs
+}
+
+// END - center.SensorResync.sensor
+
+// BEGIN - center.SensorResync.ts
 
 // TsEq filters for Ts being equal to argument
 func (qs SensorresyncQS) TsEq(v time.Time) SensorresyncQS {
@@ -342,6 +367,15 @@ func (qs SensorresyncQS) OrderByTsDesc() SensorresyncQS {
 	return qs
 }
 
+// DistinctOnTs marks field in queries to add to DISTINCT ON clause
+func (qs SensorresyncQS) DistinctOnTs() SensorresyncQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"ts"`)
+
+	return qs
+}
+
+// END - center.SensorResync.ts
+
 // OrderByRandom randomizes result
 func (qs SensorresyncQS) OrderByRandom() SensorresyncQS {
 	qs.order = append(qs.order, `random()`)
@@ -395,14 +429,19 @@ func (qs SensorresyncQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs SensorresyncQS) queryFull() (string, []interface{}) {
+func (qs SensorresyncQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "sensor_id", "ts" FROM "center_sensorresync"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "sensor_id", "ts" FROM "center_sensorresync"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -418,7 +457,14 @@ func (qs SensorresyncQS) Count(ctx context.Context, db models.DBInterface) (coun
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "center_sensorresync"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "center_sensorresync"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -427,7 +473,7 @@ func (qs SensorresyncQS) Count(ctx context.Context, db models.DBInterface) (coun
 
 // All returns all rows matching queryset filters
 func (qs SensorresyncQS) All(ctx context.Context, db models.DBInterface) (SensorresyncList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -444,12 +490,16 @@ func (qs SensorresyncQS) All(ctx context.Context, db models.DBInterface) (Sensor
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs SensorresyncQS) First(ctx context.Context, db models.DBInterface) (*Sensorresync, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

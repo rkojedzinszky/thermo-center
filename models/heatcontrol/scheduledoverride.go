@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,7 +18,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Scheduledoverride mirrors model heatcontrol.ScheduledOverride
@@ -37,9 +37,10 @@ type ScheduledoverrideList []*Scheduledoverride
 
 // ScheduledoverrideQS represents a queryset for heatcontrol.ScheduledOverride
 type ScheduledoverrideQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs ScheduledoverrideQS) filter(c string, p interface{}) ScheduledoverrideQS {
@@ -68,6 +69,8 @@ func (qs ScheduledoverrideQS) Or(exprs ...ScheduledoverrideQS) Scheduledoverride
 
 	return qs
 }
+
+// BEGIN - heatcontrol.ScheduledOverride.id
 
 // GetID returns Scheduledoverride.ID
 func (s *Scheduledoverride) GetID() int32 {
@@ -176,6 +179,17 @@ func (qs ScheduledoverrideQS) OrderByIDDesc() ScheduledoverrideQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs ScheduledoverrideQS) DistinctOnID() ScheduledoverrideQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.ScheduledOverride.id
+
+// BEGIN - heatcontrol.ScheduledOverride.control
+
 // GetControl returns Control
 func (s *Scheduledoverride) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
 	return ControlQS{}.IDEq(s.control).First(ctx, db)
@@ -241,6 +255,17 @@ func (qs ScheduledoverrideQS) OrderByControlDesc() ScheduledoverrideQS {
 
 	return qs
 }
+
+// DistinctOnControl marks field in queries to add to DISTINCT ON clause
+func (qs ScheduledoverrideQS) DistinctOnControl() ScheduledoverrideQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"control_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.ScheduledOverride.control
+
+// BEGIN - heatcontrol.ScheduledOverride.start
 
 // StartEq filters for Start being equal to argument
 func (qs ScheduledoverrideQS) StartEq(v time.Time) ScheduledoverrideQS {
@@ -344,6 +369,17 @@ func (qs ScheduledoverrideQS) OrderByStartDesc() ScheduledoverrideQS {
 	return qs
 }
 
+// DistinctOnStart marks field in queries to add to DISTINCT ON clause
+func (qs ScheduledoverrideQS) DistinctOnStart() ScheduledoverrideQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"start"`)
+
+	return qs
+}
+
+// END - heatcontrol.ScheduledOverride.start
+
+// BEGIN - heatcontrol.ScheduledOverride.end
+
 // EndEq filters for End being equal to argument
 func (qs ScheduledoverrideQS) EndEq(v time.Time) ScheduledoverrideQS {
 	return qs.filter(`"end" =`, v)
@@ -445,6 +481,17 @@ func (qs ScheduledoverrideQS) OrderByEndDesc() ScheduledoverrideQS {
 
 	return qs
 }
+
+// DistinctOnEnd marks field in queries to add to DISTINCT ON clause
+func (qs ScheduledoverrideQS) DistinctOnEnd() ScheduledoverrideQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"end"`)
+
+	return qs
+}
+
+// END - heatcontrol.ScheduledOverride.end
+
+// BEGIN - heatcontrol.ScheduledOverride.target_temp
 
 // TargetTempEq filters for TargetTemp being equal to argument
 func (qs ScheduledoverrideQS) TargetTempEq(v float64) ScheduledoverrideQS {
@@ -548,6 +595,15 @@ func (qs ScheduledoverrideQS) OrderByTargetTempDesc() ScheduledoverrideQS {
 	return qs
 }
 
+// DistinctOnTargetTemp marks field in queries to add to DISTINCT ON clause
+func (qs ScheduledoverrideQS) DistinctOnTargetTemp() ScheduledoverrideQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"target_temp"`)
+
+	return qs
+}
+
+// END - heatcontrol.ScheduledOverride.target_temp
+
 // OrderByRandom randomizes result
 func (qs ScheduledoverrideQS) OrderByRandom() ScheduledoverrideQS {
 	qs.order = append(qs.order, `random()`)
@@ -601,14 +657,19 @@ func (qs ScheduledoverrideQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs ScheduledoverrideQS) queryFull() (string, []interface{}) {
+func (qs ScheduledoverrideQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "control_id", "start", "end", "target_temp" FROM "heatcontrol_scheduledoverride"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "control_id", "start", "end", "target_temp" FROM "heatcontrol_scheduledoverride"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -624,7 +685,14 @@ func (qs ScheduledoverrideQS) Count(ctx context.Context, db models.DBInterface) 
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_scheduledoverride"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_scheduledoverride"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -633,7 +701,7 @@ func (qs ScheduledoverrideQS) Count(ctx context.Context, db models.DBInterface) 
 
 // All returns all rows matching queryset filters
 func (qs ScheduledoverrideQS) All(ctx context.Context, db models.DBInterface) (ScheduledoverrideList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -650,12 +718,16 @@ func (qs ScheduledoverrideQS) All(ctx context.Context, db models.DBInterface) (S
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs ScheduledoverrideQS) First(ctx context.Context, db models.DBInterface) (*Scheduledoverride, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

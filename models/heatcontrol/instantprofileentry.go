@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,7 +18,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
 )
 
 // Instantprofileentry mirrors model heatcontrol.InstantProfileEntry
@@ -37,9 +37,10 @@ type InstantprofileentryList []*Instantprofileentry
 
 // InstantprofileentryQS represents a queryset for heatcontrol.InstantProfileEntry
 type InstantprofileentryQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs InstantprofileentryQS) filter(c string, p interface{}) InstantprofileentryQS {
@@ -68,6 +69,8 @@ func (qs InstantprofileentryQS) Or(exprs ...InstantprofileentryQS) Instantprofil
 
 	return qs
 }
+
+// BEGIN - heatcontrol.InstantProfileEntry.id
 
 // GetID returns Instantprofileentry.ID
 func (i *Instantprofileentry) GetID() int32 {
@@ -176,6 +179,17 @@ func (qs InstantprofileentryQS) OrderByIDDesc() InstantprofileentryQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs InstantprofileentryQS) DistinctOnID() InstantprofileentryQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.InstantProfileEntry.id
+
+// BEGIN - heatcontrol.InstantProfileEntry.profile
+
 // GetProfile returns Instantprofile
 func (i *Instantprofileentry) GetProfile(ctx context.Context, db models.DBInterface) (*Instantprofile, error) {
 	return InstantprofileQS{}.IDEq(i.profile).First(ctx, db)
@@ -242,6 +256,17 @@ func (qs InstantprofileentryQS) OrderByProfileDesc() InstantprofileentryQS {
 	return qs
 }
 
+// DistinctOnProfile marks field in queries to add to DISTINCT ON clause
+func (qs InstantprofileentryQS) DistinctOnProfile() InstantprofileentryQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"profile_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.InstantProfileEntry.profile
+
+// BEGIN - heatcontrol.InstantProfileEntry.control
+
 // GetControl returns Control
 func (i *Instantprofileentry) GetControl(ctx context.Context, db models.DBInterface) (*Control, error) {
 	return ControlQS{}.IDEq(i.control).First(ctx, db)
@@ -307,6 +332,17 @@ func (qs InstantprofileentryQS) OrderByControlDesc() InstantprofileentryQS {
 
 	return qs
 }
+
+// DistinctOnControl marks field in queries to add to DISTINCT ON clause
+func (qs InstantprofileentryQS) DistinctOnControl() InstantprofileentryQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"control_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.InstantProfileEntry.control
+
+// BEGIN - heatcontrol.InstantProfileEntry.target_temp
 
 // TargetTempIsNull filters for TargetTemp being null
 func (qs InstantprofileentryQS) TargetTempIsNull() InstantprofileentryQS {
@@ -432,6 +468,17 @@ func (qs InstantprofileentryQS) OrderByTargetTempDesc() InstantprofileentryQS {
 	return qs
 }
 
+// DistinctOnTargetTemp marks field in queries to add to DISTINCT ON clause
+func (qs InstantprofileentryQS) DistinctOnTargetTemp() InstantprofileentryQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"target_temp"`)
+
+	return qs
+}
+
+// END - heatcontrol.InstantProfileEntry.target_temp
+
+// BEGIN - heatcontrol.InstantProfileEntry.active
+
 // ActiveEq filters for Active being equal to argument
 func (qs InstantprofileentryQS) ActiveEq(v bool) InstantprofileentryQS {
 	return qs.filter(`"active" =`, v)
@@ -514,6 +561,15 @@ func (qs InstantprofileentryQS) OrderByActiveDesc() InstantprofileentryQS {
 	return qs
 }
 
+// DistinctOnActive marks field in queries to add to DISTINCT ON clause
+func (qs InstantprofileentryQS) DistinctOnActive() InstantprofileentryQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"active"`)
+
+	return qs
+}
+
+// END - heatcontrol.InstantProfileEntry.active
+
 // OrderByRandom randomizes result
 func (qs InstantprofileentryQS) OrderByRandom() InstantprofileentryQS {
 	qs.order = append(qs.order, `random()`)
@@ -567,14 +623,19 @@ func (qs InstantprofileentryQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs InstantprofileentryQS) queryFull() (string, []interface{}) {
+func (qs InstantprofileentryQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "profile_id", "control_id", "target_temp", "active" FROM "heatcontrol_instantprofileentry"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "profile_id", "control_id", "target_temp", "active" FROM "heatcontrol_instantprofileentry"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -590,7 +651,14 @@ func (qs InstantprofileentryQS) Count(ctx context.Context, db models.DBInterface
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_instantprofileentry"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_instantprofileentry"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -599,7 +667,7 @@ func (qs InstantprofileentryQS) Count(ctx context.Context, db models.DBInterface
 
 // All returns all rows matching queryset filters
 func (qs InstantprofileentryQS) All(ctx context.Context, db models.DBInterface) (InstantprofileentryList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -616,12 +684,16 @@ func (qs InstantprofileentryQS) All(ctx context.Context, db models.DBInterface) 
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs InstantprofileentryQS) First(ctx context.Context, db models.DBInterface) (*Instantprofileentry, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

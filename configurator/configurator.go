@@ -8,7 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/rkojedzinszky/thermo-center/models/center"
+	"github.com/rkojedzinszky/thermo-center/v5/models/center"
 )
 
 type configurator struct {

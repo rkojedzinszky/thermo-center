@@ -9,10 +9,10 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"github.com/rkojedzinszky/thermo-center/aggregator"
-	"github.com/rkojedzinszky/thermo-center/configurator"
-	"github.com/rkojedzinszky/thermo-center/receiver/cc1101"
-	"github.com/rkojedzinszky/thermo-center/receiver/gpiointerrupt"
+	"github.com/rkojedzinszky/thermo-center/v5/aggregator"
+	"github.com/rkojedzinszky/thermo-center/v5/configurator"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/cc1101"
+	"github.com/rkojedzinszky/thermo-center/v5/receiver/gpiointerrupt"
 )
 
 // Runner handles configuration and receiver tasks

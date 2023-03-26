@@ -3,7 +3,7 @@
 /*
   Command used to generate:
 
-  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center center heatcontrol
+  DJANGO_SETTINGS_MODULE=application.settings ../djan-go-rm/djan-go-rm.py --gomodule github.com/rkojedzinszky/thermo-center/v5 center heatcontrol
 
   https://github.com/rkojedzinszky/djan-go-rm
 */
@@ -18,8 +18,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/rkojedzinszky/thermo-center/models"
-	"github.com/rkojedzinszky/thermo-center/models/center"
+	"github.com/rkojedzinszky/thermo-center/v5/models"
+	"github.com/rkojedzinszky/thermo-center/v5/models/center"
 )
 
 // Control mirrors model heatcontrol.Control
@@ -39,9 +39,10 @@ type ControlList []*Control
 
 // ControlQS represents a queryset for heatcontrol.Control
 type ControlQS struct {
-	condFragments models.AndFragment
-	order         []string
-	forClause     string
+	distinctOnFields []string
+	condFragments    models.AndFragment
+	order            []string
+	forClause        string
 }
 
 func (qs ControlQS) filter(c string, p interface{}) ControlQS {
@@ -70,6 +71,8 @@ func (qs ControlQS) Or(exprs ...ControlQS) ControlQS {
 
 	return qs
 }
+
+// BEGIN - heatcontrol.Control.id
 
 // GetID returns Control.ID
 func (c *Control) GetID() int32 {
@@ -178,6 +181,17 @@ func (qs ControlQS) OrderByIDDesc() ControlQS {
 	return qs
 }
 
+// DistinctOnID marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnID() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.id
+
+// BEGIN - heatcontrol.Control.sensor
+
 // GetSensor returns center.Sensor
 func (c *Control) GetSensor(ctx context.Context, db models.DBInterface) (*center.Sensor, error) {
 	return center.SensorQS{}.IDEq(c.sensor).First(ctx, db)
@@ -243,6 +257,17 @@ func (qs ControlQS) OrderBySensorDesc() ControlQS {
 
 	return qs
 }
+
+// DistinctOnSensor marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnSensor() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"sensor_id"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.sensor
+
+// BEGIN - heatcontrol.Control.kp
 
 // KpEq filters for Kp being equal to argument
 func (qs ControlQS) KpEq(v float64) ControlQS {
@@ -346,6 +371,17 @@ func (qs ControlQS) OrderByKpDesc() ControlQS {
 	return qs
 }
 
+// DistinctOnKp marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnKp() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"kp"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.kp
+
+// BEGIN - heatcontrol.Control.ki
+
 // KiEq filters for Ki being equal to argument
 func (qs ControlQS) KiEq(v float64) ControlQS {
 	return qs.filter(`"ki" =`, v)
@@ -448,6 +484,17 @@ func (qs ControlQS) OrderByKiDesc() ControlQS {
 	return qs
 }
 
+// DistinctOnKi marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnKi() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"ki"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.ki
+
+// BEGIN - heatcontrol.Control.kd
+
 // KdEq filters for Kd being equal to argument
 func (qs ControlQS) KdEq(v float64) ControlQS {
 	return qs.filter(`"kd" =`, v)
@@ -549,6 +596,17 @@ func (qs ControlQS) OrderByKdDesc() ControlQS {
 
 	return qs
 }
+
+// DistinctOnKd marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnKd() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"kd"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.kd
+
+// BEGIN - heatcontrol.Control.intabsmax
 
 // IntabsmaxIsNull filters for Intabsmax being null
 func (qs ControlQS) IntabsmaxIsNull() ControlQS {
@@ -674,6 +732,15 @@ func (qs ControlQS) OrderByIntabsmaxDesc() ControlQS {
 	return qs
 }
 
+// DistinctOnIntabsmax marks field in queries to add to DISTINCT ON clause
+func (qs ControlQS) DistinctOnIntabsmax() ControlQS {
+	qs.distinctOnFields = append(qs.distinctOnFields, `"intabsmax"`)
+
+	return qs
+}
+
+// END - heatcontrol.Control.intabsmax
+
 // OrderByRandom randomizes result
 func (qs ControlQS) OrderByRandom() ControlQS {
 	qs.order = append(qs.order, `random()`)
@@ -727,14 +794,19 @@ func (qs ControlQS) orderByClause() string {
 	return " ORDER BY " + strings.Join(qs.order, ", ")
 }
 
-func (qs ControlQS) queryFull() (string, []interface{}) {
+func (qs ControlQS) queryFull(distinctOnFields []string) (string, []interface{}) {
 	c := &models.PositionalCounter{}
 
 	s, p := qs.whereClause(c)
 	s += qs.orderByClause()
 	s += qs.forClause
 
-	return `SELECT "id", "sensor_id", "kp", "ki", "kd", "intabsmax" FROM "heatcontrol_control"` + s, p
+	var distinctClause string
+	if len(distinctOnFields) > 0 {
+		distinctClause = fmt.Sprintf("DISTINCT ON (%s) ", strings.Join(distinctOnFields, ", "))
+	}
+
+	return `SELECT ` + distinctClause + `"id", "sensor_id", "kp", "ki", "kd", "intabsmax" FROM "heatcontrol_control"` + s, p
 }
 
 // QueryId returns statement and parameters suitable for embedding in IN clause
@@ -750,7 +822,14 @@ func (qs ControlQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 	s, p := qs.whereClause(c)
 
-	row := db.QueryRow(ctx, `SELECT COUNT("id") FROM "heatcontrol_control"`+s, p...)
+	var countClause string
+	if len(qs.distinctOnFields) > 0 {
+		countClause = fmt.Sprintf("DISTINCT (%s)", strings.Join(qs.distinctOnFields, ", "))
+	} else {
+		countClause = `"id"`
+	}
+
+	row := db.QueryRow(ctx, `SELECT COUNT(`+countClause+`) FROM "heatcontrol_control"`+s, p...)
 
 	err = row.Scan(&count)
 
@@ -759,7 +838,7 @@ func (qs ControlQS) Count(ctx context.Context, db models.DBInterface) (count int
 
 // All returns all rows matching queryset filters
 func (qs ControlQS) All(ctx context.Context, db models.DBInterface) (ControlList, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(qs.distinctOnFields)
 
 	rows, err := db.Query(ctx, s, p...)
 	if err != nil {
@@ -776,12 +855,16 @@ func (qs ControlQS) All(ctx context.Context, db models.DBInterface) (ControlList
 		ret = append(ret, &obj)
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return ret, nil
 }
 
 // First returns the first row matching queryset filters, others are discarded
 func (qs ControlQS) First(ctx context.Context, db models.DBInterface) (*Control, error) {
-	s, p := qs.queryFull()
+	s, p := qs.queryFull(nil)
 
 	s += " LIMIT 1"
 

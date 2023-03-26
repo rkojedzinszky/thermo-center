@@ -8,7 +8,7 @@ package receiver
 
 import (
 	context "context"
-	configurator "github.com/rkojedzinszky/thermo-center/configurator"
+	configurator "github.com/rkojedzinszky/thermo-center/v5/configurator"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
