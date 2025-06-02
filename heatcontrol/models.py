@@ -72,9 +72,9 @@ class Profile(models.Model):
     target_temp = models.FloatField(null=True, blank=True)
 
     class Meta:
-        index_together = (
-                ('control', 'daytype', 'start'),
-                )
+        indexes = [
+            models.Index(fields=["control", "daytype", "start"]),
+        ]
 
     def __str__(self):
         return '{} at {}[from {}]: {}'.format(self.control.sensor, self.daytype, self.start, self.target_temp)
@@ -88,9 +88,10 @@ class ScheduledOverride(models.Model):
     target_temp = models.FloatField()
 
     class Meta:
-        index_together = (
-                ('control', 'end'),
-                )
+        indexes = [
+            models.Index(fields=["control", "end"]),
+        ]
+
 
 class InstantProfile(models.Model):
     """ A Profile which contains Instant overrides """
@@ -117,6 +118,9 @@ class InstantProfileEntry(models.Model):
         return '<{},{},{}>'.format(self.profile, self.control, self.target_temp)
 
     class Meta:
-        unique_together = (
-                ('profile', 'control'),
-                )
+        constraints = [
+            models.UniqueConstraint(
+                fields=["profile", "control"],
+                name="instantprofile_unique_profile_control",
+            ),
+        ]

@@ -1,4 +1,4 @@
-FROM alpine:3.17 AS common
+FROM ghcr.io/euronetzrt/django AS common
 
 LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
 LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
@@ -17,8 +17,7 @@ ADD heatcontrol heatcontrol
 ADD receiver/api_pb2.py receiver/api_pb2_grpc.py receiver/
 ADD configurator/api_pb2.py configurator/
 
-RUN apk add --no-cache py3-pip py3-grpcio py3-protobuf tzdata py3-psycopg2 libmemcached && \
-    ln -sf python3 /usr/bin/python && ln -sf pip3 /usr/bin/pip && \
+RUN apk add --no-cache libmemcached && \
     apk --no-cache add -t .build-deps g++ libc-dev python3-dev zlib-dev libmemcached-dev && \
     pip install -r requirements.txt && \
     apk del .build-deps && \
