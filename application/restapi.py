@@ -23,7 +23,7 @@ class SessionResource(Resource):
 
     class Meta(ResourceMetaCommon):
         authentication = Authentication()
-        list_allowed_methods = ["post"]
+        list_allowed_methods = ["get", "post"]
         detail_allowed_methods = ["get", "delete"]
 
     def detail_uri_kwargs(self, bundle_or_obj):
