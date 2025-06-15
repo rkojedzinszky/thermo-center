@@ -1,4 +1,4 @@
-""" Rest API """
+"""Rest API"""
 
 import time
 from django.contrib.auth import authenticate, login, logout
@@ -11,21 +11,24 @@ from tastypie.bundle import Bundle
 from application import http
 
 from tastypie.api import Api
-RestApi = Api(api_name='v1')
+
+RestApi = Api(api_name="v1")
 
 
 class SessionResource(Resource):
-    id = fields.IntegerField(readonly=True)
+    id = fields.IntegerField(unique=True, readonly=True)
     is_admin = fields.BooleanField(readonly=True)
+    username = fields.CharField()
+    password = fields.CharField(null=True)
 
     class Meta(ResourceMetaCommon):
         authentication = Authentication()
-        list_allowed_methods = ['get', 'post']
-        detail_allowed_methods = ['get', 'delete']
+        list_allowed_methods = ["post"]
+        detail_allowed_methods = ["get", "delete"]
 
     def detail_uri_kwargs(self, bundle_or_obj):
         if isinstance(bundle_or_obj, Bundle):
-            return {'pk': 1}
+            return {"pk": 1}
 
         return None
 
@@ -36,7 +39,11 @@ class SessionResource(Resource):
         return []
 
     def obj_create(self, bundle, **kwargs):
-        user = authenticate(request=bundle.request, username=bundle.data['username'], password=bundle.data.pop('password', None))
+        user = authenticate(
+            request=bundle.request,
+            username=bundle.data["username"],
+            password=bundle.data.pop("password", None),
+        )
 
         if user is not None and user.is_active:
             login(bundle.request, user)
@@ -48,7 +55,7 @@ class SessionResource(Resource):
         return bundle
 
     def obj_get(self, bundle, **kwargs):
-        if kwargs.get('pk', None) == '1' and bundle.request.user.is_authenticated:
+        if kwargs.get("pk", None) == "1" and bundle.request.user.is_authenticated:
             return bundle.request.user
 
         raise http.ImmediateHttpResponse(http.HttpNotFound())
@@ -59,8 +66,9 @@ class SessionResource(Resource):
         logout(bundle.request)
 
     def dehydrate(self, bundle):
-        bundle.data['id'] = 1
-        bundle.data['is_admin'] = bundle.obj.is_superuser
+        bundle.data["id"] = 1
+        bundle.data["is_admin"] = bundle.obj.is_superuser
+        bundle.data["username"] = bundle.obj.username
 
         return bundle
 

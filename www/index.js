@@ -145,12 +145,10 @@ const AppState = DefineMap.extend({
 		this.listenTo('need_ws', this._ws.bind(this));
 		this.listenTo('displaypage', this.setpage.bind(this));
 
-		Session.getList().then(function(res) {
-			if (res.length == 1) {
-				self.session = res[0]; // will call setpage
-			} else {
-				self.setpage();
-			}
+		Session.get({id: 1}).then((res) => {
+			self.session = res // will call setpage
+		}, () => {
+			self.setpage();
 		});
 
 		window.addEventListener('visibilitychange', self.visibilitychanged.bind(self));
