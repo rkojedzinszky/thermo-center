@@ -91,6 +91,11 @@ const WsHandler = DefineMap.extend({
 	}
 });
 
+const update = DefineMap.extend({
+	'available': { serialize: false, type: 'boolean', default: false },
+})
+const Update = new update()
+
 const AppState = DefineMap.extend({
 	'session': { serialize: false },
 	'element': { serialize: false },
@@ -117,6 +122,11 @@ const AppState = DefineMap.extend({
 	'ws_connected': {
 		get() {
 			return this.ws && this.ws.is_connected();
+		}
+	},
+	'update': {
+		get() {
+			return Update.available
 		}
 	},
 	setpage() {
@@ -206,5 +216,17 @@ Component.extend({
 
 // Register service-worker
 if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register("/sw.js");
+	navigator.serviceWorker.register("/sw.js").then(registration => {
+		console.log('ServiceWorker registration successful with scope: ', registration.scope)
+		registration.addEventListener('updatefound', () => {
+			const installingWorker = registration.installing
+			installingWorker.addEventListener('statechange', () => {
+				if (installingWorker.state === 'installed') {
+					if (navigator.serviceWorker.controller) {
+						Update.available = true
+					}
+				}
+			})
+		})
+	},)
 }

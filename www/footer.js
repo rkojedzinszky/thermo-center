@@ -1,5 +1,6 @@
 "use strict";
 import Component from "can-component";
+import DefineMap from "can-define/map/map";
 
 Component.extend({
 	tag: 'thermo-footer',
@@ -15,6 +16,18 @@ Component.extend({
 				<div>ui: {{ app.uiVersion }}</div>
 			</div>
 		</div>
+		{{#if app.update}}
+			<div class="row justify-content-center">
+				<div class="col-sm-2 text-muted text-center">
+					<button on:click="doReload()">Reload for new version</button>
+				</div>
+			</div>
+		{{/if}}
 	</footer>
 	`,
+	ViewModel: DefineMap.extend({
+		doReload() {
+			window.location.reload();
+		}
+	})
 });
