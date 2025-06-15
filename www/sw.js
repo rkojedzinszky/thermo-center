@@ -46,7 +46,7 @@ self.addEventListener('activate', event => {
                 }
             })
         )).then(() => {
-            console.log("ServiceWorker", cacheVersion, " is ready to handle fetches!");
+            console.log("ServiceWorker", cacheVersion, "is ready to handle fetches!");
         })
     );
 });
