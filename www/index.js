@@ -222,24 +222,39 @@ function showUpdateBanner(worker) {
   });
 }
 
+function getNewWorker(registration) {
+    return new Promise(resolve => {
+        if (registration.waiting) {
+            resolve(registration.waiting)
+        } else {
+            registration.addEventListener('updatefound', () => {
+                resolve(registration.installing)
+            })
+        }
+    })
+}
+
+function handleWorkerState(worker) {
+	switch (worker.state) {
+		case 'installed':
+			showUpdateBanner(worker)
+			break
+		case 'activated':
+			window.location.reload()
+			break
+	}
+}
+
 // Register service-worker
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register("/sw.js").then(registration => {
 		console.log('ServiceWorker registration successful with scope: ', registration.scope)
-		registration.addEventListener('updatefound', () => {
-			const installingWorker = registration.installing
-			installingWorker.addEventListener('statechange', () => {
-				switch (installingWorker.state) {
-					case 'installed':
-						if (navigator.serviceWorker.controller) {
-							showUpdateBanner(installingWorker)
-						}
-						break
-					case 'activated':
-						window.location.reload()
-						break
-				}
+
+		getNewWorker(registration).then(worker => {
+			worker.addEventListener('statechange', () => {
+				handleWorkerState(worker)
 			})
+			handleWorkerState(worker)
 		})
 	})
 }
