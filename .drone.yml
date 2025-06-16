@@ -17,8 +17,8 @@ steps:
   - git config --global --add safe.directory $(pwd)
   - git fetch --tags
   - V=$(git describe --tags HEAD)
-  - echo "export default \\"$V\\";" > www/version.js
-  - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
+  - echo "export default \"$V\";" > www/version.js
+  - sed -i -e "/^const cacheVersion/s/ =.*/ = \"$V-$(date +%s)\";/" www/sw.js
   image: alpine:3.22.0
   name: versions
 - image: plugins/docker:20.10
@@ -142,8 +142,8 @@ steps:
   - git config --global --add safe.directory $(pwd)
   - git fetch --tags
   - V=$(git describe --tags HEAD)
-  - echo "export default \\"$V\\";" > www/version.js
-  - sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js
+  - echo "export default \"$V\";" > www/version.js
+  - sed -i -e "/^const cacheVersion/s/ =.*/ = \"$V-$(date +%s)\";/" www/sw.js
   image: alpine:3.22.0
   name: versions
 - image: plugins/docker:20.10

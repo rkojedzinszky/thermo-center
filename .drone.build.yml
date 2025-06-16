@@ -14,8 +14,8 @@ steps:
   - git config --global --add safe.directory $(pwd)
   - git fetch --tags
   - V=$(git describe --tags HEAD)
-  - 'echo "export default \\"$V\\";" > www/version.js'
-  - 'sed -i -e "/^const cacheVersion/s/ =.*/ = \\"$V\\";/" www/sw.js'
+  - echo "export default \"$V\";" > www/version.js
+  - sed -i -e "/^const cacheVersion/s/ =.*/ = \"$V-$(date +%s)\";/" www/sw.js
 
 - name: api
   image: plugins/docker:20.10
