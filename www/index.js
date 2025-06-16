@@ -91,11 +91,6 @@ const WsHandler = DefineMap.extend({
 	}
 });
 
-const update = DefineMap.extend({
-	'worker': { serialize: false, default: null },
-})
-const Update = new update()
-
 const AppState = DefineMap.extend({
 	'session': { serialize: false },
 	'element': { serialize: false },
@@ -123,14 +118,6 @@ const AppState = DefineMap.extend({
 		get() {
 			return this.ws && this.ws.is_connected();
 		}
-	},
-	'updateAvailable': {
-		get() {
-			return Update.worker != null
-		}
-	},
-	update() {
-		Update.worker.postMessage({ action: 'skipWaiting' })
 	},
 	setpage() {
 		var self = this;
@@ -217,6 +204,24 @@ Component.extend({
 	ViewModel: AppState
 });
 
+function showUpdateBanner(worker) {
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.innerHTML = `
+    <div class="update-banner-content">
+      A new version is available.
+      <button id="reload-btn">Reload</button>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+  setTimeout(() => banner.classList.add('show'), 100);
+
+  document.getElementById('reload-btn').addEventListener('click', () => {
+    worker.postMessage({ action: 'skipWaiting' });
+  });
+}
+
 // Register service-worker
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register("/sw.js").then(registration => {
@@ -227,7 +232,7 @@ if ('serviceWorker' in navigator) {
 				switch (installingWorker.state) {
 					case 'installed':
 						if (navigator.serviceWorker.controller) {
-							Update.worker = installingWorker
+							showUpdateBanner(installingWorker)
 						}
 						break
 					case 'activated':

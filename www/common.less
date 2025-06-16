@@ -19,3 +19,43 @@ div.content {
 div.content.loaded {
 	opacity: inherit;
 };
+
+#update-banner {
+  position: fixed;
+  bottom: -100px;
+  left: 0;
+  right: 0;
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 1em;
+  font-family: sans-serif;
+  font-size: 1rem;
+  z-index: 9999;
+  transition: bottom 0.5s ease-out;
+}
+
+#update-banner.show {
+  bottom: 0;
+}
+
+.update-banner-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+#update-banner button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#update-banner button:hover {
+  background: #45a049;
+}

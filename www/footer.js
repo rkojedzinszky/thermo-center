@@ -15,13 +15,6 @@ Component.extend({
 				<div>ui: {{ app.uiVersion }}</div>
 			</div>
 		</div>
-		{{#if app.updateAvailable}}
-			<div class="row justify-content-center">
-				<div class="col-sm-2 text-muted text-center">
-					<a href="#" on:click="app.update()">Reload for new version</a>
-				</div>
-			</div>
-		{{/if}}
 	</footer>
 	`
 });
