@@ -92,7 +92,7 @@ const WsHandler = DefineMap.extend({
 });
 
 const update = DefineMap.extend({
-	'available': { serialize: false, type: 'boolean', default: false },
+	'worker': { serialize: false, default: null },
 })
 const Update = new update()
 
@@ -124,10 +124,13 @@ const AppState = DefineMap.extend({
 			return this.ws && this.ws.is_connected();
 		}
 	},
-	'update': {
+	'updateAvailable': {
 		get() {
-			return Update.available
+			return Update.worker != null
 		}
+	},
+	update() {
+		Update.worker.postMessage({ action: 'skipWaiting' })
 	},
 	setpage() {
 		var self = this;
@@ -221,12 +224,17 @@ if ('serviceWorker' in navigator) {
 		registration.addEventListener('updatefound', () => {
 			const installingWorker = registration.installing
 			installingWorker.addEventListener('statechange', () => {
-				if (installingWorker.state === 'installed') {
-					if (navigator.serviceWorker.controller) {
-						Update.available = true
-					}
+				switch (installingWorker.state) {
+					case 'installed':
+						if (navigator.serviceWorker.controller) {
+							Update.worker = installingWorker
+						}
+						break
+					case 'activated':
+						window.location.reload()
+						break
 				}
 			})
 		})
-	},)
+	})
 }
