@@ -42,6 +42,7 @@ const wsurl = function() {
 	return protocol + '//' + document.location.host + path.join('/') + '/';
 }();
 
+let swRegistration
 const WsHandler = DefineMap.extend({
 	'ws': { serialize: false, default: null },
 	'app': { serialize: false, default: null },
@@ -57,6 +58,9 @@ const WsHandler = DefineMap.extend({
 		var self = this;
 		ws.addEventListener('open', function() {
 			self.ws = ws;
+			if (swRegistration) {
+				swRegistration.update()
+			}
 		});
 
 		ws.addEventListener('message', function(e) {
@@ -249,6 +253,7 @@ function handleWorkerState(worker) {
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register("/sw.js").then(registration => {
 		console.log('ServiceWorker registration successful with scope: ', registration.scope)
+		swRegistration = registration
 
 		getNewWorker(registration).then(worker => {
 			worker.addEventListener('statechange', () => {
