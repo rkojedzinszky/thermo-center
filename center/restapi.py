@@ -43,8 +43,6 @@ class SensorResource(ReadonlyPkeyResource):
     rssi = fields.FloatField(null=True, help_text="RSSI of sensor")
     lqi = fields.FloatField(null=True, help_text="Line Quality Indicator of sensor")
     interval = fields.FloatField(null=True, help_text="Elapsed time since last report")
-    age = fields.FloatField(null=True, readonly=True)
-    server_time = fields.DateTimeField(readonly=True)
 
     sensor_resync = fields.ForeignKey(
         "center.restapi.SensorResyncResource", "", readonly=True, null=True
