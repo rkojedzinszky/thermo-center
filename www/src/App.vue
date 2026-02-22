@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useTheme } from '@/composables/useTheme'
+import { useWebSocketSync } from '@/composables/useWebSocketSync'
 // Initialises theme and keeps html[data-theme] in sync
 useTheme()
+// Manage websocket lifecycle based on auth state
+useWebSocketSync()
 </script>
 
 <template>

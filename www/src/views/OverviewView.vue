@@ -4,12 +4,12 @@ import { useRouter } from 'vue-router'
 import { useSensors } from '@/composables/useSensors'
 import { useAuth } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
-import { startWebSocket, stopWebSocket } from '@/services/websocket'
+import { subscribeToWebSocket } from '@/services/websocket'
 import SensorCard from '@/components/SensorCard.vue'
 import SensorTable from '@/components/SensorTable.vue'
 
 const router = useRouter()
-const { orderedSensors, loadSensors, reorder } = useSensors()
+const { orderedSensors, loadSensors, updateSensor, reorder } = useSensors()
 const { session, logout: authLogout } = useAuth()
 const { pref, setTheme } = useTheme()
 
@@ -43,18 +43,26 @@ function onCardDragEnd() {
 }
 
 async function logout() {
-  stopWebSocket()
   await authLogout()
   router.push('/login')
 }
 
+let unsubscribeFromWebSocket: (() => void) | null = null
+
 onMounted(async () => {
-  await loadSensors()
-  startWebSocket()
+  // Subscribe to websocket events
+  unsubscribeFromWebSocket = subscribeToWebSocket({
+    onConnected: () => {
+      loadSensors()
+    },
+    onUpdate: (sensorId: number) => {
+      updateSensor(sensorId)
+    },
+  })
 })
 
 onUnmounted(() => {
-  stopWebSocket()
+  unsubscribeFromWebSocket?.()
 })
 </script>
 
