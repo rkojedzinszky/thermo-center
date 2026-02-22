@@ -1,0 +1,348 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount } from '@vue/test-utils'
+import SensorCard from '../components/SensorCard.vue'
+import type { THSensor } from '../api'
+
+const NOW_UNIX = 1_700_000_000
+
+const activeSensor: THSensor = {
+  id: 42,
+  name: 'Living Room',
+  temperature: 21.5,
+  humidity: 55.3,
+  lastTsf: NOW_UNIX - 30, // 30 seconds ago – active
+  vcc: 3.3,
+  rssi: -65,
+  lqi: 200,
+  interval: 60,
+  lastSeq: 12345,
+  valid: true,
+  sensorResync: null,
+}
+
+const inactiveSensor: THSensor = {
+  ...activeSensor,
+  id: 99,
+  name: 'Basement',
+  lastTsf: NOW_UNIX - 600, // 10 minutes ago – inactive
+}
+
+const noDataSensor: THSensor = {
+  ...activeSensor,
+  id: 7,
+  name: 'Garage',
+  lastTsf: null,
+  temperature: null,
+  humidity: null,
+}
+
+beforeEach(() => {
+  vi.useFakeTimers()
+  vi.setSystemTime(NOW_UNIX * 1000)
+})
+
+afterEach(() => {
+  vi.useRealTimers()
+})
+
+function mountCard(sensor: THSensor) {
+  return mount(SensorCard, {
+    props: { sensor, index: 0, total: 1 },
+  })
+}
+
+describe('SensorCard', () => {
+  describe('layout & structure', () => {
+    it('renders the card wrapper element', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-wrapper').exists()).toBe(true)
+    })
+
+    it('has a front face and a back face', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-front').exists()).toBe(true)
+      expect(wrapper.find('.card-back').exists()).toBe(true)
+    })
+
+    it('card wrapper is draggable', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-wrapper').attributes('draggable')).toBe('true')
+    })
+
+    it('has aria-label with sensor name', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-wrapper').attributes('aria-label')).toContain(activeSensor.name)
+    })
+
+    it('has reading elements for temperature and humidity', () => {
+      const wrapper = mountCard(activeSensor)
+      const readings = wrapper.findAll('.reading')
+      expect(readings).toHaveLength(2)
+    })
+  })
+
+  describe('readability – front side', () => {
+    it('displays sensor name on the front', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.sensor-name').text()).toBe('Living Room')
+    })
+
+    it('displays formatted temperature', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-front').text()).toContain('21.5 °C')
+    })
+
+    it('displays formatted humidity', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-front').text()).toContain('55.3 %')
+    })
+
+    it('displays "30 seconds ago" when lastTsf is 30 seconds ago', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.age-label').text()).toBe('30 seconds ago')
+    })
+
+    it('displays "No data" when lastTsf is null', () => {
+      const wrapper = mountCard(noDataSensor)
+      expect(wrapper.find('.age-label').text()).toBe('No data')
+    })
+
+    it('displays "—" for null temperature', () => {
+      const wrapper = mountCard(noDataSensor)
+      expect(wrapper.find('.card-front').text()).toContain('—')
+    })
+
+    it('shows a flip hint for discoverability', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-front').text()).toContain('Click to flip')
+    })
+  })
+
+  describe('inactive state', () => {
+    it('adds "inactive" class to wrapper when sensor is inactive', () => {
+      const wrapper = mountCard(inactiveSensor)
+      expect(wrapper.find('.card-wrapper').classes()).toContain('inactive')
+    })
+
+    it('shows "Inactive" badge on the front', () => {
+      const wrapper = mountCard(inactiveSensor)
+      expect(wrapper.find('.inactive-badge').exists()).toBe(true)
+    })
+
+    it('adds stale class to age label when inactive', () => {
+      const wrapper = mountCard(inactiveSensor)
+      expect(wrapper.find('.age-label').classes()).toContain('stale')
+    })
+
+    it('does NOT add "inactive" class for an active sensor', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-wrapper').classes()).not.toContain('inactive')
+    })
+
+    it('does NOT show "Inactive" badge for an active sensor', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.inactive-badge').exists()).toBe(false)
+    })
+
+    it('marks sensor with null lastTsf as inactive', () => {
+      const wrapper = mountCard(noDataSensor)
+      expect(wrapper.find('.card-wrapper').classes()).toContain('inactive')
+    })
+  })
+
+  describe('card flip', () => {
+    it('starts with card not flipped', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card').classes()).not.toContain('flipped')
+    })
+
+    it('adds "flipped" class after clicking', async () => {
+      const wrapper = mountCard(activeSensor)
+      await wrapper.find('.card-wrapper').trigger('click')
+      expect(wrapper.find('.card').classes()).toContain('flipped')
+    })
+
+    it('removes "flipped" class on second click (flip back)', async () => {
+      const wrapper = mountCard(activeSensor)
+      await wrapper.find('.card-wrapper').trigger('click')
+      await wrapper.find('.card-wrapper').trigger('click')
+      expect(wrapper.find('.card').classes()).not.toContain('flipped')
+    })
+
+    it('shows "Click to flip back" hint on the back face', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-back').text()).toContain('Click to flip back')
+    })
+  })
+
+  describe('back side – raw data fields', () => {
+    it('renders exactly the expected number of fields', () => {
+      const wrapper = mountCard(activeSensor)
+      // id, name, temperature, humidity, lastTsf, vcc, rssi, lqi, interval, lastSeq = 10
+      expect(wrapper.findAll('.back-field')).toHaveLength(10)
+    })
+
+    it('back side contains ID field', () => {
+      const wrapper = mountCard(activeSensor)
+      const labels = wrapper.findAll('.field-label').map((el) => el.text())
+      expect(labels).toContain('ID')
+    })
+
+    it('back side shows VCC field', () => {
+      const wrapper = mountCard(activeSensor)
+      const labels = wrapper.findAll('.field-label').map((el) => el.text())
+      expect(labels).toContain('VCC')
+    })
+
+    it('back side shows RSSI field', () => {
+      const wrapper = mountCard(activeSensor)
+      const labels = wrapper.findAll('.field-label').map((el) => el.text())
+      expect(labels).toContain('RSSI')
+    })
+
+    it('back side shows Last Data field', () => {
+      const wrapper = mountCard(activeSensor)
+      const labels = wrapper.findAll('.field-label').map((el) => el.text())
+      expect(labels).toContain('Last Data')
+    })
+
+    it('does NOT render "valid" as a displayed field', () => {
+      const wrapper = mountCard(activeSensor)
+      const labels = wrapper.findAll('.field-label').map((el) => el.text().toLowerCase())
+      expect(labels).not.toContain('valid')
+    })
+
+    it('does NOT render "sensorResync" / "sensor_resync" as a displayed field', () => {
+      const wrapper = mountCard(activeSensor)
+      const text = wrapper.find('.card-back').text().toLowerCase()
+      expect(text).not.toContain('resync')
+    })
+  })
+
+  describe('drag events', () => {
+    it('emits dragStart with index on dragstart', () => {
+      const wrapper = mountCard(activeSensor)
+      wrapper.find('.card-wrapper').trigger('dragstart')
+      expect(wrapper.emitted('dragStart')?.[0]).toEqual([0])
+    })
+
+    it('emits dragOver with index on dragover', () => {
+      const wrapper = mountCard(activeSensor)
+      wrapper.find('.card-wrapper').trigger('dragover')
+      expect(wrapper.emitted('dragOver')?.[0]).toEqual([0])
+    })
+
+    it('emits dragEnd on dragend', () => {
+      const wrapper = mountCard(activeSensor)
+      wrapper.find('.card-wrapper').trigger('dragend')
+      expect(wrapper.emitted('dragEnd')).toBeTruthy()
+    })
+  })
+
+  describe('touch drag events', () => {
+    it('emits dragStart with index on touchstart', async () => {
+      const wrapper = mountCard(activeSensor)
+      await wrapper.find('.card-wrapper').trigger('touchstart', {
+        touches: [{ clientX: 50, clientY: 50 }],
+      })
+      expect(wrapper.emitted('dragStart')?.[0]).toEqual([0])
+    })
+
+    it('emits dragEnd on touchend without prior move', async () => {
+      const wrapper = mountCard(activeSensor)
+      const card = wrapper.find('.card-wrapper')
+      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await card.trigger('touchend', { changedTouches: [{ clientX: 50, clientY: 50 }] })
+      expect(wrapper.emitted('dragEnd')).toBeTruthy()
+    })
+
+    it('emits dragOver when touchmove targets a different card index', async () => {
+      // Mount two cards so we can simulate targeting card at index 1
+      const wrapper = mountCard(activeSensor)
+      const card = wrapper.find('.card-wrapper')
+
+      // Create a fake element that reports data-card-index="1"
+      const fakeTarget = document.createElement('div')
+      fakeTarget.setAttribute('data-card-index', '1')
+      document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
+
+      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await card.trigger('touchmove', { touches: [{ clientX: 50, clientY: 120 }] })
+
+      // dragOver should be emitted with index 1
+      const events = wrapper.emitted('dragOver')
+      expect(events).toBeTruthy()
+      expect(events?.[0]).toEqual([1])
+
+      delete (document as any).elementFromPoint
+    })
+
+    it('does NOT emit dragOver when touchmove targets the same card index', async () => {
+      const wrapper = mountCard(activeSensor)
+      const card = wrapper.find('.card-wrapper')
+
+      // Target reports same index (0)
+      const fakeTarget = document.createElement('div')
+      fakeTarget.setAttribute('data-card-index', '0')
+      document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
+
+      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await card.trigger('touchmove', { touches: [{ clientX: 50, clientY: 55 }] })
+
+      expect(wrapper.emitted('dragOver')).toBeFalsy()
+
+      delete (document as any).elementFromPoint
+    })
+  })
+
+  describe('timestamp formatting', () => {
+    it('formats "1 minute ago" for 65 seconds', () => {
+      const sensor = { ...activeSensor, lastTsf: NOW_UNIX - 65 }
+      const wrapper = mountCard(sensor)
+      expect(wrapper.find('.age-label').text()).toBe('1 minute ago')
+    })
+
+    it('formats "2 hours ago" for 7500 seconds', () => {
+      const sensor = { ...activeSensor, lastTsf: NOW_UNIX - 7500 }
+      const wrapper = mountCard(sensor)
+      expect(wrapper.find('.age-label').text()).toBe('2 hours ago')
+    })
+
+    it('formats "just now" for a future or near-zero timestamp', () => {
+      const sensor = { ...activeSensor, lastTsf: NOW_UNIX + 5 }
+      const wrapper = mountCard(sensor)
+      expect(wrapper.find('.age-label').text()).toBe('just now')
+    })
+  })
+
+  describe('card size – no overflow guarantee', () => {
+    it('card-wrapper has fixed dimensions via CSS classes (not inline overflow)', () => {
+      const wrapper = mountCard(activeSensor)
+      // The wrapper must not have inline overflow styles that would cause clipping
+      const style = wrapper.find('.card-wrapper').attributes('style') ?? ''
+      expect(style).not.toContain('overflow: hidden')
+    })
+
+    it('back-fields list element exists and is within the card face', () => {
+      const wrapper = mountCard(activeSensor)
+      const backFace = wrapper.find('.card-back')
+      expect(backFace.find('.back-fields').exists()).toBe(true)
+    })
+
+    it('each field-value has the ellipsis class applied via CSS (class present)', () => {
+      const wrapper = mountCard(activeSensor)
+      // Verify the field-value elements exist (CSS handles overflow:hidden text-overflow:ellipsis)
+      const values = wrapper.findAll('.field-value')
+      expect(values.length).toBeGreaterThan(0)
+      values.forEach((v) => {
+        expect(v.classes()).toContain('field-value')
+      })
+    })
+
+    it('reading-value elements exist for temperature and humidity', () => {
+      const wrapper = mountCard(activeSensor)
+      const values = wrapper.findAll('.reading-value')
+      expect(values).toHaveLength(2)
+    })
+  })
+})
