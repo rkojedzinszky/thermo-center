@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import type { THSensor } from '@/api'
+import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
 
 const props = defineProps<{
   sensors: THSensor[]
@@ -10,41 +11,7 @@ const emit = defineEmits<{
   reorder: [fromIndex: number, toIndex: number]
 }>()
 
-const now = ref(Math.floor(Date.now() / 1000))
-let timer: ReturnType<typeof setInterval> | null = null
-
-onMounted(() => {
-  timer = setInterval(() => {
-    now.value = Math.floor(Date.now() / 1000)
-  }, 1000)
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
-
-const INACTIVE_THRESHOLD = 300
-
-function isInactive(sensor: THSensor): boolean {
-  if (sensor.lastTsf == null) return true
-  return now.value - sensor.lastTsf > INACTIVE_THRESHOLD
-}
-
-function formatAge(tsf: number | null | undefined): string {
-  if (tsf == null) return 'No data'
-  const diff = Math.floor(now.value - tsf)
-  if (diff < 6) return 'just now'
-  if (diff < 60) return `${diff} second${diff === 1 ? '' : 's'} ago`
-  const minutes = Math.floor(diff / 60)
-  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
-  const hours = Math.floor(minutes / 60)
-  return `${hours} hour${hours === 1 ? '' : 's'} ago`
-}
-
-/** Format a number to at most 2 decimal places, stripping trailing zeros. */
-function fmt(n: number): string {
-  return parseFloat(n.toFixed(2)).toString()
-}
+const { now } = useTimerSync()
 
 // ── Mouse drag ──────────────────────────────────────
 const dragIndex = ref<number | null>(null)
@@ -174,7 +141,7 @@ function cellValue(sensor: THSensor, key: string): string {
           :key="sensor.id"
           class="table-row"
           :class="{
-            inactive: isInactive(sensor),
+            inactive: checkInactive(sensor, now),
             'drag-over': dragOverIndex === idx,
             dragging: dragIndex === idx,
           }"
@@ -190,7 +157,10 @@ function cellValue(sensor: THSensor, key: string): string {
             <span class="drag-handle" title="Drag to reorder">⠿</span>
           </td>
           <td v-for="col in columns" :key="col.key" class="td" :data-label="col.label">
-            <span v-if="col.key === 'lastTsf'" :class="{ 'stale-text': isInactive(sensor) }">
+            <span
+              v-if="col.key === 'lastTsf'"
+              :class="{ 'stale-text': checkInactive(sensor, now) }"
+            >
               {{ cellValue(sensor, col.key) }}
             </span>
             <span v-else>{{ cellValue(sensor, col.key) }}</span>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import type { THSensor } from '@/api'
+import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
 
 const props = defineProps<{
   sensor: THSensor
@@ -15,41 +16,9 @@ const emit = defineEmits<{
 }>()
 
 const flipped = ref(false)
-const now = ref(Math.floor(Date.now() / 1000))
-let timer: ReturnType<typeof setInterval> | null = null
+const { now } = useTimerSync()
 
-onMounted(() => {
-  timer = setInterval(() => {
-    now.value = Math.floor(Date.now() / 1000)
-  }, 1000)
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
-
-const INACTIVE_THRESHOLD = 300 // 5 minutes in seconds
-
-const isInactive = computed(() => {
-  if (props.sensor.lastTsf == null) return true
-  return now.value - props.sensor.lastTsf > INACTIVE_THRESHOLD
-})
-
-function formatAge(tsf: number | null | undefined): string {
-  if (tsf == null) return 'No data'
-  const diff = Math.floor(now.value - tsf)
-  if (diff < 2) return 'just now'
-  if (diff < 60) return `${diff} second${diff === 1 ? '' : 's'} ago`
-  const minutes = Math.floor(diff / 60)
-  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
-  const hours = Math.floor(minutes / 60)
-  return `${hours} hour${hours === 1 ? '' : 's'} ago`
-}
-
-/** Format a number to at most 2 decimal places, stripping trailing zeros. */
-function fmt(n: number): string {
-  return parseFloat(n.toFixed(2)).toString()
-}
+const isInactive = computed(() => checkInactive(props.sensor, now.value))
 
 const ageLabel = computed(() => formatAge(props.sensor.lastTsf))
 
@@ -66,9 +35,9 @@ const backFields = computed(() => {
   return [
     { label: 'ID', value: String(s.id) },
     { label: 'Name', value: s.name },
-    { label: 'Temperature', value: s.temperature != null ? `${fmt(s.temperature)} °C` : '—' },
-    { label: 'Humidity', value: s.humidity != null ? `${fmt(s.humidity)} %` : '—' },
-    { label: 'Last Data', value: formatAge(s.lastTsf) },
+    { label: 'Temperature', value: temperature.value },
+    { label: 'Humidity', value: humidity.value },
+    { label: 'Last Data', value: ageLabel.value },
     { label: 'VCC', value: s.vcc != null ? `${fmt(s.vcc)} V` : '—' },
     { label: 'RSSI', value: s.rssi != null ? `${fmt(s.rssi)} dBm` : '—' },
     { label: 'LQI', value: s.lqi != null ? fmt(s.lqi) : '—' },
