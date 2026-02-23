@@ -261,7 +261,7 @@ function onGripPointerDown(e: Event) {
 
 .sensor-name {
   color: var(--color-text);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   overflow: hidden;
@@ -287,25 +287,28 @@ function onGripPointerDown(e: Event) {
 
 .card-readings {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   flex: 1;
-  padding: 0.04rem 0.36rem;
+  padding: 0.12rem 0.36rem;
   justify-content: center;
+  gap: 0.08rem;
 }
 
 .reading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
+  justify-content: center;
+  flex: 0 0 auto;
   gap: 0.08rem;
   min-width: 0;
-  padding: 0.12rem;
+  padding: 0.08rem;
 }
 
 .reading-value {
   color: var(--color-text-values);
-  font-size: 1.05rem;
+  font-size: 1.22rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -316,15 +319,16 @@ function onGripPointerDown(e: Event) {
 
 .reading-label {
   color: var(--color-text-muted);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
 .reading-divider {
-  width: 1px;
-  height: 2.2rem;
+  width: 72%;
+  height: 1px;
+  margin: 0 auto;
   background: var(--color-reading-divider);
   flex-shrink: 0;
 }
@@ -340,7 +344,7 @@ function onGripPointerDown(e: Event) {
 
 .age-label {
   color: var(--color-text-secondary);
-  font-size: 0.62rem;
+  font-size: 0.67rem;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -354,7 +358,7 @@ function onGripPointerDown(e: Event) {
 
 .flip-hint {
   color: var(--color-text-faint);
-  font-size: 0.54rem;
+  font-size: 0.58rem;
   font-style: italic;
   white-space: nowrap;
   flex-shrink: 0;
@@ -385,22 +389,20 @@ function onGripPointerDown(e: Event) {
   justify-content: space-between;
   gap: 0.24rem;
   padding: 0.02rem 0;
+  font-weight: 500;
 }
 
 .field-label {
   color: var(--color-text-muted);
-  font-size: 0.62rem;
-  font-weight: 600;
+  font-size: 0.66rem;
   letter-spacing: 0.02em;
-  text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .field-value {
   color: var(--color-text-fields);
-  font-size: 0.62rem;
-  font-weight: 500;
+  font-size: 0.66rem;
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
