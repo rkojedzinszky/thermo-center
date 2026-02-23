@@ -305,8 +305,9 @@ onUnmounted(() => {
 .cards-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 0.6rem;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .cards-grid > :deep(.card-wrapper) {

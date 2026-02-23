@@ -145,16 +145,22 @@ function cellValue(sensor: THSensor, key: string): string {
             'drag-over': dragOverIndex === idx,
             dragging: dragIndex === idx,
           }"
-          draggable="true"
           :data-row-index="idx"
-          @dragstart="onDragStart(idx, $event)"
           @dragover="onDragOver(idx, $event)"
           @drop="onDrop(idx, $event)"
-          @dragend="onDragEnd"
-          @touchstart.passive="onRowTouchStart(idx, $event)"
         >
           <td class="td-drag">
-            <span class="drag-handle" title="Drag to reorder">⠿</span>
+            <span
+              class="drag-handle"
+              title="Drag to reorder"
+              draggable="true"
+              aria-label="Drag row"
+              @dragstart="onDragStart(idx, $event)"
+              @dragend="onDragEnd"
+              @touchstart.passive="onRowTouchStart(idx, $event)"
+            >
+              ⠿
+            </span>
           </td>
           <td v-for="col in columns" :key="col.key" class="td" :data-label="col.label">
             <span
@@ -260,6 +266,7 @@ function cellValue(sensor: THSensor, key: string): string {
   font-size: 1rem;
   cursor: grab;
   user-select: none;
+  touch-action: none;
 }
 
 .stale-text {

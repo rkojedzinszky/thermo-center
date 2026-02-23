@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import SensorCard from '../components/SensorCard.vue'
 import type { THSensor } from '../api'
 
-const NOW_UNIX = 1_700_000_000
+const NOW_UNIX = Math.floor(Date.now() / 1000)
 
 const activeSensor: THSensor = {
   id: 42,
@@ -64,9 +64,14 @@ describe('SensorCard', () => {
       expect(wrapper.find('.card-back').exists()).toBe(true)
     })
 
-    it('card wrapper is draggable', () => {
+    it('card wrapper is not draggable', () => {
       const wrapper = mountCard(activeSensor)
-      expect(wrapper.find('.card-wrapper').attributes('draggable')).toBe('true')
+      expect(wrapper.find('.card-wrapper').attributes('draggable')).toBeUndefined()
+    })
+
+    it('drag handle is draggable', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.card-grip').attributes('draggable')).toBe('true')
     })
 
     it('has aria-label with sensor name', () => {
@@ -220,9 +225,9 @@ describe('SensorCard', () => {
   })
 
   describe('drag events', () => {
-    it('emits dragStart with index on dragstart', () => {
+    it('emits dragStart with index when dragging from the grip', () => {
       const wrapper = mountCard(activeSensor)
-      wrapper.find('.card-wrapper').trigger('dragstart')
+      wrapper.find('.card-grip').trigger('dragstart')
       expect(wrapper.emitted('dragStart')?.[0]).toEqual([0])
     })
 
@@ -232,17 +237,23 @@ describe('SensorCard', () => {
       expect(wrapper.emitted('dragOver')?.[0]).toEqual([0])
     })
 
-    it('emits dragEnd on dragend', () => {
+    it('emits dragEnd on grip dragend', () => {
       const wrapper = mountCard(activeSensor)
-      wrapper.find('.card-wrapper').trigger('dragend')
+      wrapper.find('.card-grip').trigger('dragend')
       expect(wrapper.emitted('dragEnd')).toBeTruthy()
+    })
+
+    it('does NOT emit dragStart when dragging the card wrapper', () => {
+      const wrapper = mountCard(activeSensor)
+      wrapper.find('.card-wrapper').trigger('dragstart')
+      expect(wrapper.emitted('dragStart')).toBeFalsy()
     })
   })
 
   describe('touch drag events', () => {
     it('emits dragStart with index on touchstart', async () => {
       const wrapper = mountCard(activeSensor)
-      await wrapper.find('.card-wrapper').trigger('touchstart', {
+      await wrapper.find('.card-grip').trigger('touchstart', {
         touches: [{ clientX: 50, clientY: 50 }],
       })
       expect(wrapper.emitted('dragStart')?.[0]).toEqual([0])
@@ -250,24 +261,24 @@ describe('SensorCard', () => {
 
     it('emits dragEnd on touchend without prior move', async () => {
       const wrapper = mountCard(activeSensor)
-      const card = wrapper.find('.card-wrapper')
-      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
-      await card.trigger('touchend', { changedTouches: [{ clientX: 50, clientY: 50 }] })
+      const grip = wrapper.find('.card-grip')
+      await grip.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await grip.trigger('touchend', { changedTouches: [{ clientX: 50, clientY: 50 }] })
       expect(wrapper.emitted('dragEnd')).toBeTruthy()
     })
 
     it('emits dragOver when touchmove targets a different card index', async () => {
       // Mount two cards so we can simulate targeting card at index 1
       const wrapper = mountCard(activeSensor)
-      const card = wrapper.find('.card-wrapper')
+      const grip = wrapper.find('.card-grip')
 
       // Create a fake element that reports data-card-index="1"
       const fakeTarget = document.createElement('div')
       fakeTarget.setAttribute('data-card-index', '1')
       document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
 
-      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
-      await card.trigger('touchmove', { touches: [{ clientX: 50, clientY: 120 }] })
+      await grip.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await grip.trigger('touchmove', { touches: [{ clientX: 50, clientY: 120 }] })
 
       // dragOver should be emitted with index 1
       const events = wrapper.emitted('dragOver')
@@ -279,15 +290,15 @@ describe('SensorCard', () => {
 
     it('does NOT emit dragOver when touchmove targets the same card index', async () => {
       const wrapper = mountCard(activeSensor)
-      const card = wrapper.find('.card-wrapper')
+      const grip = wrapper.find('.card-grip')
 
       // Target reports same index (0)
       const fakeTarget = document.createElement('div')
       fakeTarget.setAttribute('data-card-index', '0')
       document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
 
-      await card.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
-      await card.trigger('touchmove', { touches: [{ clientX: 50, clientY: 55 }] })
+      await grip.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await grip.trigger('touchmove', { touches: [{ clientX: 50, clientY: 55 }] })
 
       expect(wrapper.emitted('dragOver')).toBeFalsy()
 

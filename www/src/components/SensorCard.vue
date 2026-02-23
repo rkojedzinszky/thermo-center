@@ -108,29 +108,45 @@ function onTouchEnd(e: TouchEvent) {
   touchMoved = false
   emit('dragEnd')
 }
+
+function onGripPointerDown(e: Event) {
+  // Drag should start only from the grip and should not flip the card.
+  e.stopPropagation()
+}
 </script>
 
 <template>
   <div
     class="card-wrapper"
     :class="{ inactive: isInactive }"
-    draggable="true"
     :aria-label="`Sensor ${sensor.name}`"
     :data-card-index="index"
-    @dragstart="onDragStart"
     @dragover="onDragOver"
-    @dragend="$emit('dragEnd')"
     @click="toggleFlip"
-    @touchstart="onTouchStart"
-    @touchmove="onTouchMove"
-    @touchend="onTouchEnd"
   >
     <div class="card" :class="{ flipped }">
       <!-- FRONT -->
       <div class="card-face card-front">
         <div class="card-header">
           <span class="sensor-name">{{ sensor.name }}</span>
-          <span v-if="isInactive" class="inactive-badge">Inactive</span>
+          <div class="header-right">
+            <span
+              class="card-grip"
+              title="Drag to reorder"
+              draggable="true"
+              aria-label="Drag card"
+              @dragstart="onDragStart"
+              @dragend="$emit('dragEnd')"
+              @touchstart.passive="onTouchStart"
+              @touchmove="onTouchMove"
+              @touchend="onTouchEnd"
+              @mousedown="onGripPointerDown"
+              @click="onGripPointerDown"
+            >
+              ⠿
+            </span>
+            <span v-if="isInactive" class="inactive-badge">Inactive</span>
+          </div>
         </div>
         <div class="card-readings">
           <div class="reading">
@@ -167,14 +183,14 @@ function onTouchEnd(e: TouchEvent) {
 
 <style scoped>
 .card-wrapper {
-  width: 240px;
-  height: 265px;
+  width: 168px;
+  height: 196px;
   perspective: 1000px;
   cursor: pointer;
   user-select: none;
   flex-shrink: 0;
   transition: opacity 0.4s;
-  touch-action: none; /* let our touchmove handler control scrolling */
+  touch-action: auto;
 }
 
 .card-wrapper.inactive {
@@ -223,13 +239,29 @@ function onTouchEnd(e: TouchEvent) {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1rem 1.1rem 0.4rem;
-  gap: 0.4rem;
+  padding: 0.55rem 0.6rem 0.2rem;
+  gap: 0.3rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.card-grip {
+  color: var(--color-handle);
+  cursor: grab;
+  font-size: 0.88rem;
+  line-height: 1;
+  user-select: none;
+  flex-shrink: 0;
+  touch-action: none;
 }
 
 .sensor-name {
   color: var(--color-text);
-  font-size: 1rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   overflow: hidden;
@@ -244,10 +276,10 @@ function onTouchEnd(e: TouchEvent) {
   border: 1px solid var(--color-inactive-badge-border);
   border-radius: 0.35rem;
   color: var(--color-inactive-badge-text);
-  font-size: 0.6rem;
+  font-size: 0.52rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  padding: 0.15rem 0.4rem;
+  padding: 0.1rem 0.26rem;
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
@@ -257,7 +289,7 @@ function onTouchEnd(e: TouchEvent) {
   display: flex;
   align-items: center;
   flex: 1;
-  padding: 0.25rem 0.75rem;
+  padding: 0.04rem 0.36rem;
   justify-content: center;
 }
 
@@ -266,14 +298,14 @@ function onTouchEnd(e: TouchEvent) {
   flex-direction: column;
   align-items: center;
   flex: 1;
-  gap: 0.15rem;
+  gap: 0.08rem;
   min-width: 0;
-  padding: 0.25rem;
+  padding: 0.12rem;
 }
 
 .reading-value {
   color: var(--color-text-values);
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -284,7 +316,7 @@ function onTouchEnd(e: TouchEvent) {
 
 .reading-label {
   color: var(--color-text-muted);
-  font-size: 0.68rem;
+  font-size: 0.56rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -292,7 +324,7 @@ function onTouchEnd(e: TouchEvent) {
 
 .reading-divider {
   width: 1px;
-  height: 3rem;
+  height: 2.2rem;
   background: var(--color-reading-divider);
   flex-shrink: 0;
 }
@@ -301,14 +333,14 @@ function onTouchEnd(e: TouchEvent) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 1.1rem;
+  padding: 0.26rem 0.56rem;
   border-top: 1px solid var(--color-footer-border);
   gap: 0.5rem;
 }
 
 .age-label {
   color: var(--color-text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -322,7 +354,7 @@ function onTouchEnd(e: TouchEvent) {
 
 .flip-hint {
   color: var(--color-text-faint);
-  font-size: 0.65rem;
+  font-size: 0.54rem;
   font-style: italic;
   white-space: nowrap;
   flex-shrink: 0;
@@ -339,27 +371,27 @@ function onTouchEnd(e: TouchEvent) {
 .back-fields {
   list-style: none;
   margin: 0;
-  padding: 0.7rem 1.1rem 0.4rem;
+  padding: 0.3rem 0.56rem 0.14rem;
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.04rem;
 }
 
 .back-field {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.12rem 0;
+  gap: 0.24rem;
+  padding: 0.02rem 0;
 }
 
 .field-label {
   color: var(--color-text-muted);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
@@ -367,7 +399,7 @@ function onTouchEnd(e: TouchEvent) {
 
 .field-value {
   color: var(--color-text-fields);
-  font-size: 0.8rem;
+  font-size: 0.62rem;
   font-weight: 500;
   text-align: right;
   overflow: hidden;
@@ -379,6 +411,6 @@ function onTouchEnd(e: TouchEvent) {
 
 .back-footer {
   border-top: 1px solid var(--color-back-footer-border);
-  padding: 0.5rem 1.1rem;
+  padding: 0.24rem 0.56rem;
 }
 </style>

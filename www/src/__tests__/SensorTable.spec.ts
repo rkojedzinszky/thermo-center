@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import SensorTable from '../components/SensorTable.vue'
 import type { THSensor } from '../api'
 
-const NOW_UNIX = 1_700_000_000
+const NOW_UNIX = Math.floor(Date.now() / 1000)
 
 const sensors: THSensor[] = [
   {
@@ -165,21 +165,27 @@ describe('SensorTable', () => {
   })
 
   describe('drag-and-drop reorder', () => {
-    it('all rows are draggable', () => {
+    it('rows are not draggable and only handles are draggable', () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
       rows.forEach((row) => {
-        expect(row.attributes('draggable')).toBe('true')
+        expect(row.attributes('draggable')).toBeUndefined()
+      })
+      const handles = wrapper.findAll('.drag-handle')
+      handles.forEach((handle) => {
+        expect(handle.attributes('draggable')).toBe('true')
       })
     })
 
     it('emits "reorder" event when dragging from one row to another', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
       const row0 = rows[0]!
       const row1 = rows[1]!
+      const handle0 = handles[0]!
 
-      await row0.trigger('dragstart', {
+      await handle0.trigger('dragstart', {
         dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
       })
       await row1.trigger('dragover')
@@ -192,9 +198,11 @@ describe('SensorTable', () => {
     it('does NOT emit reorder when dropped on same index', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
       const row0 = rows[0]!
+      const handle0 = handles[0]!
 
-      await row0.trigger('dragstart', {
+      await handle0.trigger('dragstart', {
         dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
       })
       await row0.trigger('dragover')
@@ -206,10 +214,11 @@ describe('SensorTable', () => {
     it('adds "drag-over" class when dragging over a row', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
-      const row0 = rows[0]!
+      const handles = wrapper.findAll('.drag-handle')
       const row1 = rows[1]!
+      const handle0 = handles[0]!
 
-      await row0.trigger('dragstart', {
+      await handle0.trigger('dragstart', {
         dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
       })
       await row1.trigger('dragover')
@@ -220,6 +229,22 @@ describe('SensorTable', () => {
     it('clears drag-over class after drag ends', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
+      const row1 = rows[1]!
+      const handle0 = handles[0]!
+
+      await handle0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row1.trigger('dragover')
+      await handle0.trigger('dragend')
+
+      expect(row1.classes()).not.toContain('drag-over')
+    })
+
+    it('does NOT emit reorder when dragging starts from row body', async () => {
+      const wrapper = mount(SensorTable, { props: { sensors } })
+      const rows = wrapper.findAll('tbody tr.table-row')
       const row0 = rows[0]!
       const row1 = rows[1]!
 
@@ -227,9 +252,9 @@ describe('SensorTable', () => {
         dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
       })
       await row1.trigger('dragover')
-      await row0.trigger('dragend')
+      await row1.trigger('drop')
 
-      expect(row1.classes()).not.toContain('drag-over')
+      expect(wrapper.emitted('reorder')).toBeFalsy()
     })
   })
 
@@ -237,13 +262,15 @@ describe('SensorTable', () => {
     it('emits "reorder" event when touch-dragging from one row to another', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
       const row0 = rows[0]!
       const row1 = rows[1]!
+      const handle0 = handles[0]!
 
       // Mock elementFromPoint to return the second row's DOM element
       document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
 
-      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
       await wrapper.find('.table-wrapper').trigger('touchmove', {
         touches: [{ clientX: 50, clientY: 100 }],
       })
@@ -260,11 +287,13 @@ describe('SensorTable', () => {
     it('does NOT emit reorder when touch ends on same row', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
       const row0 = rows[0]!
+      const handle0 = handles[0]!
 
       document.elementFromPoint = vi.fn().mockReturnValue(row0.element)
 
-      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
       await wrapper.find('.table-wrapper').trigger('touchmove', {
         touches: [{ clientX: 50, clientY: 55 }],
       })
@@ -280,12 +309,14 @@ describe('SensorTable', () => {
     it('adds "drag-over" class to target row during touch drag', async () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
+      const handles = wrapper.findAll('.drag-handle')
       const row0 = rows[0]!
       const row1 = rows[1]!
+      const handle0 = handles[0]!
 
       document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
 
-      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
       await wrapper.find('.table-wrapper').trigger('touchmove', {
         touches: [{ clientX: 50, clientY: 100 }],
       })
