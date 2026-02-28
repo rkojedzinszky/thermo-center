@@ -1,14 +1,46 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
+
 import { useTheme } from '@/composables/useTheme'
 import { useWebSocketSync } from '@/composables/useWebSocketSync'
+import { PWA_UPDATE_EVENT, applyPwaUpdate } from '@/pwa'
+
 // Initialises theme and keeps html[data-theme] in sync
 useTheme()
 // Manage websocket lifecycle based on auth state
 useWebSocketSync()
+
+const showUpdateBanner = ref(false)
+
+function onPwaUpdateAvailable() {
+  showUpdateBanner.value = true
+}
+
+function dismissUpdateBanner() {
+  showUpdateBanner.value = false
+}
+
+function installUpdate() {
+  applyPwaUpdate()
+}
+
+onMounted(() => {
+  window.addEventListener(PWA_UPDATE_EVENT, onPwaUpdateAvailable)
+})
+
+onUnmounted(() => {
+  window.removeEventListener(PWA_UPDATE_EVENT, onPwaUpdateAvailable)
+})
 </script>
 
 <template>
   <RouterView />
+
+  <div v-if="showUpdateBanner" class="pwa-update-banner" role="status" aria-live="polite">
+    <span>A new version is available.</span>
+    <button type="button" class="pwa-update-action" @click="installUpdate">Update</button>
+    <button type="button" class="pwa-update-dismiss" @click="dismissUpdateBanner">Dismiss</button>
+  </div>
 </template>
 
 <style>
@@ -168,5 +200,48 @@ html[data-theme='light'] {
 .resync-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.pwa-update-banner {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-accent-border);
+  border-radius: 0.75rem;
+  background: var(--color-surface-solid);
+  color: var(--color-text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.pwa-update-action,
+.pwa-update-dismiss {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+}
+
+.pwa-update-action {
+  margin-left: auto;
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-bg);
+}
+
+@media (min-width: 640px) {
+  .pwa-update-banner {
+    left: auto;
+    min-width: 26rem;
+    max-width: 36rem;
+  }
 }
 </style>
