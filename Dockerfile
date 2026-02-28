@@ -39,31 +39,22 @@ CMD ["uwsgi", "--http11-socket", ":8080", "--plugin=python3", "--wsgi", "applica
 ### UI
 FROM common AS fe-prepare
 
-RUN python manage.py collectstatic --no-input && \
-    mkdir -p www/models/g && \
-    python manage.py gen_canjs_models
+RUN python manage.py collectstatic --no-input
 
-FROM node:10-alpine AS fe-build
+FROM node:24-alpine AS fe-build
 
 ADD www /work
 
 WORKDIR /work
 
-COPY --from=fe-prepare /opt/thermo-center/www/models/g/ /work/models/g/
-
-RUN yarn && sh build.sh && rm -rf node_modules
+RUN npm install && npm run build
 
 FROM nginx:alpine AS ui
 
 LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
 LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
 
-RUN mkdir -p /var/www/html/dist/ /var/www/html/icons/ /var/www/html/static/
-
-ADD www/index.html www/manifest.json www/sw.js /var/www/html/
-ADD www/icons /var/www/html/icons/
-COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/static/
-COPY --from=fe-build /work/dist /var/www/html/dist
+COPY --from=fe-build /work/dist /var/www/html
 
 ADD docker-assets-ui /
 
