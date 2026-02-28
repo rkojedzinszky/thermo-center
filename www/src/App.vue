@@ -36,6 +36,7 @@ body {
 :root,
 html[data-theme='dark'] {
   --color-bg: #0d1117;
+  --color-background: #161b22;
   --color-surface: rgba(22, 27, 34, 0.88);
   --color-surface-solid: #161b22;
   --color-card-a: #1e293b;
@@ -52,6 +53,7 @@ html[data-theme='dark'] {
   --color-border-strong: rgba(255, 255, 255, 0.12);
   --color-border-card: rgba(255, 255, 255, 0.1);
   --color-border-card-back: rgba(99, 102, 241, 0.3);
+  --color-border-dialog: rgba(255, 255, 255, 0.1);
   --color-accent: #818cf8;
   --color-accent-bg: rgba(99, 102, 241, 0.2);
   --color-accent-border: rgba(99, 102, 241, 0.5);
@@ -68,9 +70,11 @@ html[data-theme='dark'] {
   --color-footer-border: rgba(255, 255, 255, 0.06);
   --color-back-footer-border: rgba(99, 102, 241, 0.15);
   --color-input-bg: rgba(255, 255, 255, 0.07);
-  --color-input-border: rgba(255, 255, 255, 0.15);
+  --color-border-input: rgba(255, 255, 255, 0.15);
   --color-input-text: #e2e8f0;
   --color-input-placeholder: #475569;
+  --color-task-bg: rgba(15, 23, 42, 0.8);
+  --color-border-task: rgba(99, 102, 241, 0.2);
   --color-btn-bg: linear-gradient(135deg, #3b82f6, #2563eb);
   --color-btn-shadow: rgba(59, 130, 246, 0.35);
   --color-page-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -83,11 +87,13 @@ html[data-theme='dark'] {
   --color-table-bg: rgba(15, 23, 42, 0.7);
   --color-table-row-hover: rgba(255, 255, 255, 0.04);
   --color-handle: #475569;
+  --color-primary: #3b82f6;
 }
 
 /* ── Light theme ── */
 html[data-theme='light'] {
   --color-bg: #f1f5f9;
+  --color-background: #ffffff;
   --color-surface: rgba(255, 255, 255, 0.94);
   --color-surface-solid: #ffffff;
   --color-card-a: #ffffff;
@@ -104,6 +110,7 @@ html[data-theme='light'] {
   --color-border-strong: rgba(0, 0, 0, 0.12);
   --color-border-card: rgba(0, 0, 0, 0.1);
   --color-border-card-back: rgba(99, 102, 241, 0.25);
+  --color-border-dialog: rgba(0, 0, 0, 0.1);
   --color-accent: #6366f1;
   --color-accent-bg: rgba(99, 102, 241, 0.1);
   --color-accent-border: rgba(99, 102, 241, 0.4);
@@ -120,9 +127,11 @@ html[data-theme='light'] {
   --color-footer-border: rgba(0, 0, 0, 0.06);
   --color-back-footer-border: rgba(99, 102, 241, 0.12);
   --color-input-bg: rgba(0, 0, 0, 0.04);
-  --color-input-border: rgba(0, 0, 0, 0.18);
+  --color-border-input: rgba(0, 0, 0, 0.18);
   --color-input-text: #0f172a;
   --color-input-placeholder: #94a3b8;
+  --color-task-bg: rgba(241, 245, 249, 0.9);
+  --color-border-task: rgba(99, 102, 241, 0.2);
   --color-btn-bg: linear-gradient(135deg, #3b82f6, #2563eb);
   --color-btn-shadow: rgba(59, 130, 246, 0.25);
   --color-page-bg: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 50%, #ddd6fe 100%);
@@ -135,13 +144,14 @@ html[data-theme='light'] {
   --color-table-bg: rgba(255, 255, 255, 0.8);
   --color-table-row-hover: rgba(0, 0, 0, 0.02);
   --color-handle: #94a3b8;
+  --color-primary: #3b82f6;
 }
 
 /* ── Resync button (shared) ── */
 .resync-button {
   background: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #000000;
+  color: #fca5a5;
   border-radius: 0.3rem;
   font-size: 0.65rem;
   font-weight: 600;

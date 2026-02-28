@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import type { THSensor } from '@/api'
 import { useSensors } from '@/composables/useSensors'
 import { useAuth } from '@/composables/useAuth'
 import { useTheme } from '@/composables/useTheme'
@@ -9,7 +10,8 @@ import SensorCard from '@/components/SensorCard.vue'
 import SensorTable from '@/components/SensorTable.vue'
 
 const router = useRouter()
-const { orderedSensors, loadSensors, updateSensor, reorder } = useSensors()
+const { orderedSensors, loadSensors, updateSensor, updateSensorDirect, removeSensor, reorder } =
+  useSensors()
 const { session, logout: authLogout } = useAuth()
 const { pref, setTheme } = useTheme()
 
@@ -40,6 +42,16 @@ function onCardDragEnd() {
   }
   dragFromIndex.value = null
   dragOverIndex.value = null
+}
+
+// Handle sensor updates (instantly update local state)
+function onSensorUpdated(updatedSensor: THSensor) {
+  updateSensorDirect(updatedSensor)
+}
+
+// Handle sensor deletions
+function onSensorDeleted(deletedId: number) {
+  removeSensor(deletedId)
 }
 
 async function logout() {
@@ -163,6 +175,8 @@ onUnmounted(() => {
           @drag-start="onCardDragStart"
           @drag-over="onCardDragOver"
           @drag-end="onCardDragEnd"
+          @updated="onSensorUpdated"
+          @deleted="() => onSensorDeleted(sensor.id)"
         />
         <div v-if="orderedSensors.length === 0" class="empty-state">
           <span class="empty-icon">📡</span>
@@ -172,7 +186,12 @@ onUnmounted(() => {
 
       <!-- Table view -->
       <div v-else class="table-container">
-        <SensorTable :sensors="orderedSensors" @reorder="reorder" />
+        <SensorTable
+          :sensors="orderedSensors"
+          @reorder="reorder"
+          @updated="onSensorUpdated"
+          @deleted="(sensorId: number) => onSensorDeleted(sensorId)"
+        />
       </div>
     </main>
   </div>

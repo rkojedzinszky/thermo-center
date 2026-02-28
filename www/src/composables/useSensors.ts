@@ -61,6 +61,18 @@ export function useSensors() {
     }
   }
 
+  function updateSensorDirect(sensor: THSensor) {
+    sensorsMap.value = new Map(sensorsMap.value).set(sensor.id, sensor)
+  }
+
+  function removeSensor(id: number) {
+    const newMap = new Map(sensorsMap.value)
+    newMap.delete(id)
+    sensorsMap.value = newMap
+    orderIds.value = orderIds.value.filter((orderId) => orderId !== id)
+    saveOrder(orderIds.value)
+  }
+
   function reorder(fromIndex: number, toIndex: number) {
     const ids = [...orderIds.value]
     const moved = ids.splice(fromIndex, 1)[0]
@@ -70,5 +82,5 @@ export function useSensors() {
     saveOrder(orderIds.value)
   }
 
-  return { orderedSensors, loadSensors, updateSensor, reorder }
+  return { orderedSensors, loadSensors, updateSensor, updateSensorDirect, removeSensor, reorder }
 }

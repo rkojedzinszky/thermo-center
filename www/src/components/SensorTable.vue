@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { THSensor } from '@/api'
 import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
 import { useResyncMap } from '@/composables/useResync'
+import { useAuth } from '@/composables/useAuth'
+import SensorEditDialog from './SensorEditDialog.vue'
 
 const props = defineProps<{
   sensors: THSensor[]
@@ -10,9 +12,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   reorder: [fromIndex: number, toIndex: number]
+  updated: [sensor: THSensor]
+  deleted: [sensorId: number]
 }>()
 
 const { now } = useTimerSync()
+const { isAdmin } = useAuth()
+const editDialogOpen = ref(false)
+const selectedSensor = ref<THSensor | null>(null)
 const sensorsRef = ref(props.sensors)
 const { resyncDisabledMap, handleResync } = useResyncMap(sensorsRef)
 
@@ -99,7 +106,7 @@ function onTableTouchEnd() {
   dragOverIndex.value = null
 }
 
-const columns = [
+const columns = computed(() => [
   { key: 'name', label: 'Name' },
   { key: 'temperature', label: 'Temp (°C)' },
   { key: 'humidity', label: 'Humidity (%)' },
@@ -109,7 +116,8 @@ const columns = [
   { key: 'interval', label: 'Interval (s)' },
   { key: 'lastSeq', label: 'Seq' },
   { key: 'lastTsf', label: 'Last Data' },
-]
+  ...(isAdmin.value ? [{ key: 'actions', label: 'Actions' }] : []),
+])
 
 function cellValue(sensor: THSensor, key: string): string {
   switch (key) {
@@ -183,6 +191,19 @@ function cellValue(sensor: THSensor, key: string): string {
             >
               ⚠ Resync
             </button>
+            <button
+              v-else-if="col.key === 'actions'"
+              class="action-button"
+              title="Edit sensor"
+              @click="
+                () => {
+                  selectedSensor = sensor
+                  editDialogOpen = true
+                }
+              "
+            >
+              Edit
+            </button>
             <span v-else>
               {{ cellValue(sensor, col.key) }}
             </span>
@@ -194,6 +215,26 @@ function cellValue(sensor: THSensor, key: string): string {
       </tbody>
     </table>
   </div>
+
+  <SensorEditDialog
+    :sensor="selectedSensor"
+    :open="editDialogOpen"
+    @close="editDialogOpen = false"
+    @updated="
+      (updatedSensor) => {
+        emit('updated', updatedSensor)
+        editDialogOpen = false
+      }
+    "
+    @deleted="
+      () => {
+        if (selectedSensor) {
+          emit('deleted', selectedSensor.id)
+        }
+        editDialogOpen = false
+      }
+    "
+  />
 </template>
 
 <style scoped>
@@ -289,6 +330,29 @@ function cellValue(sensor: THSensor, key: string): string {
   padding: 0.25rem 0.5rem;
 }
 
+.action-button {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  color: #3b82f6;
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.action-button:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.35);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .empty-row {
   color: var(--color-text-muted);
   font-style: italic;

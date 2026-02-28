@@ -8,6 +8,7 @@ const error = ref<string | null>(null)
 
 export function useAuth() {
   const isLoggedIn = computed(() => session.value !== null)
+  const isAdmin = computed(() => session.value?.isAdmin ?? false)
 
   async function checkSession(): Promise<boolean> {
     loading.value = true
@@ -49,5 +50,5 @@ export function useAuth() {
     }
   }
 
-  return { session, isLoggedIn, loading, error, checkSession, login, logout }
+  return { session, isLoggedIn, isAdmin, loading, error, checkSession, login, logout }
 }
