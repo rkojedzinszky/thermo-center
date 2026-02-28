@@ -3,8 +3,6 @@ import { ref, computed } from 'vue'
 import type { THSensor } from '@/api'
 import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
 import { useResync } from '@/composables/useResync'
-import { useAuth } from '@/composables/useAuth'
-import SensorEditDialog from './SensorEditDialog.vue'
 
 const props = defineProps<{
   sensor: THSensor
@@ -21,11 +19,9 @@ const emit = defineEmits<{
 }>()
 
 const flipped = ref(false)
-const editDialogOpen = ref(false)
 const { now } = useTimerSync()
 const sensorRef = computed(() => props.sensor)
 const { resyncDisabled, handleResync } = useResync(sensorRef)
-const { isAdmin } = useAuth()
 
 const isInactive = computed(() => checkInactive(props.sensor, now.value))
 const isInvalid = computed(() => props.sensor.valid === false)
@@ -140,15 +136,6 @@ function onGripPointerDown(e: Event) {
         <div class="card-header">
           <span class="sensor-name">{{ sensor.name }}</span>
           <div class="header-right">
-            <button
-              v-if="isAdmin"
-              class="card-edit-btn"
-              title="Edit sensor"
-              aria-label="Edit sensor"
-              @click.stop="editDialogOpen = true"
-            >
-              ✎
-            </button>
             <span
               class="card-grip"
               title="Drag to reorder"
@@ -206,23 +193,6 @@ function onGripPointerDown(e: Event) {
       </div>
     </div>
   </div>
-
-  <SensorEditDialog
-    :sensor="sensor"
-    :open="editDialogOpen"
-    @close="editDialogOpen = false"
-    @updated="
-      (updatedSensor) => {
-        $emit('updated', updatedSensor)
-        editDialogOpen = false
-      }
-    "
-    @deleted="
-      () => {
-        $emit('deleted', sensor.id)
-      }
-    "
-  />
 </template>
 
 <style scoped>
