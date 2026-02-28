@@ -62,7 +62,9 @@ export function useSensors() {
   }
 
   function updateSensorDirect(sensor: THSensor) {
-    sensorsMap.value = new Map(sensorsMap.value).set(sensor.id, sensor)
+    const existing = sensorsMap.value.get(sensor.id)
+    const merged = existing ? { ...existing, ...sensor } : sensor
+    sensorsMap.value = new Map(sensorsMap.value).set(sensor.id, merged)
   }
 
   function removeSensor(id: number) {
