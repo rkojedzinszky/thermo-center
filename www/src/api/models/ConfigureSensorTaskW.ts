@@ -30,7 +30,7 @@ export interface ConfigureSensorTaskW {
      * @type {string}
      * @memberof ConfigureSensorTaskW
      */
-    sensorName: string;
+    sensorName?: string | null;
 }
 
 /**
@@ -38,7 +38,6 @@ export interface ConfigureSensorTaskW {
  */
 export function instanceOfConfigureSensorTaskW(value: object): value is ConfigureSensorTaskW {
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
-    if (!('sensorName' in value) || value['sensorName'] === undefined) return false;
     return true;
 }
 
@@ -53,7 +52,7 @@ export function ConfigureSensorTaskWFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'sensorId': json['sensor_id'],
-        'sensorName': json['sensor_name'],
+        'sensorName': json['sensor_name'] == null ? undefined : json['sensor_name'],
     };
 }
 

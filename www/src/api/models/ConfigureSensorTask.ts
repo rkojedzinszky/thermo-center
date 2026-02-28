@@ -72,7 +72,7 @@ export interface ConfigureSensorTask {
      * @type {string}
      * @memberof ConfigureSensorTask
      */
-    sensorName: string;
+    sensorName?: string | null;
 }
 
 /**
@@ -81,7 +81,6 @@ export interface ConfigureSensorTask {
 export function instanceOfConfigureSensorTask(value: object): value is ConfigureSensorTask {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
-    if (!('sensorName' in value) || value['sensorName'] === undefined) return false;
     return true;
 }
 
@@ -103,7 +102,7 @@ export function ConfigureSensorTaskFromJSONTyped(json: any, ignoreDiscriminator:
         'error': json['error'] == null ? undefined : json['error'],
         'id': json['id'],
         'sensorId': json['sensor_id'],
-        'sensorName': json['sensor_name'],
+        'sensorName': json['sensor_name'] == null ? undefined : json['sensor_name'],
     };
 }
 
