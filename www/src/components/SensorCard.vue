@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import type { THSensor } from '@/api'
 import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
+import { useResync } from '@/composables/useResync'
 
 const props = defineProps<{
   sensor: THSensor
@@ -17,8 +18,11 @@ const emit = defineEmits<{
 
 const flipped = ref(false)
 const { now } = useTimerSync()
+const sensorRef = computed(() => props.sensor)
+const { resyncDisabled, handleResync } = useResync(sensorRef)
 
 const isInactive = computed(() => checkInactive(props.sensor, now.value))
+const isInvalid = computed(() => props.sensor.valid === false)
 
 const ageLabel = computed(() => formatAge(props.sensor.lastTsf))
 
@@ -145,7 +149,6 @@ function onGripPointerDown(e: Event) {
             >
               ⠿
             </span>
-            <span v-if="isInactive" class="inactive-badge">Inactive</span>
           </div>
         </div>
         <div class="card-readings">
@@ -160,7 +163,16 @@ function onGripPointerDown(e: Event) {
           </div>
         </div>
         <div class="card-footer">
-          <span class="age-label" :class="{ stale: isInactive }">{{ ageLabel }}</span>
+          <button
+            v-if="isInvalid"
+            class="resync-button"
+            :disabled="resyncDisabled"
+            title="Request sensor resynchronization"
+            @click="handleResync"
+          >
+            ⚠ Resync
+          </button>
+          <span v-else class="age-label">{{ ageLabel }}</span>
           <span class="flip-hint">Click to flip</span>
         </div>
       </div>
@@ -271,20 +283,6 @@ function onGripPointerDown(e: Event) {
   min-width: 0;
 }
 
-.inactive-badge {
-  background: var(--color-inactive-badge);
-  border: 1px solid var(--color-inactive-badge-border);
-  border-radius: 0.35rem;
-  color: var(--color-inactive-badge-text);
-  font-size: 0.52rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 0.1rem 0.26rem;
-  text-transform: uppercase;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
 .card-readings {
   display: flex;
   flex-direction: column;
@@ -352,8 +350,9 @@ function onGripPointerDown(e: Event) {
   flex: 1;
 }
 
-.age-label.stale {
-  color: var(--color-stale);
+.resync-button {
+  padding: 0.15rem 0.35rem;
+  flex: 1;
 }
 
 .flip-hint {

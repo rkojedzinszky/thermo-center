@@ -36,6 +36,14 @@ const noDataSensor: THSensor = {
   humidity: null,
 }
 
+const invalidSensor: THSensor = {
+  ...activeSensor,
+  id: 88,
+  name: 'Master Bedroom',
+  valid: false,
+  sensorResync: null,
+}
+
 beforeEach(() => {
   vi.useFakeTimers()
   vi.setSystemTime(NOW_UNIX * 1000)
@@ -129,24 +137,9 @@ describe('SensorCard', () => {
       expect(wrapper.find('.card-wrapper').classes()).toContain('inactive')
     })
 
-    it('shows "Inactive" badge on the front', () => {
-      const wrapper = mountCard(inactiveSensor)
-      expect(wrapper.find('.inactive-badge').exists()).toBe(true)
-    })
-
-    it('adds stale class to age label when inactive', () => {
-      const wrapper = mountCard(inactiveSensor)
-      expect(wrapper.find('.age-label').classes()).toContain('stale')
-    })
-
     it('does NOT add "inactive" class for an active sensor', () => {
       const wrapper = mountCard(activeSensor)
       expect(wrapper.find('.card-wrapper').classes()).not.toContain('inactive')
-    })
-
-    it('does NOT show "Inactive" badge for an active sensor', () => {
-      const wrapper = mountCard(activeSensor)
-      expect(wrapper.find('.inactive-badge').exists()).toBe(false)
     })
 
     it('marks sensor with null lastTsf as inactive', () => {
@@ -354,6 +347,46 @@ describe('SensorCard', () => {
       const wrapper = mountCard(activeSensor)
       const values = wrapper.findAll('.reading-value')
       expect(values).toHaveLength(2)
+    })
+  })
+
+  describe('resync button – invalid sensor', () => {
+    it('shows resync button when sensor has valid=false', () => {
+      const wrapper = mountCard(invalidSensor)
+      expect(wrapper.find('.resync-button').exists()).toBe(true)
+    })
+
+    it('does NOT show resync button when sensor has valid=true', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.resync-button').exists()).toBe(false)
+    })
+
+    it('shows age-label when sensor is valid', () => {
+      const wrapper = mountCard(activeSensor)
+      expect(wrapper.find('.age-label').exists()).toBe(true)
+    })
+
+    it('hides age-label when sensor is invalid', () => {
+      const wrapper = mountCard(invalidSensor)
+      expect(wrapper.find('.age-label').exists()).toBe(false)
+    })
+
+    it('resync button is enabled on initial render', () => {
+      const wrapper = mountCard(invalidSensor)
+      expect(wrapper.find('.resync-button').attributes('disabled')).toBeUndefined()
+    })
+
+    it('resync button has correct title attribute', () => {
+      const wrapper = mountCard(invalidSensor)
+      expect(wrapper.find('.resync-button').attributes('title')).toBe(
+        'Request sensor resynchronization',
+      )
+    })
+
+    it('displaying resync button does not affect card interaction', () => {
+      const wrapper = mountCard(invalidSensor)
+      expect(wrapper.find('.card-wrapper').exists()).toBe(true)
+      expect(wrapper.find('.card').classes()).not.toContain('flipped')
     })
   })
 })

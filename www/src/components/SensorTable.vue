@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { THSensor } from '@/api'
 import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
+import { useResyncMap } from '@/composables/useResync'
 
 const props = defineProps<{
   sensors: THSensor[]
@@ -12,6 +13,16 @@ const emit = defineEmits<{
 }>()
 
 const { now } = useTimerSync()
+const sensorsRef = ref(props.sensors)
+const { resyncDisabledMap, handleResync } = useResyncMap(sensorsRef)
+
+// Keep sensorsRef in sync with prop changes
+watch(
+  () => props.sensors,
+  (newSensors) => {
+    sensorsRef.value = newSensors
+  },
+)
 
 // ── Mouse drag ──────────────────────────────────────
 const dragIndex = ref<number | null>(null)
@@ -163,13 +174,18 @@ function cellValue(sensor: THSensor, key: string): string {
             </span>
           </td>
           <td v-for="col in columns" :key="col.key" class="td" :data-label="col.label">
-            <span
-              v-if="col.key === 'lastTsf'"
-              :class="{ 'stale-text': checkInactive(sensor, now) }"
+            <button
+              v-if="col.key === 'lastTsf' && sensor.valid === false"
+              class="resync-button"
+              :disabled="resyncDisabledMap.get(sensor.id) ?? false"
+              title="Request sensor resynchronization"
+              @click="handleResync(sensor, $event)"
             >
+              ⚠ Resync
+            </button>
+            <span v-else>
               {{ cellValue(sensor, col.key) }}
             </span>
-            <span v-else>{{ cellValue(sensor, col.key) }}</span>
           </td>
         </tr>
         <tr v-if="sensors.length === 0">
@@ -269,8 +285,8 @@ function cellValue(sensor: THSensor, key: string): string {
   touch-action: none;
 }
 
-.stale-text {
-  color: var(--color-stale);
+.resync-button {
+  padding: 0.25rem 0.5rem;
 }
 
 .empty-row {

@@ -129,10 +129,11 @@ describe('SensorTable', () => {
       expect(headerText).not.toContain('valid')
     })
 
-    it('does NOT render "sensor_resync" column', () => {
+    it('does NOT render "sensor_resync" field as data column', () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
-      const headerText = wrapper.findAll('th').map((th) => th.text().toLowerCase())
-      expect(headerText.join(' ')).not.toContain('resync')
+      const text = wrapper.find('tbody').text()
+      // sensor_resync values should not be rendered as cell content
+      expect(text).not.toContain('abc')
     })
   })
 
@@ -148,19 +149,6 @@ describe('SensorTable', () => {
       const wrapper = mount(SensorTable, { props: { sensors } })
       const rows = wrapper.findAll('tbody tr.table-row')
       expect(rows[0]!.classes()).not.toContain('inactive')
-    })
-
-    it('applies stale-text class to the age cell of inactive sensor', () => {
-      const wrapper = mount(SensorTable, { props: { sensors } })
-      const staleElements = wrapper.findAll('.stale-text')
-      expect(staleElements.length).toBeGreaterThan(0)
-    })
-
-    it('does not apply stale-text to active sensor age', () => {
-      const activeSensorOnly: THSensor[] = [sensors[0]!]
-      const wrapper = mount(SensorTable, { props: { sensors: activeSensorOnly } })
-      const staleElements = wrapper.findAll('.stale-text')
-      expect(staleElements).toHaveLength(0)
     })
   })
 
@@ -342,6 +330,46 @@ describe('SensorTable', () => {
       ]
       const wrapper = mount(SensorTable, { props: { sensors: s } })
       expect(wrapper.text()).toContain('1 minute ago')
+    })
+  })
+
+  describe('resync button – invalid sensor', () => {
+    it('shows resync button for sensor with valid=false', () => {
+      const wrapper = mount(SensorTable, { props: { sensors } })
+      const buttons = wrapper.findAll('.resync-button')
+      // Only the second sensor (index 1) has valid=false
+      expect(buttons).toHaveLength(1)
+    })
+
+    it('does NOT show resync button for sensor with valid=true', () => {
+      const activeSensors: THSensor[] = [sensors[0]!] // Only the active sensor
+      const wrapper = mount(SensorTable, { props: { sensors: activeSensors } })
+      const buttons = wrapper.findAll('.resync-button')
+      expect(buttons).toHaveLength(0)
+    })
+
+    it('resync button replaces age label in Last Data cell', () => {
+      const wrapper = mount(SensorTable, { props: { sensors } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const invalidRow = rows[1]! // Second sensor is invalid
+      // Last Data cell should have the button
+      expect(invalidRow.find('.resync-button').exists()).toBe(true)
+      expect(invalidRow.find('.resync-button').text()).toContain('Resync')
+    })
+
+    it('shows age label in Last Data cell for valid sensors', () => {
+      const wrapper = mount(SensorTable, { props: { sensors } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const activeRow = rows[0]! // First sensor is active/valid
+      // Last Data cell should show age, not button
+      expect(activeRow.find('.resync-button').exists()).toBe(false)
+      expect(activeRow.text()).toContain('45 seconds ago')
+    })
+
+    it('resync button has correct title attribute', () => {
+      const wrapper = mount(SensorTable, { props: { sensors } })
+      const button = wrapper.find('.resync-button')
+      expect(button.attributes('title')).toBe('Request sensor resynchronization')
     })
   })
 })

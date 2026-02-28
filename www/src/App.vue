@@ -136,4 +136,27 @@ html[data-theme='light'] {
   --color-table-row-hover: rgba(0, 0, 0, 0.02);
   --color-handle: #94a3b8;
 }
+
+/* ── Resync button (shared) ── */
+.resync-button {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #000000;
+  border-radius: 0.3rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.resync-button:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.35);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.resync-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>
