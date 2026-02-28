@@ -13,9 +13,9 @@ const { orderedSensors, loadSensors, updateSensor, reorder } = useSensors()
 const { session, logout: authLogout } = useAuth()
 const { pref, setTheme } = useTheme()
 
-type ViewMode = 'cards' | 'table'
+type ViewMode = 'table' | 'cards'
 const VIEW_MODE_KEY = 'sensor_view_mode'
-const viewMode = ref<ViewMode>((localStorage.getItem(VIEW_MODE_KEY) as ViewMode | null) ?? 'cards')
+const viewMode = ref<ViewMode>((localStorage.getItem(VIEW_MODE_KEY) as ViewMode | null) ?? 'table')
 
 function setViewMode(mode: ViewMode) {
   viewMode.value = mode
@@ -115,6 +115,19 @@ onUnmounted(() => {
         <div class="view-toggle" role="group" aria-label="View mode">
           <button
             class="toggle-btn"
+            :class="{ active: viewMode === 'table' }"
+            title="Table view"
+            aria-label="Table view"
+            @click="setViewMode('table')"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="4" width="20" height="3" rx="1" />
+              <rect x="2" y="10" width="20" height="3" rx="1" />
+              <rect x="2" y="16" width="20" height="3" rx="1" />
+            </svg>
+          </button>
+          <button
+            class="toggle-btn"
             :class="{ active: viewMode === 'cards' }"
             title="Card view"
             aria-label="Card view"
@@ -125,19 +138,6 @@ onUnmounted(() => {
               <rect x="13" y="2" width="9" height="9" rx="2" />
               <rect x="2" y="13" width="9" height="9" rx="2" />
               <rect x="13" y="13" width="9" height="9" rx="2" />
-            </svg>
-          </button>
-          <button
-            class="toggle-btn"
-            :class="{ active: viewMode === 'table' }"
-            title="Table view"
-            aria-label="Table view"
-            @click="setViewMode('table')"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="2" y="4" width="20" height="3" rx="1" />
-              <rect x="2" y="10" width="20" height="3" rx="1" />
-              <rect x="2" y="16" width="20" height="3" rx="1" />
             </svg>
           </button>
         </div>
