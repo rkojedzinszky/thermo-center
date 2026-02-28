@@ -169,6 +169,7 @@ watch(
 
         <div class="dialog-buttons">
           <button
+            v-if="!deleteConfirmation"
             class="btn btn-configure"
             :disabled="isConfiguringLoading || isSaving || isDeleting"
             @click="handleConfigure"
@@ -176,6 +177,7 @@ watch(
             Configure
           </button>
           <button
+            v-if="!deleteConfirmation"
             class="btn btn-save"
             :disabled="isConfiguringLoading || isSaving || isDeleting"
             @click="handleSave"
@@ -183,7 +185,7 @@ watch(
             {{ isSaving ? 'Saving...' : 'Save' }}
           </button>
 
-          <div style="flex: 1" />
+          <div v-if="!deleteConfirmation" style="flex: 1" />
 
           <button
             v-if="!deleteConfirmation"
@@ -195,20 +197,19 @@ watch(
           </button>
 
           <div v-if="deleteConfirmation" class="delete-confirmation">
-            <span class="delete-confirm-text">Are you sure?</span>
             <button class="btn btn-delete-confirm" :disabled="isDeleting" @click="handleDelete">
-              {{ isDeleting ? 'Deleting...' : 'Yes, delete' }}
+              {{ isDeleting ? 'Deleting...' : 'Confirm delete' }}
             </button>
             <button
               class="btn btn-delete-cancel"
               :disabled="isDeleting"
               @click="deleteConfirmation = false"
             >
-              No
+              Cancel
             </button>
           </div>
 
-          <button class="btn btn-cancel" @click="handleCancel">Cancel</button>
+          <button v-if="!deleteConfirmation" class="btn btn-cancel" @click="handleCancel">Cancel</button>
         </div>
       </div>
 
@@ -557,11 +558,7 @@ watch(
   display: flex;
   align-items: center;
   gap: 0.6rem;
-}
-
-.delete-confirm-text {
-  font-size: 0.9rem;
-  color: #fca5a5;
-  font-weight: 600;
+  width: 100%;
+  justify-content: space-between;
 }
 </style>
