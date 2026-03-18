@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import type { THSensor } from '@/api'
-import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
+import {
+  useTimerSync,
+  formatDecimal2,
+  formatInteger,
+  formatAge,
+  checkInactive,
+} from '@/composables/useSensorFormatting'
 import { useResyncMap } from '@/composables/useResync'
 import { useAuth } from '@/composables/useAuth'
 import SensorEditDialog from './SensorEditDialog.vue'
@@ -124,19 +130,19 @@ function cellValue(sensor: THSensor, key: string): string {
     case 'name':
       return sensor.name
     case 'temperature':
-      return sensor.temperature != null ? fmt(sensor.temperature) : '—'
+      return sensor.temperature != null ? formatDecimal2(sensor.temperature) : '—'
     case 'humidity':
-      return sensor.humidity != null ? fmt(sensor.humidity) : '—'
+      return sensor.humidity != null ? formatDecimal2(sensor.humidity) : '—'
     case 'vcc':
-      return sensor.vcc != null ? fmt(sensor.vcc) : '—'
+      return sensor.vcc != null ? formatDecimal2(sensor.vcc) : '—'
     case 'rssi':
-      return sensor.rssi != null ? fmt(sensor.rssi) : '—'
+      return sensor.rssi != null ? formatInteger(sensor.rssi) : '—'
     case 'lqi':
-      return sensor.lqi != null ? fmt(sensor.lqi) : '—'
+      return sensor.lqi != null ? formatInteger(sensor.lqi) : '—'
     case 'interval':
-      return sensor.interval != null ? fmt(sensor.interval) : '—'
+      return sensor.interval != null ? formatDecimal2(sensor.interval) : '—'
     case 'lastSeq':
-      return sensor.lastSeq != null ? String(sensor.lastSeq) : '—'
+      return sensor.lastSeq != null ? formatInteger(sensor.lastSeq) : '—'
     case 'lastTsf':
       return formatAge(sensor.lastTsf)
     default:
@@ -151,7 +157,26 @@ function cellValue(sensor: THSensor, key: string): string {
       <thead>
         <tr>
           <th class="th-drag" />
-          <th v-for="col in columns" :key="col.key" class="th">{{ col.label }}</th>
+          <th
+            v-for="col in columns"
+            :key="col.key"
+            class="th"
+            :class="{
+              numeric: [
+                'temperature',
+                'humidity',
+                'vcc',
+                'rssi',
+                'lqi',
+                'interval',
+                'lastSeq',
+                'lastTsf',
+              ].includes(col.key),
+              actions: col.key === 'actions',
+            }"
+          >
+            {{ col.label }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -181,7 +206,25 @@ function cellValue(sensor: THSensor, key: string): string {
               ⠿
             </span>
           </td>
-          <td v-for="col in columns" :key="col.key" class="td" :data-label="col.label">
+          <td
+            v-for="col in columns"
+            :key="col.key"
+            class="td"
+            :class="{
+              numeric: [
+                'temperature',
+                'humidity',
+                'vcc',
+                'rssi',
+                'lqi',
+                'interval',
+                'lastSeq',
+                'lastTsf',
+              ].includes(col.key),
+              actions: col.key === 'actions',
+            }"
+            :data-label="col.label"
+          >
             <button
               v-if="col.key === 'lastTsf' && sensor.valid === false"
               class="resync-button"
@@ -358,5 +401,31 @@ function cellValue(sensor: THSensor, key: string): string {
   font-style: italic;
   padding: 2rem;
   text-align: center;
+}
+
+/* Right-align numeric columns */
+.th.numeric {
+  text-align: right;
+  padding-right: 2rem;
+}
+
+.td.numeric {
+  text-align: right;
+  padding-right: 2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+/* Center-align Actions column */
+.th.actions {
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.td.actions {
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 </style>

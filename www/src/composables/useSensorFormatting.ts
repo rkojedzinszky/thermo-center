@@ -35,6 +35,16 @@ export function fmt(n: number): string {
   return parseFloat(n.toFixed(2)).toString()
 }
 
+/** Format a number to exactly 2 decimal places (for display stability). */
+export function formatDecimal2(n: number): string {
+  return n.toFixed(2)
+}
+
+/** Format a number as an integer (no decimal places). */
+export function formatInteger(n: number): string {
+  return Math.round(n).toString()
+}
+
 export function formatAge(tsf: number | null | undefined): string {
   if (tsf == null) return 'No data'
   const diff = Math.floor(now.value - tsf)

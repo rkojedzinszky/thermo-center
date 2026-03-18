@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { THSensor } from '@/api'
-import { useTimerSync, fmt, formatAge, checkInactive } from '@/composables/useSensorFormatting'
+import {
+  useTimerSync,
+  formatDecimal2,
+  formatInteger,
+  formatAge,
+  checkInactive,
+} from '@/composables/useSensorFormatting'
 import { useResync } from '@/composables/useResync'
 
 const props = defineProps<{
@@ -29,10 +35,10 @@ const isInvalid = computed(() => props.sensor.valid === false)
 const ageLabel = computed(() => formatAge(props.sensor.lastTsf))
 
 const temperature = computed(() =>
-  props.sensor.temperature != null ? `${fmt(props.sensor.temperature)} °C` : '—',
+  props.sensor.temperature != null ? `${formatDecimal2(props.sensor.temperature)} °C` : '—',
 )
 const humidity = computed(() =>
-  props.sensor.humidity != null ? `${fmt(props.sensor.humidity)} %` : '—',
+  props.sensor.humidity != null ? `${formatDecimal2(props.sensor.humidity)} %` : '—',
 )
 
 // Back-side fields: all excluding valid and sensorResync
@@ -44,11 +50,11 @@ const backFields = computed(() => {
     { label: 'Temperature', value: temperature.value },
     { label: 'Humidity', value: humidity.value },
     { label: 'Last Data', value: ageLabel.value },
-    { label: 'VCC', value: s.vcc != null ? `${fmt(s.vcc)} V` : '—' },
-    { label: 'RSSI', value: s.rssi != null ? `${fmt(s.rssi)} dBm` : '—' },
-    { label: 'LQI', value: s.lqi != null ? fmt(s.lqi) : '—' },
-    { label: 'Interval', value: s.interval != null ? `${fmt(s.interval)} s` : '—' },
-    { label: 'Seq', value: s.lastSeq != null ? String(s.lastSeq) : '—' },
+    { label: 'VCC', value: s.vcc != null ? `${formatDecimal2(s.vcc)} V` : '—' },
+    { label: 'RSSI', value: s.rssi != null ? `${formatInteger(s.rssi)} dBm` : '—' },
+    { label: 'LQI', value: s.lqi != null ? formatInteger(s.lqi) : '—' },
+    { label: 'Interval', value: s.interval != null ? `${formatDecimal2(s.interval)} s` : '—' },
+    { label: 'Seq', value: s.lastSeq != null ? formatInteger(s.lastSeq) : '—' },
   ]
 })
 
@@ -334,6 +340,7 @@ function onGripPointerDown(e: Event) {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  font-family: 'Courier New', monospace;
 }
 
 .reading-label {
@@ -429,6 +436,7 @@ function onGripPointerDown(e: Event) {
   white-space: nowrap;
   flex: 1;
   min-width: 0;
+  font-family: 'Courier New', monospace;
 }
 
 .back-footer {
