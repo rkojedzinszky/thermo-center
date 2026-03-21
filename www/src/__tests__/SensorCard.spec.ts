@@ -268,6 +268,7 @@ describe('SensorCard', () => {
       // Create a fake element that reports data-card-index="1"
       const fakeTarget = document.createElement('div')
       fakeTarget.setAttribute('data-card-index', '1')
+      const originalElementFromPoint = document.elementFromPoint
       document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
 
       await grip.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
@@ -278,7 +279,7 @@ describe('SensorCard', () => {
       expect(events).toBeTruthy()
       expect(events?.[0]).toEqual([1])
 
-      delete (document as any).elementFromPoint
+      document.elementFromPoint = originalElementFromPoint
     })
 
     it('does NOT emit dragOver when touchmove targets the same card index', async () => {
@@ -288,6 +289,7 @@ describe('SensorCard', () => {
       // Target reports same index (0)
       const fakeTarget = document.createElement('div')
       fakeTarget.setAttribute('data-card-index', '0')
+      const originalElementFromPoint = document.elementFromPoint
       document.elementFromPoint = vi.fn().mockReturnValue(fakeTarget)
 
       await grip.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
@@ -295,7 +297,7 @@ describe('SensorCard', () => {
 
       expect(wrapper.emitted('dragOver')).toBeFalsy()
 
-      delete (document as any).elementFromPoint
+      document.elementFromPoint = originalElementFromPoint
     })
   })
 
