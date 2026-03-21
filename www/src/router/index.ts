@@ -20,6 +20,12 @@ const router = createRouter({
       component: () => import('@/views/OverviewView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/heating',
+      name: 'heating',
+      component: () => import('@/views/ControlView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

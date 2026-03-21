@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useTheme } from '@/composables/useTheme'
+import { useAuth } from '@/composables/useAuth'
+import { useOverviewViewMode } from '@/composables/useOverviewViewMode'
 import { useWebSocketSync } from '@/composables/useWebSocketSync'
 import { PWA_UPDATE_EVENT, applyPwaUpdate } from '@/pwa'
+import AppHeader from '@/components/AppHeader.vue'
 
 // Initialises theme and keeps html[data-theme] in sync
-useTheme()
+const { pref, setTheme } = useTheme()
+const { session, logout: authLogout } = useAuth()
+const { viewMode, setViewMode } = useOverviewViewMode()
+const route = useRoute()
+const router = useRouter()
 // Manage websocket lifecycle based on auth state
 useWebSocketSync()
 
@@ -24,6 +32,29 @@ function installUpdate() {
   applyPwaUpdate()
 }
 
+const currentPage = computed<'overview' | 'heating'>(() =>
+  route.name === 'heating' ? 'heating' : 'overview',
+)
+
+const showShellHeader = computed(() => route.meta.requiresAuth === true)
+
+const headerTitle = computed(() =>
+  currentPage.value === 'heating' ? 'Heating Control' : 'Thermo Center',
+)
+
+const headerSubtitle = computed(() =>
+  currentPage.value === 'heating' ? 'Heating overview' : 'Sensor overview',
+)
+
+const headerIcon = computed(() => (currentPage.value === 'heating' ? '🔥' : '🌡️'))
+
+const showViewToggle = computed(() => currentPage.value === 'overview')
+
+async function logout() {
+  await authLogout()
+  router.push('/login')
+}
+
 onMounted(() => {
   window.addEventListener(PWA_UPDATE_EVENT, onPwaUpdateAvailable)
 })
@@ -34,7 +65,24 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <RouterView />
+  <div class="app-shell">
+    <AppHeader
+      v-if="showShellHeader"
+      :title="headerTitle"
+      :subtitle="headerSubtitle"
+      :icon="headerIcon"
+      :current-page="currentPage"
+      :show-view-toggle="showViewToggle"
+      :username="session?.username"
+      :current-theme="pref"
+      :view-mode="viewMode"
+      @logout="logout"
+      @theme-change="setTheme"
+      @view-mode-change="setViewMode"
+    />
+
+    <RouterView />
+  </div>
 
   <div v-if="showUpdateBanner" class="pwa-update-banner" role="status" aria-live="polite">
     <span>A new version is available.</span>
@@ -54,6 +102,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
   font-family:
     'Inter',
     system-ui,
@@ -62,6 +112,17 @@ body {
     'Segoe UI',
     sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  height: 100%;
+}
+
+.app-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── Dark theme (default) ── */

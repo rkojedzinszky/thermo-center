@@ -1,28 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import type { THSensor } from '@/api'
 import { useSensors } from '@/composables/useSensors'
-import { useAuth } from '@/composables/useAuth'
-import { useTheme } from '@/composables/useTheme'
+import { useOverviewViewMode } from '@/composables/useOverviewViewMode'
 import { subscribeToWebSocket } from '@/services/websocket'
 import SensorCard from '@/components/SensorCard.vue'
 import SensorTable from '@/components/SensorTable.vue'
 
-const router = useRouter()
 const { orderedSensors, loadSensors, updateSensor, updateSensorDirect, removeSensor, reorder } =
   useSensors()
-const { session, logout: authLogout } = useAuth()
-const { pref, setTheme } = useTheme()
-
-type ViewMode = 'table' | 'cards'
-const VIEW_MODE_KEY = 'sensor_view_mode'
-const viewMode = ref<ViewMode>((localStorage.getItem(VIEW_MODE_KEY) as ViewMode | null) ?? 'table')
-
-function setViewMode(mode: ViewMode) {
-  viewMode.value = mode
-  localStorage.setItem(VIEW_MODE_KEY, mode)
-}
+const { viewMode } = useOverviewViewMode()
 
 // Card drag-and-drop state
 const dragFromIndex = ref<number | null>(null)
@@ -54,11 +41,6 @@ function onSensorDeleted(deletedId: number) {
   removeSensor(deletedId)
 }
 
-async function logout() {
-  await authLogout()
-  router.push('/login')
-}
-
 let unsubscribeFromWebSocket: (() => void) | null = null
 
 onMounted(async () => {
@@ -80,87 +62,6 @@ onUnmounted(() => {
 
 <template>
   <div class="overview">
-    <!-- Header -->
-    <header class="overview-header">
-      <div class="header-left">
-        <span class="header-icon">🌡️</span>
-        <div>
-          <h1 class="header-title">Thermo Center</h1>
-          <p class="header-sub">
-            {{ orderedSensors.length }} sensor{{ orderedSensors.length !== 1 ? 's' : '' }}
-          </p>
-        </div>
-      </div>
-      <div class="header-right">
-        <!-- Theme toggle -->
-        <div class="view-toggle" role="group" aria-label="Theme">
-          <button
-            class="toggle-btn"
-            :class="{ active: pref === 'light' }"
-            title="Light theme"
-            aria-label="Light theme"
-            @click="setTheme('light')"
-          >
-            ☀️
-          </button>
-          <button
-            class="toggle-btn"
-            :class="{ active: pref === 'system' }"
-            title="System default"
-            aria-label="System default theme"
-            @click="setTheme('system')"
-          >
-            🖥️
-          </button>
-          <button
-            class="toggle-btn"
-            :class="{ active: pref === 'dark' }"
-            title="Dark theme"
-            aria-label="Dark theme"
-            @click="setTheme('dark')"
-          >
-            🌙
-          </button>
-        </div>
-
-        <!-- View toggle -->
-        <div class="view-toggle" role="group" aria-label="View mode">
-          <button
-            class="toggle-btn"
-            :class="{ active: viewMode === 'table' }"
-            title="Table view"
-            aria-label="Table view"
-            @click="setViewMode('table')"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="2" y="4" width="20" height="3" rx="1" />
-              <rect x="2" y="10" width="20" height="3" rx="1" />
-              <rect x="2" y="16" width="20" height="3" rx="1" />
-            </svg>
-          </button>
-          <button
-            class="toggle-btn"
-            :class="{ active: viewMode === 'cards' }"
-            title="Card view"
-            aria-label="Card view"
-            @click="setViewMode('cards')"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="2" y="2" width="9" height="9" rx="2" />
-              <rect x="13" y="2" width="9" height="9" rx="2" />
-              <rect x="2" y="13" width="9" height="9" rx="2" />
-              <rect x="13" y="13" width="9" height="9" rx="2" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="user-info">
-          <span class="username">{{ session?.username }}</span>
-          <button class="logout-btn" @click="logout">Sign out</button>
-        </div>
-      </div>
-    </header>
-
     <!-- Main content -->
     <main class="overview-content">
       <!-- Cards view -->
@@ -199,126 +100,23 @@ onUnmounted(() => {
 
 <style scoped>
 .overview {
-  background: var(--color-bg);
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  color: var(--color-text);
-}
-
-/* Header */
-.overview-header {
-  align-items: center;
-  background: var(--color-surface);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.header-left {
-  align-items: center;
-  display: flex;
-  gap: 0.75rem;
-}
-
-.header-icon {
-  font-size: 2rem;
-}
-
-.header-title {
-  color: var(--color-text);
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.header-sub {
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.header-right {
-  align-items: center;
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.view-toggle {
-  display: flex;
-  background: var(--color-border);
-  border: 1px solid var(--color-border-strong);
-  border-radius: 0.6rem;
   overflow: hidden;
-}
-
-.toggle-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.9rem;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-
-.toggle-btn:hover {
-  background: var(--color-border-strong);
-  color: var(--color-text-secondary);
-}
-
-.toggle-btn.active {
-  background: var(--color-accent-bg);
-  color: var(--color-accent);
-}
-
-.user-info {
-  align-items: center;
-  display: flex;
-  gap: 0.75rem;
-}
-
-.username {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.logout-btn {
-  background: var(--color-error-bg);
-  border: 1px solid var(--color-error-border);
-  border-radius: 0.5rem;
-  color: var(--color-error);
-  cursor: pointer;
-  font-size: 0.82rem;
-  padding: 0.4rem 0.85rem;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
-}
-
-.logout-btn:hover {
-  filter: brightness(1.15);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* Content */
 .overview-content {
   flex: 1;
+  min-height: 0;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .cards-grid {
@@ -342,7 +140,11 @@ onUnmounted(() => {
 }
 
 .table-container {
-  max-width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .empty-state {

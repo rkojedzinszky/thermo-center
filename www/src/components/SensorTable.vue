@@ -282,8 +282,9 @@ function cellValue(sensor: THSensor, key: string): string {
 
 <style scoped>
 .table-wrapper {
-  width: 100%;
-  overflow-x: auto;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
   border-radius: 1rem;
   border: 1px solid var(--color-border);
   background: var(--color-table-bg);
@@ -295,6 +296,12 @@ function cellValue(sensor: THSensor, key: string): string {
   width: 100%;
   min-width: 700px;
   font-size: 0.875rem;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .th {

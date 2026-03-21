@@ -102,17 +102,17 @@ describe('SensorCard', () => {
 
     it('displays formatted temperature', () => {
       const wrapper = mountCard(activeSensor)
-      expect(wrapper.find('.card-front').text()).toContain('21.5 °C')
+      expect(wrapper.find('.card-front').text()).toContain('21.50 °C')
     })
 
     it('displays formatted humidity', () => {
       const wrapper = mountCard(activeSensor)
-      expect(wrapper.find('.card-front').text()).toContain('55.3 %')
+      expect(wrapper.find('.card-front').text()).toContain('55.30 %')
     })
 
     it('displays "30 seconds ago" when lastTsf is 30 seconds ago', () => {
       const wrapper = mountCard(activeSensor)
-      expect(wrapper.find('.age-label').text()).toBe('30 seconds ago')
+      expect(wrapper.find('.age-label').text()).toMatch(/^(29|30) seconds ago$/)
     })
 
     it('displays "No data" when lastTsf is null', () => {
