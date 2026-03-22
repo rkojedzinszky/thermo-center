@@ -16,7 +16,7 @@ const target = computed(() =>
 )
 
 const difference = computed(() => {
-  if (props.control.temperature == null || props.control.targetTemp == null) return null
+  if (props.control.temperature == null || props.control.targetTemp == null) return '—'
   const diff = props.control.targetTemp - props.control.temperature
   return diff >= 0 ? `+${formatDecimal2(diff)}` : formatDecimal2(diff)
 })
@@ -42,7 +42,7 @@ const difference = computed(() => {
       </div>
     </div>
 
-    <div v-if="difference !== null" class="card-diff">
+    <div class="card-diff">
       <span class="diff-label">Difference</span>
       <span
         class="diff-value"
