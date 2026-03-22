@@ -5,6 +5,13 @@ import type { THSensor } from '@/api'
 const ORDER_KEY = 'sensor_order'
 
 const sensorsMap = ref<Map<number, THSensor>>(new Map())
+const orderedSensors = computed<THSensor[]>(() => {
+  const all = Array.from(sensorsMap.value.values())
+  const known = orderIds.value.filter((id) => sensorsMap.value.has(id))
+  const unknownIds = all.map((s) => s.id).filter((id) => !orderIds.value.includes(id))
+  const merged = [...known, ...unknownIds]
+  return merged.map((id) => sensorsMap.value.get(id)!).filter(Boolean)
+})
 const orderIds = ref<number[]>(loadOrder())
 
 function loadOrder(): number[] {
@@ -25,14 +32,6 @@ function saveOrder(ids: number[]) {
 }
 
 export function useSensors() {
-  const orderedSensors = computed<THSensor[]>(() => {
-    const all = Array.from(sensorsMap.value.values())
-    const known = orderIds.value.filter((id) => sensorsMap.value.has(id))
-    const unknownIds = all.map((s) => s.id).filter((id) => !orderIds.value.includes(id))
-    const merged = [...known, ...unknownIds]
-    return merged.map((id) => sensorsMap.value.get(id)!).filter(Boolean)
-  })
-
   async function loadSensors() {
     const result = await api.listTHSensor()
     const items: THSensor[] = result.objects ?? []
