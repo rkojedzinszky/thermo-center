@@ -84,7 +84,6 @@ const difference = computed(() => {
 }
 
 .control-name {
-  color: var(--color-text);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -155,7 +154,6 @@ const difference = computed(() => {
 }
 
 .diff-value {
-  color: var(--color-text);
   font-size: 0.95rem;
   font-weight: 700;
   font-family: 'Courier New', monospace;

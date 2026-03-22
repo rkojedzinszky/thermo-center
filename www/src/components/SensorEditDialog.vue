@@ -331,7 +331,6 @@ watch(
   margin: 0 0 1rem 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--color-text);
 }
 
 .error-message {
@@ -354,7 +353,6 @@ watch(
 .form-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-text);
 }
 
 .form-input {
@@ -362,7 +360,6 @@ watch(
   background: var(--color-input-bg);
   border: 1px solid var(--color-border-input);
   border-radius: 0.4rem;
-  color: var(--color-text);
   font-family: inherit;
   font-size: 0.95rem;
 }
@@ -418,7 +415,6 @@ watch(
 }
 
 .status-value {
-  color: var(--color-text);
   flex: 1;
   word-break: break-word;
 }

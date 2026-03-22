@@ -123,6 +123,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: var(--color-text);
 }
 
 /* ── Dark theme (default) ── */
@@ -276,7 +277,6 @@ html[data-theme='light'] {
   border: 1px solid var(--color-accent-border);
   border-radius: 0.75rem;
   background: var(--color-surface-solid);
-  color: var(--color-text);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
@@ -285,7 +285,6 @@ html[data-theme='light'] {
   border: 1px solid var(--color-border-strong);
   border-radius: 0.5rem;
   background: transparent;
-  color: var(--color-text);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;

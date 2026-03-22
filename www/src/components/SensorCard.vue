@@ -294,12 +294,10 @@ function onGripPointerDown(e: Event) {
 }
 
 .card-edit-btn:hover {
-  color: var(--color-text);
   background: rgba(99, 102, 241, 0.15);
 }
 
 .sensor-name {
-  color: var(--color-text);
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.01em;

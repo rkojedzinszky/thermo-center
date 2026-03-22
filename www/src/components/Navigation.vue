@@ -117,13 +117,11 @@ if (typeof window !== 'undefined') {
 
 .menu-button:hover {
   background: rgba(0, 0, 0, 0.04);
-  color: var(--color-text);
 }
 
 .menu-button.active {
   background: rgba(99, 102, 241, 0.1);
   border-color: rgba(99, 102, 241, 0.3);
-  color: var(--color-text);
 }
 
 .menu-dropdown {
@@ -156,12 +154,10 @@ if (typeof window !== 'undefined') {
 
 .menu-link:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: var(--color-text);
 }
 
 .menu-link.active {
   background: rgba(99, 102, 241, 0.1);
-  color: var(--color-text);
 }
 
 .menu-icon {

@@ -121,13 +121,9 @@ function handleViewModeChange(mode: 'table' | 'cards') {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rex;
+  padding: 0.8rem;
   border-bottom: 1px solid var(--color-border);
-  background: linear-gradient(
-    to right,
-    rgba(var(--color-card-a-rgb), 0.3),
-    rgba(var(--color-card-b-rgb), 0.2)
-  );
+  background: linear-gradient(to right, var(--color-card-a), var(--color-card-b));
   backdrop-filter: blur(4px);
 }
 
@@ -188,12 +184,10 @@ function handleViewModeChange(mode: 'table' | 'cards') {
 
 .btn:hover {
   background: rgba(0, 0, 0, 0.04);
-  color: var(--color-text);
 }
 
 .btn.active {
   background: var(--color-accent-bg, rgba(99, 102, 241, 0.1));
-  color: var(--color-text);
 }
 
 .user-menu {
@@ -219,7 +213,6 @@ function handleViewModeChange(mode: 'table' | 'cards') {
 
 .logout-btn:hover {
   background: rgba(0, 0, 0, 0.04);
-  border-color: var(--color-text);
 }
 
 @media (max-width: 768px) {
