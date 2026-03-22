@@ -8,7 +8,6 @@ Name | Type
 ------------ | -------------
 `control` | string
 `daytype` | string
-`id` | number
 `start` | string
 `targetTemp` | number
 
@@ -21,7 +20,6 @@ import type { ProfileW } from ''
 const example = {
   "control": null,
   "daytype": null,
-  "id": null,
   "start": null,
   "targetTemp": null,
 } satisfies ProfileW

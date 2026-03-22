@@ -7,7 +7,7 @@
 Name | Type
 ------------ | -------------
 `meta` | [ListMeta](ListMeta.md)
-`objects` | [Array&lt;ProfileW&gt;](ProfileW.md)
+`objects` | [Array&lt;Profile&gt;](Profile.md)
 
 ## Example
 

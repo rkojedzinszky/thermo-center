@@ -6,7 +6,6 @@
 
 Name | Type
 ------------ | -------------
-`id` | number
 `name` | string
 
 ## Example
@@ -16,7 +15,6 @@ import type { DayTypeW } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
   "name": null,
 } satisfies DayTypeW
 

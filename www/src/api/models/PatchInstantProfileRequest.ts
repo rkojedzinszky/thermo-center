@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface PatchInstantProfileRequest {
     /**
-     * ID
-     * @type {number}
-     * @memberof PatchInstantProfileRequest
-     */
-    id?: number;
-    /**
      * name
      * @type {string}
      * @memberof PatchInstantProfileRequest
@@ -56,7 +50,6 @@ export function PatchInstantProfileRequestFromJSONTyped(json: any, ignoreDiscrim
     }
     return {
         
-        'id': json['id'] == null ? undefined : json['id'],
         'name': json['name'] == null ? undefined : json['name'],
         'active': json['active'] == null ? undefined : json['active'],
     };
@@ -73,7 +66,6 @@ export function PatchInstantProfileRequestToJSONTyped(value?: PatchInstantProfil
 
     return {
         
-        'id': value['id'],
         'name': value['name'],
         'active': value['active'],
     };

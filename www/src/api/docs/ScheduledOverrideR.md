@@ -1,28 +1,22 @@
 
-# ControlW
+# ScheduledOverrideR
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`kp` | number
-`ki` | number
-`kd` | number
-`intabsmax` | number
+`id` | number
 
 ## Example
 
 ```typescript
-import type { ControlW } from ''
+import type { ScheduledOverrideR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "kp": null,
-  "ki": null,
-  "kd": null,
-  "intabsmax": null,
-} satisfies ControlW
+  "id": null,
+} satisfies ScheduledOverrideR
 
 console.log(example)
 
@@ -31,7 +25,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as ControlW
+const exampleParsed = JSON.parse(exampleJSON) as ScheduledOverrideR
 console.log(exampleParsed)
 ```
 

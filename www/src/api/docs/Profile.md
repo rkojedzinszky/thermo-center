@@ -1,28 +1,30 @@
 
-# ControlW
+# Profile
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`kp` | number
-`ki` | number
-`kd` | number
-`intabsmax` | number
+`id` | number
+`control` | string
+`daytype` | string
+`start` | string
+`targetTemp` | number
 
 ## Example
 
 ```typescript
-import type { ControlW } from ''
+import type { Profile } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "kp": null,
-  "ki": null,
-  "kd": null,
-  "intabsmax": null,
-} satisfies ControlW
+  "id": null,
+  "control": null,
+  "daytype": null,
+  "start": null,
+  "targetTemp": null,
+} satisfies Profile
 
 console.log(example)
 
@@ -31,7 +33,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as ControlW
+const exampleParsed = JSON.parse(exampleJSON) as Profile
 console.log(exampleParsed)
 ```
 

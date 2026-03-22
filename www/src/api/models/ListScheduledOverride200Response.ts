@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ScheduledOverrideW } from './ScheduledOverrideW';
+import type { ScheduledOverride } from './ScheduledOverride';
 import {
-    ScheduledOverrideWFromJSON,
-    ScheduledOverrideWFromJSONTyped,
-    ScheduledOverrideWToJSON,
-    ScheduledOverrideWToJSONTyped,
-} from './ScheduledOverrideW';
+    ScheduledOverrideFromJSON,
+    ScheduledOverrideFromJSONTyped,
+    ScheduledOverrideToJSON,
+    ScheduledOverrideToJSONTyped,
+} from './ScheduledOverride';
 import type { ListMeta } from './ListMeta';
 import {
     ListMetaFromJSON,
@@ -42,10 +42,10 @@ export interface ListScheduledOverride200Response {
     meta: ListMeta;
     /**
      * 
-     * @type {Array<ScheduledOverrideW>}
+     * @type {Array<ScheduledOverride>}
      * @memberof ListScheduledOverride200Response
      */
-    objects: Array<ScheduledOverrideW>;
+    objects: Array<ScheduledOverride>;
 }
 
 /**
@@ -68,7 +68,7 @@ export function ListScheduledOverride200ResponseFromJSONTyped(json: any, ignoreD
     return {
         
         'meta': ListMetaFromJSON(json['meta']),
-        'objects': ((json['objects'] as Array<any>).map(ScheduledOverrideWFromJSON)),
+        'objects': ((json['objects'] as Array<any>).map(ScheduledOverrideFromJSON)),
     };
 }
 
@@ -84,7 +84,7 @@ export function ListScheduledOverride200ResponseToJSONTyped(value?: ListSchedule
     return {
         
         'meta': ListMetaToJSON(value['meta']),
-        'objects': ((value['objects'] as Array<any>).map(ScheduledOverrideWToJSON)),
+        'objects': ((value['objects'] as Array<any>).map(ScheduledOverrideToJSON)),
     };
 }
 

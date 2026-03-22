@@ -7,7 +7,7 @@
 Name | Type
 ------------ | -------------
 `meta` | [ListMeta](ListMeta.md)
-`objects` | [Array&lt;ScheduledOverrideW&gt;](ScheduledOverrideW.md)
+`objects` | [Array&lt;ScheduledOverride&gt;](ScheduledOverride.md)
 
 ## Example
 

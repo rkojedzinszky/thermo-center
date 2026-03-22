@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ProfileW } from './ProfileW';
+import type { Profile } from './Profile';
 import {
-    ProfileWFromJSON,
-    ProfileWFromJSONTyped,
-    ProfileWToJSON,
-    ProfileWToJSONTyped,
-} from './ProfileW';
+    ProfileFromJSON,
+    ProfileFromJSONTyped,
+    ProfileToJSON,
+    ProfileToJSONTyped,
+} from './Profile';
 import type { ListMeta } from './ListMeta';
 import {
     ListMetaFromJSON,
@@ -42,10 +42,10 @@ export interface ListProfile200Response {
     meta: ListMeta;
     /**
      * 
-     * @type {Array<ProfileW>}
+     * @type {Array<Profile>}
      * @memberof ListProfile200Response
      */
-    objects: Array<ProfileW>;
+    objects: Array<Profile>;
 }
 
 /**
@@ -68,7 +68,7 @@ export function ListProfile200ResponseFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'meta': ListMetaFromJSON(json['meta']),
-        'objects': ((json['objects'] as Array<any>).map(ProfileWFromJSON)),
+        'objects': ((json['objects'] as Array<any>).map(ProfileFromJSON)),
     };
 }
 
@@ -84,7 +84,7 @@ export function ListProfile200ResponseToJSONTyped(value?: ListProfile200Response
     return {
         
         'meta': ListMetaToJSON(value['meta']),
-        'objects': ((value['objects'] as Array<any>).map(ProfileWToJSON)),
+        'objects': ((value['objects'] as Array<any>).map(ProfileToJSON)),
     };
 }
 

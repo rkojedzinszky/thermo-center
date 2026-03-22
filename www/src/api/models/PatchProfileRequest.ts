@@ -32,12 +32,6 @@ export interface PatchProfileRequest {
      */
     daytype?: string;
     /**
-     * ID
-     * @type {number}
-     * @memberof PatchProfileRequest
-     */
-    id?: number;
-    /**
      * start
      * @type {string}
      * @memberof PatchProfileRequest
@@ -70,7 +64,6 @@ export function PatchProfileRequestFromJSONTyped(json: any, ignoreDiscriminator:
         
         'control': json['control'] == null ? undefined : json['control'],
         'daytype': json['daytype'] == null ? undefined : json['daytype'],
-        'id': json['id'] == null ? undefined : json['id'],
         'start': json['start'] == null ? undefined : json['start'],
         'targetTemp': json['target_temp'] == null ? undefined : json['target_temp'],
     };
@@ -89,7 +82,6 @@ export function PatchProfileRequestToJSONTyped(value?: PatchProfileRequest | nul
         
         'control': value['control'],
         'daytype': value['daytype'],
-        'id': value['id'],
         'start': value['start'],
         'target_temp': value['targetTemp'],
     };

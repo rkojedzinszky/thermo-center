@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface PatchControlRequest {
     /**
-     * ID
-     * @type {number}
-     * @memberof PatchControlRequest
-     */
-    id?: number;
-    /**
      * kp
      * @type {number}
      * @memberof PatchControlRequest
@@ -68,7 +62,6 @@ export function PatchControlRequestFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'id': json['id'] == null ? undefined : json['id'],
         'kp': json['kp'] == null ? undefined : json['kp'],
         'ki': json['ki'] == null ? undefined : json['ki'],
         'kd': json['kd'] == null ? undefined : json['kd'],
@@ -87,7 +80,6 @@ export function PatchControlRequestToJSONTyped(value?: PatchControlRequest | nul
 
     return {
         
-        'id': value['id'],
         'kp': value['kp'],
         'ki': value['ki'],
         'kd': value['kd'],

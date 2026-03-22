@@ -16,55 +16,63 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ProfileW
+ * @interface Profile
  */
-export interface ProfileW {
+export interface Profile {
+    /**
+     * ID
+     * @type {number}
+     * @memberof Profile
+     */
+    id: number;
     /**
      * NO_DESCRIPTION
      * @type {string}
-     * @memberof ProfileW
+     * @memberof Profile
      */
     control: string;
     /**
      * NO_DESCRIPTION
      * @type {string}
-     * @memberof ProfileW
+     * @memberof Profile
      */
     daytype: string;
     /**
      * start
      * @type {string}
-     * @memberof ProfileW
+     * @memberof Profile
      */
     start: string;
     /**
      * target temp
      * @type {number}
-     * @memberof ProfileW
+     * @memberof Profile
      */
     targetTemp?: number | null;
 }
 
 /**
- * Check if a given object implements the ProfileW interface.
+ * Check if a given object implements the Profile interface.
  */
-export function instanceOfProfileW(value: object): value is ProfileW {
+export function instanceOfProfile(value: object): value is Profile {
+    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('control' in value) || value['control'] === undefined) return false;
     if (!('daytype' in value) || value['daytype'] === undefined) return false;
     if (!('start' in value) || value['start'] === undefined) return false;
     return true;
 }
 
-export function ProfileWFromJSON(json: any): ProfileW {
-    return ProfileWFromJSONTyped(json, false);
+export function ProfileFromJSON(json: any): Profile {
+    return ProfileFromJSONTyped(json, false);
 }
 
-export function ProfileWFromJSONTyped(json: any, ignoreDiscriminator: boolean): ProfileW {
+export function ProfileFromJSONTyped(json: any, ignoreDiscriminator: boolean): Profile {
     if (json == null) {
         return json;
     }
     return {
         
+        'id': json['id'],
         'control': json['control'],
         'daytype': json['daytype'],
         'start': json['start'],
@@ -72,17 +80,18 @@ export function ProfileWFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     };
 }
 
-export function ProfileWToJSON(json: any): ProfileW {
-    return ProfileWToJSONTyped(json, false);
+export function ProfileToJSON(json: any): Profile {
+    return ProfileToJSONTyped(json, false);
 }
 
-export function ProfileWToJSONTyped(value?: ProfileW | null, ignoreDiscriminator: boolean = false): any {
+export function ProfileToJSONTyped(value?: Profile | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
+        'id': value['id'],
         'control': value['control'],
         'daytype': value['daytype'],
         'start': value['start'],

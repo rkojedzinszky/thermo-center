@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface ControlW {
     /**
-     * ID
-     * @type {number}
-     * @memberof ControlW
-     */
-    id: number;
-    /**
      * kp
      * @type {number}
      * @memberof ControlW
@@ -55,7 +49,6 @@ export interface ControlW {
  * Check if a given object implements the ControlW interface.
  */
 export function instanceOfControlW(value: object): value is ControlW {
-    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('kp' in value) || value['kp'] === undefined) return false;
     if (!('ki' in value) || value['ki'] === undefined) return false;
     if (!('kd' in value) || value['kd'] === undefined) return false;
@@ -72,7 +65,6 @@ export function ControlWFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'id': json['id'],
         'kp': json['kp'],
         'ki': json['ki'],
         'kd': json['kd'],
@@ -91,7 +83,6 @@ export function ControlWToJSONTyped(value?: ControlW | null, ignoreDiscriminator
 
     return {
         
-        'id': value['id'],
         'kp': value['kp'],
         'ki': value['ki'],
         'kd': value['kd'],

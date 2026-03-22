@@ -7,7 +7,7 @@
 Name | Type
 ------------ | -------------
 `meta` | [ListMeta](ListMeta.md)
-`objects` | [Array&lt;DayTypeW&gt;](DayTypeW.md)
+`objects` | [Array&lt;DayType&gt;](DayType.md)
 
 ## Example
 

@@ -6,7 +6,6 @@
 
 Name | Type
 ------------ | -------------
-`id` | number
 `kp` | number
 `ki` | number
 `kd` | number
@@ -19,7 +18,6 @@ import type { PatchControlRequest } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
   "kp": null,
   "ki": null,
   "kd": null,

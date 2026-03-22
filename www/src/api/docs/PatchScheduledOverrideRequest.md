@@ -7,7 +7,6 @@
 Name | Type
 ------------ | -------------
 `control` | string
-`id` | number
 `start` | Date
 `end` | Date
 `targetTemp` | number
@@ -20,7 +19,6 @@ import type { PatchScheduledOverrideRequest } from ''
 // TODO: Update the object below with actual values
 const example = {
   "control": null,
-  "id": null,
   "start": null,
   "end": null,
   "targetTemp": null,

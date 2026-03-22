@@ -187,7 +187,7 @@ No authorization required
 
 ## createDayType
 
-> DayTypeW createDayType(dayTypeW)
+> DayType createDayType(dayTypeW)
 
 Create DayType
 
@@ -230,7 +230,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**DayTypeW**](DayTypeW.md)
+[**DayType**](DayType.md)
 
 ### Authorization
 
@@ -319,7 +319,7 @@ No authorization required
 
 ## createProfile
 
-> ProfileW createProfile(profileW)
+> Profile createProfile(profileW)
 
 Create Profile
 
@@ -362,7 +362,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ProfileW**](ProfileW.md)
+[**Profile**](Profile.md)
 
 ### Authorization
 
@@ -385,7 +385,7 @@ No authorization required
 
 ## createScheduledOverride
 
-> ScheduledOverrideW createScheduledOverride(scheduledOverrideW)
+> ScheduledOverride createScheduledOverride(scheduledOverrideW)
 
 Create ScheduledOverride
 
@@ -428,7 +428,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ScheduledOverrideW**](ScheduledOverrideW.md)
+[**ScheduledOverride**](ScheduledOverride.md)
 
 ### Authorization
 
@@ -1186,7 +1186,7 @@ No authorization required
 
 ## getDayType
 
-> DayTypeW getDayType(id)
+> DayType getDayType(id)
 
 Get a single DayType by primary key
 
@@ -1229,7 +1229,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**DayTypeW**](DayTypeW.md)
+[**DayType**](DayType.md)
 
 ### Authorization
 
@@ -1253,7 +1253,7 @@ No authorization required
 
 ## getInstantProfile
 
-> InstantProfileW getInstantProfile(id)
+> InstantProfile getInstantProfile(id)
 
 Get a single InstantProfile by primary key
 
@@ -1296,7 +1296,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**InstantProfileW**](InstantProfileW.md)
+[**InstantProfile**](InstantProfile.md)
 
 ### Authorization
 
@@ -1320,7 +1320,7 @@ No authorization required
 
 ## getProfile
 
-> ProfileW getProfile(id)
+> Profile getProfile(id)
 
 Get a single Profile by primary key
 
@@ -1363,7 +1363,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ProfileW**](ProfileW.md)
+[**Profile**](Profile.md)
 
 ### Authorization
 
@@ -1387,7 +1387,7 @@ No authorization required
 
 ## getScheduledOverride
 
-> ScheduledOverrideW getScheduledOverride(id)
+> ScheduledOverride getScheduledOverride(id)
 
 Get a single ScheduledOverride by primary key
 
@@ -1430,7 +1430,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ScheduledOverrideW**](ScheduledOverrideW.md)
+[**ScheduledOverride**](ScheduledOverride.md)
 
 ### Authorization
 
@@ -2340,7 +2340,7 @@ No authorization required
 
 ## patchDayType
 
-> DayTypeW patchDayType(id, patchDayTypeRequest)
+> DayType patchDayType(id, patchDayTypeRequest)
 
 Patch a single DayType by primary key
 
@@ -2386,7 +2386,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**DayTypeW**](DayTypeW.md)
+[**DayType**](DayType.md)
 
 ### Authorization
 
@@ -2480,7 +2480,7 @@ No authorization required
 
 ## patchProfile
 
-> ProfileW patchProfile(id, patchProfileRequest)
+> Profile patchProfile(id, patchProfileRequest)
 
 Patch a single Profile by primary key
 
@@ -2526,7 +2526,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ProfileW**](ProfileW.md)
+[**Profile**](Profile.md)
 
 ### Authorization
 
@@ -2550,7 +2550,7 @@ No authorization required
 
 ## patchScheduledOverride
 
-> ScheduledOverrideW patchScheduledOverride(id, patchScheduledOverrideRequest)
+> ScheduledOverride patchScheduledOverride(id, patchScheduledOverrideRequest)
 
 Patch a single ScheduledOverride by primary key
 
@@ -2596,7 +2596,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ScheduledOverrideW**](ScheduledOverrideW.md)
+[**ScheduledOverride**](ScheduledOverride.md)
 
 ### Authorization
 
@@ -2760,7 +2760,7 @@ No authorization required
 
 ## putDayType
 
-> DayTypeW putDayType(id, dayTypeW)
+> DayType putDayType(id, dayTypeW)
 
 Overwrite a single DayType by primary key
 
@@ -2806,7 +2806,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**DayTypeW**](DayTypeW.md)
+[**DayType**](DayType.md)
 
 ### Authorization
 
@@ -2900,7 +2900,7 @@ No authorization required
 
 ## putProfile
 
-> ProfileW putProfile(id, profileW)
+> Profile putProfile(id, profileW)
 
 Overwrite a single Profile by primary key
 
@@ -2946,7 +2946,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ProfileW**](ProfileW.md)
+[**Profile**](Profile.md)
 
 ### Authorization
 
@@ -2970,7 +2970,7 @@ No authorization required
 
 ## putScheduledOverride
 
-> ScheduledOverrideW putScheduledOverride(id, scheduledOverrideW)
+> ScheduledOverride putScheduledOverride(id, scheduledOverrideW)
 
 Overwrite a single ScheduledOverride by primary key
 
@@ -3016,7 +3016,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**ScheduledOverrideW**](ScheduledOverrideW.md)
+[**ScheduledOverride**](ScheduledOverride.md)
 
 ### Authorization
 

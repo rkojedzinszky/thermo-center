@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { InstantProfileW } from './InstantProfileW';
+import type { InstantProfile } from './InstantProfile';
 import {
-    InstantProfileWFromJSON,
-    InstantProfileWFromJSONTyped,
-    InstantProfileWToJSON,
-    InstantProfileWToJSONTyped,
-} from './InstantProfileW';
+    InstantProfileFromJSON,
+    InstantProfileFromJSONTyped,
+    InstantProfileToJSON,
+    InstantProfileToJSONTyped,
+} from './InstantProfile';
 import type { ListMeta } from './ListMeta';
 import {
     ListMetaFromJSON,
@@ -42,10 +42,10 @@ export interface ListInstantProfile200Response {
     meta: ListMeta;
     /**
      * 
-     * @type {Array<InstantProfileW>}
+     * @type {Array<InstantProfile>}
      * @memberof ListInstantProfile200Response
      */
-    objects: Array<InstantProfileW>;
+    objects: Array<InstantProfile>;
 }
 
 /**
@@ -68,7 +68,7 @@ export function ListInstantProfile200ResponseFromJSONTyped(json: any, ignoreDisc
     return {
         
         'meta': ListMetaFromJSON(json['meta']),
-        'objects': ((json['objects'] as Array<any>).map(InstantProfileWFromJSON)),
+        'objects': ((json['objects'] as Array<any>).map(InstantProfileFromJSON)),
     };
 }
 
@@ -84,7 +84,7 @@ export function ListInstantProfile200ResponseToJSONTyped(value?: ListInstantProf
     return {
         
         'meta': ListMetaToJSON(value['meta']),
-        'objects': ((value['objects'] as Array<any>).map(InstantProfileWToJSON)),
+        'objects': ((value['objects'] as Array<any>).map(InstantProfileToJSON)),
     };
 }
 

@@ -55,6 +55,12 @@ export interface ControlR {
      * @memberof ControlR
      */
     age?: number | null;
+    /**
+     * ID
+     * @type {number}
+     * @memberof ControlR
+     */
+    id: number;
 }
 
 /**
@@ -63,6 +69,7 @@ export interface ControlR {
 export function instanceOfControlR(value: object): value is ControlR {
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
 
@@ -82,6 +89,7 @@ export function ControlRFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'targetTemp': json['target_temp'] == null ? undefined : json['target_temp'],
         'pidcontrol': json['pidcontrol'] == null ? undefined : json['pidcontrol'],
         'age': json['age'] == null ? undefined : json['age'],
+        'id': json['id'],
     };
 }
 
@@ -102,6 +110,7 @@ export function ControlRToJSONTyped(value?: ControlR | null, ignoreDiscriminator
         'target_temp': value['targetTemp'],
         'pidcontrol': value['pidcontrol'],
         'age': value['age'],
+        'id': value['id'],
     };
 }
 

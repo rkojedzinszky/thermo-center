@@ -26,12 +26,6 @@ export interface PatchScheduledOverrideRequest {
      */
     control?: string;
     /**
-     * ID
-     * @type {number}
-     * @memberof PatchScheduledOverrideRequest
-     */
-    id?: number;
-    /**
      * start
      * @type {Date}
      * @memberof PatchScheduledOverrideRequest
@@ -69,7 +63,6 @@ export function PatchScheduledOverrideRequestFromJSONTyped(json: any, ignoreDisc
     return {
         
         'control': json['control'] == null ? undefined : json['control'],
-        'id': json['id'] == null ? undefined : json['id'],
         'start': json['start'] == null ? undefined : (new Date(json['start'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
         'targetTemp': json['target_temp'] == null ? undefined : json['target_temp'],
@@ -88,7 +81,6 @@ export function PatchScheduledOverrideRequestToJSONTyped(value?: PatchScheduledO
     return {
         
         'control': value['control'],
-        'id': value['id'],
         'start': value['start'] == null ? value['start'] : value['start'].toISOString(),
         'end': value['end'] == null ? value['end'] : value['end'].toISOString(),
         'target_temp': value['targetTemp'],

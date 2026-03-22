@@ -16,39 +16,46 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ScheduledOverrideW
+ * @interface ScheduledOverride
  */
-export interface ScheduledOverrideW {
+export interface ScheduledOverride {
+    /**
+     * ID
+     * @type {number}
+     * @memberof ScheduledOverride
+     */
+    id: number;
     /**
      * NO_DESCRIPTION
      * @type {string}
-     * @memberof ScheduledOverrideW
+     * @memberof ScheduledOverride
      */
     control: string;
     /**
      * start
      * @type {Date}
-     * @memberof ScheduledOverrideW
+     * @memberof ScheduledOverride
      */
     start: Date;
     /**
      * end
      * @type {Date}
-     * @memberof ScheduledOverrideW
+     * @memberof ScheduledOverride
      */
     end: Date;
     /**
      * target temp
      * @type {number}
-     * @memberof ScheduledOverrideW
+     * @memberof ScheduledOverride
      */
     targetTemp: number;
 }
 
 /**
- * Check if a given object implements the ScheduledOverrideW interface.
+ * Check if a given object implements the ScheduledOverride interface.
  */
-export function instanceOfScheduledOverrideW(value: object): value is ScheduledOverrideW {
+export function instanceOfScheduledOverride(value: object): value is ScheduledOverride {
+    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('control' in value) || value['control'] === undefined) return false;
     if (!('start' in value) || value['start'] === undefined) return false;
     if (!('end' in value) || value['end'] === undefined) return false;
@@ -56,16 +63,17 @@ export function instanceOfScheduledOverrideW(value: object): value is ScheduledO
     return true;
 }
 
-export function ScheduledOverrideWFromJSON(json: any): ScheduledOverrideW {
-    return ScheduledOverrideWFromJSONTyped(json, false);
+export function ScheduledOverrideFromJSON(json: any): ScheduledOverride {
+    return ScheduledOverrideFromJSONTyped(json, false);
 }
 
-export function ScheduledOverrideWFromJSONTyped(json: any, ignoreDiscriminator: boolean): ScheduledOverrideW {
+export function ScheduledOverrideFromJSONTyped(json: any, ignoreDiscriminator: boolean): ScheduledOverride {
     if (json == null) {
         return json;
     }
     return {
         
+        'id': json['id'],
         'control': json['control'],
         'start': (new Date(json['start'])),
         'end': (new Date(json['end'])),
@@ -73,17 +81,18 @@ export function ScheduledOverrideWFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-export function ScheduledOverrideWToJSON(json: any): ScheduledOverrideW {
-    return ScheduledOverrideWToJSONTyped(json, false);
+export function ScheduledOverrideToJSON(json: any): ScheduledOverride {
+    return ScheduledOverrideToJSONTyped(json, false);
 }
 
-export function ScheduledOverrideWToJSONTyped(value?: ScheduledOverrideW | null, ignoreDiscriminator: boolean = false): any {
+export function ScheduledOverrideToJSONTyped(value?: ScheduledOverride | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
+        'id': value['id'],
         'control': value['control'],
         'start': value['start'].toISOString(),
         'end': value['end'].toISOString(),

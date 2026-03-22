@@ -19,7 +19,9 @@ import type {
   ConfigureSensorTaskW,
   Control,
   ControlW,
+  DayType,
   DayTypeW,
+  InstantProfile,
   InstantProfileW,
   ListControl200Response,
   ListDayType200Response,
@@ -36,7 +38,9 @@ import type {
   PatchProfileRequest,
   PatchScheduledOverrideRequest,
   PatchSensorRequest,
+  Profile,
   ProfileW,
+  ScheduledOverride,
   ScheduledOverrideW,
   Sensor,
   SensorResync,
@@ -55,8 +59,12 @@ import {
     ControlToJSON,
     ControlWFromJSON,
     ControlWToJSON,
+    DayTypeFromJSON,
+    DayTypeToJSON,
     DayTypeWFromJSON,
     DayTypeWToJSON,
+    InstantProfileFromJSON,
+    InstantProfileToJSON,
     InstantProfileWFromJSON,
     InstantProfileWToJSON,
     ListControl200ResponseFromJSON,
@@ -89,8 +97,12 @@ import {
     PatchScheduledOverrideRequestToJSON,
     PatchSensorRequestFromJSON,
     PatchSensorRequestToJSON,
+    ProfileFromJSON,
+    ProfileToJSON,
     ProfileWFromJSON,
     ProfileWToJSON,
+    ScheduledOverrideFromJSON,
+    ScheduledOverrideToJSON,
     ScheduledOverrideWFromJSON,
     ScheduledOverrideWToJSON,
     SensorFromJSON,
@@ -417,17 +429,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Create DayType
      */
-    async createDayTypeRaw(requestParameters: CreateDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayTypeW>> {
+    async createDayTypeRaw(requestParameters: CreateDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayType>> {
         const requestOptions = await this.createDayTypeRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeFromJSON(jsonValue));
     }
 
     /**
      * Create DayType
      */
-    async createDayType(requestParameters: CreateDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayTypeW> {
+    async createDayType(requestParameters: CreateDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayType> {
         const response = await this.createDayTypeRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -510,17 +522,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Create Profile
      */
-    async createProfileRaw(requestParameters: CreateProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProfileW>> {
+    async createProfileRaw(requestParameters: CreateProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Profile>> {
         const requestOptions = await this.createProfileRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileFromJSON(jsonValue));
     }
 
     /**
      * Create Profile
      */
-    async createProfile(requestParameters: CreateProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProfileW> {
+    async createProfile(requestParameters: CreateProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Profile> {
         const response = await this.createProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -557,17 +569,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Create ScheduledOverride
      */
-    async createScheduledOverrideRaw(requestParameters: CreateScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverrideW>> {
+    async createScheduledOverrideRaw(requestParameters: CreateScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverride>> {
         const requestOptions = await this.createScheduledOverrideRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideFromJSON(jsonValue));
     }
 
     /**
      * Create ScheduledOverride
      */
-    async createScheduledOverride(requestParameters: CreateScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverrideW> {
+    async createScheduledOverride(requestParameters: CreateScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverride> {
         const response = await this.createScheduledOverrideRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1094,17 +1106,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get a single DayType by primary key
      */
-    async getDayTypeRaw(requestParameters: GetDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayTypeW>> {
+    async getDayTypeRaw(requestParameters: GetDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayType>> {
         const requestOptions = await this.getDayTypeRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeFromJSON(jsonValue));
     }
 
     /**
      * Get a single DayType by primary key
      */
-    async getDayType(requestParameters: GetDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayTypeW> {
+    async getDayType(requestParameters: GetDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayType> {
         const response = await this.getDayTypeRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1139,17 +1151,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get a single InstantProfile by primary key
      */
-    async getInstantProfileRaw(requestParameters: GetInstantProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstantProfileW>> {
+    async getInstantProfileRaw(requestParameters: GetInstantProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstantProfile>> {
         const requestOptions = await this.getInstantProfileRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => InstantProfileWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstantProfileFromJSON(jsonValue));
     }
 
     /**
      * Get a single InstantProfile by primary key
      */
-    async getInstantProfile(requestParameters: GetInstantProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstantProfileW> {
+    async getInstantProfile(requestParameters: GetInstantProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstantProfile> {
         const response = await this.getInstantProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1184,17 +1196,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get a single Profile by primary key
      */
-    async getProfileRaw(requestParameters: GetProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProfileW>> {
+    async getProfileRaw(requestParameters: GetProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Profile>> {
         const requestOptions = await this.getProfileRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileFromJSON(jsonValue));
     }
 
     /**
      * Get a single Profile by primary key
      */
-    async getProfile(requestParameters: GetProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProfileW> {
+    async getProfile(requestParameters: GetProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Profile> {
         const response = await this.getProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1229,17 +1241,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get a single ScheduledOverride by primary key
      */
-    async getScheduledOverrideRaw(requestParameters: GetScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverrideW>> {
+    async getScheduledOverrideRaw(requestParameters: GetScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverride>> {
         const requestOptions = await this.getScheduledOverrideRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideFromJSON(jsonValue));
     }
 
     /**
      * Get a single ScheduledOverride by primary key
      */
-    async getScheduledOverride(requestParameters: GetScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverrideW> {
+    async getScheduledOverride(requestParameters: GetScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverride> {
         const response = await this.getScheduledOverrideRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1872,17 +1884,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Patch a single DayType by primary key
      */
-    async patchDayTypeRaw(requestParameters: PatchDayTypeOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayTypeW>> {
+    async patchDayTypeRaw(requestParameters: PatchDayTypeOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayType>> {
         const requestOptions = await this.patchDayTypeRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeFromJSON(jsonValue));
     }
 
     /**
      * Patch a single DayType by primary key
      */
-    async patchDayType(requestParameters: PatchDayTypeOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayTypeW> {
+    async patchDayType(requestParameters: PatchDayTypeOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayType> {
         const response = await this.patchDayTypeRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1981,17 +1993,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Patch a single Profile by primary key
      */
-    async patchProfileRaw(requestParameters: PatchProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProfileW>> {
+    async patchProfileRaw(requestParameters: PatchProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Profile>> {
         const requestOptions = await this.patchProfileRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileFromJSON(jsonValue));
     }
 
     /**
      * Patch a single Profile by primary key
      */
-    async patchProfile(requestParameters: PatchProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProfileW> {
+    async patchProfile(requestParameters: PatchProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Profile> {
         const response = await this.patchProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2036,17 +2048,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Patch a single ScheduledOverride by primary key
      */
-    async patchScheduledOverrideRaw(requestParameters: PatchScheduledOverrideOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverrideW>> {
+    async patchScheduledOverrideRaw(requestParameters: PatchScheduledOverrideOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverride>> {
         const requestOptions = await this.patchScheduledOverrideRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideFromJSON(jsonValue));
     }
 
     /**
      * Patch a single ScheduledOverride by primary key
      */
-    async patchScheduledOverride(requestParameters: PatchScheduledOverrideOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverrideW> {
+    async patchScheduledOverride(requestParameters: PatchScheduledOverrideOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverride> {
         const response = await this.patchScheduledOverrideRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2201,17 +2213,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Overwrite a single DayType by primary key
      */
-    async putDayTypeRaw(requestParameters: PutDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayTypeW>> {
+    async putDayTypeRaw(requestParameters: PutDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DayType>> {
         const requestOptions = await this.putDayTypeRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => DayTypeFromJSON(jsonValue));
     }
 
     /**
      * Overwrite a single DayType by primary key
      */
-    async putDayType(requestParameters: PutDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayTypeW> {
+    async putDayType(requestParameters: PutDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayType> {
         const response = await this.putDayTypeRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2310,17 +2322,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Overwrite a single Profile by primary key
      */
-    async putProfileRaw(requestParameters: PutProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProfileW>> {
+    async putProfileRaw(requestParameters: PutProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Profile>> {
         const requestOptions = await this.putProfileRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ProfileFromJSON(jsonValue));
     }
 
     /**
      * Overwrite a single Profile by primary key
      */
-    async putProfile(requestParameters: PutProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProfileW> {
+    async putProfile(requestParameters: PutProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Profile> {
         const response = await this.putProfileRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -2365,17 +2377,17 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Overwrite a single ScheduledOverride by primary key
      */
-    async putScheduledOverrideRaw(requestParameters: PutScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverrideW>> {
+    async putScheduledOverrideRaw(requestParameters: PutScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScheduledOverride>> {
         const requestOptions = await this.putScheduledOverrideRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideWFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ScheduledOverrideFromJSON(jsonValue));
     }
 
     /**
      * Overwrite a single ScheduledOverride by primary key
      */
-    async putScheduledOverride(requestParameters: PutScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverrideW> {
+    async putScheduledOverride(requestParameters: PutScheduledOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ScheduledOverride> {
         const response = await this.putScheduledOverrideRaw(requestParameters, initOverrides);
         return await response.value();
     }

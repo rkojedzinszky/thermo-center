@@ -12,6 +12,7 @@ Name | Type
 `targetTemp` | number
 `pidcontrol` | number
 `age` | number
+`id` | number
 
 ## Example
 
@@ -26,6 +27,7 @@ const example = {
   "targetTemp": null,
   "pidcontrol": null,
   "age": null,
+  "id": null,
 } satisfies ControlR
 
 console.log(example)

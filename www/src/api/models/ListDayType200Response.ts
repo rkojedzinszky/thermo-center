@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { DayTypeW } from './DayTypeW';
+import type { DayType } from './DayType';
 import {
-    DayTypeWFromJSON,
-    DayTypeWFromJSONTyped,
-    DayTypeWToJSON,
-    DayTypeWToJSONTyped,
-} from './DayTypeW';
+    DayTypeFromJSON,
+    DayTypeFromJSONTyped,
+    DayTypeToJSON,
+    DayTypeToJSONTyped,
+} from './DayType';
 import type { ListMeta } from './ListMeta';
 import {
     ListMetaFromJSON,
@@ -42,10 +42,10 @@ export interface ListDayType200Response {
     meta: ListMeta;
     /**
      * 
-     * @type {Array<DayTypeW>}
+     * @type {Array<DayType>}
      * @memberof ListDayType200Response
      */
-    objects: Array<DayTypeW>;
+    objects: Array<DayType>;
 }
 
 /**
@@ -68,7 +68,7 @@ export function ListDayType200ResponseFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'meta': ListMetaFromJSON(json['meta']),
-        'objects': ((json['objects'] as Array<any>).map(DayTypeWFromJSON)),
+        'objects': ((json['objects'] as Array<any>).map(DayTypeFromJSON)),
     };
 }
 
@@ -84,7 +84,7 @@ export function ListDayType200ResponseToJSONTyped(value?: ListDayType200Response
     return {
         
         'meta': ListMetaToJSON(value['meta']),
-        'objects': ((value['objects'] as Array<any>).map(DayTypeWToJSON)),
+        'objects': ((value['objects'] as Array<any>).map(DayTypeToJSON)),
     };
 }
 

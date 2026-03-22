@@ -6,7 +6,6 @@
 
 Name | Type
 ------------ | -------------
-`id` | number
 `name` | string
 `active` | boolean
 
@@ -17,7 +16,6 @@ import type { InstantProfileW } from ''
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
   "name": null,
   "active": null,
 } satisfies InstantProfileW

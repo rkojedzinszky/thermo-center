@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface PatchDayTypeRequest {
     /**
-     * ID
-     * @type {number}
-     * @memberof PatchDayTypeRequest
-     */
-    id?: number;
-    /**
      * name
      * @type {string}
      * @memberof PatchDayTypeRequest
@@ -50,7 +44,6 @@ export function PatchDayTypeRequestFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'id': json['id'] == null ? undefined : json['id'],
         'name': json['name'] == null ? undefined : json['name'],
     };
 }
@@ -66,7 +59,6 @@ export function PatchDayTypeRequestToJSONTyped(value?: PatchDayTypeRequest | nul
 
     return {
         
-        'id': value['id'],
         'name': value['name'],
     };
 }

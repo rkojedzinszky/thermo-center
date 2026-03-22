@@ -16,58 +16,67 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface InstantProfileW
+ * @interface InstantProfile
  */
-export interface InstantProfileW {
+export interface InstantProfile {
+    /**
+     * ID
+     * @type {number}
+     * @memberof InstantProfile
+     */
+    id: number;
     /**
      * name
      * @type {string}
-     * @memberof InstantProfileW
+     * @memberof InstantProfile
      */
     name: string;
     /**
      * active
      * @type {boolean}
-     * @memberof InstantProfileW
+     * @memberof InstantProfile
      */
     active: boolean;
 }
 
 /**
- * Check if a given object implements the InstantProfileW interface.
+ * Check if a given object implements the InstantProfile interface.
  */
-export function instanceOfInstantProfileW(value: object): value is InstantProfileW {
+export function instanceOfInstantProfile(value: object): value is InstantProfile {
+    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('active' in value) || value['active'] === undefined) return false;
     return true;
 }
 
-export function InstantProfileWFromJSON(json: any): InstantProfileW {
-    return InstantProfileWFromJSONTyped(json, false);
+export function InstantProfileFromJSON(json: any): InstantProfile {
+    return InstantProfileFromJSONTyped(json, false);
 }
 
-export function InstantProfileWFromJSONTyped(json: any, ignoreDiscriminator: boolean): InstantProfileW {
+export function InstantProfileFromJSONTyped(json: any, ignoreDiscriminator: boolean): InstantProfile {
     if (json == null) {
         return json;
     }
     return {
         
+        'id': json['id'],
         'name': json['name'],
         'active': json['active'],
     };
 }
 
-export function InstantProfileWToJSON(json: any): InstantProfileW {
-    return InstantProfileWToJSONTyped(json, false);
+export function InstantProfileToJSON(json: any): InstantProfile {
+    return InstantProfileToJSONTyped(json, false);
 }
 
-export function InstantProfileWToJSONTyped(value?: InstantProfileW | null, ignoreDiscriminator: boolean = false): any {
+export function InstantProfileToJSONTyped(value?: InstantProfile | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
+        'id': value['id'],
         'name': value['name'],
         'active': value['active'],
     };

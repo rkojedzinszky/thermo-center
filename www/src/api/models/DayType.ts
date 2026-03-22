@@ -16,50 +16,59 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface DayTypeW
+ * @interface DayType
  */
-export interface DayTypeW {
+export interface DayType {
+    /**
+     * ID
+     * @type {number}
+     * @memberof DayType
+     */
+    id: number;
     /**
      * name
      * @type {string}
-     * @memberof DayTypeW
+     * @memberof DayType
      */
     name: string;
 }
 
 /**
- * Check if a given object implements the DayTypeW interface.
+ * Check if a given object implements the DayType interface.
  */
-export function instanceOfDayTypeW(value: object): value is DayTypeW {
+export function instanceOfDayType(value: object): value is DayType {
+    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     return true;
 }
 
-export function DayTypeWFromJSON(json: any): DayTypeW {
-    return DayTypeWFromJSONTyped(json, false);
+export function DayTypeFromJSON(json: any): DayType {
+    return DayTypeFromJSONTyped(json, false);
 }
 
-export function DayTypeWFromJSONTyped(json: any, ignoreDiscriminator: boolean): DayTypeW {
+export function DayTypeFromJSONTyped(json: any, ignoreDiscriminator: boolean): DayType {
     if (json == null) {
         return json;
     }
     return {
         
+        'id': json['id'],
         'name': json['name'],
     };
 }
 
-export function DayTypeWToJSON(json: any): DayTypeW {
-    return DayTypeWToJSONTyped(json, false);
+export function DayTypeToJSON(json: any): DayType {
+    return DayTypeToJSONTyped(json, false);
 }
 
-export function DayTypeWToJSONTyped(value?: DayTypeW | null, ignoreDiscriminator: boolean = false): any {
+export function DayTypeToJSONTyped(value?: DayType | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
 
     return {
         
+        'id': value['id'],
         'name': value['name'],
     };
 }
