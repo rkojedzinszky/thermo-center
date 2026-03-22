@@ -2,35 +2,37 @@ import { ref, computed } from 'vue'
 import api from '@/utils/api'
 import type { Control } from '@/api'
 
+const controlsMap = ref<Map<number, Control>>(new Map())
+
+const orderedControls = computed<Control[]>(() => {
+  return Array.from(controlsMap.value.values())
+})
+
 export function useControls() {
-  const controlsMap = ref<Map<number, Control>>(new Map())
-
-  const orderedControls = computed<Control[]>(() => {
-    return Array.from(controlsMap.value.values())
-  })
-
   async function loadControls() {
     const result = await api.listControl()
     const items: Control[] = result.objects ?? []
     const newMap = new Map<number, Control>()
     for (const c of items) {
-      newMap.set(c.id, c)
+      newMap.set(c.sensorId, c)
     }
     controlsMap.value = newMap
   }
 
   function updateControlDirect(updated: Control) {
-    controlsMap.value.set(updated.id, updated)
+    controlsMap.value.set(updated.sensorId, updated)
   }
 
-  async function updateControl(controlId: number) {
+  async function updateControl(sensorId: number) {
     // Only fetch if this control is already known (was fetched via list call)
-    if (!controlsMap.value.has(controlId)) {
+    if (!controlsMap.value.has(sensorId)) {
       return
     }
     try {
-      const control = await api.getControl({ id: controlId })
-      updateControlDirect(control)
+      const control = await api.listControl({ sensorId: sensorId }).then((res) => res.objects?.[0])
+      if (control) {
+        updateControlDirect(control)
+      }
     } catch {
       // ignore errors
     }

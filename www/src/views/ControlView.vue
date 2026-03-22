@@ -14,8 +14,8 @@ onMounted(async () => {
     onConnected: () => {
       loadControls()
     },
-    onUpdate: (controlId: number) => {
-      updateControl(controlId)
+    onUpdate: (sensorId: number) => {
+      updateControl(sensorId)
     },
   })
 })
