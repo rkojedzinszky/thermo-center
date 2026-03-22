@@ -70,11 +70,6 @@ const difference = computed(() => {
   flex-shrink: 0;
 }
 
-.control-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover, var(--shadow-card));
-}
-
 .card-header {
   display: flex;
   align-items: center;
