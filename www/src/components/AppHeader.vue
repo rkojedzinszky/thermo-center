@@ -121,7 +121,7 @@ function handleViewModeChange(mode: 'table' | 'cards') {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem 2rem;
+  padding: 0.8rex;
   border-bottom: 1px solid var(--color-border);
   background: linear-gradient(
     to right,
@@ -144,7 +144,7 @@ function handleViewModeChange(mode: 'table' | 'cards') {
 
 .header-title {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -179,7 +179,7 @@ function handleViewModeChange(mode: 'table' | 'cards') {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 0.6rem;
+  padding: 0.2rem;
   border-radius: 0.4rem;
   font-size: 1rem;
   transition: all 0.2s;
@@ -223,13 +223,8 @@ function handleViewModeChange(mode: 'table' | 'cards') {
 }
 
 @media (max-width: 768px) {
-  .app-header {
-    padding: 1rem;
-    gap: 1rem;
-  }
-
   .header-title {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   .header-right {
@@ -247,7 +242,7 @@ function handleViewModeChange(mode: 'table' | 'cards') {
 
   .btn {
     padding: 0.35rem 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 }
 </style>
