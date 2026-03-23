@@ -3,6 +3,7 @@
 import datetime, time
 from tastypie import fields
 from tastypie import resources
+from application.resource import ReadonlyPkeyResource
 from tastypie.utils import timezone
 from tastypie.authorization import ReadOnlyAuthorization, Authorization
 from center.restapi import THSensorResource, THSensorResourceInstance
@@ -14,7 +15,7 @@ from tastypie.bundle import Bundle
 import logging
 logger = logging.getLogger(__name__)
 
-class DayTypeResource(resources.ModelResource):
+class DayTypeResource(ReadonlyPkeyResource):
     class Meta(ResourceMetaCommon):
         queryset = models.DayType.objects.all()
         authorization = ReadOnlyAuthorization()
@@ -25,7 +26,7 @@ class DayTypeResource(resources.ModelResource):
 DayTypeResourceInstance = DayTypeResource()
 restapi.RestApi.register(DayTypeResourceInstance)
 
-class ControlResource(resources.ModelResource):
+class ControlResource(ReadonlyPkeyResource):
     sensor_id = fields.IntegerField('sensor_id', readonly=True)
     name = fields.CharField(readonly=True)
     temperature = fields.FloatField(readonly=True, null=True)
@@ -63,7 +64,7 @@ class ControlResource(resources.ModelResource):
 ControlResourceInstance = ControlResource()
 restapi.RestApi.register(ControlResourceInstance)
 
-class ProfileResource(resources.ModelResource):
+class ProfileResource(ReadonlyPkeyResource):
     control = fields.ForeignKey(ControlResource, 'control')
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
@@ -79,7 +80,7 @@ class ProfileResource(resources.ModelResource):
 ProfileResourceInstance = ProfileResource()
 restapi.RestApi.register(ProfileResourceInstance)
 
-class ScheduledOverrideResource(resources.ModelResource):
+class ScheduledOverrideResource(ReadonlyPkeyResource):
     control = fields.ForeignKey(ControlResource, 'control')
 
     class Meta(ResourceMetaCommon):
@@ -99,7 +100,7 @@ class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
     def update_detail(self, object_list, bundle):
         return True
 
-class InstantProfileResource(resources.ModelResource):
+class InstantProfileResource(ReadonlyPkeyResource):
     class Meta(ResourceMetaCommon):
         always_return_data = False
         queryset = models.InstantProfile.objects.order_by('id')
@@ -112,7 +113,7 @@ class CurrentDaytypeAuthorization(ReadOnlyAuthorization):
     def update_detail(self, object_list, bundle):
         return True
 
-class CurrentDaytypeResource(resources.ModelResource):
+class CurrentDaytypeResource(ReadonlyPkeyResource):
     daytype = fields.CharField()
 
     class Meta(ResourceMetaCommon):
