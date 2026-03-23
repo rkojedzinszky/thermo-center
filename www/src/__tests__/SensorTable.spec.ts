@@ -7,6 +7,7 @@ const NOW_UNIX = Math.floor(Date.now() / 1000)
 
 const sensors: THSensor[] = [
   {
+    resourceUri: '/sensor/1',
     id: 1,
     name: 'Kitchen',
     temperature: 23.2,
@@ -18,9 +19,10 @@ const sensors: THSensor[] = [
     interval: 120,
     lastSeq: 9999,
     valid: true,
-    sensorResync: null,
+    sensorResync: undefined,
   },
   {
+    resourceUri: '/sensor/2',
     id: 2,
     name: 'Attic',
     temperature: 18.0,
@@ -125,13 +127,14 @@ describe('SensorTable', () => {
     it('shows "—" for null fields on the second sensor', () => {
       const sensorWithNulls: THSensor[] = [
         {
+          resourceUri: '/sensor/3',
           id: 3,
           name: 'Shed',
           temperature: null,
           humidity: null,
           lastTsf: null,
           valid: null,
-          sensorResync: null,
+          sensorResync: undefined,
         },
       ]
       const wrapper = mount(SensorTable, { props: { sensors: sensorWithNulls } })
@@ -333,7 +336,14 @@ describe('SensorTable', () => {
   describe('timestamp formatting', () => {
     it('shows "No data" for null lastTsf', () => {
       const s: THSensor[] = [
-        { id: 10, name: 'Test', lastTsf: null, valid: null, sensorResync: null },
+        {
+          resourceUri: '/sensor/10',
+          id: 10,
+          name: 'Test',
+          lastTsf: null,
+          valid: null,
+          sensorResync: undefined,
+        },
       ]
       const wrapper = mount(SensorTable, { props: { sensors: s } })
       expect(wrapper.text()).toContain('No data')
@@ -341,7 +351,14 @@ describe('SensorTable', () => {
 
     it('shows minute-format for 75 seconds ago', () => {
       const s: THSensor[] = [
-        { id: 11, name: 'Test', lastTsf: NOW_UNIX - 75, valid: null, sensorResync: null },
+        {
+          resourceUri: '/sensor/11',
+          id: 11,
+          name: 'Test',
+          lastTsf: NOW_UNIX - 75,
+          valid: null,
+          sensorResync: undefined,
+        },
       ]
       const wrapper = mount(SensorTable, { props: { sensors: s } })
       expect(wrapper.text()).toContain('1 minute ago')
@@ -434,8 +451,9 @@ describe('SensorTable', () => {
       const table = wrapper.find('table.sensor-table')
       // The HTML should be in place; CSS handles the constraint
       expect(table.exists()).toBe(true)
+      const tableElement = table.element as HTMLTableElement
       const computedMinWidth =
-        table.element.style.minWidth || window.getComputedStyle(table.element).minWidth
+        tableElement.style.minWidth || window.getComputedStyle(tableElement).minWidth
       // Either inline style or computed from CSS (when styles are applied)
       expect(table.exists()).toBe(true)
     })

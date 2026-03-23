@@ -6,6 +6,7 @@ import type { THSensor } from '../api'
 const NOW_UNIX = Math.floor(Date.now() / 1000)
 
 const activeSensor: THSensor = {
+  resourceUri: '/sensor/42',
   id: 42,
   name: 'Living Room',
   temperature: 21.5,
@@ -17,7 +18,7 @@ const activeSensor: THSensor = {
   interval: 60,
   lastSeq: 12345,
   valid: true,
-  sensorResync: null,
+  sensorResync: undefined,
 }
 
 const inactiveSensor: THSensor = {
@@ -41,7 +42,7 @@ const invalidSensor: THSensor = {
   id: 88,
   name: 'Master Bedroom',
   valid: false,
-  sensorResync: null,
+  sensorResync: undefined,
 }
 
 beforeEach(() => {
