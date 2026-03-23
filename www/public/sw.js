@@ -1,13 +1,9 @@
 const CACHE_VERSION = 'v1'
 const CACHE_NAME = `thermo-center-${CACHE_VERSION}`
-const OFFLINE_URLS = ['./', './index.html', './manifest.webmanifest', './favicon.ico']
+const OFFLINE_URLS = []
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(OFFLINE_URLS)
-    }),
-  )
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS)))
 })
 
 self.addEventListener('activate', (event) => {
@@ -17,7 +13,9 @@ self.addEventListener('activate', (event) => {
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter((cacheName) => cacheName.startsWith('thermo-center-') && cacheName !== CACHE_NAME)
+            .filter(
+              (cacheName) => cacheName.startsWith('thermo-center-') && cacheName !== CACHE_NAME,
+            )
             .map((cacheName) => caches.delete(cacheName)),
         )
       })
