@@ -1,5 +1,5 @@
 import { ref, watch, type Ref } from 'vue'
-import type { THSensor, SensorResyncW } from '@/api'
+import type { THSensor } from '@/api'
 import api from '@/utils/api'
 
 /**
@@ -24,9 +24,7 @@ export function useResync(sensor: Ref<THSensor>) {
 
     try {
       resyncDisabled.value = true
-      const resourceUri = `/api/v1/thsensor/${sensor.value.id}/`
-      const payload: SensorResyncW = { sensor: resourceUri }
-      await api.createSensorResync({ sensorResyncW: payload })
+      await api.createSensorResync({ sensorResyncW: { sensor: sensor.value.resourceUri } })
     } catch (error) {
       console.error('Failed to create sensor resync:', error)
       resyncDisabled.value = false
@@ -58,9 +56,7 @@ export function useResyncMap(sensors: Ref<THSensor[]>) {
 
     try {
       resyncDisabledMap.value.set(sensor.id, true)
-      const resourceUri = `/api/v1/thsensor/${sensor.id}/`
-      const payload: SensorResyncW = { sensor: resourceUri }
-      await api.createSensorResync({ sensorResyncW: payload })
+      await api.createSensorResync({ sensorResyncW: { sensor: sensor.resourceUri } })
     } catch (error) {
       console.error('Failed to create sensor resync:', error)
       resyncDisabledMap.value.set(sensor.id, false)

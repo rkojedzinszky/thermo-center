@@ -62,7 +62,7 @@ async function confirmTargetEdit() {
   const start = new Date()
   const end = new Date(start.getTime() + 2 * 60 * 60 * 1000)
   const payload: ScheduledOverrideW = {
-    control: `/api/v1/control/${props.control.id}/`,
+    control: props.control.resourceUri,
     start,
     end,
     targetTemp: editedTarget.value,
@@ -71,7 +71,6 @@ async function confirmTargetEdit() {
   isSaving.value = true
   try {
     await api.createScheduledOverride({ scheduledOverrideW: payload })
-    console.log('Reloading control after creating override, sensorId:', props.control.sensorId)
     await updateControl(props.control.sensorId)
   } catch (error) {
     console.error('Failed to create scheduled override:', error)
