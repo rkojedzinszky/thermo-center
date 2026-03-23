@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface ScheduledOverrideR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof ScheduledOverrideR
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof ScheduledOverrideR
@@ -31,6 +37,7 @@ export interface ScheduledOverrideR {
  * Check if a given object implements the ScheduledOverrideR interface.
  */
 export function instanceOfScheduledOverrideR(value: object): value is ScheduledOverrideR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
@@ -45,6 +52,7 @@ export function ScheduledOverrideRFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
     };
 }
@@ -60,6 +68,7 @@ export function ScheduledOverrideRToJSONTyped(value?: ScheduledOverrideR | null,
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
     };
 }

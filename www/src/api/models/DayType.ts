@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface DayType {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof DayType
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof DayType
@@ -37,6 +43,7 @@ export interface DayType {
  * Check if a given object implements the DayType interface.
  */
 export function instanceOfDayType(value: object): value is DayType {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     return true;
@@ -52,6 +59,7 @@ export function DayTypeFromJSONTyped(json: any, ignoreDiscriminator: boolean): D
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
         'name': json['name'],
     };
@@ -68,6 +76,7 @@ export function DayTypeToJSONTyped(value?: DayType | null, ignoreDiscriminator: 
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
         'name': value['name'],
     };

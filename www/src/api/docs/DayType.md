@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `id` | number
 `name` | string
 
@@ -16,6 +17,7 @@ import type { DayType } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "id": null,
   "name": null,
 } satisfies DayType

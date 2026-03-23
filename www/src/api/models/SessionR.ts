@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface SessionR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof SessionR
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {number}
      * @memberof SessionR
@@ -37,6 +43,7 @@ export interface SessionR {
  * Check if a given object implements the SessionR interface.
  */
 export function instanceOfSessionR(value: object): value is SessionR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('isAdmin' in value) || value['isAdmin'] === undefined) return false;
     return true;
@@ -52,6 +59,7 @@ export function SessionRFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
         'isAdmin': json['is_admin'],
     };
@@ -68,6 +76,7 @@ export function SessionRToJSONTyped(value?: SessionR | null, ignoreDiscriminator
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
         'is_admin': value['isAdmin'],
     };

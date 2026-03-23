@@ -6,6 +6,8 @@ export * from './ConfigureSensorTaskW';
 export * from './Control';
 export * from './ControlR';
 export * from './ControlW';
+export * from './CurrentDaytype';
+export * from './CurrentDaytypeR';
 export * from './CurrentDaytypeW';
 export * from './DayType';
 export * from './DayTypeR';

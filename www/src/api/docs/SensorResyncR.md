@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `ts` | Date
 `id` | number
 
@@ -16,6 +17,7 @@ import type { SensorResyncR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "ts": null,
   "id": null,
 } satisfies SensorResyncR

@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `id` | number
 `control` | string
 `start` | Date
@@ -19,6 +20,7 @@ import type { ScheduledOverride } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "id": null,
   "control": null,
   "start": null,

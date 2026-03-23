@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `sensorId` | number
 `name` | string
 `temperature` | number
@@ -21,6 +22,7 @@ import type { ControlR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "sensorId": null,
   "name": null,
   "temperature": null,

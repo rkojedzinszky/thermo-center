@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface SensorResyncW {
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof SensorResyncW
      */

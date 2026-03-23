@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface Control {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof Control
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {number}
      * @memberof Control
@@ -91,6 +97,7 @@ export interface Control {
  * Check if a given object implements the Control interface.
  */
 export function instanceOfControl(value: object): value is Control {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
@@ -110,6 +117,7 @@ export function ControlFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'sensorId': json['sensor_id'],
         'name': json['name'],
         'temperature': json['temperature'] == null ? undefined : json['temperature'],
@@ -135,6 +143,7 @@ export function ControlToJSONTyped(value?: Control | null, ignoreDiscriminator: 
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'sensor_id': value['sensorId'],
         'name': value['name'],
         'temperature': value['temperature'],

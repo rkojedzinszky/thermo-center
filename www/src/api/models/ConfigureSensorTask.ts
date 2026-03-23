@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface ConfigureSensorTask {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof ConfigureSensorTask
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {Date}
      * @memberof ConfigureSensorTask
@@ -79,6 +85,7 @@ export interface ConfigureSensorTask {
  * Check if a given object implements the ConfigureSensorTask interface.
  */
 export function instanceOfConfigureSensorTask(value: object): value is ConfigureSensorTask {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
     return true;
@@ -94,6 +101,7 @@ export function ConfigureSensorTaskFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'created': json['created'] == null ? undefined : (new Date(json['created'])),
         'started': json['started'] == null ? undefined : (new Date(json['started'])),
         'firstDiscovery': json['first_discovery'] == null ? undefined : (new Date(json['first_discovery'])),
@@ -117,6 +125,7 @@ export function ConfigureSensorTaskToJSONTyped(value?: ConfigureSensorTask | nul
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'created': value['created'] == null ? value['created'] : value['created'].toISOString(),
         'started': value['started'] == null ? value['started'] : value['started'].toISOString(),
         'first_discovery': value['firstDiscovery'] == null ? value['firstDiscovery'] : value['firstDiscovery'].toISOString(),

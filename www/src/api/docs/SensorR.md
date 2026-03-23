@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `valid` | boolean
 `sensorResync` | string
 `thsensor` | string
@@ -18,6 +19,7 @@ import type { SensorR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "valid": null,
   "sensorResync": null,
   "thsensor": null,

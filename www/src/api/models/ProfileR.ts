@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface ProfileR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof ProfileR
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof ProfileR
@@ -31,6 +37,7 @@ export interface ProfileR {
  * Check if a given object implements the ProfileR interface.
  */
 export function instanceOfProfileR(value: object): value is ProfileR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
@@ -45,6 +52,7 @@ export function ProfileRFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
     };
 }
@@ -60,6 +68,7 @@ export function ProfileRToJSONTyped(value?: ProfileR | null, ignoreDiscriminator
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
     };
 }

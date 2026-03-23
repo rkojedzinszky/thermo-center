@@ -16,52 +16,44 @@ import { mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface DayTypeR
+ * @interface CurrentDaytypeR
  */
-export interface DayTypeR {
+export interface CurrentDaytypeR {
     /**
      * resource uri
      * @type {string}
-     * @memberof DayTypeR
+     * @memberof CurrentDaytypeR
      */
     resourceUri: string;
-    /**
-     * ID
-     * @type {number}
-     * @memberof DayTypeR
-     */
-    id: number;
 }
 
 /**
- * Check if a given object implements the DayTypeR interface.
+ * Check if a given object implements the CurrentDaytypeR interface.
  */
-export function instanceOfDayTypeR(value: object): value is DayTypeR {
+export function instanceOfCurrentDaytypeR(value: object): value is CurrentDaytypeR {
     if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
-    if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
 
-export function DayTypeRFromJSON(json: any): DayTypeR {
-    return DayTypeRFromJSONTyped(json, false);
+export function CurrentDaytypeRFromJSON(json: any): CurrentDaytypeR {
+    return CurrentDaytypeRFromJSONTyped(json, false);
 }
 
-export function DayTypeRFromJSONTyped(json: any, ignoreDiscriminator: boolean): DayTypeR {
+export function CurrentDaytypeRFromJSONTyped(json: any, ignoreDiscriminator: boolean): CurrentDaytypeR {
     if (json == null) {
         return json;
     }
     return {
         
         'resourceUri': json['resource_uri'],
-        'id': json['id'],
     };
 }
 
-export function DayTypeRToJSON(json: any): DayTypeR {
-    return DayTypeRToJSONTyped(json, false);
+export function CurrentDaytypeRToJSON(json: any): CurrentDaytypeR {
+    return CurrentDaytypeRToJSONTyped(json, false);
 }
 
-export function DayTypeRToJSONTyped(value?: DayTypeR | null, ignoreDiscriminator: boolean = false): any {
+export function CurrentDaytypeRToJSONTyped(value?: CurrentDaytypeR | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -69,7 +61,6 @@ export function DayTypeRToJSONTyped(value?: DayTypeR | null, ignoreDiscriminator
     return {
         
         'resource_uri': value['resourceUri'],
-        'id': value['id'],
     };
 }
 

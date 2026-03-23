@@ -20,23 +20,29 @@ import { mapValues } from '../runtime';
  */
 export interface SensorR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof SensorR
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {boolean}
      * @memberof SensorR
      */
     valid?: boolean | null;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof SensorR
      */
-    sensorResync?: string | null;
+    sensorResync?: string;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof SensorR
      */
-    thsensor?: string | null;
+    thsensor?: string;
     /**
      * id
      * @type {number}
@@ -49,6 +55,7 @@ export interface SensorR {
  * Check if a given object implements the SensorR interface.
  */
 export function instanceOfSensorR(value: object): value is SensorR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
@@ -63,6 +70,7 @@ export function SensorRFromJSONTyped(json: any, ignoreDiscriminator: boolean): S
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'valid': json['valid'] == null ? undefined : json['valid'],
         'sensorResync': json['sensor_resync'] == null ? undefined : json['sensor_resync'],
         'thsensor': json['thsensor'] == null ? undefined : json['thsensor'],
@@ -81,6 +89,7 @@ export function SensorRToJSONTyped(value?: SensorR | null, ignoreDiscriminator: 
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'valid': value['valid'],
         'sensor_resync': value['sensorResync'],
         'thsensor': value['thsensor'],

@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface PatchProfileRequest {
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof PatchProfileRequest
      */
     control?: string;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof PatchProfileRequest
      */

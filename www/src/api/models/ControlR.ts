@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface ControlR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof ControlR
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {number}
      * @memberof ControlR
@@ -67,6 +73,7 @@ export interface ControlR {
  * Check if a given object implements the ControlR interface.
  */
 export function instanceOfControlR(value: object): value is ControlR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('sensorId' in value) || value['sensorId'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
@@ -83,6 +90,7 @@ export function ControlRFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'sensorId': json['sensor_id'],
         'name': json['name'],
         'temperature': json['temperature'] == null ? undefined : json['temperature'],
@@ -104,6 +112,7 @@ export function ControlRToJSONTyped(value?: ControlR | null, ignoreDiscriminator
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'sensor_id': value['sensorId'],
         'name': value['name'],
         'temperature': value['temperature'],

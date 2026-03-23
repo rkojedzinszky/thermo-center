@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface PatchScheduledOverrideRequest {
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof PatchScheduledOverrideRequest
      */

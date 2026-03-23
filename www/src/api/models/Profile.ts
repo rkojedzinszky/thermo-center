@@ -20,19 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface Profile {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof Profile
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof Profile
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof Profile
      */
     control: string;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof Profile
      */
@@ -55,6 +61,7 @@ export interface Profile {
  * Check if a given object implements the Profile interface.
  */
 export function instanceOfProfile(value: object): value is Profile {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('control' in value) || value['control'] === undefined) return false;
     if (!('daytype' in value) || value['daytype'] === undefined) return false;
@@ -72,6 +79,7 @@ export function ProfileFromJSONTyped(json: any, ignoreDiscriminator: boolean): P
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
         'control': json['control'],
         'daytype': json['daytype'],
@@ -91,6 +99,7 @@ export function ProfileToJSONTyped(value?: Profile | null, ignoreDiscriminator: 
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
         'control': value['control'],
         'daytype': value['daytype'],

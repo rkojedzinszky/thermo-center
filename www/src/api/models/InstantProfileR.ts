@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface InstantProfileR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof InstantProfileR
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof InstantProfileR
@@ -31,6 +37,7 @@ export interface InstantProfileR {
  * Check if a given object implements the InstantProfileR interface.
  */
 export function instanceOfInstantProfileR(value: object): value is InstantProfileR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     return true;
 }
@@ -45,6 +52,7 @@ export function InstantProfileRFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
     };
 }
@@ -60,6 +68,7 @@ export function InstantProfileRToJSONTyped(value?: InstantProfileR | null, ignor
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
     };
 }

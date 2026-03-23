@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface ScheduledOverrideW {
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof ScheduledOverrideW
      */

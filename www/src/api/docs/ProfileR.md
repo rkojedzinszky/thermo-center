@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `id` | number
 
 ## Example
@@ -15,6 +16,7 @@ import type { ProfileR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "id": null,
 } satisfies ProfileR
 

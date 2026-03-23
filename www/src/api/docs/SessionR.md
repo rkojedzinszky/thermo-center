@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `id` | number
 `isAdmin` | boolean
 
@@ -16,6 +17,7 @@ import type { SessionR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "id": null,
   "isAdmin": null,
 } satisfies SessionR

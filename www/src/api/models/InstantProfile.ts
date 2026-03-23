@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface InstantProfile {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof InstantProfile
+     */
+    resourceUri: string;
+    /**
      * ID
      * @type {number}
      * @memberof InstantProfile
@@ -43,6 +49,7 @@ export interface InstantProfile {
  * Check if a given object implements the InstantProfile interface.
  */
 export function instanceOfInstantProfile(value: object): value is InstantProfile {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('active' in value) || value['active'] === undefined) return false;
@@ -59,6 +66,7 @@ export function InstantProfileFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'id': json['id'],
         'name': json['name'],
         'active': json['active'],
@@ -76,6 +84,7 @@ export function InstantProfileToJSONTyped(value?: InstantProfile | null, ignoreD
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'id': value['id'],
         'name': value['name'],
         'active': value['active'],

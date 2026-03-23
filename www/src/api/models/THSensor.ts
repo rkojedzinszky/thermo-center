@@ -20,17 +20,23 @@ import { mapValues } from '../runtime';
  */
 export interface THSensor {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof THSensor
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {boolean}
      * @memberof THSensor
      */
     valid?: boolean | null;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof THSensor
      */
-    sensorResync?: string | null;
+    sensorResync?: string;
     /**
      * id
      * @type {number}
@@ -97,6 +103,7 @@ export interface THSensor {
  * Check if a given object implements the THSensor interface.
  */
 export function instanceOfTHSensor(value: object): value is THSensor {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     return true;
@@ -112,6 +119,7 @@ export function THSensorFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'valid': json['valid'] == null ? undefined : json['valid'],
         'sensorResync': json['sensor_resync'] == null ? undefined : json['sensor_resync'],
         'id': json['id'],
@@ -138,6 +146,7 @@ export function THSensorToJSONTyped(value?: THSensor | null, ignoreDiscriminator
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'valid': value['valid'],
         'sensor_resync': value['sensorResync'],
         'id': value['id'],

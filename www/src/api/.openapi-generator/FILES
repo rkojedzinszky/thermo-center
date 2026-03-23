@@ -6,6 +6,8 @@ docs/ConfigureSensorTaskW.md
 docs/Control.md
 docs/ControlR.md
 docs/ControlW.md
+docs/CurrentDaytype.md
+docs/CurrentDaytypeR.md
 docs/CurrentDaytypeW.md
 docs/DayType.md
 docs/DayTypeR.md
@@ -55,6 +57,8 @@ models/ConfigureSensorTaskW.ts
 models/Control.ts
 models/ControlR.ts
 models/ControlW.ts
+models/CurrentDaytype.ts
+models/CurrentDaytypeR.ts
 models/CurrentDaytypeW.ts
 models/DayType.ts
 models/DayTypeR.ts

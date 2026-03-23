@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `created` | Date
 `started` | Date
 `firstDiscovery` | Date
@@ -23,6 +24,7 @@ import type { ConfigureSensorTask } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "created": null,
   "started": null,
   "firstDiscovery": null,

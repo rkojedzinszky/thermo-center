@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `valid` | boolean
 `sensorResync` | string
 `id` | number
@@ -17,6 +18,7 @@ import type { THSensorR } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "valid": null,
   "sensorResync": null,
   "id": null,

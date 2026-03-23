@@ -6,6 +6,7 @@
 
 Name | Type
 ------------ | -------------
+`resourceUri` | string
 `id` | number
 `name` | string
 `active` | boolean
@@ -17,6 +18,7 @@ import type { InstantProfile } from ''
 
 // TODO: Update the object below with actual values
 const example = {
+  "resourceUri": null,
   "id": null,
   "name": null,
   "active": null,

@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface ProfileW {
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof ProfileW
      */
     control: string;
     /**
-     * NO_DESCRIPTION
+     * resource uri
      * @type {string}
      * @memberof ProfileW
      */

@@ -1,5 +1,5 @@
 
-# InstantProfileR
+# CurrentDaytype
 
 
 ## Properties
@@ -7,18 +7,18 @@
 Name | Type
 ------------ | -------------
 `resourceUri` | string
-`id` | number
+`daytype` | string
 
 ## Example
 
 ```typescript
-import type { InstantProfileR } from ''
+import type { CurrentDaytype } from ''
 
 // TODO: Update the object below with actual values
 const example = {
   "resourceUri": null,
-  "id": null,
-} satisfies InstantProfileR
+  "daytype": null,
+} satisfies CurrentDaytype
 
 console.log(example)
 
@@ -27,7 +27,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as InstantProfileR
+const exampleParsed = JSON.parse(exampleJSON) as CurrentDaytype
 console.log(exampleParsed)
 ```
 

@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface SensorResyncR {
     /**
+     * resource uri
+     * @type {string}
+     * @memberof SensorResyncR
+     */
+    resourceUri: string;
+    /**
      * NO_DESCRIPTION
      * @type {Date}
      * @memberof SensorResyncR
@@ -37,6 +43,7 @@ export interface SensorResyncR {
  * Check if a given object implements the SensorResyncR interface.
  */
 export function instanceOfSensorResyncR(value: object): value is SensorResyncR {
+    if (!('resourceUri' in value) || value['resourceUri'] === undefined) return false;
     if (!('ts' in value) || value['ts'] === undefined) return false;
     if (!('id' in value) || value['id'] === undefined) return false;
     return true;
@@ -52,6 +59,7 @@ export function SensorResyncRFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
+        'resourceUri': json['resource_uri'],
         'ts': (new Date(json['ts'])),
         'id': json['id'],
     };
@@ -68,6 +76,7 @@ export function SensorResyncRToJSONTyped(value?: SensorResyncR | null, ignoreDis
 
     return {
         
+        'resource_uri': value['resourceUri'],
         'ts': value['ts'].toISOString(),
         'id': value['id'],
     };
