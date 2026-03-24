@@ -41,20 +41,10 @@ FROM common AS fe-prepare
 
 RUN python manage.py collectstatic --no-input
 
-FROM node:24-alpine AS fe-build
-
-ADD www /work
-
-WORKDIR /work
-
-RUN npm install && npm run build
-
 FROM nginx:alpine AS ui
 
-LABEL org.opencontainers.image.authors "Richard Kojedzinszky <richard@kojedz.in>"
-LABEL org.opencontainers.image.source https://github.com/rkojedzinszky/thermo-center
-
-COPY --from=fe-build /work/dist /var/www/html
+COPY www/dist/ /var/www/html
+COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html
 
 ADD docker-assets-ui /
 
