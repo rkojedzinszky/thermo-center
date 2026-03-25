@@ -85,10 +85,11 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Table view -->
+      <!-- Table view (simple and full) -->
       <div v-else class="table-container">
         <SensorTable
           :sensors="orderedSensors"
+          :is-expanded="viewMode === 'full-table'"
           @reorder="reorder"
           @updated="onSensorUpdated"
           @deleted="(sensorId: number) => onSensorDeleted(sensorId)"

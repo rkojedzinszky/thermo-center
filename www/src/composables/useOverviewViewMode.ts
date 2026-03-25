@@ -1,12 +1,16 @@
 import { ref } from 'vue'
 
-export type OverviewViewMode = 'table' | 'cards'
+export type OverviewViewMode = 'cards' | 'simple-table' | 'full-table'
 
 const VIEW_MODE_KEY = 'sensor_view_mode'
 
 function loadInitialViewMode(): OverviewViewMode {
   const raw = localStorage.getItem(VIEW_MODE_KEY)
-  return raw === 'cards' || raw === 'table' ? raw : 'table'
+  if (raw === 'cards' || raw === 'simple-table' || raw === 'full-table') {
+    return raw
+  }
+  // Default to cards for new users
+  return 'cards'
 }
 
 const viewMode = ref<OverviewViewMode>(loadInitialViewMode())

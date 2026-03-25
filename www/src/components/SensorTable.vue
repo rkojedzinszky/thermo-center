@@ -12,8 +12,13 @@ import { useResyncMap } from '@/composables/useResync'
 import { useAuth } from '@/composables/useAuth'
 import SensorEditDialog from './SensorEditDialog.vue'
 
+defineOptions({
+  name: 'SensorTable',
+})
+
 const props = defineProps<{
   sensors: THSensor[]
+  isExpanded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -112,18 +117,28 @@ function onTableTouchEnd() {
   dragOverIndex.value = null
 }
 
-const columns = computed(() => [
-  { key: 'name', label: 'Name' },
-  { key: 'temperature', label: 'Temp (°C)' },
-  { key: 'humidity', label: 'Humidity (%)' },
-  { key: 'vcc', label: 'VCC (V)' },
-  { key: 'rssi', label: 'RSSI (dBm)' },
-  { key: 'lqi', label: 'LQI' },
-  { key: 'interval', label: 'Interval (s)' },
-  { key: 'lastSeq', label: 'Seq' },
-  { key: 'lastTsf', label: 'Last Data' },
-  ...(isAdmin.value ? [{ key: 'actions', label: 'Actions' }] : []),
-])
+const columns = computed(() => {
+  const essentialCols = [
+    { key: 'name', label: 'Name' },
+    { key: 'temperature', label: 'Temp (°C)' },
+    { key: 'humidity', label: 'Humidity (%)' },
+  ]
+
+  const allCols = [
+    { key: 'name', label: 'Name' },
+    { key: 'temperature', label: 'Temp (°C)' },
+    { key: 'humidity', label: 'Humidity (%)' },
+    { key: 'vcc', label: 'VCC (V)' },
+    { key: 'rssi', label: 'RSSI (dBm)' },
+    { key: 'lqi', label: 'LQI' },
+    { key: 'interval', label: 'Interval (s)' },
+    { key: 'lastSeq', label: 'Seq' },
+    { key: 'lastTsf', label: 'Last Data' },
+    ...(isAdmin.value ? [{ key: 'actions', label: 'Actions' }] : []),
+  ]
+
+  return props.isExpanded ? allCols : essentialCols
+})
 
 function cellValue(sensor: THSensor, key: string): string {
   switch (key) {
@@ -294,7 +309,7 @@ function cellValue(sensor: THSensor, key: string): string {
 .sensor-table {
   border-collapse: collapse;
   width: 100%;
-  min-width: 700px;
+  min-width: 300px;
   font-size: 0.875rem;
 }
 
@@ -434,5 +449,47 @@ thead {
   text-align: center;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+@media (max-width: 768px) {
+  .table-wrapper {
+    border-radius: 0.6rem;
+  }
+
+  .sensor-table {
+    font-size: 0.8rem;
+    min-width: 300px;
+  }
+
+  .th {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .th-drag {
+    width: 30px;
+    min-width: 30px;
+  }
+
+  .td {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .td-drag {
+    padding: 0.6rem 0.3rem;
+  }
+
+  .th.numeric {
+    padding-right: 1rem;
+  }
+
+  .td.numeric {
+    padding-right: 1rem;
+  }
+
+  .action-button {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
 }
 </style>

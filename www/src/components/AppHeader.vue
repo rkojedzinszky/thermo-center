@@ -9,20 +9,20 @@ interface Props {
   showViewToggle?: boolean
   username?: string
   currentTheme?: 'light' | 'system' | 'dark'
-  viewMode?: 'table' | 'cards'
+  viewMode?: 'cards' | 'simple-table' | 'full-table'
 }
 
 interface Emits {
   logout: []
   themeChange: [theme: 'light' | 'system' | 'dark']
-  viewModeChange: [mode: 'table' | 'cards']
+  viewModeChange: [mode: 'cards' | 'simple-table' | 'full-table']
 }
 
 withDefaults(defineProps<Props>(), {
   showViewToggle: false,
   username: '',
   currentTheme: 'system',
-  viewMode: 'cards',
+  viewMode: 'cards' as const,
 })
 
 const emit = defineEmits<Emits>()
@@ -31,7 +31,7 @@ function handleThemeChange(theme: 'light' | 'system' | 'dark') {
   emit('themeChange', theme)
 }
 
-function handleViewModeChange(mode: 'table' | 'cards') {
+function handleViewModeChange(mode: 'cards' | 'simple-table' | 'full-table') {
   emit('viewModeChange', mode)
 }
 </script>
@@ -51,9 +51,25 @@ function handleViewModeChange(mode: 'table' | 'cards') {
       <div v-if="showViewToggle" class="button-group" role="group" aria-label="View mode">
         <button
           class="btn"
-          :class="{ active: viewMode === 'table' }"
-          title="Table view"
-          @click="handleViewModeChange('table')"
+          :class="{ active: viewMode === 'simple-table' }"
+          title="Simple table view"
+          @click="handleViewModeChange('simple-table')"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <!-- Simple table (fewer columns) -->
+            <rect x="2" y="4" width="8" height="3" rx="1" />
+            <rect x="14" y="4" width="8" height="3" rx="1" />
+            <rect x="2" y="10" width="8" height="3" rx="1" />
+            <rect x="14" y="10" width="8" height="3" rx="1" />
+            <rect x="2" y="16" width="8" height="3" rx="1" />
+            <rect x="14" y="16" width="8" height="3" rx="1" />
+          </svg>
+        </button>
+        <button
+          class="btn"
+          :class="{ active: viewMode === 'full-table' }"
+          title="Full table view"
+          @click="handleViewModeChange('full-table')"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <rect x="2" y="4" width="20" height="3" rx="1" />
