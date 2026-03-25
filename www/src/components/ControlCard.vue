@@ -82,68 +82,75 @@ async function confirmTargetEdit() {
 </script>
 
 <template>
-  <div class="control-card">
-    <div class="card-header">
-      <span class="control-name">{{ control.name }}</span>
-    </div>
-
-    <div class="card-temps">
-      <div class="temp-current">
-        <span class="temp-label">Current</span>
-        <span class="temp-value">{{ current }} °C</span>
+  <div class="card-container card-fixed-size">
+    <div class="control-card">
+      <div class="card-header">
+        <span class="control-name">{{ control.name }}</span>
       </div>
 
-      <div class="temp-divider" />
+      <div class="card-temps">
+        <div class="temp-current">
+          <span class="temp-label">Current</span>
+          <span class="temp-value">{{ current }} °C</span>
+        </div>
 
-      <div class="temp-target">
-        <span class="temp-label">Target</span>
-        <div class="target-editor">
-          <button
-            class="target-step-btn target-step-dec"
-            :disabled="isSaving"
-            :aria-label="`Decrease target for ${control.name}`"
-            @click="stepTarget(-1)"
-          >
-            -
-          </button>
-          <span class="temp-value">{{ target }} °C</span>
-          <button
-            class="target-step-btn target-step-inc"
-            :disabled="isSaving"
-            :aria-label="`Increase target for ${control.name}`"
-            @click="stepTarget(1)"
-          >
-            +
-          </button>
+        <div class="temp-divider" />
+
+        <div class="temp-target">
+          <span class="temp-label">Target</span>
+          <div class="target-editor">
+            <button
+              class="target-step-btn target-step-dec"
+              :disabled="isSaving"
+              :aria-label="`Decrease target for ${control.name}`"
+              @click="stepTarget(-1)"
+            >
+              -
+            </button>
+            <span class="temp-value">{{ target }} °C</span>
+            <button
+              class="target-step-btn target-step-inc"
+              :disabled="isSaving"
+              :aria-label="`Increase target for ${control.name}`"
+              @click="stepTarget(1)"
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="card-diff">
-      <template v-if="isEditingTarget">
-        <button class="edit-action-btn cancel" :disabled="isSaving" @click="cancelTargetEdit">
-          Cancel
-        </button>
-        <button class="edit-action-btn confirm" :disabled="isSaving" @click="confirmTargetEdit">
-          {{ isSaving ? 'Saving...' : 'Confirm' }}
-        </button>
-      </template>
-      <template v-else>
-        <span class="diff-label">Difference</span>
-        <span
-          class="diff-value"
-          :class="{ positive: difference.startsWith('+'), negative: difference.startsWith('-') }"
-        >
-          {{ difference }} °C
-        </span>
-      </template>
+      <div class="card-diff">
+        <template v-if="isEditingTarget">
+          <button class="edit-action-btn cancel" :disabled="isSaving" @click="cancelTargetEdit">
+            Cancel
+          </button>
+          <button class="edit-action-btn confirm" :disabled="isSaving" @click="confirmTargetEdit">
+            {{ isSaving ? 'Saving...' : 'Confirm' }}
+          </button>
+        </template>
+        <template v-else>
+          <span class="diff-label">Difference</span>
+          <span
+            class="diff-value"
+            :class="{ positive: difference.startsWith('+'), negative: difference.startsWith('-') }"
+          >
+            {{ difference }} °C
+          </span>
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.card-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
 .control-card {
-  width: 180px;
   border-radius: 0.9rem;
   overflow: hidden;
   display: flex;
@@ -154,7 +161,8 @@ async function confirmTargetEdit() {
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .card-header {

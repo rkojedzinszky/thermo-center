@@ -160,6 +160,24 @@ html[data-theme='dark'] {
   --color-inactive-badge-text: #fca5a5;
   --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   --shadow-card-back: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(99, 102, 241, 0.1);
+  --card-width: 168px;
+  --card-height: 196px;
+}
+
+.card-fixed-size {
+  width: var(--card-width);
+  min-width: var(--card-width);
+  max-width: var(--card-width);
+  height: var(--card-height);
+  min-height: var(--card-height);
+}
+
+@media (max-width: 768px) {
+  :root,
+  html[data-theme='light'] {
+    --card-width: 150px;
+    --card-height: 186px;
+  }
   --color-reading-divider: rgba(255, 255, 255, 0.08);
   --color-footer-border: rgba(255, 255, 255, 0.06);
   --color-back-footer-border: rgba(99, 102, 241, 0.15);

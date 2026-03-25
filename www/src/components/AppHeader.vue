@@ -76,42 +76,16 @@ function handleViewModeChange(mode: 'table' | 'cards') {
         </button>
       </div>
 
-      <!-- Theme toggle -->
-      <div class="button-group" role="group" aria-label="Theme">
-        <button
-          class="btn"
-          :class="{ active: currentTheme === 'light' }"
-          title="Light theme"
-          @click="handleThemeChange('light')"
-        >
-          ☀️
-        </button>
-        <button
-          class="btn"
-          :class="{ active: currentTheme === 'system' }"
-          title="System default"
-          @click="handleThemeChange('system')"
-        >
-          🖥️
-        </button>
-        <button
-          class="btn"
-          :class="{ active: currentTheme === 'dark' }"
-          title="Dark theme"
-          @click="handleThemeChange('dark')"
-        >
-          🌙
-        </button>
-      </div>
+      <!-- Username display (optional) -->
+      <div class="user-name" v-if="username">{{ username }}</div>
 
-      <!-- User menu -->
-      <div class="user-menu">
-        <span class="username">{{ username }}</span>
-        <button class="btn logout-btn" title="Logout" @click="$emit('logout')">↪</button>
-      </div>
-
-      <!-- Navigation menu -->
-      <Navigation :current="currentPage" />
+      <!-- Navigation menu with page links + theme submenu + logout -->
+      <Navigation
+        :current="currentPage"
+        :current-theme="currentTheme"
+        @themeChange="handleThemeChange"
+        @logout="$emit('logout')"
+      />
     </div>
   </header>
 </template>

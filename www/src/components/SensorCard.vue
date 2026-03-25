@@ -129,7 +129,7 @@ function onGripPointerDown(e: Event) {
 
 <template>
   <div
-    class="card-wrapper"
+    class="card-wrapper card-fixed-size"
     :class="{ inactive: isInactive }"
     :aria-label="`Sensor ${sensor.name}`"
     :data-card-index="index"
@@ -203,8 +203,6 @@ function onGripPointerDown(e: Event) {
 
 <style scoped>
 .card-wrapper {
-  width: 168px;
-  height: 196px;
   perspective: 1000px;
   cursor: pointer;
   user-select: none;

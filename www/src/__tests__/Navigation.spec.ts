@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Navigation from '@/components/Navigation.vue'
@@ -8,6 +8,9 @@ describe('Navigation Dropdown Visibility', () => {
   let wrapper: ReturnType<typeof mount>
 
   beforeEach(() => {
+    // cleanup any previous teleported dropdowns between tests
+    document.body.innerHTML = ''
+
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [
@@ -22,6 +25,10 @@ describe('Navigation Dropdown Visibility', () => {
         plugins: [router],
       },
     })
+  })
+
+  afterEach(() => {
+    wrapper.unmount()
   })
 
   it('should render menu button', () => {
@@ -88,5 +95,50 @@ describe('Navigation Dropdown Visibility', () => {
     await nextTick()
     dropdown = document.body.querySelector('.menu-dropdown')
     expect(dropdown).toBeNull()
+  })
+
+  it('should not close menu when theme submenu is opened', async () => {
+    const button = wrapper.find('.menu-button')
+    await button.trigger('click')
+    await nextTick()
+
+    const themeTrigger = document.body.querySelector(
+      '.menu-dropdown .submenu-trigger',
+    ) as HTMLElement | null
+    expect(themeTrigger).not.toBeNull()
+
+    themeTrigger?.click()
+    await nextTick()
+
+    const dropdownOpen = document.body.querySelector('.menu-dropdown')
+    const submenuOpen = document.body.querySelector('.menu-dropdown .submenu')
+
+    expect(dropdownOpen).not.toBeNull()
+    expect(submenuOpen).not.toBeNull()
+  })
+
+  it('should keep menu open after theme item select', async () => {
+    const button = wrapper.find('.menu-button')
+    await button.trigger('click')
+    await nextTick()
+
+    const themeTrigger = document.body.querySelector(
+      '.menu-dropdown .submenu-trigger',
+    ) as HTMLElement | null
+    expect(themeTrigger).not.toBeNull()
+
+    themeTrigger?.click()
+    await nextTick()
+
+    const lightTheme = document.body.querySelector(
+      '.menu-dropdown .submenu .submenu-item',
+    ) as HTMLElement | null
+    expect(lightTheme).not.toBeNull()
+
+    lightTheme?.click()
+    await nextTick()
+
+    const dropdownStillOpen = document.body.querySelector('.menu-dropdown')
+    expect(dropdownStillOpen).not.toBeNull()
   })
 })

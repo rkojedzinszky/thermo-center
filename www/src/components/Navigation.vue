@@ -7,14 +7,37 @@ defineOptions({
 
 defineProps<{
   current?: 'overview' | 'heating'
+  currentTheme?: 'light' | 'system' | 'dark'
+}>()
+
+const emit = defineEmits<{
+  logout: []
+  themeChange: [theme: 'light' | 'system' | 'dark']
 }>()
 
 const isOpen = ref(false)
+const isThemeOpen = ref(false)
 const menuRef = ref<HTMLElement | null>(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 const dropdownStyle = ref<{ top: string; right: string }>({ top: '0', right: '0' })
 
 function closeMenu() {
   isOpen.value = false
+  isThemeOpen.value = false
+}
+
+function toggleThemeSubmenu() {
+  isThemeOpen.value = !isThemeOpen.value
+}
+
+function selectTheme(theme: 'light' | 'system' | 'dark') {
+  emit('themeChange', theme)
+  isThemeOpen.value = false
+}
+
+function logout() {
+  emit('logout')
+  closeMenu()
 }
 
 async function updateDropdownPosition() {
@@ -41,8 +64,14 @@ watch(isOpen, async () => {
 // Close menu when clicking outside
 if (typeof window !== 'undefined') {
   const handleClickOutside = (e: MouseEvent) => {
-    if (menuRef.value && !menuRef.value.contains(e.target as Node)) {
+    const target = e.target as Node
+
+    const isInMenu = menuRef.value?.contains(target)
+    const isInDropdown = dropdownRef.value?.contains(target)
+
+    if (!isInMenu && !isInDropdown) {
       isOpen.value = false
+      isThemeOpen.value = false
     }
   }
 
@@ -68,7 +97,7 @@ if (typeof window !== 'undefined') {
     </button>
 
     <Teleport to="body">
-      <div v-if="isOpen" class="menu-dropdown" :style="dropdownStyle">
+      <div v-if="isOpen" class="menu-dropdown" ref="dropdownRef" :style="dropdownStyle">
         <router-link
           to="/overview"
           class="menu-link"
@@ -87,6 +116,46 @@ if (typeof window !== 'undefined') {
           <span class="menu-icon">🔥</span>
           <span>Heating Control</span>
         </router-link>
+
+        <div class="menu-divider"></div>
+
+        <button class="menu-link submenu-trigger" type="button" @click.stop="toggleThemeSubmenu">
+          <span class="menu-icon">🎨</span>
+          <span>Theme</span>
+          <span class="submenu-arrow">{{ isThemeOpen ? '▲' : '▼' }}</span>
+        </button>
+
+        <div v-if="isThemeOpen" class="submenu">
+          <button
+            class="submenu-item"
+            :class="{ active: currentTheme === 'light' }"
+            @click.stop="selectTheme('light')"
+            type="button"
+          >
+            Light
+          </button>
+          <button
+            class="submenu-item"
+            :class="{ active: currentTheme === 'system' }"
+            @click.stop="selectTheme('system')"
+            type="button"
+          >
+            System
+          </button>
+          <button
+            class="submenu-item"
+            :class="{ active: currentTheme === 'dark' }"
+            @click.stop="selectTheme('dark')"
+            type="button"
+          >
+            Dark
+          </button>
+        </div>
+
+        <button class="menu-link" type="button" @click="logout">
+          <span class="menu-icon">↪</span>
+          <span>Logout</span>
+        </button>
       </div>
     </Teleport>
   </div>
@@ -126,7 +195,7 @@ if (typeof window !== 'undefined') {
 
 .menu-dropdown {
   position: fixed;
-  background: var(--color-popup-bg, var(--color-table-bg));
+  background: var(--color-surface-solid, var(--color-table-bg));
   border: 1px solid var(--color-border);
   border-radius: 0.6rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -163,5 +232,50 @@ if (typeof window !== 'undefined') {
 .menu-icon {
   font-size: 1.1rem;
   line-height: 1;
+}
+
+.menu-divider {
+  border-top: 1px solid var(--color-border);
+  margin: 0.4rem 0;
+}
+
+.submenu-trigger {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.submenu-arrow {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--color-border);
+  margin: 0 0.5rem 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.submenu-item {
+  text-align: left;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 0.35rem;
+  margin-top: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.submenu-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.submenu-item.active {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--color-text);
 }
 </style>
