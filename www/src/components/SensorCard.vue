@@ -94,7 +94,8 @@ function onDragOver(e: DragEvent) {
 }
 
 // ── Touch drag (mobile) ─────────────────────────────
-function onTouchStart(e: TouchEvent) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onTouchStart(_e: TouchEvent) {
   touchMoved = false
   emit('dragStart', props.index)
 }

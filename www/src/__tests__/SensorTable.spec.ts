@@ -187,7 +187,6 @@ describe('SensorTable', () => {
       const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
       const rows = wrapper.findAll('tbody tr.table-row')
       const handles = wrapper.findAll('.drag-handle')
-      const row0 = rows[0]!
       const row1 = rows[1]!
       const handle0 = handles[0]!
 
@@ -269,11 +268,11 @@ describe('SensorTable', () => {
       const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
       const rows = wrapper.findAll('tbody tr.table-row')
       const handles = wrapper.findAll('.drag-handle')
-      const row0 = rows[0]!
       const row1 = rows[1]!
       const handle0 = handles[0]!
 
       // Mock elementFromPoint to return the second row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
       document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
 
       await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
@@ -287,7 +286,7 @@ describe('SensorTable', () => {
       expect(wrapper.emitted('reorder')).toBeTruthy()
       expect(wrapper.emitted('reorder')?.[0]).toEqual([0, 1])
 
-      delete (document as any).elementFromPoint
+      document.elementFromPoint = originalElementFromPoint
     })
 
     it('does NOT emit reorder when touch ends on same row', async () => {
@@ -297,6 +296,8 @@ describe('SensorTable', () => {
       const row0 = rows[0]!
       const handle0 = handles[0]!
 
+      // Mock elementFromPoint to return the same row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
       document.elementFromPoint = vi.fn().mockReturnValue(row0.element)
 
       await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
@@ -309,17 +310,18 @@ describe('SensorTable', () => {
 
       expect(wrapper.emitted('reorder')).toBeFalsy()
 
-      delete (document as any).elementFromPoint
+      document.elementFromPoint = originalElementFromPoint
     })
 
     it('adds "drag-over" class to target row during touch drag', async () => {
       const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
       const rows = wrapper.findAll('tbody tr.table-row')
       const handles = wrapper.findAll('.drag-handle')
-      const row0 = rows[0]!
       const row1 = rows[1]!
       const handle0 = handles[0]!
 
+      // Mock elementFromPoint to return the second row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
       document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
 
       await handle0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
@@ -329,7 +331,7 @@ describe('SensorTable', () => {
 
       expect(row1.classes()).toContain('drag-over')
 
-      delete (document as any).elementFromPoint
+      document.elementFromPoint = originalElementFromPoint
     })
   })
 
@@ -444,18 +446,6 @@ describe('SensorTable', () => {
       expect(tableWrapper.exists()).toBe(true)
       expect(table.exists()).toBe(true)
       expect(tableWrapper.element.contains(table.element)).toBe(true)
-    })
-
-    it('table has min-width constraint to support horizontal scrolling', () => {
-      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
-      const table = wrapper.find('table.sensor-table')
-      // The HTML should be in place; CSS handles the constraint
-      expect(table.exists()).toBe(true)
-      const tableElement = table.element as HTMLTableElement
-      const computedMinWidth =
-        tableElement.style.minWidth || window.getComputedStyle(tableElement).minWidth
-      // Either inline style or computed from CSS (when styles are applied)
-      expect(table.exists()).toBe(true)
     })
 
     it('thead and tbody are proper HTML structure for sticky header support', () => {
