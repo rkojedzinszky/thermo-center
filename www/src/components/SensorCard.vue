@@ -14,6 +14,7 @@ const props = defineProps<{
   sensor: THSensor
   index: number
   total: number
+  reorderMode?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -62,13 +63,14 @@ const backFields = computed(() => {
 let touchMoved = false
 
 function toggleFlip(e: Event) {
+  if (props.reorderMode) return
   e.stopPropagation()
   flipped.value = !flipped.value
 }
 
-// ── Mouse drag ──────────────────────────────────────
+// ── Mouse drag (only active in reorder mode) ────────
 function onDragStart(e: DragEvent) {
-  // Custom ghost avoids the browser rendering the 3D-rotated back face
+  if (!props.reorderMode) return
   const ghost = document.createElement('div')
   ghost.textContent = props.sensor.name
   ghost.setAttribute(
@@ -89,20 +91,22 @@ function onDragStart(e: DragEvent) {
 }
 
 function onDragOver(e: DragEvent) {
+  if (!props.reorderMode) return
   e.preventDefault()
   emit('dragOver', props.index)
 }
 
-// ── Touch drag (mobile) ─────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// ── Touch drag (only active in reorder mode) ────────
 function onTouchStart(_e: TouchEvent) {
+  if (!props.reorderMode) return
   touchMoved = false
   emit('dragStart', props.index)
 }
 
 function onTouchMove(e: TouchEvent) {
+  if (!props.reorderMode) return
   touchMoved = true
-  e.preventDefault() // prevent page scroll while dragging
+  e.preventDefault()
   const touch = e.touches[0]
   if (!touch) return
   const el = document.elementFromPoint(touch.clientX, touch.clientY)
@@ -114,27 +118,28 @@ function onTouchMove(e: TouchEvent) {
 }
 
 function onTouchEnd(e: TouchEvent) {
+  if (!props.reorderMode) return
   if (touchMoved) {
-    // Prevent the synthetic click that would flip the card after a drag
     e.preventDefault()
   }
   touchMoved = false
   emit('dragEnd')
-}
-
-function onGripPointerDown(e: Event) {
-  // Drag should start only from the grip and should not flip the card.
-  e.stopPropagation()
 }
 </script>
 
 <template>
   <div
     class="card-wrapper card-fixed-size"
-    :class="{ inactive: isInactive }"
+    :class="{ inactive: isInactive, 'reorder-active': reorderMode }"
     :aria-label="`Sensor ${sensor.name}`"
     :data-card-index="index"
+    :draggable="reorderMode ? 'true' : undefined"
+    @dragstart="onDragStart"
     @dragover="onDragOver"
+    @dragend="$emit('dragEnd')"
+    @touchstart.passive="onTouchStart"
+    @touchmove="onTouchMove"
+    @touchend="onTouchEnd"
     @click="toggleFlip"
   >
     <div class="card" :class="{ flipped }">
@@ -142,23 +147,6 @@ function onGripPointerDown(e: Event) {
       <div class="card-face card-front">
         <div class="card-header">
           <span class="sensor-name">{{ sensor.name }}</span>
-          <div class="header-right">
-            <span
-              class="card-grip"
-              title="Drag to reorder"
-              draggable="true"
-              aria-label="Drag card"
-              @dragstart="onDragStart"
-              @dragend="$emit('dragEnd')"
-              @touchstart.passive="onTouchStart"
-              @touchmove="onTouchMove"
-              @touchend="onTouchEnd"
-              @mousedown="onGripPointerDown"
-              @click="onGripPointerDown"
-            >
-              ⠿
-            </span>
-          </div>
         </div>
         <div class="card-readings">
           <div class="reading">
@@ -212,6 +200,11 @@ function onGripPointerDown(e: Event) {
   touch-action: auto;
 }
 
+.card-wrapper.reorder-active {
+  cursor: grab;
+  touch-action: none;
+}
+
 .card-wrapper.inactive {
   opacity: 0.45;
 }
@@ -260,40 +253,6 @@ function onGripPointerDown(e: Event) {
   justify-content: space-between;
   padding: 0.55rem 0.6rem 0.2rem;
   gap: 0.3rem;
-}
-
-.header-right {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.35rem;
-}
-
-.card-grip {
-  color: var(--color-handle);
-  cursor: grab;
-  font-size: 0.88rem;
-  line-height: 1;
-  user-select: none;
-  flex-shrink: 0;
-  touch-action: none;
-}
-
-.card-edit-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  cursor: pointer;
-  padding: 0.2rem 0.3rem;
-  border-radius: 0.3rem;
-  transition: all 0.2s;
-  line-height: 1;
-  user-select: none;
-  flex-shrink: 0;
-}
-
-.card-edit-btn:hover {
-  background: rgba(99, 102, 241, 0.15);
 }
 
 .sensor-name {

@@ -8,11 +8,13 @@ defineOptions({
 defineProps<{
   current?: 'overview' | 'heating'
   currentTheme?: 'light' | 'system' | 'dark'
+  reorderMode?: boolean
 }>()
 
 const emit = defineEmits<{
   logout: []
   themeChange: [theme: 'light' | 'system' | 'dark']
+  toggleReorder: []
 }>()
 
 const isOpen = ref(false)
@@ -37,6 +39,11 @@ function selectTheme(theme: 'light' | 'system' | 'dark') {
 
 function logout() {
   emit('logout')
+  closeMenu()
+}
+
+function onToggleReorder() {
+  emit('toggleReorder')
   closeMenu()
 }
 
@@ -118,6 +125,18 @@ if (typeof window !== 'undefined') {
         </router-link>
 
         <div class="menu-divider"></div>
+
+        <button
+          v-if="current === 'overview'"
+          class="menu-link"
+          :class="{ active: reorderMode }"
+          type="button"
+          @click="onToggleReorder"
+        >
+          <span class="menu-icon">⇅</span>
+          <span>Reorder</span>
+          <span v-if="reorderMode" class="menu-check">✓</span>
+        </button>
 
         <button class="menu-link submenu-trigger" type="button" @click.stop="toggleThemeSubmenu">
           <span class="menu-icon">🎨</span>
@@ -248,6 +267,12 @@ if (typeof window !== 'undefined') {
   margin-left: auto;
   font-size: 0.8rem;
   color: var(--color-text-muted);
+}
+
+.menu-check {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--color-accent, #6366f1);
 }
 
 .submenu {

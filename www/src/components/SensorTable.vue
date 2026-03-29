@@ -19,6 +19,7 @@ defineOptions({
 const props = defineProps<{
   sensors: THSensor[]
   isExpanded?: boolean
+  reorderMode?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -47,11 +48,11 @@ const dragIndex = ref<number | null>(null)
 const dragOverIndex = ref<number | null>(null)
 
 function onDragStart(index: number, e: DragEvent) {
+  if (!props.reorderMode) return
   dragIndex.value = index
   if (e.dataTransfer) {
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', String(index))
-    // Custom ghost prevents the browser from rendering a garbled / white row
     const sensor = props.sensors[index]
     const ghost = document.createElement('div')
     ghost.textContent = sensor?.name ?? `Row ${index + 1}`
@@ -87,14 +88,15 @@ function onDragEnd() {
   dragOverIndex.value = null
 }
 
-// ── Touch drag (mobile) ─────────────────────────────
+// ── Touch drag (only active in reorder mode) ────────
 function onRowTouchStart(index: number, _e: TouchEvent) {
+  if (!props.reorderMode) return
   dragIndex.value = index
 }
 
 function onTableTouchMove(e: TouchEvent) {
   if (dragIndex.value === null) return
-  e.preventDefault() // prevent scroll while reordering
+  e.preventDefault()
   const touch = e.touches[0]
   if (!touch) return
   const el = document.elementFromPoint(touch.clientX, touch.clientY)
@@ -167,11 +169,15 @@ function cellValue(sensor: THSensor, key: string): string {
 </script>
 
 <template>
-  <div class="table-wrapper" @touchmove="onTableTouchMove" @touchend="onTableTouchEnd">
+  <div
+    class="table-wrapper"
+    :class="{ 'reorder-active': reorderMode }"
+    @touchmove="onTableTouchMove"
+    @touchend="onTableTouchEnd"
+  >
     <table class="sensor-table">
       <thead>
         <tr>
-          <th class="th-drag" />
           <th
             v-for="col in columns"
             :key="col.key"
@@ -205,22 +211,13 @@ function cellValue(sensor: THSensor, key: string): string {
             dragging: dragIndex === idx,
           }"
           :data-row-index="idx"
+          :draggable="reorderMode ? 'true' : undefined"
+          @dragstart="onDragStart(idx, $event)"
+          @dragend="onDragEnd"
           @dragover="onDragOver(idx, $event)"
           @drop="onDrop(idx, $event)"
+          @touchstart.passive="onRowTouchStart(idx, $event)"
         >
-          <td class="td-drag">
-            <span
-              class="drag-handle"
-              title="Drag to reorder"
-              draggable="true"
-              aria-label="Drag row"
-              @dragstart="onDragStart(idx, $event)"
-              @dragend="onDragEnd"
-              @touchstart.passive="onRowTouchStart(idx, $event)"
-            >
-              ⠿
-            </span>
-          </td>
           <td
             v-for="col in columns"
             :key="col.key"
@@ -268,7 +265,7 @@ function cellValue(sensor: THSensor, key: string): string {
           </td>
         </tr>
         <tr v-if="sensors.length === 0">
-          <td :colspan="columns.length + 1" class="empty-row">No sensors found</td>
+          <td :colspan="columns.length" class="empty-row">No sensors found</td>
         </tr>
       </tbody>
     </table>
@@ -332,19 +329,15 @@ thead {
   white-space: nowrap;
 }
 
-.th-drag {
-  background: var(--color-table-header-bg);
-  border-bottom: 1px solid var(--color-border);
-  width: 36px;
-  min-width: 36px;
-}
-
 .table-row {
   border-bottom: 1px solid var(--color-border);
-  cursor: grab;
   transition:
     background 0.15s,
     opacity 0.3s;
+}
+
+.reorder-active .table-row {
+  cursor: grab;
 }
 
 .table-row:last-child {
@@ -376,19 +369,6 @@ thead {
   color: var(--color-text-fields, var(--color-text));
   padding: 0.7rem 1rem;
   white-space: nowrap;
-}
-
-.td-drag {
-  padding: 0.7rem 0.5rem;
-  text-align: center;
-  color: var(--color-handle);
-}
-
-.drag-handle {
-  font-size: 1rem;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
 }
 
 .resync-button {
@@ -466,17 +446,8 @@ thead {
     font-size: 0.65rem;
   }
 
-  .th-drag {
-    width: 30px;
-    min-width: 30px;
-  }
-
   .td {
     padding: 0.6rem 0.75rem;
-  }
-
-  .td-drag {
-    padding: 0.6rem 0.3rem;
   }
 
   .th.numeric {

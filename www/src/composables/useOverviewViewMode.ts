@@ -14,6 +14,7 @@ function loadInitialViewMode(): OverviewViewMode {
 }
 
 const viewMode = ref<OverviewViewMode>(loadInitialViewMode())
+const reorderMode = ref(false)
 
 export function useOverviewViewMode() {
   function setViewMode(mode: OverviewViewMode) {
@@ -21,8 +22,14 @@ export function useOverviewViewMode() {
     localStorage.setItem(VIEW_MODE_KEY, mode)
   }
 
+  function toggleReorderMode() {
+    reorderMode.value = !reorderMode.value
+  }
+
   return {
     viewMode,
     setViewMode,
+    reorderMode,
+    toggleReorderMode,
   }
 }

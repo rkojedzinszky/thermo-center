@@ -12,7 +12,7 @@ import AppHeader from '@/components/AppHeader.vue'
 // Initialises theme and keeps html[data-theme] in sync
 const { pref, setTheme } = useTheme()
 const { session, logout: authLogout } = useAuth()
-const { viewMode, setViewMode } = useOverviewViewMode()
+const { viewMode, setViewMode, reorderMode, toggleReorderMode } = useOverviewViewMode()
 const route = useRoute()
 const router = useRouter()
 // Manage websocket lifecycle based on auth state
@@ -76,9 +76,11 @@ onUnmounted(() => {
       :username="session?.username"
       :current-theme="pref"
       :view-mode="viewMode"
+      :reorder-mode="reorderMode"
       @logout="logout"
       @theme-change="setTheme"
       @view-mode-change="setViewMode"
+      @toggle-reorder="toggleReorderMode"
     />
 
     <RouterView />

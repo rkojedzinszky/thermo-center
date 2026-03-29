@@ -9,7 +9,7 @@ import SensorTable from '@/components/SensorTable.vue'
 
 const { orderedSensors, loadSensors, updateSensor, updateSensorDirect, removeSensor, reorder } =
   useSensors()
-const { viewMode } = useOverviewViewMode()
+const { viewMode, reorderMode } = useOverviewViewMode()
 
 // Card drag-and-drop state
 const dragFromIndex = ref<number | null>(null)
@@ -65,13 +65,18 @@ onUnmounted(() => {
     <!-- Main content -->
     <main class="overview-content">
       <!-- Cards view -->
-      <div v-if="viewMode === 'cards'" class="cards-grid">
+      <div
+        v-if="viewMode === 'cards'"
+        class="cards-grid"
+        :class="{ 'reorder-active': reorderMode }"
+      >
         <SensorCard
           v-for="(sensor, idx) in orderedSensors"
           :key="sensor.id"
           :sensor="sensor"
           :index="idx"
           :total="orderedSensors.length"
+          :reorder-mode="reorderMode"
           :class="{ 'drag-target': dragOverIndex === idx && dragFromIndex !== idx }"
           @drag-start="onCardDragStart"
           @drag-over="onCardDragOver"
@@ -90,6 +95,7 @@ onUnmounted(() => {
         <SensorTable
           :sensors="orderedSensors"
           :is-expanded="viewMode === 'full-table'"
+          :reorder-mode="reorderMode"
           @reorder="reorder"
           @updated="onSensorUpdated"
           @deleted="(sensorId: number) => onSensorDeleted(sensorId)"

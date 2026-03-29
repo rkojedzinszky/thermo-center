@@ -10,12 +10,14 @@ interface Props {
   username?: string
   currentTheme?: 'light' | 'system' | 'dark'
   viewMode?: 'cards' | 'simple-table' | 'full-table'
+  reorderMode?: boolean
 }
 
 interface Emits {
   logout: []
   themeChange: [theme: 'light' | 'system' | 'dark']
   viewModeChange: [mode: 'cards' | 'simple-table' | 'full-table']
+  toggleReorder: []
 }
 
 withDefaults(defineProps<Props>(), {
@@ -99,7 +101,9 @@ function handleViewModeChange(mode: 'cards' | 'simple-table' | 'full-table') {
       <Navigation
         :current="currentPage"
         :current-theme="currentTheme"
+        :reorder-mode="reorderMode"
         @themeChange="handleThemeChange"
+        @toggleReorder="$emit('toggleReorder')"
         @logout="$emit('logout')"
       />
     </div>
