@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.utils.module_loading import import_string, autodiscover_modules
 from django.conf.urls.static import static
-from tastypie_openapi import SchemaView
+from django_tastypie_openapi import SchemaView
 from . import views
 
 autodiscover_modules("restapi")
