@@ -43,8 +43,8 @@ RUN python manage.py collectstatic --no-input
 
 FROM nginx:alpine AS ui
 
-COPY www/dist/ /var/www/html
-COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html
+COPY www/dist /var/www/html
+COPY --from=fe-prepare /opt/thermo-center/www/static /var/www/html/static
 
 ADD docker-assets-ui /
 
