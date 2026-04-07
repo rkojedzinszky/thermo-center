@@ -1,0 +1,142 @@
+name: Container Image
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*.*.*"
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Build UI
+        working-directory: ./www
+        run: |
+          npm ci
+          npm run build
+          rm -rf node_modules
+
+      - name: Setup qemu
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Extract metadata (tags, labels) for api image
+        id: meta-api
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-api
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Extract metadata (tags, labels) for ui image
+        id: meta-ui
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-ui
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and publish api image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          target: api
+          platforms: linux/amd64, linux/arm64/v8
+          push: true
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}
+
+      - name: Build and publish ui image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          target: ui
+          platforms: linux/amd64, linux/arm64/v8
+          push: true
+          tags: ${{ steps.meta-ui.outputs.tags }}
+          labels: ${{ steps.meta-ui.outputs.labels }}
+
+  build-go-binaries:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        component: [receiver, grpcserver, ws]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+
+      - name: Compile binaries
+        env:
+          CGO_ENABLED: 0
+        run: |
+          GOARCH=amd64 go build -ldflags -s -o cmd/${{ matrix.component }}/${{ matrix.component }}.amd64 ./cmd/${{ matrix.component }}
+          GOARCH=arm64 go build -ldflags -s -o cmd/${{ matrix.component }}/${{ matrix.component }}.arm64 ./cmd/${{ matrix.component }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.component }}
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and publish image
+        uses: docker/build-push-action@v3
+        with:
+          context: cmd/${{ matrix.component }}
+          file: cmd/${{ matrix.component }}/Dockerfile
+          platforms: linux/amd64, linux/arm64/v8
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
