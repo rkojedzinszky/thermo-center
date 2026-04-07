@@ -1,62 +1,49 @@
 {
-  "description": "DIY thermo center",
+  "name": "thermo-center-www",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite --host 0.0.0.0",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "run-s lint:*",
+    "lint:oxlint": "oxlint . --fix",
+    "lint:eslint": "eslint . --fix --cache",
+    "format": "oxfmt src/"
   },
-  "steal": {
-    "bundle": [
-      "~/pages/overview/",
-      "~/pages/login/",
-      "~/pages/logout/",
-      "~/pages/heatcontrol/",
-      "~/pages/edit/",
-      "~/pages/admin/"
-    ],
-    "plugins": [
-      "steal-less"
-    ]
+  "dependencies": {
+    "vue": "^3.5.29",
+    "vue-router": "^5.0.3"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "bootstrap": "^4.5.0",
-    "can-ajax": "^2.4.5",
-    "can-assign": "^1.3.3",
-    "can-component": "^5.0.0",
-    "can-connect": "^4.0.2",
-    "can-define": "^2.8.0",
-    "can-observation-recorder": "^1.3.1",
-    "can-queues": "^1.3.2",
-    "can-realtime-rest-model": "^2.0.0",
-    "can-route": "^5.0.2",
-    "can-stache": "^5.1.1",
-    "can-stache-bindings": "^5.0.4",
-    "can-stache-route-helpers": "^2.0.0",
-    "jquery": "^3.5.1",
-    "js-cookie": "^2.2.0",
-    "popper.js": "^1.15.0",
-    "pretty-ms": "^5.0.0",
-    "rollup": "^1.17.0",
-    "steal": "^2.2.4",
-    "steal-less": "^1.3.4",
-    "steal-tools": "^2.2.6"
+    "@tsconfig/node24": "^24.0.4",
+    "@types/jsdom": "^28.0.0",
+    "@types/node": "^24.10.13",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitest/eslint-plugin": "^1.6.9",
+    "@vue/eslint-config-typescript": "^14.7.0",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.8.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-oxlint": "~1.50.0",
+    "eslint-plugin-vue": "~10.8.0",
+    "jiti": "^2.6.1",
+    "jsdom": "^28.1.0",
+    "npm-run-all2": "^8.0.4",
+    "oxfmt": "^0.35.0",
+    "oxlint": "~1.50.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-vue-devtools": "^8.0.6",
+    "vitest": "^4.0.18",
+    "vue-tsc": "^3.2.5"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rkojedzinszky/thermo-center"
-  },
-  "license": "ISC",
-  "keywords": [
-    "diy",
-    "sensor",
-    "temperature",
-    "humidity"
-  ],
-  "name": "thermo-center",
-  "version": "3.6.0",
-  "author": "Richard Kojedzinszky",
-  "bugs": {
-    "url": "https://github.com/rkojedzinszky/thermo-center/issues"
-  },
-  "homepage": "",
-  "main": "index.js"
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
 }

@@ -1,0 +1,528 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount } from '@vue/test-utils'
+import SensorTable from '../components/SensorTable.vue'
+import type { THSensor } from '../api'
+
+const NOW_UNIX = Math.floor(Date.now() / 1000)
+
+const sensors: THSensor[] = [
+  {
+    resourceUri: '/sensor/1',
+    id: 1,
+    name: 'Kitchen',
+    temperature: 23.2,
+    humidity: 48.0,
+    lastTsf: NOW_UNIX - 45,
+    vcc: 3.0,
+    rssi: -70,
+    lqi: 180,
+    interval: 120,
+    lastSeq: 9999,
+    valid: true,
+    sensorResync: undefined,
+  },
+  {
+    resourceUri: '/sensor/2',
+    id: 2,
+    name: 'Attic',
+    temperature: 18.0,
+    humidity: 62.5,
+    lastTsf: NOW_UNIX - 700, // inactive
+    vcc: 2.9,
+    rssi: -80,
+    lqi: 120,
+    interval: 120,
+    lastSeq: 8000,
+    valid: false,
+    sensorResync: 'abc',
+  },
+]
+
+beforeEach(() => {
+  vi.useFakeTimers()
+  vi.setSystemTime(NOW_UNIX * 1000)
+})
+
+afterEach(() => {
+  vi.useRealTimers()
+})
+
+describe('SensorTable', () => {
+  describe('layout & structure', () => {
+    it('renders a table element', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.find('table').exists()).toBe(true)
+    })
+
+    it('renders thead with column headers', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const ths = wrapper.findAll('th.th')
+      expect(ths.length).toBeGreaterThan(0)
+    })
+
+    it('renders the correct column headers', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const headerText = wrapper.findAll('th.th').map((th) => th.text())
+      expect(headerText).toContain('Name')
+      expect(headerText).toContain('Temp (°C)')
+      expect(headerText).toContain('Humidity (%)')
+      expect(headerText).toContain('Last Data')
+    })
+
+    it('renders a row for each sensor', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.findAll('tbody tr.table-row')).toHaveLength(sensors.length)
+    })
+
+    it('shows empty state when no sensors provided', () => {
+      const wrapper = mount(SensorTable, { props: { sensors: [], isExpanded: true } })
+      const emptyRow = wrapper.find('.empty-row')
+      expect(emptyRow.exists()).toBe(true)
+      expect(emptyRow.text()).toContain('No sensors found')
+    })
+
+    it('no drag handle column is rendered', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.find('.drag-handle').exists()).toBe(false)
+    })
+
+    it('uses a dedicated wrapper around the table for scrolling', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const scroller = wrapper.find('.table-wrapper')
+      expect(scroller.exists()).toBe(true)
+      expect(scroller.find('table.sensor-table').exists()).toBe(true)
+    })
+
+    it('renders headers in thead for sticky-table behavior', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const thead = wrapper.find('thead')
+      const headerCells = wrapper.findAll('thead th')
+      expect(thead.exists()).toBe(true)
+      expect(headerCells.length).toBeGreaterThan(1)
+    })
+  })
+
+  describe('readability – cell data', () => {
+    it('displays sensor name in a row', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.text()).toContain('Kitchen')
+    })
+
+    it('displays formatted temperature', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.text()).toContain('23.2')
+    })
+
+    it('displays formatted humidity', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.text()).toContain('48')
+    })
+
+    it('displays age for last_tsf', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      expect(wrapper.text()).toMatch(/\d+ seconds ago/)
+    })
+
+    it('shows "—" for null fields on the second sensor', () => {
+      const sensorWithNulls: THSensor[] = [
+        {
+          resourceUri: '/sensor/3',
+          id: 3,
+          name: 'Shed',
+          temperature: null,
+          humidity: null,
+          lastTsf: null,
+          valid: null,
+          sensorResync: undefined,
+        },
+      ]
+      const wrapper = mount(SensorTable, { props: { sensors: sensorWithNulls, isExpanded: true } })
+      expect(wrapper.text()).toContain('—')
+    })
+
+    it('does NOT render "valid" column', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const headerText = wrapper.findAll('th').map((th) => th.text().toLowerCase())
+      expect(headerText).not.toContain('valid')
+    })
+
+    it('does NOT render "sensor_resync" field as data column', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const text = wrapper.find('tbody').text()
+      // sensor_resync values should not be rendered as cell content
+      expect(text).not.toContain('abc')
+    })
+  })
+
+  describe('inactive state', () => {
+    it('adds "inactive" class to the row of an inactive sensor', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      // Second sensor is inactive
+      expect(rows[1]!.classes()).toContain('inactive')
+    })
+
+    it('does NOT add "inactive" class to the row of an active sensor', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      expect(rows[0]!.classes()).not.toContain('inactive')
+    })
+  })
+
+  describe('drag-and-drop reorder', () => {
+    it('rows are not draggable by default (no reorder mode)', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      rows.forEach((row) => {
+        expect(row.attributes('draggable')).toBeUndefined()
+      })
+    })
+
+    it('rows are draggable in reorder mode', () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      rows.forEach((row) => {
+        expect(row.attributes('draggable')).toBe('true')
+      })
+    })
+
+    it('emits "reorder" event when dragging from one row to another in reorder mode', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      await row0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row1.trigger('dragover')
+      await row1.trigger('drop')
+
+      expect(wrapper.emitted('reorder')).toBeTruthy()
+      expect(wrapper.emitted('reorder')?.[0]).toEqual([0, 1])
+    })
+
+    it('does NOT emit reorder when dropped on same index', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+
+      await row0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row0.trigger('dragover')
+      await row0.trigger('drop')
+
+      expect(wrapper.emitted('reorder')).toBeFalsy()
+    })
+
+    it('does NOT emit reorder when not in reorder mode', async () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      await row0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row1.trigger('dragover')
+      await row1.trigger('drop')
+
+      expect(wrapper.emitted('reorder')).toBeFalsy()
+    })
+
+    it('adds "drag-over" class when dragging over a row', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      await row0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row1.trigger('dragover')
+
+      expect(row1.classes()).toContain('drag-over')
+    })
+
+    it('clears drag-over class after drag ends', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      await row0.trigger('dragstart', {
+        dataTransfer: { setData: vi.fn(), effectAllowed: 'move' },
+      })
+      await row1.trigger('dragover')
+      await row0.trigger('dragend')
+
+      expect(row1.classes()).not.toContain('drag-over')
+    })
+  })
+
+  describe('touch drag reorder', () => {
+    it('emits "reorder" event when touch-dragging from one row to another in reorder mode', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      // Mock elementFromPoint to return the second row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
+      document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
+
+      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await wrapper.find('.table-wrapper').trigger('touchmove', {
+        touches: [{ clientX: 50, clientY: 100 }],
+      })
+      await wrapper.find('.table-wrapper').trigger('touchend', {
+        changedTouches: [{ clientX: 50, clientY: 100 }],
+      })
+
+      expect(wrapper.emitted('reorder')).toBeTruthy()
+      expect(wrapper.emitted('reorder')?.[0]).toEqual([0, 1])
+
+      document.elementFromPoint = originalElementFromPoint
+    })
+
+    it('does NOT emit reorder when touch-dragging outside reorder mode', async () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      const originalElementFromPoint = document.elementFromPoint
+      document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
+
+      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await wrapper.find('.table-wrapper').trigger('touchmove', {
+        touches: [{ clientX: 50, clientY: 100 }],
+      })
+      await wrapper.find('.table-wrapper').trigger('touchend', {
+        changedTouches: [{ clientX: 50, clientY: 100 }],
+      })
+
+      expect(wrapper.emitted('reorder')).toBeFalsy()
+
+      document.elementFromPoint = originalElementFromPoint
+    })
+
+    it('does NOT emit reorder when touch ends on same row', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+
+      // Mock elementFromPoint to return the same row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
+      document.elementFromPoint = vi.fn().mockReturnValue(row0.element)
+
+      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await wrapper.find('.table-wrapper').trigger('touchmove', {
+        touches: [{ clientX: 50, clientY: 55 }],
+      })
+      await wrapper.find('.table-wrapper').trigger('touchend', {
+        changedTouches: [{ clientX: 50, clientY: 55 }],
+      })
+
+      expect(wrapper.emitted('reorder')).toBeFalsy()
+
+      document.elementFromPoint = originalElementFromPoint
+    })
+
+    it('adds "drag-over" class to target row during touch drag in reorder mode', async () => {
+      const wrapper = mount(SensorTable, {
+        props: { sensors, isExpanded: true, reorderMode: true },
+      })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const row0 = rows[0]!
+      const row1 = rows[1]!
+
+      // Mock elementFromPoint to return the second row's DOM element
+      const originalElementFromPoint = document.elementFromPoint
+      document.elementFromPoint = vi.fn().mockReturnValue(row1.element)
+
+      await row0.trigger('touchstart', { touches: [{ clientX: 50, clientY: 50 }] })
+      await wrapper.find('.table-wrapper').trigger('touchmove', {
+        touches: [{ clientX: 50, clientY: 100 }],
+      })
+
+      expect(row1.classes()).toContain('drag-over')
+
+      document.elementFromPoint = originalElementFromPoint
+    })
+  })
+
+  describe('timestamp formatting', () => {
+    it('shows "No data" for null lastTsf', () => {
+      const s: THSensor[] = [
+        {
+          resourceUri: '/sensor/10',
+          id: 10,
+          name: 'Test',
+          lastTsf: null,
+          valid: null,
+          sensorResync: undefined,
+        },
+      ]
+      const wrapper = mount(SensorTable, { props: { sensors: s, isExpanded: true } })
+      expect(wrapper.text()).toContain('No data')
+    })
+
+    it('shows minute-format for 75 seconds ago', () => {
+      const s: THSensor[] = [
+        {
+          resourceUri: '/sensor/11',
+          id: 11,
+          name: 'Test',
+          lastTsf: NOW_UNIX - 75,
+          valid: null,
+          sensorResync: undefined,
+        },
+      ]
+      const wrapper = mount(SensorTable, { props: { sensors: s, isExpanded: true } })
+      expect(wrapper.text()).toContain('1 minute ago')
+    })
+  })
+
+  describe('resync button – invalid sensor', () => {
+    it('shows resync button for sensor with valid=false', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const buttons = wrapper.findAll('.resync-button')
+      // Only the second sensor (index 1) has valid=false
+      expect(buttons).toHaveLength(1)
+    })
+
+    it('does NOT show resync button for sensor with valid=true', () => {
+      const activeSensors: THSensor[] = [sensors[0]!] // Only the active sensor
+      const wrapper = mount(SensorTable, { props: { sensors: activeSensors, isExpanded: true } })
+      const buttons = wrapper.findAll('.resync-button')
+      expect(buttons).toHaveLength(0)
+    })
+
+    it('resync button replaces age label in Last Data cell', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const invalidRow = rows[1]! // Second sensor is invalid
+      // Last Data cell should have the button
+      expect(invalidRow.find('.resync-button').exists()).toBe(true)
+      expect(invalidRow.find('.resync-button').text()).toContain('Resync')
+    })
+
+    it('shows age label in Last Data cell for valid sensors', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const rows = wrapper.findAll('tbody tr.table-row')
+      const activeRow = rows[0]! // First sensor is active/valid
+      // Last Data cell should show age, not button
+      expect(activeRow.find('.resync-button').exists()).toBe(false)
+      expect(activeRow.text()).toMatch(/\d+ seconds ago/)
+    })
+
+    it('resync button has correct title attribute', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const button = wrapper.find('.resync-button')
+      expect(button.attributes('title')).toBe('Request sensor resynchronization')
+    })
+  })
+
+  describe('scrollable table with sticky header', () => {
+    it('table-wrapper is the scrollable container element', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const tableWrapper = wrapper.find('.table-wrapper')
+      expect(tableWrapper.exists()).toBe(true)
+      expect(tableWrapper.element.classList.contains('table-wrapper')).toBe(true)
+    })
+
+    it('thead is present and separate from tbody', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const thead = wrapper.find('thead')
+      const tbody = wrapper.find('tbody')
+      expect(thead.exists()).toBe(true)
+      expect(tbody.exists()).toBe(true)
+      // thead defines the column structure
+      expect(thead.findAll('th.th').length).toBeGreaterThan(0)
+    })
+
+    it('table structure allows header to remain visible during scroll', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const thead = wrapper.find('thead')
+      const tbody = wrapper.find('tbody')
+      const table = wrapper.find('table.sensor-table')
+
+      // Table uses standard HTML table structure
+      expect(table.exists()).toBe(true)
+      // Table has head and body sections
+      expect(table.element.contains(thead.element)).toBe(true)
+      expect(table.element.contains(tbody.element)).toBe(true)
+    })
+
+    it('table-wrapper contains the complete table element', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const tableWrapper = wrapper.find('.table-wrapper')
+      const table = wrapper.find('table.sensor-table')
+
+      expect(tableWrapper.exists()).toBe(true)
+      expect(table.exists()).toBe(true)
+      expect(tableWrapper.element.contains(table.element)).toBe(true)
+    })
+
+    it('thead and tbody are proper HTML structure for sticky header support', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const table = wrapper.find('table.sensor-table')
+      const thead = table.find('thead')
+      const tbody = table.find('tbody')
+
+      // Proper semantic HTML for table with sticky header
+      expect(thead.exists()).toBe(true)
+      expect(tbody.exists()).toBe(true)
+      expect(thead.findAll('tr').length).toBeGreaterThan(0)
+      expect(tbody.findAll('tr').length).toBe(sensors.length)
+    })
+
+    it('all data rows are in tbody, not mixed with header', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const tbody = wrapper.find('tbody')
+      const dataRows = tbody.findAll('tr.table-row')
+
+      expect(dataRows.length).toBe(sensors.length)
+      // Verify no data rows in thead
+      const theadRows = wrapper.find('thead').findAll('tr')
+      expect(theadRows.length).toBe(1)
+    })
+
+    it('header cells are properly marked as th elements in thead', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const headerCells = wrapper.findAll('thead th')
+
+      expect(headerCells.length).toBeGreaterThan(0)
+      headerCells.forEach((cell) => {
+        expect(cell.element.tagName).toBe('TH')
+      })
+    })
+
+    it('data cells use td elements in tbody rows', () => {
+      const wrapper = mount(SensorTable, { props: { sensors, isExpanded: true } })
+      const firstRow = wrapper.find('tbody tr.table-row')
+      const dataCells = firstRow.findAll('td')
+
+      expect(dataCells.length).toBeGreaterThan(0)
+      dataCells.forEach((cell) => {
+        expect(cell.element.tagName).toBe('TD')
+      })
+    })
+  })
+})

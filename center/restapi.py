@@ -130,7 +130,7 @@ class ConfigureSensorTaskAuthorization(NoAuthorization):
 
 class ConfigureSensorTaskResource(ReadonlyPkeyResource):
     sensor_id = fields.IntegerField()
-    sensor_name = fields.CharField()
+    sensor_name = fields.CharField(null=True)
     created = fields.DateTimeField("created", null=True, readonly=True)
     started = fields.DateTimeField("started", null=True, readonly=True)
     first_discovery = fields.DateTimeField("first_discovery", null=True, readonly=True)

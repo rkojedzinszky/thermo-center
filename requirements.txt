@@ -3,6 +3,7 @@ django>=5.2,<6
 django-atomic-migrations
 # install from source
 django-tastypie
+django-tastypie-openapi >= 0.1.2
 psycopg[c,pool]
 pylibmc
 grpcio
