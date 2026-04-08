@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { Control, ScheduledOverrideW } from '@/api'
+import type { Control, InstantOverrideW } from '@/api'
 import api from '@/utils/api'
 import { formatDecimal2 } from '@/composables/useSensorFormatting'
 import { useControls } from '@/composables/useControls'
@@ -59,21 +59,18 @@ async function confirmTargetEdit() {
     return
   }
 
-  const start = new Date()
-  const end = new Date(start.getTime() + 2 * 60 * 60 * 1000)
-  const payload: ScheduledOverrideW = {
+  const payload: InstantOverrideW = {
     control: props.control.resourceUri,
-    start,
-    end,
     targetTemp: editedTarget.value,
+    duration: 2 * 60 * 60,
   }
 
   isSaving.value = true
   try {
-    await api.createScheduledOverride({ scheduledOverrideW: payload })
+    await api.createInstantOverride({ instantOverrideW: payload })
     await updateControl(props.control.sensorId)
   } catch (error) {
-    console.error('Failed to create scheduled override:', error)
+    console.error('Failed to create instant override:', error)
   } finally {
     isSaving.value = false
     cancelTargetEdit()
