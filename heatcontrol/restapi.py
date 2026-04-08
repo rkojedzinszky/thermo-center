@@ -96,6 +96,22 @@ class ScheduledOverrideResource(ReadonlyPkeyResource):
 ScheduledOverrideResourceInstance = ScheduledOverrideResource()
 restapi.RestApi.register(ScheduledOverrideResourceInstance)
 
+class InstantOverrideResource(ScheduledOverrideResource):
+    duration = fields.IntegerField(help_text='Relative duration in seconds')
+
+    class Meta(ScheduledOverrideResource.Meta):
+        fields = ['control', 'target_temp', 'duration']
+        list_allowed_methods = ['post']
+        detail_allowed_methods = []
+
+    def hydrate(self, bundle):
+        bundle.obj.start = timezone.now()
+        bundle.obj.end = bundle.obj.start + datetime.timedelta(seconds=self.duration.hydrate(bundle))
+        return bundle
+
+InstantOverrideResourceInstance = InstantOverrideResource()
+restapi.RestApi.register(InstantOverrideResourceInstance)
+
 class InstantProfileResourceAuthorization(ReadOnlyAuthorization):
     def update_detail(self, object_list, bundle):
         return True
