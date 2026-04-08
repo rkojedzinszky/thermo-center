@@ -13,6 +13,9 @@ docs/DayType.md
 docs/DayTypeR.md
 docs/DayTypeW.md
 docs/DefaultApi.md
+docs/InstantOverride.md
+docs/InstantOverrideR.md
+docs/InstantOverrideW.md
 docs/InstantProfile.md
 docs/InstantProfileR.md
 docs/InstantProfileW.md
@@ -63,6 +66,9 @@ models/CurrentDaytypeW.ts
 models/DayType.ts
 models/DayTypeR.ts
 models/DayTypeW.ts
+models/InstantOverride.ts
+models/InstantOverrideR.ts
+models/InstantOverrideW.ts
 models/InstantProfile.ts
 models/InstantProfileR.ts
 models/InstantProfileW.ts

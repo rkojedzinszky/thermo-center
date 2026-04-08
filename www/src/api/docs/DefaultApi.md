@@ -7,6 +7,7 @@ All URIs are relative to *http://localhost*
 | [**createConfigureSensorTask**](DefaultApi.md#createconfiguresensortask) | **POST** /api/v1/configuresensortask/ | Create ConfigureSensorTask |
 | [**createControl**](DefaultApi.md#createcontrol) | **POST** /api/v1/control/ | Create Control |
 | [**createDayType**](DefaultApi.md#createdaytype) | **POST** /api/v1/daytype/ | Create DayType |
+| [**createInstantOverride**](DefaultApi.md#createinstantoverride) | **POST** /api/v1/instantoverride/ | Create InstantOverride |
 | [**createInstantProfile**](DefaultApi.md#createinstantprofile) | **POST** /api/v1/instantprofile/ | Create InstantProfile |
 | [**createProfile**](DefaultApi.md#createprofile) | **POST** /api/v1/profile/ | Create Profile |
 | [**createScheduledOverride**](DefaultApi.md#createscheduledoverride) | **POST** /api/v1/scheduledoverride/ | Create ScheduledOverride |
@@ -246,6 +247,72 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **201** | DayType successfully created |  * Location - URI of created DayType <br>  |
+| **0** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## createInstantOverride
+
+> InstantOverride createInstantOverride(instantOverrideW)
+
+Create InstantOverride
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DefaultApi,
+} from '';
+import type { CreateInstantOverrideRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const api = new DefaultApi();
+
+  const body = {
+    // InstantOverrideW | Values for InstantOverride
+    instantOverrideW: ...,
+  } satisfies CreateInstantOverrideRequest;
+
+  try {
+    const data = await api.createInstantOverride(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **instantOverrideW** | [InstantOverrideW](InstantOverrideW.md) | Values for InstantOverride | |
+
+### Return type
+
+[**InstantOverride**](InstantOverride.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **201** | InstantOverride successfully created |  * Location - URI of created InstantOverride <br>  |
 | **0** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)

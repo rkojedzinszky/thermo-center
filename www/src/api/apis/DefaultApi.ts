@@ -21,6 +21,8 @@ import type {
   ControlW,
   DayType,
   DayTypeW,
+  InstantOverride,
+  InstantOverrideW,
   InstantProfile,
   InstantProfileW,
   ListControl200Response,
@@ -63,6 +65,10 @@ import {
     DayTypeToJSON,
     DayTypeWFromJSON,
     DayTypeWToJSON,
+    InstantOverrideFromJSON,
+    InstantOverrideToJSON,
+    InstantOverrideWFromJSON,
+    InstantOverrideWToJSON,
     InstantProfileFromJSON,
     InstantProfileToJSON,
     InstantProfileWFromJSON,
@@ -131,6 +137,10 @@ export interface CreateControlRequest {
 
 export interface CreateDayTypeRequest {
     dayTypeW: DayTypeW;
+}
+
+export interface CreateInstantOverrideRequest {
+    instantOverrideW: InstantOverrideW;
 }
 
 export interface CreateInstantProfileRequest {
@@ -441,6 +451,53 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async createDayType(requestParameters: CreateDayTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DayType> {
         const response = await this.createDayTypeRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for createInstantOverride without sending the request
+     */
+    async createInstantOverrideRequestOpts(requestParameters: CreateInstantOverrideRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['instantOverrideW'] == null) {
+            throw new runtime.RequiredError(
+                'instantOverrideW',
+                'Required parameter "instantOverrideW" was null or undefined when calling createInstantOverride().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/api/v1/instantoverride/`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InstantOverrideWToJSON(requestParameters['instantOverrideW']),
+        };
+    }
+
+    /**
+     * Create InstantOverride
+     */
+    async createInstantOverrideRaw(requestParameters: CreateInstantOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstantOverride>> {
+        const requestOptions = await this.createInstantOverrideRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstantOverrideFromJSON(jsonValue));
+    }
+
+    /**
+     * Create InstantOverride
+     */
+    async createInstantOverride(requestParameters: CreateInstantOverrideRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstantOverride> {
+        const response = await this.createInstantOverrideRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
