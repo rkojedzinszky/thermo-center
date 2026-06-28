@@ -142,6 +142,10 @@ const columns = computed(() => {
   return props.isExpanded ? allCols : essentialCols
 })
 
+function isOutOfSync(sensor: THSensor): boolean {
+  return sensor.valid === false
+}
+
 function cellValue(sensor: THSensor, key: string): string {
   switch (key) {
     case 'name':
@@ -207,6 +211,7 @@ function cellValue(sensor: THSensor, key: string): string {
           class="table-row"
           :class="{
             inactive: checkInactive(sensor, now),
+            'out-of-sync': isOutOfSync(sensor),
             'drag-over': dragOverIndex === idx,
             dragging: dragIndex === idx,
           }"
@@ -237,8 +242,14 @@ function cellValue(sensor: THSensor, key: string): string {
             }"
             :data-label="col.label"
           >
+            <div v-if="col.key === 'name'" class="name-cell">
+              <span class="sensor-name">{{ cellValue(sensor, col.key) }}</span>
+              <span v-if="isOutOfSync(sensor)" class="out-of-sync-badge" title="Sensor is out of sync - data invalid">
+                ⚠
+              </span>
+            </div>
             <button
-              v-if="col.key === 'lastTsf' && sensor.valid === false"
+              v-else-if="col.key === 'lastTsf' && sensor.valid === false"
               class="resync-button"
               :disabled="resyncDisabledMap.get(sensor.id) ?? false"
               title="Request sensor resynchronization"
@@ -356,6 +367,23 @@ thead {
   opacity: 0.6;
 }
 
+.table-row.out-of-sync {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+}
+
+.table-row.out-of-sync:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.table-row.out-of-sync.inactive {
+  opacity: 0.7;
+}
+
+.table-row.out-of-sync.inactive:hover {
+  opacity: 0.85;
+}
+
 .table-row.drag-over {
   background: var(--color-drag-over-bg);
   border-top: 2px solid var(--color-accent-border);
@@ -369,6 +397,24 @@ thead {
   color: var(--color-text-fields, var(--color-text));
   padding: 0.7rem 1rem;
   white-space: nowrap;
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.out-of-sync-badge {
+  font-size: 0.875rem;
+  line-height: 1;
+  color: #ef4444;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .resync-button {

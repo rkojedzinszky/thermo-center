@@ -130,7 +130,7 @@ function onTouchEnd(e: TouchEvent) {
 <template>
   <div
     class="card-wrapper card-fixed-size"
-    :class="{ inactive: isInactive, 'reorder-active': reorderMode }"
+    :class="{ inactive: isInactive, 'out-of-sync': isInvalid, 'reorder-active': reorderMode }"
     :aria-label="`Sensor ${sensor.name}`"
     :data-card-index="index"
     :draggable="reorderMode ? 'true' : undefined"
@@ -205,16 +205,52 @@ function onTouchEnd(e: TouchEvent) {
   touch-action: none;
 }
 
-.card-wrapper.inactive {
-  opacity: 0.45;
+.card-wrapper.out-of-sync {
+  border-radius: 1.1rem;
+}
+
+.card-wrapper.out-of-sync:hover {
+  z-index: 10;
+}
+
+.card-wrapper.out-of-sync.inactive {
+  opacity: 0.7;
+}
+
+.card-wrapper.out-of-sync.inactive:hover {
+  opacity: 0.85;
 }
 
 .card-wrapper:hover {
   z-index: 10;
 }
 
+.card-wrapper.inactive {
+  opacity: 0.45;
+}
+
 .card-wrapper.inactive:hover {
   opacity: 0.65;
+}
+
+.card-wrapper.out-of-sync .card-front {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.card-wrapper.out-of-sync:hover .card-front {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.18) 0%, rgba(239, 68, 68, 0.12) 100%);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.card-wrapper.out-of-sync .card-back {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.card-wrapper.out-of-sync:hover .card-back {
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.18) 0%, rgba(239, 68, 68, 0.12) 100%);
+  border-color: rgba(239, 68, 68, 0.6);
 }
 
 .card {
