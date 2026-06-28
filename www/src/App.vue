@@ -176,32 +176,32 @@ html[data-theme='dark'] {
 
 @media (max-width: 768px) {
   :root,
-  html[data-theme='light'] {
+  html[data-theme='dark'] {
     --card-width: 150px;
     --card-height: 186px;
+    --color-reading-divider: rgba(255, 255, 255, 0.08);
+    --color-footer-border: rgba(255, 255, 255, 0.06);
+    --color-back-footer-border: rgba(99, 102, 241, 0.15);
+    --color-input-bg: rgba(255, 255, 255, 0.07);
+    --color-border-input: rgba(255, 255, 255, 0.15);
+    --color-input-text: #e2e8f0;
+    --color-input-placeholder: #475569;
+    --color-task-bg: rgba(15, 23, 42, 0.8);
+    --color-border-task: rgba(99, 102, 241, 0.2);
+    --color-btn-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+    --color-btn-shadow: rgba(59, 130, 246, 0.35);
+    --color-page-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    --color-login-card: rgba(255, 255, 255, 0.05);
+    --color-login-card-border: rgba(255, 255, 255, 0.12);
+    --color-login-card-title: #e2e8f0;
+    --color-login-subtitle: #94a3b8;
+    --color-drag-over-bg: rgba(99, 102, 241, 0.12);
+    --color-table-header-bg: rgba(30, 41, 59, 0.9);
+    --color-table-bg: rgba(15, 23, 42, 0.7);
+    --color-table-row-hover: rgba(255, 255, 255, 0.04);
+    --color-handle: #475569;
+    --color-primary: #3b82f6;
   }
-  --color-reading-divider: rgba(255, 255, 255, 0.08);
-  --color-footer-border: rgba(255, 255, 255, 0.06);
-  --color-back-footer-border: rgba(99, 102, 241, 0.15);
-  --color-input-bg: rgba(255, 255, 255, 0.07);
-  --color-border-input: rgba(255, 255, 255, 0.15);
-  --color-input-text: #e2e8f0;
-  --color-input-placeholder: #475569;
-  --color-task-bg: rgba(15, 23, 42, 0.8);
-  --color-border-task: rgba(99, 102, 241, 0.2);
-  --color-btn-bg: linear-gradient(135deg, #3b82f6, #2563eb);
-  --color-btn-shadow: rgba(59, 130, 246, 0.35);
-  --color-page-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  --color-login-card: rgba(255, 255, 255, 0.05);
-  --color-login-card-border: rgba(255, 255, 255, 0.12);
-  --color-login-card-title: #e2e8f0;
-  --color-login-subtitle: #94a3b8;
-  --color-drag-over-bg: rgba(99, 102, 241, 0.12);
-  --color-table-header-bg: rgba(30, 41, 59, 0.9);
-  --color-table-bg: rgba(15, 23, 42, 0.7);
-  --color-table-row-hover: rgba(255, 255, 255, 0.04);
-  --color-handle: #475569;
-  --color-primary: #3b82f6;
 }
 
 /* ── Light theme ── */
