@@ -26,37 +26,37 @@ export interface Control {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Control
      */
     sensorId: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof Control
      */
     name: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Control
      */
     temperature?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Control
      */
     targetTemp?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Control
      */
     pidcontrol?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Control
      */

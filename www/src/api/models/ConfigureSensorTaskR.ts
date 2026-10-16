@@ -26,37 +26,37 @@ export interface ConfigureSensorTaskR {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTaskR
      */
     created?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTaskR
      */
     started?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTaskR
      */
     firstDiscovery?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTaskR
      */
     lastDiscovery?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTaskR
      */
     finished?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof ConfigureSensorTaskR
      */

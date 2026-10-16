@@ -26,37 +26,37 @@ export interface ControlR {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ControlR
      */
     sensorId: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof ControlR
      */
     name: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ControlR
      */
     temperature?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ControlR
      */
     targetTemp?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ControlR
      */
     pidcontrol?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ControlR
      */

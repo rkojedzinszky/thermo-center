@@ -26,13 +26,13 @@ export interface SessionR {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof SessionR
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof SessionR
      */

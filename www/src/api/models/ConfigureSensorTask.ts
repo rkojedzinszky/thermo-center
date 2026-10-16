@@ -26,37 +26,37 @@ export interface ConfigureSensorTask {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTask
      */
     created?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTask
      */
     started?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTask
      */
     firstDiscovery?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTask
      */
     lastDiscovery?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof ConfigureSensorTask
      */
     finished?: Date | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof ConfigureSensorTask
      */
@@ -68,13 +68,13 @@ export interface ConfigureSensorTask {
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ConfigureSensorTask
      */
     sensorId: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof ConfigureSensorTask
      */

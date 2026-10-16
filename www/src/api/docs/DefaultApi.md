@@ -1994,10 +1994,10 @@ async function example() {
   const api = new DefaultApi();
 
   const body = {
-    // string (optional)
-    control: control_example,
-    // string (optional)
-    daytype: daytype_example,
+    // number (optional)
+    control: 56,
+    // number (optional)
+    daytype: 56,
   } satisfies ListProfileRequest;
 
   try {
@@ -2017,8 +2017,8 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **control** | `string` |  | [Optional] [Defaults to `undefined`] |
-| **daytype** | `string` |  | [Optional] [Defaults to `undefined`] |
+| **control** | `number` |  | [Optional] [Defaults to `undefined`] |
+| **daytype** | `number` |  | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 
@@ -2062,8 +2062,8 @@ async function example() {
   const api = new DefaultApi();
 
   const body = {
-    // string (optional)
-    control: control_example,
+    // number (optional)
+    control: 56,
   } satisfies ListScheduledOverrideRequest;
 
   try {
@@ -2083,7 +2083,7 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **control** | `string` |  | [Optional] [Defaults to `undefined`] |
+| **control** | `number` |  | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 

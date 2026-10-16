@@ -26,7 +26,7 @@ export interface THSensorR {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof THSensorR
      */

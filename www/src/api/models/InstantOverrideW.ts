@@ -32,7 +32,7 @@ export interface InstantOverrideW {
      */
     targetTemp: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof InstantOverrideW
      */

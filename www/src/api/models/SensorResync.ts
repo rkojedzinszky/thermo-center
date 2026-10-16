@@ -26,7 +26,7 @@ export interface SensorResync {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {Date}
      * @memberof SensorResync
      */

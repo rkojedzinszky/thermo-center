@@ -20,25 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface SensorW {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof SensorW
      */
     vcc?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof SensorW
      */
     rssi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof SensorW
      */
     lqi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof SensorW
      */

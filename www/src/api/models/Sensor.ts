@@ -26,7 +26,7 @@ export interface Sensor {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof Sensor
      */
@@ -50,25 +50,25 @@ export interface Sensor {
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Sensor
      */
     vcc?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Sensor
      */
     rssi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Sensor
      */
     lqi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Sensor
      */

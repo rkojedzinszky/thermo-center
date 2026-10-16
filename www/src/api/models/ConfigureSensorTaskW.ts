@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface ConfigureSensorTaskW {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof ConfigureSensorTaskW
      */
     sensorId: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof ConfigureSensorTaskW
      */

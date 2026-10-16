@@ -20,25 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface THSensorW {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */
     vcc?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */
     rssi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */
     lqi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */
@@ -56,13 +56,13 @@ export interface THSensorW {
      */
     lastTsf?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */
     temperature?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensorW
      */

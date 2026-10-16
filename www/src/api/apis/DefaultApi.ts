@@ -240,12 +240,12 @@ export interface ListDayTypeRequest {
 }
 
 export interface ListProfileRequest {
-    control?: string;
-    daytype?: string;
+    control?: number;
+    daytype?: number;
 }
 
 export interface ListScheduledOverrideRequest {
-    control?: string;
+    control?: number;
 }
 
 export interface PatchControlOperationRequest {

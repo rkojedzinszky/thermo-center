@@ -26,7 +26,7 @@ export interface SensorR {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof SensorR
      */

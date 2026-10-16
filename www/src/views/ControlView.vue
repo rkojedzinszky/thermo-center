@@ -2,9 +2,26 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useControls } from '@/composables/useControls'
 import { useInstantProfiles } from '@/composables/useInstantProfiles'
+import { usePersistentString } from '@/composables/usePersistentRef'
 import { subscribeToWebSocket } from '@/services/websocket'
 import ControlCard from '@/components/ControlCard.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import InstantProfileButton from '@/components/InstantProfileButton.vue'
+import ProfileScheduleEditor from '@/components/ProfileScheduleEditor.vue'
+
+type HeatingTab = 'cards' | 'schedules'
+
+const TAB_KEY = 'heating_tab'
+
+function isHeatingTab(value: string): value is HeatingTab {
+  return value === 'cards' || value === 'schedules'
+}
+
+const { state: activeTab, set: selectTab } = usePersistentString<HeatingTab>(
+  TAB_KEY,
+  'cards',
+  isHeatingTab,
+)
 
 const { orderedControls, loadControls, updateControl } = useControls()
 const { instantProfiles, loadInstantProfiles, toggleProfile } = useInstantProfiles()
@@ -33,27 +50,52 @@ onUnmounted(() => {
 
 <template>
   <div class="heat-control">
+    <div class="tabbar" role="tablist" aria-label="Heating control view">
+      <button
+        type="button"
+        role="tab"
+        class="tab"
+        :class="{ active: activeTab === 'cards' }"
+        :aria-selected="activeTab === 'cards'"
+        @click="selectTab('cards')"
+      >
+        Cards
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="tab"
+        :class="{ active: activeTab === 'schedules' }"
+        :aria-selected="activeTab === 'schedules'"
+        @click="selectTab('schedules')"
+      >
+        Schedules
+      </button>
+    </div>
+
     <!-- Content -->
     <main class="content">
-      <!-- Instant Profiles Section -->
-      <section v-if="instantProfiles.length > 0" class="profiles-section">
-        <div class="profiles-container">
-          <InstantProfileButton
-            v-for="profile in instantProfiles"
-            :key="profile.id"
-            :profile="profile"
-            @toggle="toggleProfile(profile.id)"
-          />
-        </div>
-      </section>
+      <template v-if="activeTab === 'cards'">
+        <!-- Instant Profiles Section -->
+        <section v-if="instantProfiles.length > 0" class="profiles-section">
+          <div class="profiles-container">
+            <InstantProfileButton
+              v-for="profile in instantProfiles"
+              :key="profile.id"
+              :profile="profile"
+              @toggle="toggleProfile(profile.id)"
+            />
+          </div>
+        </section>
 
-      <!-- Controls Section -->
-      <div v-if="orderedControls.length === 0" class="empty-state">
-        <p>No heating controls found.</p>
-      </div>
-      <div v-else class="cards-grid">
-        <ControlCard v-for="control in orderedControls" :key="control.id" :control="control" />
-      </div>
+        <!-- Controls Section -->
+        <EmptyState v-if="orderedControls.length === 0" message="No heating controls found." min-height="300px" />
+        <div v-else class="cards-grid">
+          <ControlCard v-for="control in orderedControls" :key="control.id" :control="control" />
+        </div>
+      </template>
+
+      <ProfileScheduleEditor v-else />
     </main>
   </div>
 </template>
@@ -75,13 +117,34 @@ onUnmounted(() => {
   overflow-y: auto;
 }
 
-.empty-state {
+.tabbar {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
+  gap: 0.3rem;
+  padding: 0.5rem 2rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
   color: var(--color-text-muted);
-  font-size: 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tab.active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
 }
 
 .cards-grid {

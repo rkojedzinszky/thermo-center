@@ -26,25 +26,25 @@ export interface Session {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof Session
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof Session
      */
     isAdmin: boolean;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof Session
      */
     username: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof Session
      */

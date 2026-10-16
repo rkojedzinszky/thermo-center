@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface SessionW {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof SessionW
      */
     username: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof SessionW
      */

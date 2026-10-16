@@ -26,7 +26,7 @@ export interface CurrentDaytype {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof CurrentDaytype
      */

@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface CurrentDaytypeW {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {string}
      * @memberof CurrentDaytypeW
      */

@@ -26,7 +26,7 @@ export interface THSensor {
      */
     resourceUri: string;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {boolean}
      * @memberof THSensor
      */
@@ -44,25 +44,25 @@ export interface THSensor {
      */
     id: number;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */
     vcc?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */
     rssi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */
     lqi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */
@@ -80,13 +80,13 @@ export interface THSensor {
      */
     lastTsf?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */
     temperature?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof THSensor
      */

@@ -20,25 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface PatchSensorRequest {
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof PatchSensorRequest
      */
     vcc?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof PatchSensorRequest
      */
     rssi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof PatchSensorRequest
      */
     lqi?: number | null;
     /**
-     * NO_DESCRIPTION
+     * 
      * @type {number}
      * @memberof PatchSensorRequest
      */
