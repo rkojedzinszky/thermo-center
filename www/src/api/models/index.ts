@@ -1,5 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './Calendar';
+export * from './CalendarR';
+export * from './CalendarW';
 export * from './ConfigureSensorTask';
 export * from './ConfigureSensorTaskR';
 export * from './ConfigureSensorTaskW';
@@ -18,6 +21,7 @@ export * from './InstantOverrideW';
 export * from './InstantProfile';
 export * from './InstantProfileR';
 export * from './InstantProfileW';
+export * from './ListCalendar200Response';
 export * from './ListControl200Response';
 export * from './ListDayType200Response';
 export * from './ListInstantProfile200Response';
@@ -28,6 +32,7 @@ export * from './ListSensor200Response';
 export * from './ListSensorResync200Response';
 export * from './ListSession200Response';
 export * from './ListTHSensor200Response';
+export * from './PatchCalendarRequest';
 export * from './PatchControlRequest';
 export * from './PatchDayTypeRequest';
 export * from './PatchInstantProfileRequest';

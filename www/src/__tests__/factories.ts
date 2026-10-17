@@ -1,7 +1,16 @@
-import type { Control, DayType, Profile } from '../api'
+import type { Calendar, Control, DayType, Profile } from '../api'
 
 export const CONTROL_URI = '/api/v1/control/1/'
 export const DAYTYPE_URI = '/api/v1/daytype/1/'
+
+export function makeCalendar(id: number, day: string, daytypeUri: string = DAYTYPE_URI): Calendar {
+  return {
+    id,
+    resourceUri: `/api/v1/calendar/${id}/`,
+    day: new Date(`${day}T00:00:00.000Z`),
+    daytype: daytypeUri,
+  }
+}
 
 export function makeProfile(
   id: number,

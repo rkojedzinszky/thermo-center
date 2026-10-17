@@ -30,6 +30,7 @@ All URIs are relative to *http://localhost*
 | [**getSensorResync**](DefaultApi.md#getsensorresync) | **GET** /api/v1/sensorresync/{id}/ | Get a single SensorResync by primary key |
 | [**getSession**](DefaultApi.md#getsession) | **GET** /api/v1/session/{id}/ | Get a single Session by primary key |
 | [**getTHSensor**](DefaultApi.md#getthsensor) | **GET** /api/v1/thsensor/{id}/ | Get a single THSensor by primary key |
+| [**listCalendar**](DefaultApi.md#listcalendar) | **GET** /api/v1/calendar/ | Get list of Calendar with filtering |
 | [**listControl**](DefaultApi.md#listcontrol) | **GET** /api/v1/control/ | Get list of Control with filtering |
 | [**listDayType**](DefaultApi.md#listdaytype) | **GET** /api/v1/daytype/ | Get list of DayType with filtering |
 | [**listInstantProfile**](DefaultApi.md#listinstantprofile) | **GET** /api/v1/instantprofile/ | Get list of InstantProfile with filtering |
@@ -39,6 +40,7 @@ All URIs are relative to *http://localhost*
 | [**listSensorResync**](DefaultApi.md#listsensorresync) | **GET** /api/v1/sensorresync/ | Get list of SensorResync with filtering |
 | [**listSession**](DefaultApi.md#listsession) | **GET** /api/v1/session/ | Get list of Session with filtering |
 | [**listTHSensor**](DefaultApi.md#listthsensor) | **GET** /api/v1/thsensor/ | Get list of THSensor with filtering |
+| [**patchCalendar**](DefaultApi.md#patchcalendaroperation) | **PATCH** /api/v1/calendar/{id}/ | Patch a single Calendar by primary key |
 | [**patchControl**](DefaultApi.md#patchcontroloperation) | **PATCH** /api/v1/control/{id}/ | Patch a single Control by primary key |
 | [**patchDayType**](DefaultApi.md#patchdaytypeoperation) | **PATCH** /api/v1/daytype/{id}/ | Patch a single DayType by primary key |
 | [**patchInstantProfile**](DefaultApi.md#patchinstantprofileoperation) | **PATCH** /api/v1/instantprofile/{id}/ | Patch a single InstantProfile by primary key |
@@ -1787,6 +1789,77 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
+## listCalendar
+
+> ListCalendar200Response listCalendar(day, dayGte, dayLte)
+
+Get list of Calendar with filtering
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DefaultApi,
+} from '';
+import type { ListCalendarRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const api = new DefaultApi();
+
+  const body = {
+    // Date (optional)
+    day: 2013-10-20,
+    // Date (optional)
+    dayGte: 2013-10-20,
+    // Date (optional)
+    dayLte: 2013-10-20,
+  } satisfies ListCalendarRequest;
+
+  try {
+    const data = await api.listCalendar(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **day** | `Date` |  | [Optional] [Defaults to `undefined`] |
+| **dayGte** | `Date` |  | [Optional] [Defaults to `undefined`] |
+| **dayLte** | `Date` |  | [Optional] [Defaults to `undefined`] |
+
+### Return type
+
+[**ListCalendar200Response**](ListCalendar200Response.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | List of Calendar |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
 ## listControl
 
 > ListControl200Response listControl(sensorId)
@@ -2331,6 +2404,76 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | List of THSensor |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## patchCalendar
+
+> Calendar patchCalendar(id, patchCalendarRequest)
+
+Patch a single Calendar by primary key
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DefaultApi,
+} from '';
+import type { PatchCalendarOperationRequest } from '';
+
+async function example() {
+  console.log("🚀 Testing  SDK...");
+  const api = new DefaultApi();
+
+  const body = {
+    // number
+    id: 56,
+    // PatchCalendarRequest | Values for Calendar
+    patchCalendarRequest: ...,
+  } satisfies PatchCalendarOperationRequest;
+
+  try {
+    const data = await api.patchCalendar(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `number` |  | [Defaults to `undefined`] |
+| **patchCalendarRequest** | [PatchCalendarRequest](PatchCalendarRequest.md) | Values for Calendar | |
+
+### Return type
+
+[**Calendar**](Calendar.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **202** | Calendar successfully accepted |  -  |
+| **404** | Calendar not found |  -  |
+| **0** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

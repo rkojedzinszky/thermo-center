@@ -1,5 +1,8 @@
 apis/DefaultApi.ts
 apis/index.ts
+docs/Calendar.md
+docs/CalendarR.md
+docs/CalendarW.md
 docs/ConfigureSensorTask.md
 docs/ConfigureSensorTaskR.md
 docs/ConfigureSensorTaskW.md
@@ -19,6 +22,7 @@ docs/InstantOverrideW.md
 docs/InstantProfile.md
 docs/InstantProfileR.md
 docs/InstantProfileW.md
+docs/ListCalendar200Response.md
 docs/ListControl200Response.md
 docs/ListDayType200Response.md
 docs/ListInstantProfile200Response.md
@@ -29,6 +33,7 @@ docs/ListSensor200Response.md
 docs/ListSensorResync200Response.md
 docs/ListSession200Response.md
 docs/ListTHSensor200Response.md
+docs/PatchCalendarRequest.md
 docs/PatchControlRequest.md
 docs/PatchDayTypeRequest.md
 docs/PatchInstantProfileRequest.md
@@ -54,6 +59,9 @@ docs/THSensor.md
 docs/THSensorR.md
 docs/THSensorW.md
 index.ts
+models/Calendar.ts
+models/CalendarR.ts
+models/CalendarW.ts
 models/ConfigureSensorTask.ts
 models/ConfigureSensorTaskR.ts
 models/ConfigureSensorTaskW.ts
@@ -72,6 +80,7 @@ models/InstantOverrideW.ts
 models/InstantProfile.ts
 models/InstantProfileR.ts
 models/InstantProfileW.ts
+models/ListCalendar200Response.ts
 models/ListControl200Response.ts
 models/ListDayType200Response.ts
 models/ListInstantProfile200Response.ts
@@ -82,6 +91,7 @@ models/ListSensor200Response.ts
 models/ListSensorResync200Response.ts
 models/ListSession200Response.ts
 models/ListTHSensor200Response.ts
+models/PatchCalendarRequest.ts
 models/PatchControlRequest.ts
 models/PatchDayTypeRequest.ts
 models/PatchInstantProfileRequest.ts

@@ -5,16 +5,17 @@ import { useInstantProfiles } from '@/composables/useInstantProfiles'
 import { usePersistentString } from '@/composables/usePersistentRef'
 import { subscribeToWebSocket } from '@/services/websocket'
 import ControlCard from '@/components/ControlCard.vue'
+import DayTypeCalendar from '@/components/DayTypeCalendar.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import InstantProfileButton from '@/components/InstantProfileButton.vue'
 import ProfileScheduleEditor from '@/components/ProfileScheduleEditor.vue'
 
-type HeatingTab = 'cards' | 'schedules'
+type HeatingTab = 'cards' | 'schedules' | 'calendar'
 
 const TAB_KEY = 'heating_tab'
 
 function isHeatingTab(value: string): value is HeatingTab {
-  return value === 'cards' || value === 'schedules'
+  return value === 'cards' || value === 'schedules' || value === 'calendar'
 }
 
 const { state: activeTab, set: selectTab } = usePersistentString<HeatingTab>(
@@ -71,6 +72,16 @@ onUnmounted(() => {
       >
         Schedules
       </button>
+      <button
+        type="button"
+        role="tab"
+        class="tab"
+        :class="{ active: activeTab === 'calendar' }"
+        :aria-selected="activeTab === 'calendar'"
+        @click="selectTab('calendar')"
+      >
+        Calendar
+      </button>
     </div>
 
     <!-- Content -->
@@ -89,13 +100,19 @@ onUnmounted(() => {
         </section>
 
         <!-- Controls Section -->
-        <EmptyState v-if="orderedControls.length === 0" message="No heating controls found." min-height="300px" />
+        <EmptyState
+          v-if="orderedControls.length === 0"
+          message="No heating controls found."
+          min-height="300px"
+        />
         <div v-else class="cards-grid">
           <ControlCard v-for="control in orderedControls" :key="control.id" :control="control" />
         </div>
       </template>
 
-      <ProfileScheduleEditor v-else />
+      <ProfileScheduleEditor v-else-if="activeTab === 'schedules'" />
+
+      <DayTypeCalendar v-else />
     </main>
   </div>
 </template>

@@ -80,6 +80,29 @@ class ProfileResource(ReadonlyPkeyResource):
 ProfileResourceInstance = ProfileResource()
 restapi.RestApi.register(ProfileResourceInstance)
 
+class CalendarResource(ReadonlyPkeyResource):
+    """
+    Calendar day types.
+
+    Entries are addressed by their database id like any other resource.
+    The list can be narrowed with the ``day`` filters, e.g. to a date range
+    or a single day (exact).
+    """
+    daytype = fields.ForeignKey(DayTypeResource, 'daytype')
+
+    class Meta(ResourceMetaCommon):
+        queryset = models.Calendar.objects.select_related('daytype').order_by('day')
+        authorization = Authorization()
+        fields = ('id', 'day', 'daytype')
+        filtering = {
+                'day': ['exact', 'gte', 'lte'],
+                }
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['patch']
+
+CalendarResourceInstance = CalendarResource()
+restapi.RestApi.register(CalendarResourceInstance)
+
 class ScheduledOverrideResource(ReadonlyPkeyResource):
     control = fields.ForeignKey(ControlResource, 'control')
 

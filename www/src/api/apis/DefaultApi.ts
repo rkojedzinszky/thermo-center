@@ -15,6 +15,7 @@
 
 import * as runtime from '../runtime';
 import type {
+  Calendar,
   ConfigureSensorTask,
   ConfigureSensorTaskW,
   Control,
@@ -25,6 +26,7 @@ import type {
   InstantOverrideW,
   InstantProfile,
   InstantProfileW,
+  ListCalendar200Response,
   ListControl200Response,
   ListDayType200Response,
   ListInstantProfile200Response,
@@ -34,6 +36,7 @@ import type {
   ListSensorResync200Response,
   ListSession200Response,
   ListTHSensor200Response,
+  PatchCalendarRequest,
   PatchControlRequest,
   PatchDayTypeRequest,
   PatchInstantProfileRequest,
@@ -53,6 +56,8 @@ import type {
   THSensor,
 } from '../models/index';
 import {
+    CalendarFromJSON,
+    CalendarToJSON,
     ConfigureSensorTaskFromJSON,
     ConfigureSensorTaskToJSON,
     ConfigureSensorTaskWFromJSON,
@@ -73,6 +78,8 @@ import {
     InstantProfileToJSON,
     InstantProfileWFromJSON,
     InstantProfileWToJSON,
+    ListCalendar200ResponseFromJSON,
+    ListCalendar200ResponseToJSON,
     ListControl200ResponseFromJSON,
     ListControl200ResponseToJSON,
     ListDayType200ResponseFromJSON,
@@ -91,6 +98,8 @@ import {
     ListSession200ResponseToJSON,
     ListTHSensor200ResponseFromJSON,
     ListTHSensor200ResponseToJSON,
+    PatchCalendarRequestFromJSON,
+    PatchCalendarRequestToJSON,
     PatchControlRequestFromJSON,
     PatchControlRequestToJSON,
     PatchDayTypeRequestFromJSON,
@@ -231,6 +240,12 @@ export interface GetTHSensorRequest {
     id: number;
 }
 
+export interface ListCalendarRequest {
+    day?: Date;
+    dayGte?: Date;
+    dayLte?: Date;
+}
+
 export interface ListControlRequest {
     sensorId?: number;
 }
@@ -246,6 +261,11 @@ export interface ListProfileRequest {
 
 export interface ListScheduledOverrideRequest {
     control?: number;
+}
+
+export interface PatchCalendarOperationRequest {
+    id: number;
+    patchCalendarRequest: PatchCalendarRequest;
 }
 
 export interface PatchControlOperationRequest {
@@ -1494,6 +1514,55 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for listCalendar without sending the request
+     */
+    async listCalendarRequestOpts(requestParameters: ListCalendarRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters['day'] != null) {
+            queryParameters['day'] = (requestParameters['day'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['dayGte'] != null) {
+            queryParameters['day__gte'] = (requestParameters['dayGte'] as any).toISOString().substring(0,10);
+        }
+
+        if (requestParameters['dayLte'] != null) {
+            queryParameters['day__lte'] = (requestParameters['dayLte'] as any).toISOString().substring(0,10);
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/api/v1/calendar/`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Get list of Calendar with filtering
+     */
+    async listCalendarRaw(requestParameters: ListCalendarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListCalendar200Response>> {
+        const requestOptions = await this.listCalendarRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListCalendar200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get list of Calendar with filtering
+     */
+    async listCalendar(requestParameters: ListCalendarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListCalendar200Response> {
+        const response = await this.listCalendarRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for listControl without sending the request
      */
     async listControlRequestOpts(requestParameters: ListControlRequest): Promise<runtime.RequestOpts> {
@@ -1843,6 +1912,61 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listTHSensor(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListTHSensor200Response> {
         const response = await this.listTHSensorRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for patchCalendar without sending the request
+     */
+    async patchCalendarRequestOpts(requestParameters: PatchCalendarOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling patchCalendar().'
+            );
+        }
+
+        if (requestParameters['patchCalendarRequest'] == null) {
+            throw new runtime.RequiredError(
+                'patchCalendarRequest',
+                'Required parameter "patchCalendarRequest" was null or undefined when calling patchCalendar().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+
+        let urlPath = `/api/v1/calendar/{id}/`;
+        urlPath = urlPath.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PatchCalendarRequestToJSON(requestParameters['patchCalendarRequest']),
+        };
+    }
+
+    /**
+     * Patch a single Calendar by primary key
+     */
+    async patchCalendarRaw(requestParameters: PatchCalendarOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Calendar>> {
+        const requestOptions = await this.patchCalendarRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CalendarFromJSON(jsonValue));
+    }
+
+    /**
+     * Patch a single Calendar by primary key
+     */
+    async patchCalendar(requestParameters: PatchCalendarOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Calendar> {
+        const response = await this.patchCalendarRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
