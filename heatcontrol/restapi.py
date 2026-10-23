@@ -69,7 +69,7 @@ class ProfileResource(ReadonlyPkeyResource):
     daytype = fields.ForeignKey(DayTypeResource, 'daytype')
 
     class Meta(ResourceMetaCommon):
-        queryset = models.Profile.objects.order_by('start')
+        queryset = models.Profile.objects.select_related('control', 'daytype').order_by('start')
         authorization = Authorization()
         filtering = {
                 'control': 'exact',
@@ -107,7 +107,7 @@ class ScheduledOverrideResource(ReadonlyPkeyResource):
     control = fields.ForeignKey(ControlResource, 'control')
 
     class Meta(ResourceMetaCommon):
-        queryset = models.ScheduledOverride.objects.order_by('start')
+        queryset = models.ScheduledOverride.objects.select_related('control').order_by('start')
         authorization = Authorization()
         filtering = {
                 'control': 'exact',
@@ -156,7 +156,7 @@ class CurrentDaytypeResource(ReadonlyPkeyResource):
     daytype = fields.CharField()
 
     class Meta(ResourceMetaCommon):
-        queryset = models.Calendar.objects.all()
+        queryset = models.Calendar.objects.select_related('daytype')
         authorization = CurrentDaytypeAuthorization()
         list_allowed_methods = []
         detail_allowed_methods = ['get', 'patch']
@@ -170,7 +170,7 @@ class CurrentDaytypeResource(ReadonlyPkeyResource):
         return bundle
 
     def obj_get(self, bundle, **kwargs):
-        return models.Calendar.objects.get(day=datetime.date.today())
+        return models.Calendar.objects.select_related('daytype').get(day=datetime.date.today())
 
 CurrentDaytypeResourceInstance = CurrentDaytypeResource()
 restapi.RestApi.register(CurrentDaytypeResourceInstance)

@@ -110,7 +110,7 @@ class SensorResyncResource(ReadonlyPkeyResource):
     ts = fields.DateTimeField("ts", readonly=True)
 
     class Meta(ResourceMetaCommon):
-        queryset = SensorResync.objects.all()
+        queryset = SensorResync.objects.select_related("sensor")
         authorization = RWAuthorization()
         detail_allowed_methods = ["get"]
         list_allowed_methods = ["get", "post"]
